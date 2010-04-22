@@ -1,0 +1,7 @@
+function A() {
+}
+A.prototype.f = 
+function(x) {
+	return (x) + (1);
+}
+

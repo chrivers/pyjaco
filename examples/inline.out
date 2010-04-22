@@ -1,0 +1,78 @@
+<script language="Javascript">
+
+function test() {
+	alert('Test!');
+	new TestClass();
+	return;
+}
+
+
+function TestClass() {
+	alert('TestClass created');
+	this.reset();
+	return;
+}
+TestClass.prototype.inc = 
+function() {
+	alert(this.value);
+	this.value = (this.value) + (1);
+	return;
+}
+TestClass.prototype.reset = 
+function() {
+	this.value = 0;
+	return;
+}
+
+
+function AjaxTest() {
+	this.post('/some/url');
+	return;
+}
+AjaxTest.prototype.call = 
+function(method, uri, query) {
+	query = (typeof(query) != 'undefined' && query != null) ? query : '';
+	var callback = {'argument' : [this], 'success' : this.subSuccess, 'failure' : this.subFailure};
+	if(query != '') {
+		var args = [];
+		for(var key in query)
+			(args)[args.length] = ((key) + ('=')) + (encodeURIComponent((query)[key]));
+		query = args.join('&');
+	}
+	YAHOO.util.Connect.asyncRequest(method, uri, callback, query);
+	return;
+}
+AjaxTest.prototype.failure = 
+function(o) {
+	alert('Ajax failure...');
+	return;
+}
+AjaxTest.prototype.get = 
+function(uri, query) {
+	query = (typeof(query) != 'undefined' && query != null) ? query : null;
+	this.call('GET', uri, query);
+	return;
+}
+AjaxTest.prototype.post = 
+function(uri, query) {
+	query = (typeof(query) != 'undefined' && query != null) ? query : null;
+	this.call('POST', uri, query);
+	return;
+}
+AjaxTest.prototype.subFailure = 
+function(o) {
+	(o.argument)[0].failure(o);
+	return;
+}
+AjaxTest.prototype.subSuccess = 
+function(o) {
+	(o.argument)[0].success(YAHOO.lang.JSON.parse(o.responseText));
+	return;
+}
+AjaxTest.prototype.success = 
+function(data) {
+	alert(data);
+	return;
+}
+
+</script>

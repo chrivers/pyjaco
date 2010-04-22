@@ -1,0 +1,44 @@
+
+function TestClass() {
+	return;
+	this.count = 0;
+}
+TestClass.prototype.next = 
+function() {
+	this.count = (this.count) + (1);
+	return;
+}
+TestClass.prototype.test = 
+function() {
+	alert(this.count);
+	return;
+}
+
+function helloWorld() {
+	window.testObj = new TestClass();
+	var pushButton = new YAHOO.widget.Button({'id' : 'pushButton', 'container' : 'pushButtons', 'label' : 'Hello, World!'});
+	pushButton.on('click', onButtonClick);
+	var pushButton2 = new YAHOO.widget.Button({'id' : 'pushButton2', 'container' : 'pushButtons', 'label' : 'Hello, Dude!', 'onclick' : {'obj' : 'Dude', 'fn' : onButtonClick}});
+	var i = 1;
+	while(i <= 3) {
+		new YAHOO.widget.Button({'id' : ('pushButtonIter') + (i), 'container' : 'pushButtons', 'label' : (('Hello ') + (i)) + ('!'), 'onclick' : {'obj' : ('Person #') + (i), 'fn' : onButtonClick}});
+		i = (i) + (1);
+	}
+	new YAHOO.widget.Button({'id' : 'pushButtonCount', 'container' : 'pushButtons', 'label' : 'Count', 'onclick' : {'fn' : onCountClick}});
+	return;
+}
+
+function onButtonClick(event, target) {
+	target = (typeof(target) != 'undefined' && target != null) ? target : 'World';
+	if(target == 'World')
+		target = 'Big Blue World';
+	alert((('Hello, ') + (target)) + ('!'));
+	return;
+}
+
+function onCountClick(event) {
+	window.testObj.next();
+	window.testObj.test();
+	return;
+}
+
