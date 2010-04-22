@@ -64,7 +64,7 @@ class JavaScriptVisitor(NodeVisitor):
         return ">"
 
     def visit_Or(self, node):
-        return "or"
+        return "||"
 
     def visit_And(self, node):
         return "&&"
