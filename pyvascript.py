@@ -1,5 +1,6 @@
 import inspect
 from ast import parse, iter_fields, AST, dump, NodeVisitor
+import _ast
 
 class JavaScriptVisitor(NodeVisitor):
     """
@@ -184,10 +185,13 @@ class JavaScriptVisitor(NodeVisitor):
 
     def visit_For(self, node):
         assert len(node.orelse) == 0
+        print type(node.target)
+        assert isinstance(node.target, _ast.Name)
         target = self.visit(node.target)
         iter = self.visit(node.iter)
-        s = ["for %s in %s:" % (target, iter)]
+        s = ["for (%s in %s) {" % (target, iter)]
         s.extend(self.visit_block_and_indent(node.body))
+        s.append("}")
         return s
 
     def visit_While(self, node):
