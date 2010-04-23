@@ -135,6 +135,11 @@ class JS(object):
         self.dummy = 0
         self.classes = ['dict', 'list', 'tuple']
 
+    def new_dummy(self):
+        dummy = "__dummy%d__" % self.dummy
+        self.dummy += 1
+        return dummy
+
     def name(self, node):
         return node.__class__.__name__
 
@@ -257,23 +262,78 @@ class JS(object):
 
     @scope
     def visit_For(self, node):
-        return ""
-        js = ["for (%s) {" % self.visit(node.test)]
+        if not isinstance(node.target, ast.Name):
+            raise JSError("argument decomposition in 'for' loop is not supported")
 
-        if node.orelse:
-            raise JSError("'else' in 'for' loop not supported")
+        js = []
 
-    @scope
-    def visit_While(self, node):
-        js = ["while (%s) {" % self.visit(node.test)]
+        for_target = self.visit(node.target)
+        for_iter = self.visit(node.iter)
+
+        iter_dummy = self.new_dummy()
+        orelse_dummy = self.new_dummy()
+        exc_dummy = self.new_dummy()
+
+        js.append("var %s = iter(%s);" % (iter_dummy, for_iter))
+        js.append("var %s = false;" % orelse_dummy)
+        js.append("while (1) {")
+        js.append("    var %s;" % for_target)
+        js.append("    try {")
+        js.append("        %s = %s.next();" % (for_target, iter_dummy))
+        js.append("    } catch (%s) {" % exc_dummy)
+        js.append("        if (%s.__class__ == StopIteration) {" % exc_dummy)
+        js.append("            %s = true;" % orelse_dummy)
+        js.append("            break;")
+        js.append("        } else {")
+        js.append("            throw %s;" % exc_dummy)
+        js.append("        }")
+        js.append("    }")
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
 
-        if node.orelse:
-            raise JSError("'else' in 'while' loop not supported")
+        js.append("}")
 
-        return js + ["}"]
+        if node.orelse:
+            js.append("if (%s) {" % orelse_dummy)
+
+            for stmt in node.orelse:
+                js.extend(self.indent(self.visit(stmt)))
+
+            js.append("}")
+
+        return js
+
+    @scope
+    def visit_While(self, node):
+        js = []
+
+        if not node.orelse:
+            js.append("while (%s) {" % self.visit(node.test))
+        else:
+            orelse_dummy = self.new_dummy()
+
+            js.append("var %s = false;" % orelse_dummy)
+            js.append("while (1) {");
+            js.append("    if (!(%s)) {" % self.visit(node.test))
+            js.append("        %s = true;" % orelse_dummy)
+            js.append("        break;")
+            js.append("    }")
+
+        for stmt in node.body:
+            js.extend(self.indent(self.visit(stmt)))
+
+        js.append("}")
+
+        if node.orelse:
+            js.append("if (%s) {" % orelse_dummy)
+
+            for stmt in node.orelse:
+                js.extend(self.indent(self.visit(stmt)))
+
+            js.append("}")
+
+        return js
 
     @scope
     def visit_If(self, node):
@@ -441,3 +501,4 @@ class JavaScript(object):
 
     def __str__(self):
         return self._js
+
