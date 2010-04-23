@@ -8,7 +8,7 @@ from difflib import unified_diff
 def test1(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
-    r = os.system('js -f %s' % in_file)
+    r = os.system('js -f defs.js -f %s' % in_file)
     if r == 0:
         w.write("[OK]", align="right", color="Green")
     else:
@@ -26,7 +26,7 @@ def test2(in_file):
     w.write("\n")
 
 def main():
-    test1("defs.js")
+    test1("tests/test_defs.js")
     files = glob("tests/test_*.py")
     for file in files:
         test2(file)

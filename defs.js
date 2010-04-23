@@ -412,6 +412,3 @@ function tests() {
         throw "Tests failed"
     }
 }
-
-tests();
-
