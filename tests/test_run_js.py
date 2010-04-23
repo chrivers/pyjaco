@@ -1,7 +1,7 @@
 import os
 
 from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
-        ifs2, ifs3, ifs4, loop1)
+        ifs2, ifs3, ifs4, loop1, tuple1)
 
 def test(func, run):
     run_file = "/tmp/run.js"
@@ -33,3 +33,9 @@ test(ifs1, "ifs1(1);")
 test(ifs2, "ifs2(1);")
 test(ifs3, "ifs3(1);")
 test(ifs4, "ifs4(1);")
+
+#test(tuple1, "assert(tuple1(3) == 12);")
+
+#test(loop1, "assert(loop1(4) == 0);")
+# this is the correct result:
+#test(loop1, "assert(loop1(4) == 6);")
