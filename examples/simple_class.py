@@ -1,4 +1,4 @@
-from pyvascript import JavaScript
+from py2js import JavaScript
 
 @JavaScript
 class A(object):
