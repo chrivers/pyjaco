@@ -82,6 +82,7 @@ module Python version "$Revision: 62047 $"
 """
 
 import ast
+import inspect
 
 def scope(func):
     func.scope = True
@@ -117,6 +118,18 @@ class JS(object):
         'BitXor' : '^',
         'BitAnd' : '&',
     }
+    comparison_op = {
+            'Eq'    : "==",
+            'NotEq' : "!=",
+            'Lt'    : "<",
+            'LtE'   : "<=",
+            'Gt'    : ">",
+            'GtE'   : ">=",
+            'Is'    : "===",
+            'IsNot' : "is not", # Not implemented yet
+            'In'    : "in", # Not implemented yet
+            'NotIn' : "not in", # Not implemented yet
+        }
 
     def __init__(self):
         self.dummy = 0
@@ -130,6 +143,9 @@ class JS(object):
 
     def get_binary_op(self, node):
         return self.binary_op[node.op.__class__.__name__]
+
+    def get_comparison_op(self, node):
+        return self.comparison_op[node.__class__.__name__]
 
     def visit(self, node, scope=None):
         try:
@@ -161,8 +177,8 @@ class JS(object):
         if node.args.kwarg is not None:
             raise JSError("keyword arguments are not supported")
 
-        if node.decorator_list:
-            raise JSError("decorators are not supported")
+        #if node.decorator_list:
+        #    raise JSError("decorators are not supported")
 
         defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
@@ -232,7 +248,8 @@ class JS(object):
         pass
 
     @scope
-    def _visit_For(self, node):
+    def visit_For(self, node):
+        return ""
         js = ["for (%s) {" % self.visit(node.test)]
 
         if node.orelse:
@@ -327,6 +344,16 @@ class JS(object):
 
         return "(%s)%s(%s))" % (left, self.get_binary_op(node), right)
 
+    def visit_Compare(self, node):
+        assert len(node.ops) == 1
+        assert len(node.comparators) == 1
+        op = node.ops[0]
+        comp = node.comparators[0]
+        return "%s %s %s" % (self.visit(node.left),
+                self.get_comparison_op(op),
+                self.visit(comp)
+                )
+
     def visit_Name(self, node):
         try:
             return self.name_map[node.id]
@@ -337,7 +364,12 @@ class JS(object):
         return str(node.n)
 
     def visit_Str(self, node):
-        return '"%s"' % node.s
+        if node.s.find("\n") == -1:
+            return '"%s"' % node.s
+        else:
+            s = node.s.split("\n")
+            s = '\\n" + "'.join(s)
+            return '"%s"' % s
 
     def visit_Call(self, node):
         if node.keywords:
@@ -353,51 +385,44 @@ class JS(object):
 
         return "%s(%s)" % (self.visit(node.func), js_args)
 
-js = JS()
+    def visit_Raise(self, node):
+        assert node.inst is None
+        assert node.tback is None
+        return ["raise %s;" % self.visit(node.type)]
 
-from ast import parse, dump # XXX: for debugging
+    def visit_Attribute(self, node):
+        return "%s.%s" % (self.visit(node.value), node.attr)
 
-t1 = """\
-for x in xrange(0, 1):
-    x
-else:
-    pass
-"""
+    def visit_Tuple(self, node):
+        els = [self.visit(e) for e in node.elts]
+        return "(%s)" % (", ".join(els))
 
-t2 = """\
-if x:
-    pass
-else:
-    pass
-"""
+    def visit_List(self, node):
+        els = [self.visit(e) for e in node.elts]
+        return "[%s]" % (", ".join(els))
 
-t3 = """\
-def f(y):
-    x = y
+    def visit_Slice(self, node):
+        if node.lower is None and node.upper is None and node.step is None:
+            return ":"
+        else:
+            raise NotImplementedError("Slice")
 
-    while x:
-        x -= 1
+    def visit_Subscript(self, node):
+        return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
 
-    return True
-"""
+    def visit_Index(self, node):
+        return self.visit(node.value)
 
-t4 = """\
+def transform_js(s):
+    v = JS()
+    t = ast.parse(s)
+    return "\n".join(v.visit(t))
 
-"""
+class JavaScript(object):
 
-t5 = """\
+    def __init__(self, obj):
+        obj_source = inspect.getsource(obj)
+        self._js = transform_js(obj_source)
 
-"""
-
-t6 = """\
-
-"""
-
-t7 = """\
-
-"""
-
-t8 = """\
-
-"""
-
+    def __str__(self):
+        return self._js
