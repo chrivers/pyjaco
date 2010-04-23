@@ -114,9 +114,31 @@ def loop1(x):
 
 @JavaScript
 def tuple1(x):
-    t = (x, x+1, x+3)
+    t = (x, x+1, x+2)
     a, b, c = t
     return a+b+c
+
+@JavaScript
+def tuple2(n):
+    a = 0
+    for i in (1, 2, n):
+        a += i
+    return a
+
+@JavaScript
+def tuple3():
+    a = (1, 3, 5, 4, 9, 1, 2, 3)
+    return len(a)
+
+@JavaScript
+def tuple4(n):
+    a = (1, 3, 3, 4, 9, 1, 2, 3)
+    return a.count(n)
+
+@JavaScript
+def tuple5(n):
+    a = (1, 3, 3, 4, 9, 1, 2, 3)
+    return a.index(n)
 
 @JavaScript
 def is_on_the_left(c, a, b, pts_list):

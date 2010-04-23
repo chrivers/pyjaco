@@ -269,19 +269,19 @@ class JS(object):
 
     @scope
     def visit_Assign(self, node):
-        targets = map(self.visit, node.targets)
+        assert len(node.targets) == 1
+        target = node.targets[0]
         value = self.visit(node.value)
+        if isinstance(target, (ast.Tuple, ast.List)):
+            js = ["var __dummy%d__ = %s;" % (self.dummy, value)]
 
-        if len(targets) == 1:
-            js = ["%s = %s;" % (targets[0], value)]
-        else:
-            js = ["var __dummy%d__ = %s;" % (self.dummy, node.value)]
-
-            for i, target in enumerate(targers):
-                js.append("%s = __dummy%d__[%d];" % (target, self.dummy, i))
+            for i, t in enumerate(target.elts):
+                js.append("%s = __dummy%d__.__getitem__(%d);" % (self.visit(t),
+                    self.dummy, i))
 
             self.dummy += 1
-
+        else:
+            js = ["%s = %s;" % (self.visit(target), value)]
         return js
 
     def visit_AugAssign(self, node):
@@ -504,7 +504,7 @@ class JS(object):
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
-        return "(%s)" % (", ".join(els))
+        return "tuple([%s])" % (", ".join(els))
 
     def visit_Dict(self, node):
         js = "{"
