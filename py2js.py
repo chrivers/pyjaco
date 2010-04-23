@@ -164,13 +164,13 @@ class JS(object):
     def visit(self, node, scope=None):
         try:
             visitor = getattr(self, 'visit_' + self.name(node))
-
-            if hasattr(visitor, 'statement'):
-                return visitor(node, scope)
-            else:
-                return visitor(node)
         except AttributeError:
             raise JSError("syntax not supported (%s)" % node)
+
+        if hasattr(visitor, 'statement'):
+            return visitor(node, scope)
+        else:
+            return visitor(node)
 
     def indent(self, stmts):
         return [ "    " + stmt for stmt in stmts ]
