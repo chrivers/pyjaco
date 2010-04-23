@@ -700,6 +700,25 @@ function test_iter() {
     test(function() { return i.next() == 5 });
 
     raises(StopIteration, function() { i.next() });
+
+    var t = list([7, 3, 5]);
+    var i = iter(t);
+
+    test(function() { return i.next() == 7 });
+    test(function() { return i.next() == 3 });
+    test(function() { return i.next() == 5 });
+
+    raises(StopIteration, function() { i.next() });
+
+    var i = iter(range(5));
+
+    test(function() { return i.next() == 0 });
+    test(function() { return i.next() == 1 });
+    test(function() { return i.next() == 2 });
+    test(function() { return i.next() == 3 });
+    test(function() { return i.next() == 4 });
+
+    raises(StopIteration, function() { i.next() });
 }
 
 function test_tuple() {
