@@ -406,11 +406,19 @@ _list.prototype.__getitem__ = function(index) {
 }
 
 _list.prototype.__setitem__ = function(index, value) {
-    throw new TypeError("'list' object doesn't support item assignment");
+    if ((index >= 0) && (index < len(this)))
+        this._items[index] = value
+    else
+        throw new IndexError("list assignment index out of range");
 }
 
 _list.prototype.__delitem__ = function(index) {
-    throw new TypeError("'list' object doesn't support item deletion");
+    if ((index >= 0) && (index < len(this))) {
+        var a = this._items.slice(0, index)
+        var b = this._items.slice(index+1, len(this))
+        this._items = a.concat(b)
+    } else
+        throw new IndexError("list assignment index out of range");
 }
 
 _list.prototype.count = function(value) {
@@ -443,6 +451,10 @@ _list.prototype.index = function(value, start, end) {
     }
 
     throw new ValueError("list.index(x): x not in list");
+}
+
+_list.prototype.append = function(value) {
+    this._items.push(value)
 }
 
 /* Python 'dict' type */
@@ -730,8 +742,8 @@ function test_list() {
     test(function() { return t.__contains__(5) == false });
     raises(IndexError, function() { t.__getitem__(0) });
 
-    raises(TypeError, function() { t.__setitem__(7, 0) });
-    raises(TypeError, function() { t.__delitem__(7) });
+    raises(IndexError, function() { t.__setitem__(7, 0) });
+    raises(IndexError, function() { t.__delitem__(7) });
 
     raises(ValueError, function() { t.index(5) });
     test(function() { return t.count(5) == 0 });
@@ -746,13 +758,30 @@ function test_list() {
     test(function() { return t.__contains__(5) == true });
     test(function() { return t.__getitem__(5) == 4 });
 
-    raises(TypeError, function() { t.__setitem__(7, 0) });
-    raises(TypeError, function() { t.__delitem__(7) });
+    raises(IndexError, function() { t.__setitem__(7, 0) });
+    raises(IndexError, function() { t.__delitem__(7) });
 
     test(function() { return t.index(5) == 2 });
     test(function() { return t.count(5) == 2 });
 
     raises(AttributeError, function() { return hash(t) });
+
+    t.append(3);
+    test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1, 3]' });
+
+    t.__setitem__(1, 3);
+    test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1, 3]' });
+    t.__setitem__(7, 0);
+    test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1, 0]' });
+    t.__delitem__(7);
+    test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1]' });
+    t.__delitem__(1);
+    test(function() { return str(t) == '[3, 5, 5, 4, 4, 1]' });
+    t.__delitem__(1);
+    test(function() { return str(t) == '[3, 5, 4, 4, 1]' });
+    t.__delitem__(0);
+    test(function() { return str(t) == '[5, 4, 4, 1]' });
+    raises(IndexError, function() { t.__delitem__(4) });
 }
 
 function tests() {
