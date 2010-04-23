@@ -405,6 +405,13 @@ class JS(object):
         els = [self.visit(e) for e in node.elts]
         return "(%s)" % (", ".join(els))
 
+    def visit_Dict(self, node):
+        js = "{"
+        for k, v in zip(node.keys, node.values):
+            js += "%s: %s," % (self.visit(k), self.visit(v))
+        js += "}"
+        return js
+
     def visit_List(self, node):
         els = [self.visit(e) for e in node.elts]
         return "[%s]" % (", ".join(els))
