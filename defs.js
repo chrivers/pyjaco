@@ -63,6 +63,14 @@ function TypeError(message) {
 TypeError.__name__ = 'TypeError';
 TypeError.prototype.__class__ = TypeError
 
+TypeError.prototype.__str__ = function () {
+    return this.__class__.__name__ + ": " + this.message;
+}
+
+TypeError.prototype.toString = function () {
+    return this.__str__();
+}
+
 function StopIteration(message) {
     this.message = defined(message) ? message : "";
 }
@@ -75,6 +83,36 @@ StopIteration.prototype.__str__ = function () {
 }
 
 StopIteration.prototype.toString = function () {
+    return this.__str__();
+}
+
+function IndexError(message) {
+    this.message = defined(message) ? message : "";
+}
+
+IndexError.__name__ = 'IndexError';
+IndexError.prototype.__class__ = IndexError
+
+IndexError.prototype.__str__ = function () {
+    return this.__class__.__name__ + ": " + this.message;
+}
+
+IndexError.prototype.toString = function () {
+    return this.__str__();
+}
+
+function ValueError(message) {
+    this.message = defined(message) ? message : "";
+}
+
+ValueError.__name__ = 'ValueError';
+ValueError.prototype.__class__ = ValueError
+
+ValueError.prototype.__str__ = function () {
+    return this.__class__.__name__ + ": " + this.message;
+}
+
+ValueError.prototype.toString = function () {
     return this.__str__();
 }
 
@@ -105,8 +143,10 @@ function setattr(obj, name, value) {
 function hash(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.__hash__();
+    } else if (typeof(obj) == 'number') {
+        return obj == -1 ? -2 : obj;
     } else {
-        throw new AttributeError(obj, name);
+        throw new AttributeError(obj, '__hash__');
     }
 }
 
@@ -114,7 +154,7 @@ function len(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
-        throw new AttributeError(obj, name);
+        throw new AttributeError(obj, '__name__');
     }
 }
 
@@ -181,6 +221,125 @@ _iter.prototype.next = function() {
     } else {
         throw new StopIteration('no more items');
     }
+}
+
+/* Python 'tuple' type */
+
+function tuple(args) {
+    return new _tuple(args);
+}
+
+function _tuple(args) {
+    this.__init__(args);
+}
+
+_tuple.__name__ = 'tuple';
+_tuple.prototype.__class__ = _tuple;
+
+_tuple.prototype.__init__ = function(args) {
+    if (defined(args)) {
+        this._items = args;
+    } else {
+        this._items = [];
+    }
+}
+
+_tuple.prototype.__str__ = function () {
+    return "(" + this._items.join(", ") + ")";
+}
+
+_tuple.prototype.toString = function () {
+    return this.__str__();
+}
+
+_tuple.prototype.__hash__ = function () {
+    var value = 0x345678;
+    var length = this.__len__();
+
+    for (var index in this._items) {
+        value = ((1000003*value) & 0xFFFFFFFF) ^ hash(this._items[index]);
+        value = value ^ length;
+    }
+
+    if (value == -1) {
+        value = -2
+    }
+
+    return value
+}
+
+_tuple.prototype.__len__ = function() {
+    var count = 0;
+
+    for (var index in this._items) {
+        count += 1;
+    }
+
+    return count;
+}
+
+_tuple.prototype.__iter__ = function() {
+    return new _iter(this._items);
+}
+
+_tuple.prototype.__contains__ = function(item) {
+    for (var index in this._items) {
+        if (item == this._items[index]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+_tuple.prototype.__getitem__ = function(index) {
+    var value = this._items[index];
+
+    if (defined(value)) {
+        return value;
+    } else {
+        throw new IndexError("tuple index out of range");
+    }
+}
+
+_tuple.prototype.__setitem__ = function(index, value) {
+    throw new TypeError("'tuple' object doesn't support item assignment");
+}
+
+_tuple.prototype.__delitem__ = function(index) {
+    throw new TypeError("'tuple' object doesn't support item deletion");
+}
+
+_tuple.prototype.count = function(value) {
+    var count = 0;
+
+    for (var index in this._items) {
+        if (value == this._items[index]) {
+            count += 1;
+        }
+    }
+
+    return count;
+}
+
+_tuple.prototype.index = function(value, start, end) {
+    if (!defined(start)) {
+        start = 0;
+    }
+
+    for (var i = start; !defined(end) || (start < end); i++) {
+        var _value = this._items[i];
+
+        if (!defined(_value)) {
+            break;
+        }
+
+        if (_value == value) {
+            return i;
+        }
+    }
+
+    throw new ValueError("tuple.index(x): x not in list");
 }
 
 /* Python 'dict' type */
@@ -377,7 +536,6 @@ function test_dict() {
     var d = dict();
 
     test(function() { return str(d) == '{}' });
-    test(function() { return str(d) == '{}' });
     test(function() { return len(d) == 0 });
 
     raises(KeyError, function() { d.popitem() });
@@ -415,12 +573,56 @@ function test_iter() {
     test(function() { return i.next() == 2 });
 
     raises(StopIteration, function() { i.next() });
+
+    var t = tuple([7, 3, 5]);
+    var i = iter(t);
+
+    test(function() { return i.next() == 7 });
+    test(function() { return i.next() == 3 });
+    test(function() { return i.next() == 5 });
+
+    raises(StopIteration, function() { i.next() });
+}
+
+function test_tuple() {
+    var t = tuple();
+
+    test(function() { return str(t) == '()' });
+    test(function() { return len(t) == 0 });
+
+    test(function() { return t.__contains__(5) == false });
+    raises(IndexError, function() { t.__getitem__(0) });
+
+    raises(TypeError, function() { t.__setitem__(7, 0) });
+    raises(TypeError, function() { t.__delitem__(7) });
+
+    raises(ValueError, function() { t.index(5) });
+    test(function() { return t.count(5) == 0 });
+
+    test(function() { return hash(t) == 3430008 });
+
+    var t = tuple([3, 4, 5, 5, 4, 4, 1]);
+
+    test(function() { return str(t) == '(3, 4, 5, 5, 4, 4, 1)' });
+    test(function() { return len(t) == 7 });
+
+    test(function() { return t.__contains__(5) == true });
+    test(function() { return t.__getitem__(5) == 4 });
+
+    raises(TypeError, function() { t.__setitem__(7, 0) });
+    raises(TypeError, function() { t.__delitem__(7) });
+
+    test(function() { return t.index(5) == 2 });
+    test(function() { return t.count(5) == 2 });
+
+    test(function() { return hash(t) == -2017591611 });
 }
 
 function tests() {
     try {
         test_dict();
         test_iter();
+        test_tuple();
     } catch(e) {
         if (defined(e.message)) {
             print(e.__class__.__name__ + ": " + e.message);
