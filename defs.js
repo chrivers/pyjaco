@@ -762,11 +762,14 @@ function tests() {
         test_tuple();
         test_list();
     } catch(e) {
-        if (defined(e.message)) {
-            print(e.__class__.__name__ + ": " + e.message);
-        } else {
-            print(e.__class__.__name__ + ": ");
-        }
+        if (defined(e.__class__)) {
+            if (defined(e.message)) {
+                print(e.__class__.__name__ + ": " + e.message);
+            } else {
+                print(e.__class__.__name__ + ": ");
+            }
+        } else
+            print(e)
 
         throw "Tests failed"
     }
