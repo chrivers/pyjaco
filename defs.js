@@ -178,7 +178,10 @@ function range(start, end, step) {
         seq.push(i);
     }
 
-    return new _iter(seq);
+    // python3.0:
+    //return new _iter(seq)
+    // python2.x:
+    return list(seq);
 }
 
 /* Python 'iter' type */
@@ -840,12 +843,22 @@ function test_list() {
     raises(IndexError, function() { t.__setitem__(-6, 6) });
 }
 
+function test_range() {
+    var t = range(5);
+    test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
+    var t = range(1, 3);
+    test(function() { return str(t) == '[1, 2]' });
+    var t = range(1, 5, 2);
+    test(function() { return str(t) == '[1, 3]' });
+}
+
 function tests() {
     try {
         test_dict();
         test_iter();
         test_tuple();
         test_list();
+        test_range();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
