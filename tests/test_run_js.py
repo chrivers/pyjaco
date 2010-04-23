@@ -1,21 +1,6 @@
 import os
 
-from py2js import JavaScript
-
-@JavaScript
-def f1(x):
-    return x
-
-@JavaScript
-def f2(x):
-    return x + 5
-
-@JavaScript
-def f3(x):
-    a = x + 1
-    return a - 5
-
-
+from test_compile_js import f1, f2, f3
 
 def test(func, run):
     run_file = "/tmp/run.js"
@@ -33,3 +18,4 @@ def test(func, run):
 test(f1, "assert(f1(3) == 3)")
 test(f1, "assert(f1(3) != 4)")
 test(f2, "assert(f2(3) == 8)")
+test(f3, "assert(f3(3) == -1)")
