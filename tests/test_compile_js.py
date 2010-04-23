@@ -113,6 +113,12 @@ def loop1(x):
     return a
 
 @JavaScript
+def tuple1(x):
+    t = (x, x+1, x+3)
+    a, b, c = t
+    return a+b+c
+
+@JavaScript
 def is_on_the_left(c, a, b, pts_list):
    ax, ay = pts_list[a]
    bx, by = pts_list[b]
