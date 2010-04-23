@@ -293,13 +293,12 @@ _tuple.prototype.__contains__ = function(item) {
 }
 
 _tuple.prototype.__getitem__ = function(index) {
-    var value = this._items[index];
-
-    if (defined(value)) {
-        return value;
-    } else {
-        throw new IndexError("tuple index out of range");
-    }
+    if ((index >= 0) && (index < len(this)))
+        return this._items[index]
+    else if ((index < 0) && (index >= -len(this)))
+        return this._items[index+len(this)]
+    else
+        throw new IndexError("list assignment index out of range");
 }
 
 _tuple.prototype.__setitem__ = function(index, value) {
@@ -396,18 +395,19 @@ _list.prototype.__contains__ = function(item) {
 }
 
 _list.prototype.__getitem__ = function(index) {
-    var value = this._items[index];
-
-    if (defined(value)) {
-        return value;
-    } else {
-        throw new IndexError("list index out of range");
-    }
+    if ((index >= 0) && (index < len(this)))
+        return this._items[index]
+    else if ((index < 0) && (index >= -len(this)))
+        return this._items[index+len(this)]
+    else
+        throw new IndexError("list assignment index out of range");
 }
 
 _list.prototype.__setitem__ = function(index, value) {
     if ((index >= 0) && (index < len(this)))
         this._items[index] = value
+    else if ((index < 0) && (index >= -len(this)))
+        this._items[index+len(this)] = value
     else
         throw new IndexError("list assignment index out of range");
 }
@@ -722,7 +722,24 @@ function test_tuple() {
     test(function() { return len(t) == 7 });
 
     test(function() { return t.__contains__(5) == true });
+    test(function() { return t.__getitem__(0) == 3 });
+    test(function() { return t.__getitem__(1) == 4 });
+    test(function() { return t.__getitem__(2) == 5 });
+    test(function() { return t.__getitem__(3) == 5 });
+    test(function() { return t.__getitem__(4) == 4 });
     test(function() { return t.__getitem__(5) == 4 });
+    test(function() { return t.__getitem__(6) == 1 });
+    raises(IndexError, function() { t.__getitem__(7) });
+    raises(IndexError, function() { t.__getitem__(8) });
+    test(function() { return t.__getitem__(-1) == 1 });
+    test(function() { return t.__getitem__(-2) == 4 });
+    test(function() { return t.__getitem__(-3) == 4 });
+    test(function() { return t.__getitem__(-4) == 5 });
+    test(function() { return t.__getitem__(-5) == 5 });
+    test(function() { return t.__getitem__(-6) == 4 });
+    test(function() { return t.__getitem__(-7) == 3 });
+    raises(IndexError, function() { t.__getitem__(-8) });
+    raises(IndexError, function() { t.__getitem__(-9) });
 
     raises(TypeError, function() { t.__setitem__(7, 0) });
     raises(TypeError, function() { t.__delitem__(7) });
@@ -731,6 +748,7 @@ function test_tuple() {
     test(function() { return t.count(5) == 2 });
 
     test(function() { return hash(t) == -2017591611 });
+
 }
 
 function test_list() {
@@ -756,7 +774,24 @@ function test_list() {
     test(function() { return len(t) == 7 });
 
     test(function() { return t.__contains__(5) == true });
+    test(function() { return t.__getitem__(0) == 3 });
+    test(function() { return t.__getitem__(1) == 4 });
+    test(function() { return t.__getitem__(2) == 5 });
+    test(function() { return t.__getitem__(3) == 5 });
+    test(function() { return t.__getitem__(4) == 4 });
     test(function() { return t.__getitem__(5) == 4 });
+    test(function() { return t.__getitem__(6) == 1 });
+    raises(IndexError, function() { t.__getitem__(7) });
+    raises(IndexError, function() { t.__getitem__(8) });
+    test(function() { return t.__getitem__(-1) == 1 });
+    test(function() { return t.__getitem__(-2) == 4 });
+    test(function() { return t.__getitem__(-3) == 4 });
+    test(function() { return t.__getitem__(-4) == 5 });
+    test(function() { return t.__getitem__(-5) == 5 });
+    test(function() { return t.__getitem__(-6) == 4 });
+    test(function() { return t.__getitem__(-7) == 3 });
+    raises(IndexError, function() { t.__getitem__(-8) });
+    raises(IndexError, function() { t.__getitem__(-9) });
 
     raises(IndexError, function() { t.__setitem__(7, 0) });
     raises(IndexError, function() { t.__delitem__(7) });
@@ -782,6 +817,27 @@ function test_list() {
     t.__delitem__(0);
     test(function() { return str(t) == '[5, 4, 4, 1]' });
     raises(IndexError, function() { t.__delitem__(4) });
+
+    t.__setitem__(0, 1);
+    test(function() { return str(t) == '[1, 4, 4, 1]' });
+    t.__setitem__(1, 2);
+    test(function() { return str(t) == '[1, 2, 4, 1]' });
+    t.__setitem__(2, 3);
+    test(function() { return str(t) == '[1, 2, 3, 1]' });
+    t.__setitem__(3, 4);
+    test(function() { return str(t) == '[1, 2, 3, 4]' });
+    raises(IndexError, function() { t.__setitem__(4, 5) });
+    raises(IndexError, function() { t.__setitem__(5, 6) });
+    t.__setitem__(-1, 1);
+    test(function() { return str(t) == '[1, 2, 3, 1]' });
+    t.__setitem__(-2, 2);
+    test(function() { return str(t) == '[1, 2, 2, 1]' });
+    t.__setitem__(-3, 3);
+    test(function() { return str(t) == '[1, 3, 2, 1]' });
+    t.__setitem__(-4, 4);
+    test(function() { return str(t) == '[4, 3, 2, 1]' });
+    raises(IndexError, function() { t.__setitem__(-5, 5) });
+    raises(IndexError, function() { t.__setitem__(-6, 6) });
 }
 
 function tests() {
