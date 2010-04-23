@@ -179,9 +179,9 @@ function range(start, end, step) {
     }
 
     // python3.0:
-    //return new _iter(seq)
+    return new _iter(seq)
     // python2.x:
-    return list(seq);
+    //return list(seq);
 }
 
 /* Python 'iter' type */
@@ -928,12 +928,21 @@ function test_list() {
 }
 
 function test_range() {
-    var t = range(5);
+    // Test tuple/list conversion from range()
+    var t = tuple(range(5));
+    test(function() { return str(t) == '(0, 1, 2, 3, 4)' });
+    var t = list(range(5));
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
-    t = range(1, 3);
+
+    // test min/max/step in range():
+    t = list(range(1, 3));
     test(function() { return str(t) == '[1, 2]' });
-    t = range(1, 5, 2);
+    t = list(range(1, 5, 2));
     test(function() { return str(t) == '[1, 3]' });
+
+    // test iter:
+    var t = list(iter(range(5)));
+    test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
 function tests() {
