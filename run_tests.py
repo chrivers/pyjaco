@@ -7,13 +7,9 @@ from difflib import unified_diff
 
 def test1(in_file):
     w = Writer()
-    w.write("Testint the file: %s" % in_file)
-    out_file = "/tmp/_pyvascript_test.out"
-    os.system("python %s > %s" % (in_file, out_file))
-    out_file_correct = os.path.splitext(in_file)[0] + ".out"
-    f1 = open(out_file_correct).read()
-    f2 = open(out_file).read()
-    if f1 == f2:
+    w.write("Testing the file: %s" % in_file)
+    r = os.system('js -f %s' % in_file)
+    if r == 0:
         w.write("[OK]", align="right", color="Green")
     else:
         w.write("[FAIL]", align="right", color="Red")
@@ -21,7 +17,7 @@ def test1(in_file):
 
 def test2(in_file):
     w = Writer()
-    w.write("Testint the file: %s" % in_file)
+    w.write("Testing the file: %s" % in_file)
     r = os.system("python %s" % (in_file))
     if r == 0:
         w.write("[OK]", align="right", color="Green")
@@ -30,9 +26,7 @@ def test2(in_file):
     w.write("\n")
 
 def main():
-    files = glob("examples/*.py")
-    for file in files:
-        test1(file)
+    test1("defs.js")
     files = glob("tests/test_*.py")
     for file in files:
         test2(file)

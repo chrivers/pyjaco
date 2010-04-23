@@ -331,10 +331,8 @@ function tests() {
             print(e.__class__.__name__);
         }
 
-        return;
+        throw "Tests failed"
     }
-
-    print("OK");
 }
 
 tests();
