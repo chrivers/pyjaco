@@ -241,7 +241,24 @@ _tuple.prototype.__class__ = _tuple;
 
 _tuple.prototype.__init__ = function(args) {
     if (defined(args)) {
-        this._items = args;
+        var i = null;
+        try {
+            i  = iter(args);
+        } catch (TypeError) {
+            // let's hope that args is an Array
+            this._items = args;
+        }
+        if (i != null) {
+            var seq = [];
+            try {
+                while (true) {
+                    seq.push(i.next());
+                }
+            } catch (StopIteration) {
+                // pass
+            }
+            this._items = seq;
+        }
     } else {
         this._items = [];
     }
@@ -359,7 +376,25 @@ _list.prototype.__class__ = _list;
 
 _list.prototype.__init__ = function(args) {
     if (defined(args)) {
-        this._items = args;
+        var i = null;
+        try {
+            i  = iter(args);
+        } catch (TypeError) {
+            // let's hope that args is an Array
+            this._items = args;
+        }
+        if (i != null) {
+            var seq = [];
+            try {
+                while (true) {
+                    seq.push(i.next());
+                }
+            } catch (StopIteration) {
+                // pass
+            }
+            this._items = seq;
+        } else
+            this._items = args;
     } else {
         this._items = [];
     }
@@ -771,6 +806,20 @@ function test_tuple() {
 
     test(function() { return hash(t) == -2017591611 });
 
+    t = tuple([1, 2, 3, 4])
+    test(function() { return str(t) == '(1, 2, 3, 4)' })
+    test(function() { return str(tuple(t)) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(t)) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(tuple(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(tuple(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(list(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(list(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(tuple(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(list(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(list(t)))) == '[1, 2, 3, 4]' })
 }
 
 function test_list() {
@@ -865,6 +914,17 @@ function test_list() {
     t = list([1, 2, 3, 4])
     test(function() { return str(t) == '[1, 2, 3, 4]' })
     test(function() { return str(tuple(t)) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(t)) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(tuple(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(tuple(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(list(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(list(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(tuple(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(iter(list(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str(list(iter(list(t)))) == '[1, 2, 3, 4]' })
 }
 
 function test_range() {
