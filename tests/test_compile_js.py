@@ -204,3 +204,16 @@ def triangulate_af(pts_list, bdy_edges):
         else:
             bdy_edges.append((c,b))
     return elems
+
+@JavaScript
+class TestClass(object):
+    def __init__(self):
+        alert('TestClass created')
+        self.reset()
+
+    def reset(self):
+        self.value = 0
+
+    def inc(self):
+        alert(self.value)
+        self.value += 1

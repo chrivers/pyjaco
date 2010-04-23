@@ -1,5 +1,4 @@
-from pyvascript import JavaScript
-from AjaxHelper import AjaxHelper
+from py2js import JavaScript
 
 @JavaScript
 def test():

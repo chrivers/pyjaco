@@ -204,8 +204,16 @@ class JS(object):
         return js + ["}"]
 
     @scope
-    def _visit_ClassDef(self, node):
-        pass
+    def visit_ClassDef(self, node):
+        # this needs more work:
+        js = []
+        bases = [self.visit(n) for n in node.bases]
+        assert len(bases) >= 1
+        bases = ", ".join(bases)
+        js.append("class %s(%s):" % (node.name, bases))
+        for stmt in node.body:
+            js.extend(self.indent(self.visit(stmt)))
+        return js
 
     def visit_Return(self, node):
         if node.value is not None:
