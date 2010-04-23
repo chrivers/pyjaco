@@ -122,6 +122,25 @@ function str(obj) {
     return obj.toString();
 }
 
+function range(start, end, step) {
+    if (!defined(end)) {
+        end = start;
+        start = 0;
+    }
+
+    if (!defined(step)) {
+        step = 1;
+    }
+
+    var seq = [];
+
+    for (var i = start; i < end; i += step) {
+        seq.push(i);
+    }
+
+    return new _iter(seq);
+}
+
 /* Python 'iter' type */
 
 function iter(obj) {
@@ -412,3 +431,4 @@ function tests() {
         throw "Tests failed"
     }
 }
+
