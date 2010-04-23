@@ -36,32 +36,47 @@ AttributeError.__name__ = 'AttributeError';
 AttributeError.prototype.__class__ = AttributeError
 
 function AssertionError(message) {
-    this.message = message;
+    this.message = defined(message) ? message : "";
 }
 
 AssertionError.__name__ = 'AssertionError';
 AssertionError.prototype.__class__ = AssertionError
 
 function KeyError(message) {
-    this.message = message;
+    this.message = defined(message) ? message : "";
 }
 
 KeyError.__name__ = 'KeyError';
 KeyError.prototype.__class__ = KeyError
 
 function NameError(message) {
-    this.message = message;
+    this.message = defined(message) ? message : "";
 }
 
 NameError.__name__ = 'NameError';
 NameError.prototype.__class__ = NameError
 
 function TypeError(message) {
-    this.message = message;
+    this.message = defined(message) ? message : "";
 }
 
 TypeError.__name__ = 'TypeError';
 TypeError.prototype.__class__ = TypeError
+
+function StopIteration(message) {
+    this.message = defined(message) ? message : "";
+}
+
+StopIteration.__name__ = 'StopIteration';
+StopIteration.prototype.__class__ = StopIteration
+
+StopIteration.prototype.__str__ = function () {
+    return this.__class__.__name__ + ": " + this.message;
+}
+
+StopIteration.prototype.toString = function () {
+    return this.__str__();
+}
 
 /* Python built-in functions */
 
@@ -107,6 +122,48 @@ function str(obj) {
     return obj.toString();
 }
 
+/* Python 'iter' type */
+
+function iter(obj) {
+    if (obj.__class__ == _iter) {
+        return obj;
+    } else if (defined(obj.__iter__)) {
+        return obj.__iter__();
+    } else {
+        throw new TypeError("'__iter__' method not supported");
+    }
+}
+
+function _iter(seq) {
+    this.__init__(seq);
+}
+
+_iter.__name__ = 'iter';
+_iter.prototype.__class__ = _iter;
+
+_iter.prototype.__init__ = function(seq) {
+    this._seq = seq;
+    this._index = 0;
+}
+
+_iter.prototype.__str__ = function () {
+    return "<iter of " + this._seq + " at " + this._index + ">";
+}
+
+_iter.prototype.toString = function () {
+    return this.__str__();
+}
+
+_iter.prototype.next = function() {
+    var value = this._seq[this._index++];
+
+    if (defined(value)) {
+        return value;
+    } else {
+        throw new StopIteration('no more items');
+    }
+}
+
 /* Python 'dict' type */
 
 function dict(args) {
@@ -121,7 +178,11 @@ _dict.__name__ = 'dict';
 _dict.prototype.__class__ = _dict;
 
 _dict.prototype.__init__ = function(args) {
-    this._items = {};
+    if (defined(args)) {
+        this._items = args;
+    } else {
+        this._items = {};
+    }
 }
 
 _dict.prototype.__str__ = function () {
@@ -150,6 +211,10 @@ _dict.prototype.__len__ = function() {
     }
 
     return count;
+}
+
+_dict.prototype.__iter__ = function() {
+    return new _iter(this.keys());
 }
 
 _dict.prototype.__contains__ = function(key) {
@@ -293,6 +358,7 @@ function test_dict() {
     var d = dict();
 
     test(function() { return str(d) == '{}' });
+    test(function() { return str(d) == '{}' });
     test(function() { return len(d) == 0 });
 
     raises(KeyError, function() { d.popitem() });
@@ -321,14 +387,26 @@ function test_dict() {
     test(function() { return len(d) == 0 });
 }
 
+function test_iter() {
+    var d = dict({0: 1, 1: 2, 2: 3});
+    var i = iter(d);
+
+    test(function() { return i.next() == 0 });
+    test(function() { return i.next() == 1 });
+    test(function() { return i.next() == 2 });
+
+    raises(StopIteration, function() { i.next() });
+}
+
 function tests() {
     try {
         test_dict();
+        test_iter();
     } catch(e) {
         if (defined(e.message)) {
             print(e.__class__.__name__ + ": " + e.message);
         } else {
-            print(e.__class__.__name__);
+            print(e.__class__.__name__ + ": ");
         }
 
         throw "Tests failed"
