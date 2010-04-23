@@ -140,6 +140,8 @@ class JS(object):
     def __init__(self):
         self.dummy = 0
         self.classes = ['dict', 'list', 'tuple']
+        # This is the name of the class that we are currently in:
+        self._class_name = None
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -208,7 +210,15 @@ class JS(object):
             if default is not None:
                 js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
-        js = [("function %s(" % node.name) + ", ".join(js_args) + ") {"]
+        if self._class_name:
+            prep = "_%s.prototype.%s = function(" % \
+                    (self._class_name, node.name)
+            if not (js_args[0] == "self"):
+                raise NotImplementedError("The first argument must be 'self'.")
+            del js_args[0]
+        else:
+            prep = "function %s(" % node.name
+        js = [prep + ", ".join(js_args) + ") {"]
 
         js.extend(self.indent(js_defaults))
 
@@ -219,14 +229,33 @@ class JS(object):
 
     @scope
     def visit_ClassDef(self, node):
-        # this needs more work:
         js = []
         bases = [self.visit(n) for n in node.bases]
         assert len(bases) >= 1
         bases = ", ".join(bases)
-        js.append("class %s(%s):" % (node.name, bases))
+        class_name = node.name
+        js.append("function %s() {" % class_name)
+        js.append("    return new _%s();" % class_name)
+        js.append("}")
+        js.append("function _%s() {" % class_name)
+        js.append("    this.__init__();")
+        js.append("}")
+        js.append("_%s.__name__ = '%s'" % (class_name, class_name))
+        js.append("_%s.prototype.__class__ = _%s" % (class_name, class_name))
+        from ast import dump
+        methods = []
+        self._class_name = class_name
         for stmt in node.body:
-            js.extend(self.indent(self.visit(stmt)))
+            if isinstance(stmt, ast.FunctionDef):
+                methods.append(stmt)
+            js.extend(self.visit(stmt))
+        self._class_name = None
+        methods_names = [m.name for m in methods]
+        if not "__init__" in methods_names:
+            # if the user didn't define __init__(), we have to add it ourselves
+            # because we call it from the constructor above
+            js.append("_%s.prototype.__init__ = function() {" % class_name)
+            js.append("}")
         return js
 
     def visit_Return(self, node):

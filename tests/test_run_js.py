@@ -1,7 +1,7 @@
 import os
 
 from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
-        ifs2, ifs3, ifs4, loop1, tuple1)
+        ifs2, ifs3, ifs4, loop1, tuple1, Class1, Class2, Class3)
 
 def test(func, run):
     run_file = "/tmp/run.js"
@@ -37,3 +37,17 @@ test(ifs4, "ifs4(1);")
 #test(tuple1, "assert(tuple1(3) == 12);")
 
 test(loop1, "assert(loop1(4) == 6);")
+
+test(Class1, """\
+a = Class1();
+assert(a.test1() == 5);
+""")
+test(Class2, """\
+a = Class2();
+assert(a.test1() == 6);
+""")
+test(Class3, """\
+a = Class3();
+assert(a.test1(3) == 5);
+assert(a.test2(3) == 6);
+""")
