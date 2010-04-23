@@ -350,7 +350,7 @@ class JS(object):
         if isinstance(node.op, ast.FloorDiv):
             return "Math.floor((%s)/(%s))" % (left, right)
 
-        return "(%s)%s(%s))" % (left, self.get_binary_op(node), right)
+        return "(%s)%s(%s)" % (left, self.get_binary_op(node), right)
 
     def visit_Compare(self, node):
         assert len(node.ops) == 1
