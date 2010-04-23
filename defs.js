@@ -342,6 +342,109 @@ _tuple.prototype.index = function(value, start, end) {
     throw new ValueError("tuple.index(x): x not in list");
 }
 
+/* Python 'list' type */
+
+function list(args) {
+    return new _list(args);
+}
+
+function _list(args) {
+    this.__init__(args);
+}
+
+_list.__name__ = 'list';
+_list.prototype.__class__ = _list;
+
+_list.prototype.__init__ = function(args) {
+    if (defined(args)) {
+        this._items = args;
+    } else {
+        this._items = [];
+    }
+}
+
+_list.prototype.__str__ = function () {
+    return "[" + this._items.join(", ") + "]";
+}
+
+_list.prototype.toString = function () {
+    return this.__str__();
+}
+
+_list.prototype.__len__ = function() {
+    var count = 0;
+
+    for (var index in this._items) {
+        count += 1;
+    }
+
+    return count;
+}
+
+_list.prototype.__iter__ = function() {
+    return new _iter(this._items);
+}
+
+_list.prototype.__contains__ = function(item) {
+    for (var index in this._items) {
+        if (item == this._items[index]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+_list.prototype.__getitem__ = function(index) {
+    var value = this._items[index];
+
+    if (defined(value)) {
+        return value;
+    } else {
+        throw new IndexError("list index out of range");
+    }
+}
+
+_list.prototype.__setitem__ = function(index, value) {
+    throw new TypeError("'list' object doesn't support item assignment");
+}
+
+_list.prototype.__delitem__ = function(index) {
+    throw new TypeError("'list' object doesn't support item deletion");
+}
+
+_list.prototype.count = function(value) {
+    var count = 0;
+
+    for (var index in this._items) {
+        if (value == this._items[index]) {
+            count += 1;
+        }
+    }
+
+    return count;
+}
+
+_list.prototype.index = function(value, start, end) {
+    if (!defined(start)) {
+        start = 0;
+    }
+
+    for (var i = start; !defined(end) || (start < end); i++) {
+        var _value = this._items[i];
+
+        if (!defined(_value)) {
+            break;
+        }
+
+        if (_value == value) {
+            return i;
+        }
+    }
+
+    throw new ValueError("list.index(x): x not in list");
+}
+
 /* Python 'dict' type */
 
 function dict(args) {
@@ -618,11 +721,46 @@ function test_tuple() {
     test(function() { return hash(t) == -2017591611 });
 }
 
+function test_list() {
+    var t = list();
+
+    test(function() { return str(t) == '[]' });
+    test(function() { return len(t) == 0 });
+
+    test(function() { return t.__contains__(5) == false });
+    raises(IndexError, function() { t.__getitem__(0) });
+
+    raises(TypeError, function() { t.__setitem__(7, 0) });
+    raises(TypeError, function() { t.__delitem__(7) });
+
+    raises(ValueError, function() { t.index(5) });
+    test(function() { return t.count(5) == 0 });
+
+    raises(AttributeError, function() { return hash(t) });
+
+    var t = list([3, 4, 5, 5, 4, 4, 1]);
+
+    test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1]' });
+    test(function() { return len(t) == 7 });
+
+    test(function() { return t.__contains__(5) == true });
+    test(function() { return t.__getitem__(5) == 4 });
+
+    raises(TypeError, function() { t.__setitem__(7, 0) });
+    raises(TypeError, function() { t.__delitem__(7) });
+
+    test(function() { return t.index(5) == 2 });
+    test(function() { return t.count(5) == 2 });
+
+    raises(AttributeError, function() { return hash(t) });
+}
+
 function tests() {
     try {
         test_dict();
         test_iter();
         test_tuple();
+        test_list();
     } catch(e) {
         if (defined(e.message)) {
             print(e.__class__.__name__ + ": " + e.message);
