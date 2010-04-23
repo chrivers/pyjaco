@@ -2,7 +2,7 @@ from py2js import JavaScript
 
 @JavaScript
 def StartGoL():
-    window.gol = GoL.new()
+    window.gol = GoL()
 
 @JavaScript
 class GoL(object):
@@ -11,7 +11,7 @@ class GoL(object):
         self.height = 75
         self.canvas = document.getElementById('canvas').getContext('2d')
         self.canvas.fillStyle = 'rgb(0, 0, 0)'
-        self.grid = Array.new(self.width*self.height)
+        self.grid = _new(Array, self.width*self.height)
         for i in range(self.width*self.height):
             self.grid[i] = Math.random() > 0.5
         setInterval('window.gol.iter()', 250)
@@ -19,8 +19,8 @@ class GoL(object):
     def get(self, x, y):
         return self.grid[((x + self.width) % self.width) + ((y + self.height) % self.height) * self.width]
     def iter(self):
-        toDie = Array.new(0)
-        toLive = Array.new(0)
+        toDie = _new(Array, 0)
+        toLive = _new(Array, 0)
         for x in range(0, self.width):
             for y in range(0, self.height):
                 count = 0
@@ -68,13 +68,16 @@ class GoL(object):
 
 def main():
     print """<html>
+<head>
+<script language="JavaScript" src="defs.js"></script>
 <script language="JavaScript">
 %s
 </script>
+</head>
 <body onLoad="StartGoL()">
     <canvas id="canvas" width="750" height="750"></canvas>
 </body>
-</html>""" % (str(StartGoL)+str(GoL))
+</html>""" % (str(StartGoL)+"\n"+str(GoL))
 
 
 if __name__ == "__main__":

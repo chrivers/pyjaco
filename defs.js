@@ -26,6 +26,10 @@ function assert(cond, msg) {
     }
 }
 
+function _new(cls, arg) {
+    return new cls(arg)
+}
+
 /* Python built-in exceptions */
 
 function AttributeError(obj, name) {
