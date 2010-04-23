@@ -860,14 +860,19 @@ function test_list() {
     test(function() { return str(t) == '[4, 3, 2, 1]' });
     raises(IndexError, function() { t.__setitem__(-5, 5) });
     raises(IndexError, function() { t.__setitem__(-6, 6) });
+
+
+    t = list([1, 2, 3, 4])
+    test(function() { return str(t) == '[1, 2, 3, 4]' })
+    test(function() { return str(tuple(t)) == '(1, 2, 3, 4)' })
 }
 
 function test_range() {
     var t = range(5);
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
-    var t = range(1, 3);
+    t = range(1, 3);
     test(function() { return str(t) == '[1, 2]' });
-    var t = range(1, 5, 2);
+    t = range(1, 5, 2);
     test(function() { return str(t) == '[1, 3]' });
 }
 
