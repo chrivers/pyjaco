@@ -99,6 +99,11 @@ class JS(object):
         'False'  : 'false',
     }
 
+    bool_op = {
+        'And'    : '&&',
+        'Or'     : '||',
+    }
+
     unary_op = {
         'Invert' : '~',
         'Not'    : '!',
@@ -118,6 +123,7 @@ class JS(object):
         'BitXor' : '^',
         'BitAnd' : '&',
     }
+
     comparison_op = {
             'Eq'    : "==",
             'NotEq' : "!=",
@@ -142,6 +148,9 @@ class JS(object):
 
     def name(self, node):
         return node.__class__.__name__
+
+    def get_bool_op(self, node):
+        return self.bool_op[node.op.__class__.__name__]
 
     def get_unary_op(self, node):
         return self.unary_op[node.op.__class__.__name__]
@@ -397,6 +406,9 @@ class JS(object):
 
     def visit_Continue(self, node):
         return ["continue;"]
+
+    def visit_BoolOp(self, node):
+        return self.get_bool_op(node).join([ "(%s)" % self.visit(val) for val in node.values ])
 
     def visit_UnaryOp(self, node):
         return "%s(%s)" % (self.get_unary_op(node), self.visit(node.operand))
