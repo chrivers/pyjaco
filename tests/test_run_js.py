@@ -36,6 +36,4 @@ test(ifs4, "ifs4(1);")
 
 #test(tuple1, "assert(tuple1(3) == 12);")
 
-#test(loop1, "assert(loop1(4) == 0);")
-# this is the correct result:
-#test(loop1, "assert(loop1(4) == 6);")
+test(loop1, "assert(loop1(4) == 6);")
