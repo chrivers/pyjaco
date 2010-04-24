@@ -80,7 +80,7 @@ def triangulate_af(pts_list, bdy_edges):
     elems = []
     #bdy_edges = bdy_edges[:]
     # main loop
-    while bdy_edges != []:
+    while len(bdy_edges) > 0:
         # take the last item from the list of bdy edges (and remove it)
         a,b = bdy_edges.pop()
         c = find_third_point(a, b, pts_list, bdy_edges)
