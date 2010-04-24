@@ -402,6 +402,7 @@ _list.prototype.__init__ = function(args) {
     } else {
         this._items = [];
     }
+    this._len = -1;
 }
 
 _list.prototype.__str__ = function () {
@@ -413,13 +414,17 @@ _list.prototype.toString = function () {
 }
 
 _list.prototype.__len__ = function() {
-    var count = 0;
+    if (this._len == -1) {
+        var count = 0;
 
-    for (var index in this._items) {
-        count += 1;
-    }
+        for (var index in this._items) {
+            count += 1;
+        }
 
-    return count;
+        this._len = count;
+        return count;
+    } else
+        return this._len;
 }
 
 _list.prototype.__iter__ = function() {
@@ -459,6 +464,7 @@ _list.prototype.__delitem__ = function(index) {
         var a = this._items.slice(0, index)
         var b = this._items.slice(index+1, len(this))
         this._items = a.concat(b)
+        this._len = -1;
     } else
         throw new IndexError("list assignment index out of range");
 }
@@ -497,6 +503,7 @@ _list.prototype.index = function(value, start, end) {
 
 _list.prototype.append = function(value) {
     this._items.push(value)
+    this._len = -1;
 }
 
 /* Python 'dict' type */
