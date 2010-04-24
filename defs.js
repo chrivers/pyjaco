@@ -188,6 +188,40 @@ function range(start, end, step) {
     //return list(seq);
 }
 
+function zip() {
+    if (!arguments.length) {
+        return list();
+    }
+
+    var iters = list();
+
+    for (var i = 0; i < arguments.length; i++) {
+        iters.append(iter(arguments[i]));
+    }
+
+    var items = list();
+
+    while (true) {
+        var item = list();
+
+        for (var i = 0; i < arguments.length; i++) {
+            try {
+                var value = iters.__getitem__(i).next();
+            } catch (exc) {
+                if (isinstance(exc, StopIteration)) {
+                    return items;
+                } else {
+                    throw exc;
+                }
+            }
+
+            item.append(value);
+        }
+
+        items.append(tuple(item));
+    }
+}
+
 function isinstance(obj, cls) {
     if (defined(obj.__class__)) {
         // XXX: add support for tuple syntax
@@ -974,6 +1008,30 @@ function test_range() {
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
+function test_zip() {
+    test(function() { return str(zip()) == "[]" });
+
+    var a = list([1, 2, 3]);
+    var b = list([4, 5, 6]);
+    var c = list([7, 8, 9]);
+
+    test(function() { return str(zip(a)) == "[(1,), (2,), (3,)]" });
+    test(function() { return str(zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
+    test(function() { return str(zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
+
+    var d = list([7, 8, 9, 10]);
+    var e = list([7, 8, 9, 10, 11]);
+
+    test(function() { return str(zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
+    test(function() { return str(zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
+
+    test(function() { return str(zip(e,d)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+    test(function() { return str(zip(d,e)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+
+    test(function() { return str(zip(e,a,d)) == "[(7, 1, 7), (8, 2, 8), (9, 3, 9)]" });
+    test(function() { return str(zip(e,d,a)) == "[(7, 7, 1), (8, 8, 2), (9, 9, 3)]" });
+}
+
 function test_isinstance() {
     test(function() {
         return isinstance(new StopIteration(), StopIteration) == true;
@@ -991,6 +1049,7 @@ function tests() {
         test_tuple();
         test_list();
         test_range();
+        test_zip();
         test_isinstance();
     } catch(e) {
         if (defined(e.__class__)) {
