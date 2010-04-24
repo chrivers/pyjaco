@@ -120,6 +120,21 @@ ValueError.prototype.toString = function () {
     return this.__str__();
 }
 
+function NotImplementedError(message) {
+    this.message = defined(message) ? message : "";
+}
+
+NotImplementedError.__name__ = 'NotImplementedError';
+NotImplementedError.prototype.__class__ = NotImplementedError
+
+NotImplementedError.prototype.__str__ = function () {
+    return this.__class__.__name__ + ": " + this.message;
+}
+
+NotImplementedError.prototype.toString = function () {
+    return this.__str__();
+}
+
 /* Python built-in functions */
 
 function hasattr(obj, name) {
@@ -186,6 +201,33 @@ function range(start, end, step) {
     return new _iter(seq)
     // python2.x:
     //return list(seq);
+}
+
+function map() {
+    if (arguments.length < 2) {
+        throw new TypeError("map() requires at least two args");
+    }
+
+    if (arguments.length > 2) {
+        throw new NotImplementedError("only one sequence allowed in map()");
+    }
+
+    var func = arguments[0];
+    var seq = iter(arguments[1]);
+
+    var result = list();
+
+    while (true) {
+        try {
+            result.append(func(seq.next()));
+        } catch (exc) {
+            if (isinstance(exc, StopIteration)) {
+                return result; // XXX: this is Python 2.x
+            } else {
+                throw exc;
+            }
+        }
+    }
 }
 
 function zip() {
@@ -1008,6 +1050,17 @@ function test_range() {
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
+function test_map() {
+    var f = function(x) { return x*x };
+    var a = list([1, 2, 3]);
+
+    test(function() { return str(map(f, list())) == '[]' });
+    test(function() { return str(map(f, a)) == '[1, 4, 9]' });
+
+    raises(TypeError, function() { map(f) });
+    raises(NotImplementedError, function() { map(f, a, a) });
+}
+
 function test_zip() {
     test(function() { return str(zip()) == "[]" });
 
@@ -1049,6 +1102,7 @@ function tests() {
         test_tuple();
         test_list();
         test_range();
+        test_map();
         test_zip();
         test_isinstance();
     } catch(e) {
