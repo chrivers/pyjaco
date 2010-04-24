@@ -245,12 +245,14 @@ function float(value) {
 /* Python 'iter' type */
 
 function iter(obj) {
-    if (obj.__class__ == _iter) {
+    if (obj instanceof Array) {
+        return new _iter(obj);
+    } else if (obj.__class__ == _iter) {
         return obj;
     } else if (defined(obj.__iter__)) {
         return obj.__iter__();
     } else {
-        throw new py.TypeError("'__iter__' method not supported");
+        throw new py.TypeError("object is not iterable");
     }
 }
 
@@ -825,6 +827,13 @@ function test_dict() {
 }
 
 function test_iter() {
+    var a = [0, 1, 2];
+    var i = iter(a);
+
+    test(function() { return i.next() == 0 });
+    test(function() { return i.next() == 1 });
+    test(function() { return i.next() == 2 });
+
     var d = dict({0: 1, 1: 2, 2: 3});
     var i = iter(d);
 
