@@ -134,31 +134,57 @@ def start_triag():
     js_pre = document.getElementById('js_pre')
     js_pre.textContent = "start"
     canvas = document.getElementById('canvas').getContext('2d')
-    canvas.fillStyle = 'rgb(0, 0, 0)'
-    js_pre.textContent = "canvas"
-    x, y = 10, 10
-    canvas.fillRect(x, y, x+10, y+10)
-    x, y = 0, 50
-    canvas.fillText("Some example text", x, y)
+    canvas.fillText("Mesh", 100, 10)
     js_pre.textContent = "triag"
-    s = example1()
-    js_pre.textContent = "done"
-    js_pre.textContent = s
+    js_pre.textContent = example1()
+    nodes, s1, elems = example2()
+    scale = 50
+    x0 = 3
+    canvas.strokeStyle = 'rgb(0, 0, 255)'
+    for el in elems:
+        canvas.beginPath()
+        x, y = nodes[el[0]]
+        canvas.moveTo(x*scale+x0, 200-y*scale)
+        x, y = nodes[el[1]]
+        canvas.lineTo(x*scale+x0, 200-y*scale)
+        x, y = nodes[el[2]]
+        canvas.lineTo(x*scale+x0, 200-y*scale)
+        x, y = nodes[el[0]]
+        canvas.lineTo(x*scale+x0, 200-y*scale)
+        canvas.stroke()
+    canvas.strokeStyle = 'rgb(0, 255, 0)'
+    canvas.beginPath()
+    x, y = nodes[0]
+    canvas.moveTo(x*scale+x0, 200-y*scale)
+    for n in nodes:
+        x, y = n
+        canvas.lineTo(x*scale+x0, 200-y*scale)
+    x, y = nodes[0]
+    canvas.lineTo(x*scale+x0, 200-y*scale)
+    canvas.stroke()
 
 @JavaScript
 def example1():
+    nodes, s1, elems = example2()
+    result = str(nodes) + "\n" + s1 + "\n" + str(elems)
+    return result
+
+@JavaScript
+def example2():
     nodes = [
             (0, 0),
             (1, 0),
-            (1, 1),
+            (2, 1),
+            (2, 2),
+            (1, 2),
             (0.5, 1.5),
             (0, 1),
             ]
-    edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
+    edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)]
     s1 = str(edges)
     elems = triangulate_af(nodes, edges)
-    result = str(nodes) + "\n" + s1 + "\n" + str(elems)
-    return result
+    return nodes, s1, elems
+
 
 def main():
     funcs = [
@@ -173,6 +199,7 @@ def main():
             two_edges_intersect,
             edge_intersects_edges,
             example1,
+            example2,
             start_triag,
             ]
     js = ""

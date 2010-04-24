@@ -187,31 +187,97 @@ function edge_intersects_edges(e1, nodes, edges) {
     return false;
 }
 function example1() {
-    nodes = list([tuple([0, 0]), tuple([1, 0]), tuple([1, 1]), tuple([0.5, 1.5]), tuple([0, 1])]);
-    edges = list([tuple([0, 1]), tuple([1, 2]), tuple([2, 3]), tuple([3, 4]), tuple([4, 0])]);
-    s1 = str(edges);
-    elems = triangulate_af(nodes,edges);
+    var __dummy0__ = example2();
+    nodes = __dummy0__.__getitem__(0);
+    s1 = __dummy0__.__getitem__(1);
+    elems = __dummy0__.__getitem__(2);
     result = ((((str(nodes))+("\n" + ""))+(s1))+("\n" + ""))+(str(elems));
     return result;
+}
+function example2() {
+    nodes = list([tuple([0, 0]), tuple([1, 0]), tuple([2, 1]), tuple([2, 2]), tuple([1, 2]), tuple([0.5, 1.5]), tuple([0, 1])]);
+    edges = list([tuple([0, 1]), tuple([1, 2]), tuple([2, 3]), tuple([3, 4]), tuple([4, 5]), tuple([5, 0])]);
+    s1 = str(edges);
+    elems = triangulate_af(nodes,edges);
+    return tuple([nodes, s1, elems]);
 }
 function start_triag() {
     js_pre = document.getElementById("js_pre");
     js_pre.textContent = "start";
     canvas = document.getElementById("canvas").getContext("2d");
-    canvas.fillStyle = "rgb(0, 0, 0)";
-    js_pre.textContent = "canvas";
-    var __dummy0__ = tuple([10, 10]);
-    x = __dummy0__.__getitem__(0);
-    y = __dummy0__.__getitem__(1);
-    canvas.fillRect(x,y,(x)+(10),(y)+(10));
-    var __dummy1__ = tuple([0, 50]);
-    x = __dummy1__.__getitem__(0);
-    y = __dummy1__.__getitem__(1);
-    canvas.fillText("Some example text",x,y);
+    canvas.fillText("Mesh",100,10);
     js_pre.textContent = "triag";
-    s = example1();
-    js_pre.textContent = "done";
-    js_pre.textContent = s;
+    js_pre.textContent = example1();
+    var __dummy0__ = example2();
+    nodes = __dummy0__.__getitem__(0);
+    s1 = __dummy0__.__getitem__(1);
+    elems = __dummy0__.__getitem__(2);
+    scale = 50;
+    x0 = 3;
+    canvas.strokeStyle = "rgb(0, 0, 255)";
+    var __dummy1__ = iter(elems);
+    var __dummy2__ = false;
+    while (1) {
+        var el;
+        try {
+            el = __dummy1__.next();
+        } catch (__dummy3__) {
+            if (__dummy3__.__class__ == py.StopIteration) {
+                __dummy2__ = true;
+                break;
+            } else {
+                throw __dummy3__;
+            }
+        }
+        canvas.beginPath();
+        var __dummy4__ = nodes.__getitem__(el.__getitem__(0));
+        x = __dummy4__.__getitem__(0);
+        y = __dummy4__.__getitem__(1);
+        canvas.moveTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+        var __dummy5__ = nodes.__getitem__(el.__getitem__(1));
+        x = __dummy5__.__getitem__(0);
+        y = __dummy5__.__getitem__(1);
+        canvas.lineTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+        var __dummy6__ = nodes.__getitem__(el.__getitem__(2));
+        x = __dummy6__.__getitem__(0);
+        y = __dummy6__.__getitem__(1);
+        canvas.lineTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+        var __dummy7__ = nodes.__getitem__(el.__getitem__(0));
+        x = __dummy7__.__getitem__(0);
+        y = __dummy7__.__getitem__(1);
+        canvas.lineTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+        canvas.stroke();
+    }
+    canvas.strokeStyle = "rgb(0, 255, 0)";
+    canvas.beginPath();
+    var __dummy8__ = nodes.__getitem__(0);
+    x = __dummy8__.__getitem__(0);
+    y = __dummy8__.__getitem__(1);
+    canvas.moveTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+    var __dummy9__ = iter(nodes);
+    var __dummy10__ = false;
+    while (1) {
+        var n;
+        try {
+            n = __dummy9__.next();
+        } catch (__dummy11__) {
+            if (__dummy11__.__class__ == py.StopIteration) {
+                __dummy10__ = true;
+                break;
+            } else {
+                throw __dummy11__;
+            }
+        }
+        var __dummy12__ = n;
+        x = __dummy12__.__getitem__(0);
+        y = __dummy12__.__getitem__(1);
+        canvas.lineTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+    }
+    var __dummy13__ = nodes.__getitem__(0);
+    x = __dummy13__.__getitem__(0);
+    y = __dummy13__.__getitem__(1);
+    canvas.lineTo(((x)*(scale))+(x0),(200)-((y)*(scale)));
+    canvas.stroke();
 }
 
 </script>
@@ -219,9 +285,9 @@ function start_triag() {
 <body onLoad="start_triag()">
     <h1>Triangulation Demo</h1>
     Python output:<br/>
-    <pre id="py_pre">[(0, 0), (1, 0), (1, 1), (0.5, 1.5), (0, 1)]
-[(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
-[(4, 0, 1), (4, 1, 2), (4, 2, 3)]</pre>
+    <pre id="py_pre">[(0, 0), (1, 0), (2, 1), (2, 2), (1, 2), (0.5, 1.5), (0, 1)]
+[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)]
+[(5, 0, 1), (5, 1, 2), (5, 2, 4), (4, 2, 3)]</pre>
     JavaScript output:<br/>
     <pre id="js_pre"></pre>
     Canvas:<br/>
