@@ -148,10 +148,10 @@ function range(start, end, step) {
         seq.push(i);
     }
 
-    // python3.0:
-    return new _iter(seq)
-    // python2.x:
-    //return list(seq);
+    if (py.__python3__)
+        return iter(seq);
+    else
+        return seq;
 }
 
 function map() {
