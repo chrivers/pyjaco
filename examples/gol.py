@@ -11,7 +11,7 @@ class GoL(object):
         self.height = 75
         self.canvas = document.getElementById('canvas').getContext('2d')
         self.canvas.fillStyle = 'rgb(0, 0, 0)'
-        self.grid = _new(Array, self.width*self.height)
+        self.grid = list(range(self.width*self.height))
         for i in range(self.width*self.height):
             self.grid[i] = Math.random() > 0.5
         setInterval('window.gol.iter()', 250)
@@ -19,8 +19,8 @@ class GoL(object):
     def get(self, x, y):
         return self.grid[((x + self.width) % self.width) + ((y + self.height) % self.height) * self.width]
     def iter(self):
-        toDie = _new(Array, 0)
-        toLive = _new(Array, 0)
+        toDie = []
+        toLive = []
         for x in range(0, self.width):
             for y in range(0, self.height):
                 count = 0
@@ -43,16 +43,16 @@ class GoL(object):
                 
                 if self.get(x, y):
                     if count < 2:
-                        toDie[toDie.length] = x + y*self.width
+                        toDie.append(x + y*self.width)
                     elif count > 3:
-                        toDie[toDie.length] = x + y*self.width
+                        toDie.append(x + y*self.width)
                 else:
                     if count == 3:
-                        toLive[toLive.length] = x + y*self.width
+                        toLive.append(x + y*self.width)
         
-        for i in range(toDie.length):
+        for i in range(len(toDie)):
             self.grid[toDie[i]] = False
-        for i in range(toLive.length):
+        for i in range(len(toLive)):
             self.grid[toLive[i]] = True
         
         self.draw()
