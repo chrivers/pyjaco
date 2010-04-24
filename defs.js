@@ -208,6 +208,10 @@ function isinstance(obj, cls) {
     }
 }
 
+function float(value) {
+    return value;
+}
+
 /* Python 'iter' type */
 
 function iter(obj) {
