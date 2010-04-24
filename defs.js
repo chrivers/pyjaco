@@ -547,6 +547,11 @@ _list.prototype.append = function(value) {
     this._len = -1;
 }
 
+_list.prototype.pop = function() {
+    this._len = -1;
+    return this._items.pop();
+}
+
 /* Python 'dict' type */
 
 function dict(args) {
@@ -968,20 +973,31 @@ function test_list() {
     raises(py.IndexError, function() { t.__setitem__(-6, 6) });
 
 
-    t = list([1, 2, 3, 4])
-    test(function() { return str(t) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(t)) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(t)) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(iter(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(iter(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(tuple(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(tuple(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(list(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(list(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(iter(tuple(t)))) == '[1, 2, 3, 4]' })
-    test(function() { return str(tuple(iter(list(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str(list(iter(list(t)))) == '[1, 2, 3, 4]' })
+    t = list([1, 2, 3, 4]);
+    test(function() { return str(t) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(t)) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(t)) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(iter(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(iter(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(tuple(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(tuple(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(list(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(list(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(iter(tuple(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str(tuple(iter(list(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str(list(iter(list(t)))) == '[1, 2, 3, 4]' });
+
+    t = list([]);
+    test(function() { return str(t) == '[]' });
+    t.append(1);
+    test(function() { return str(t) == '[1]' });
+    t.append(5);
+    test(function() { return str(t) == '[1, 5]' });
+    test(function() { return t.pop() == 5 });
+    test(function() { return str(t) == '[1]' });
+    test(function() { return t.pop() == 1 });
+    test(function() { return str(t) == '[]' });
 }
 
 function test_range() {
