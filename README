@@ -1,0 +1,14 @@
+py2js
+-----
+
+Python to JavaScript translator.
+
+Examples
+--------
+
+firefox examples/gol.html
+
+And the game of life should show in the browser. If it doesn't, it's a bug. You
+can generate that file using
+
+python examples/gol.py > examples/gol.html
