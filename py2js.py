@@ -521,7 +521,14 @@ class JS(object):
     def visit_Raise(self, node):
         assert node.inst is None
         assert node.tback is None
-        return ["raise %s;" % self.visit(node.type)]
+        return ["throw %s;" % self.visit(node.type)]
+
+    def visit_Print(self, node):
+        assert node.dest is None
+        assert node.nl
+        values = [self.visit(v) for v in node.values]
+        values = ", ".join(values)
+        return ["print(%s);" % values]
 
     def visit_Attribute(self, node):
         return "%s.%s" % (self.visit(node.value), node.attr)
@@ -561,9 +568,12 @@ def transform_js(s):
 class JavaScript(object):
 
     def __init__(self, obj):
+        self._obj = obj
         obj_source = inspect.getsource(obj)
         self._js = transform_js(obj_source)
 
     def __str__(self):
         return self._js
 
+    def __call__(self, *args, **kwargs):
+        return self._obj(*args, **kwargs)
