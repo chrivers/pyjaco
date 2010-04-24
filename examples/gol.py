@@ -69,7 +69,7 @@ class GoL(object):
 def main():
     print """<html>
 <head>
-<script language="JavaScript" src="defs.js"></script>
+<script language="JavaScript" src="../defs.js"></script>
 <script language="JavaScript">
 %s
 </script>
