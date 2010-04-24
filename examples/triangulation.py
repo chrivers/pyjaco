@@ -130,7 +130,23 @@ def edge_intersects_edges(e1, nodes, edges):
     return False
 
 @JavaScript
-def e1():
+def start_triag():
+    js_pre = document.getElementById('js_pre')
+    js_pre.textContent = "start"
+    canvas = document.getElementById('canvas').getContext('2d')
+    canvas.fillStyle = 'rgb(0, 0, 0)'
+    js_pre.textContent = "canvas"
+    x, y = 10, 10
+    canvas.fillRect(x, y, x+10, y+10)
+    x, y = 0, 50
+    canvas.fillText("Some example text", x, y)
+    js_pre.textContent = "triag"
+    s = example1()
+    js_pre.textContent = "done"
+    js_pre.textContent = s
+
+@JavaScript
+def example1():
     nodes = [
             (0, 0),
             (1, 0),
@@ -139,26 +155,52 @@ def e1():
             (0, 1),
             ]
     edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
-    print nodes
-    print edges
+    s1 = str(edges)
     elems = triangulate_af(nodes, edges)
-    print elems
+    result = str(nodes) + "\n" + s1 + "\n" + str(elems)
+    return result
 
-funcs = [
-        is_on_the_left,
-        criterion,
-        find_third_point,
-        lies_inside,
-        is_boundary_edge,
-        triangulate_af,
-        ccw,
-        intersect,
-        two_edges_intersect,
-        edge_intersects_edges,
-        e1,
-        ]
-s = ""
-for f in funcs:
-    s += str(f) + "\n"
-print s
-#e1()
+def main():
+    funcs = [
+            is_on_the_left,
+            criterion,
+            find_third_point,
+            lies_inside,
+            is_boundary_edge,
+            triangulate_af,
+            ccw,
+            intersect,
+            two_edges_intersect,
+            edge_intersects_edges,
+            example1,
+            start_triag,
+            ]
+    js = ""
+    for f in funcs:
+        js += str(f) + "\n"
+    py_result = example1()
+
+    print """<html>
+<head>
+<script language="JavaScript" src="../math.js"></script>
+<script language="JavaScript" src="../defs.js"></script>
+<script language="JavaScript">
+%s
+</script>
+</head>
+<body onLoad="start_triag()">
+    <h1>Triangulation Demo</h1>
+    Python output:<br/>
+    <pre id="py_pre">%s</pre>
+    JavaScript output:<br/>
+    <pre id="js_pre"></pre>
+    Canvas:<br/>
+    <canvas id="canvas" width="200" height="200"></canvas>
+    <br/>
+    End of page.
+</body>
+</html>""" % (js, py_result)
+
+
+if __name__ == "__main__":
+    main()
