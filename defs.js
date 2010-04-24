@@ -315,6 +315,22 @@ _tuple.prototype.__str__ = function () {
     }
 }
 
+_tuple.prototype.__eq__ = function (other) {
+    if (other.__class__.__name__ == "tuple") {
+        if (len(this) != len(other))
+            return false
+        for (var i = 0; i < len(this); i++) {
+            // TODO: use __eq__ here as well:
+            if (this._items[i] != other._items[i])
+                return false
+        }
+        return true
+        // This doesn't take into account hash collisions:
+        //return hash(this) == hash(other)
+    } else
+        return false
+}
+
 _tuple.prototype.toString = function () {
     return this.__str__();
 }
@@ -541,6 +557,11 @@ _list.prototype.index = function(value, start, end) {
 
         if (_value == value) {
             return i;
+        }
+
+        if (defined(_value.__eq__)) {
+            if (_value.__eq__(value))
+                return i
         }
     }
 
@@ -1020,6 +1041,15 @@ function test_list() {
     t.remove(1);
     test(function() { return str(t) == '[]' });
     raises(py.ValueError, function() { t.remove(3) });
+
+    var t1 = tuple([1, 2]);
+    var t2 = tuple([1, 3]);
+    t = list([t1, t2]);
+    test(function() { return str(t) == '[(1, 2), (1, 3)]' });
+    test(function() { return t.index(t1) == 0 });
+    test(function() { return t.index(t2) == 1 });
+    test(function() { return t.index(tuple([1, 2])) == 0 });
+    test(function() { return t.index(tuple([1, 3])) == 1 });
 }
 
 function test_range() {
