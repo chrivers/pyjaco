@@ -269,7 +269,11 @@ _tuple.prototype.__init__ = function(args) {
 }
 
 _tuple.prototype.__str__ = function () {
-    return "(" + this._items.join(", ") + ")";
+    if (this.__len__() == 1) {
+        return "(" + this._items[0] + ",)";
+    } else {
+        return "(" + this._items.join(", ") + ")";
+    }
 }
 
 _tuple.prototype.toString = function () {
@@ -783,6 +787,11 @@ function test_tuple() {
     test(function() { return t.count(5) == 0 });
 
     test(function() { return hash(t) == 3430008 });
+
+    var t = tuple([1]);
+
+    test(function() { return str(t) == '(1,)' });
+    test(function() { return len(t) == 1 });
 
     var t = tuple([3, 4, 5, 5, 4, 4, 1]);
 
