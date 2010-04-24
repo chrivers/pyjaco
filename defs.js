@@ -16,6 +16,8 @@
 
 var py = {};
 
+py.__python3__ = false;
+
 /* JavaScript helper functions */
 
 function defined(obj) {
@@ -25,6 +27,20 @@ function defined(obj) {
 function assert(cond, msg) {
     if (!cond) {
         throw new py.AssertionError(msg);
+    }
+}
+
+function iterate(seq, func) {
+    while (true) {
+        try {
+            func(seq.next());
+        } catch (exc) {
+            if (isinstance(exc, py.StopIteration)) {
+                break;
+            } else {
+                throw exc;
+            }
+        }
     }
 }
 
@@ -150,19 +166,16 @@ function map() {
     var func = arguments[0];
     var seq = iter(arguments[1]);
 
-    var result = list();
+    var items = list();
 
-    while (true) {
-        try {
-            result.append(func(seq.next()));
-        } catch (exc) {
-            if (isinstance(exc, py.StopIteration)) {
-                return result; // XXX: this is Python 2.x
-            } else {
-                throw exc;
-            }
-        }
-    }
+    iterate(seq, function(item) {
+        items.append(func(item));
+    });
+
+    if (py.__python3__)
+        return iter(items);
+    else
+        return items;
 }
 
 function zip() {
@@ -281,19 +294,13 @@ _tuple.prototype.__init__ = function(args) {
             }
         }
         if (i != null) {
-            var seq = [];
-            try {
-                while (true) {
-                    seq.push(i.next());
-                }
-            } catch (exc) {
-                if (isinstance(exc, py.StopIteration)) {
-                    // pass
-                } else {
-                    throw exc;
-                }
-            }
-            this._items = seq;
+            var items = [];
+
+            iterate(i, function(item) {
+                items.push(item);
+            });
+
+            this._items = items;
         }
     } else {
         this._items = [];
@@ -428,19 +435,13 @@ _list.prototype.__init__ = function(args) {
             }
         }
         if (i != null) {
-            var seq = [];
-            try {
-                while (true) {
-                    seq.push(i.next());
-                }
-            } catch (exc) {
-                if (isinstance(exc, py.StopIteration)) {
-                    // pass
-                } else {
-                    throw exc;
-                }
-            }
-            this._items = seq;
+            var items = [];
+
+            iterate(i, function(item) {
+                items.push(item);
+            });
+
+            this._items = items;
         } else {
             this._items = args;
         }
