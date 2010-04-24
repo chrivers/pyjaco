@@ -213,11 +213,28 @@ function zip() {
 }
 
 function isinstance(obj, cls) {
-    if (defined(obj.__class__)) {
-        // XXX: add support for tuple syntax
-        return obj.__class__ == cls;
-    } else {
+    if (cls instanceof _tuple) {
+        var length = cls.__len__();
+
+        if (length == 0) {
+            return false;
+        }
+
+        for (var i = 0; i < length; i++) {
+            var _cls = cls.__getitem__(i);
+
+            if (isinstance(obj, _cls)) {
+                return true;
+            }
+        }
+
         return false;
+    } else {
+        if (defined(obj.__class__) && defined(cls.__name__)) {
+            return obj.__class__ == cls;
+        } else {
+            return obj instanceof cls;
+        }
     }
 }
 
@@ -1117,6 +1134,39 @@ function test_isinstance() {
     test(function() {
         return isinstance(new py.StopIteration(), py.ValueError) == false;
     });
+
+    test(function() { return isinstance([], Array) == true });
+    test(function() { return isinstance([], Number) == false });
+    test(function() { return isinstance([], String) == false });
+
+    test(function() { return isinstance([], tuple()) == false });
+
+    test(function() { return isinstance([], tuple([Number, Array])) == true });
+    test(function() { return isinstance([], tuple([Array, Number])) == true });
+
+    test(function() { return isinstance([], tuple([Number, String])) == false });
+
+    var t = tuple([1, 2, 3]);
+
+    test(function() { return isinstance(t, Array) == false });
+    test(function() { return isinstance(t, Number) == false });
+    test(function() { return isinstance(t, String) == false });
+
+    test(function() { return isinstance(t, tuple()) == false });
+
+    test(function() { return isinstance(t, tuple([Number, Array])) == false });
+    test(function() { return isinstance(t, tuple([Array, Number])) == false });
+
+    test(function() { return isinstance(t, tuple([Number, String])) == false });
+
+    test(function() { return isinstance(t, _tuple) == true });
+    test(function() { return isinstance(t, _list) == false });
+    test(function() { return isinstance(t, _dict) == false });
+
+    test(function() { return isinstance(t, tuple([Number, _tuple])) == true });
+    test(function() { return isinstance(t, tuple([_tuple, Number])) == true });
+
+    test(function() { return isinstance(t, tuple([_list, _dict])) == false });
 }
 
 function test_exceptions() {
