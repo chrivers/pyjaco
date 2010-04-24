@@ -188,6 +188,15 @@ function range(start, end, step) {
     //return list(seq);
 }
 
+function isinstance(obj, cls) {
+    if (defined(obj.__class__)) {
+        // XXX: add support for tuple syntax
+        return obj.__class__ == cls;
+    } else {
+        return false;
+    }
+}
+
 /* Python 'iter' type */
 
 function iter(obj) {
@@ -965,6 +974,16 @@ function test_range() {
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
+function test_isinstance() {
+    test(function() {
+        return isinstance(new StopIteration(), StopIteration) == true;
+    });
+
+    test(function() {
+        return isinstance(new StopIteration(), ValueError) == false;
+    });
+}
+
 function tests() {
     try {
         test_dict();
@@ -972,6 +991,7 @@ function tests() {
         test_tuple();
         test_list();
         test_range();
+        test_isinstance();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
