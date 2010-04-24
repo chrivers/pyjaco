@@ -546,6 +546,10 @@ _list.prototype.index = function(value, start, end) {
     throw new py.ValueError("list.index(x): x not in list");
 }
 
+_list.prototype.remove = function(value) {
+    this.__delitem__(this.index(value));
+}
+
 _list.prototype.append = function(value) {
     this._items.push(value)
     this._len = -1;
@@ -1002,6 +1006,19 @@ function test_list() {
     test(function() { return str(t) == '[1]' });
     test(function() { return t.pop() == 1 });
     test(function() { return str(t) == '[]' });
+
+    t = list([4, 3, 1, 2]);
+    test(function() { return str(t) == '[4, 3, 1, 2]' });
+    t.remove(3);
+    test(function() { return str(t) == '[4, 1, 2]' });
+    raises(py.ValueError, function() { t.remove(3) });
+    t.remove(4);
+    test(function() { return str(t) == '[1, 2]' });
+    t.remove(2);
+    test(function() { return str(t) == '[1]' });
+    t.remove(1);
+    test(function() { return str(t) == '[]' });
+    raises(py.ValueError, function() { t.remove(3) });
 }
 
 function test_range() {
