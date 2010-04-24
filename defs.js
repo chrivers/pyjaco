@@ -44,6 +44,16 @@ function iterate(seq, func) {
     }
 }
 
+function copy(iterator) {
+    var items = [];
+
+    iterate(iterator, function(item) {
+        items.push(item);
+    });
+
+    return items;
+}
+
 function _new(cls, arg) {
     return new cls(arg)
 }
@@ -288,41 +298,28 @@ _iter.prototype.next = function() {
 
 /* Python 'tuple' type */
 
-function tuple(args) {
-    return new _tuple(args);
+function tuple(seq) {
+    if (arguments.length <= 1) {
+        return new _tuple(seq);
+    } else {
+        throw new py.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
+    }
 }
 
-function _tuple(args) {
-    this.__init__(args);
+function _tuple(seq) {
+    this.__init__(seq);
 }
 
 _tuple.__name__ = 'tuple';
 _tuple.prototype.__class__ = _tuple;
 
-_tuple.prototype.__init__ = function(args) {
-    if (defined(args)) {
-        var i = null;
-        try {
-            i  = iter(args);
-        } catch (exc) {
-            if (isinstance(exc, py.TypeError)) {
-                // let's hope that args is an Array
-                this._items = args;
-            } else {
-                throw exc;
-            }
-        }
-        if (i != null) {
-            var items = [];
-
-            iterate(i, function(item) {
-                items.push(item);
-            });
-
-            this._items = items;
-        }
-    } else {
+_tuple.prototype.__init__ = function(seq) {
+    if (!defined(seq)) {
         this._items = [];
+        this._len = 0;
+    } else {
+        this._items = copy(iter(seq));
+        this._len = -1;
     }
 }
 
@@ -445,45 +442,29 @@ _tuple.prototype.index = function(value, start, end) {
 
 /* Python 'list' type */
 
-function list(args) {
-    return new _list(args);
+function list(seq) {
+    if (arguments.length <= 1) {
+        return new _list(seq);
+    } else {
+        throw new py.TypeError("list() takes at most 1 argument (" + arguments.length + " given)");
+    }
 }
 
-function _list(args) {
-    this.__init__(args);
+function _list(seq) {
+    this.__init__(seq);
 }
 
 _list.__name__ = 'list';
 _list.prototype.__class__ = _list;
 
-_list.prototype.__init__ = function(args) {
-    if (defined(args)) {
-        var i = null;
-        try {
-            i  = iter(args);
-        } catch (exc) {
-            if (isinstance(exc, py.TypeError)) {
-                // let's hope that args is an Array
-                this._items = args;
-            } else {
-                throw exc;
-            }
-        }
-        if (i != null) {
-            var items = [];
-
-            iterate(i, function(item) {
-                items.push(item);
-            });
-
-            this._items = items;
-        } else {
-            this._items = args;
-        }
-    } else {
+_list.prototype.__init__ = function(seq) {
+    if (!defined(seq)) {
         this._items = [];
+        this._len = 0;
+    } else {
+        this._items = copy(iter(seq));
+        this._len = -1;
     }
-    this._len = -1;
 }
 
 _list.prototype.__str__ = function () {
@@ -873,6 +854,8 @@ function test_iter() {
 }
 
 function test_tuple() {
+    raises(py.TypeError, function() { tuple(1, 2, 3) });
+
     var t = tuple();
 
     test(function() { return str(t) == '()' });
@@ -944,6 +927,8 @@ function test_tuple() {
 }
 
 function test_list() {
+    raises(py.TypeError, function() { list(1, 2, 3) });
+
     var t = list();
 
     test(function() { return str(t) == '[]' });
