@@ -99,6 +99,21 @@ class JS(object):
         'False'  : 'false',
     }
 
+    builtin = set([
+        'NotImplementedError',
+        'ZeroDivisionError',
+        'AssertionError',
+        'AttributeError',
+        'RuntimeError',
+        'ImportError',
+        'TypeError',
+        'ValueError',
+        'NameError',
+        'IndexError',
+        'KeyError',
+        'StopIteration',
+    ])
+
     bool_op = {
         'And'    : '&&',
         'Or'     : '||',
@@ -323,7 +338,7 @@ class JS(object):
         js.append("    try {")
         js.append("        %s = %s.next();" % (for_target, iter_dummy))
         js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (%s.__class__ == StopIteration) {" % exc_dummy)
+        js.append("        if (%s.__class__ == py.StopIteration) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
         js.append("            break;")
         js.append("        } else {")
@@ -471,7 +486,12 @@ class JS(object):
         try:
             return self.name_map[node.id]
         except KeyError:
-            return node.id
+            pass
+
+        if node.id in self.builtin:
+            return "py." + node.id;
+        else:
+            return node.id;
 
     def visit_Num(self, node):
         return str(node.n)

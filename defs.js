@@ -14,6 +14,8 @@
 
 */
 
+var py = {};
+
 /* JavaScript helper functions */
 
 function defined(obj) {
@@ -22,7 +24,7 @@ function defined(obj) {
 
 function assert(cond, msg) {
     if (!cond) {
-        throw new AssertionError(msg);
+        throw new py.AssertionError(msg);
     }
 }
 
@@ -32,107 +34,40 @@ function _new(cls, arg) {
 
 /* Python built-in exceptions */
 
-function AttributeError(obj, name) {
-    this.message = "'" + obj.__class__.__name__ + "' object has not attribute '" + name + "'";
-}
+py.__exceptions__ = [
+    'NotImplementedError',
+    'ZeroDivisionError',
+    'AssertionError',
+    'AttributeError',
+    'RuntimeError',
+    'ImportError',
+    'TypeError',
+    'ValueError',
+    'NameError',
+    'IndexError',
+    'KeyError',
+    'StopIteration',
+];
 
-AttributeError.__name__ = 'AttributeError';
-AttributeError.prototype.__class__ = AttributeError
+for (var i in py.__exceptions__) {
+    var name = py.__exceptions__[i];
 
-function AssertionError(message) {
-    this.message = defined(message) ? message : "";
-}
+    py[name] = function() {
+        return function(message) {
+            this.message = defined(message) ? message : "";
+        }
+    }();
 
-AssertionError.__name__ = 'AssertionError';
-AssertionError.prototype.__class__ = AssertionError
+    py[name].__name__ = name;
+    py[name].prototype.__class__ = py[name];
 
-function KeyError(message) {
-    this.message = defined(message) ? message : "";
-}
+    py[name].prototype.__str__ = function() {
+        return this.__class__.__name__ + ": " + this.message;
+    }
 
-KeyError.__name__ = 'KeyError';
-KeyError.prototype.__class__ = KeyError
-
-function NameError(message) {
-    this.message = defined(message) ? message : "";
-}
-
-NameError.__name__ = 'NameError';
-NameError.prototype.__class__ = NameError
-
-function TypeError(message) {
-    this.message = defined(message) ? message : "";
-}
-
-TypeError.__name__ = 'TypeError';
-TypeError.prototype.__class__ = TypeError
-
-TypeError.prototype.__str__ = function () {
-    return this.__class__.__name__ + ": " + this.message;
-}
-
-TypeError.prototype.toString = function () {
-    return this.__str__();
-}
-
-function StopIteration(message) {
-    this.message = defined(message) ? message : "";
-}
-
-StopIteration.__name__ = 'StopIteration';
-StopIteration.prototype.__class__ = StopIteration
-
-StopIteration.prototype.__str__ = function () {
-    return this.__class__.__name__ + ": " + this.message;
-}
-
-StopIteration.prototype.toString = function () {
-    return this.__str__();
-}
-
-function IndexError(message) {
-    this.message = defined(message) ? message : "";
-}
-
-IndexError.__name__ = 'IndexError';
-IndexError.prototype.__class__ = IndexError
-
-IndexError.prototype.__str__ = function () {
-    return this.__class__.__name__ + ": " + this.message;
-}
-
-IndexError.prototype.toString = function () {
-    return this.__str__();
-}
-
-function ValueError(message) {
-    this.message = defined(message) ? message : "";
-}
-
-ValueError.__name__ = 'ValueError';
-ValueError.prototype.__class__ = ValueError
-
-ValueError.prototype.__str__ = function () {
-    return this.__class__.__name__ + ": " + this.message;
-}
-
-ValueError.prototype.toString = function () {
-    return this.__str__();
-}
-
-function NotImplementedError(message) {
-    this.message = defined(message) ? message : "";
-}
-
-NotImplementedError.__name__ = 'NotImplementedError';
-NotImplementedError.prototype.__class__ = NotImplementedError
-
-NotImplementedError.prototype.__str__ = function () {
-    return this.__class__.__name__ + ": " + this.message;
-}
-
-NotImplementedError.prototype.toString = function () {
-    return this.__str__();
+    py[name].prototype.toString = function() {
+        return this.__str__();
+    }
 }
 
 /* Python built-in functions */
@@ -150,7 +85,7 @@ function getattr(obj, name, value) {
         if (defined(value)) {
             return value;
         } else {
-            throw new AttributeError(obj, name);
+            throw new py.AttributeError(obj, name);
         }
     }
 }
@@ -165,7 +100,7 @@ function hash(obj) {
     } else if (typeof(obj) == 'number') {
         return obj == -1 ? -2 : obj;
     } else {
-        throw new AttributeError(obj, '__hash__');
+        throw new py.AttributeError(obj, '__hash__');
     }
 }
 
@@ -173,7 +108,7 @@ function len(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
-        throw new AttributeError(obj, '__name__');
+        throw new py.AttributeError(obj, '__name__');
     }
 }
 
@@ -205,11 +140,11 @@ function range(start, end, step) {
 
 function map() {
     if (arguments.length < 2) {
-        throw new TypeError("map() requires at least two args");
+        throw new py.TypeError("map() requires at least two args");
     }
 
     if (arguments.length > 2) {
-        throw new NotImplementedError("only one sequence allowed in map()");
+        throw new py.NotImplementedError("only one sequence allowed in map()");
     }
 
     var func = arguments[0];
@@ -221,7 +156,7 @@ function map() {
         try {
             result.append(func(seq.next()));
         } catch (exc) {
-            if (isinstance(exc, StopIteration)) {
+            if (isinstance(exc, py.StopIteration)) {
                 return result; // XXX: this is Python 2.x
             } else {
                 throw exc;
@@ -250,7 +185,7 @@ function zip() {
             try {
                 var value = iters.__getitem__(i).next();
             } catch (exc) {
-                if (isinstance(exc, StopIteration)) {
+                if (isinstance(exc, py.StopIteration)) {
                     return items;
                 } else {
                     throw exc;
@@ -281,7 +216,7 @@ function iter(obj) {
     } else if (defined(obj.__iter__)) {
         return obj.__iter__();
     } else {
-        throw new TypeError("'__iter__' method not supported");
+        throw new py.TypeError("'__iter__' method not supported");
     }
 }
 
@@ -311,7 +246,7 @@ _iter.prototype.next = function() {
     if (defined(value)) {
         return value;
     } else {
-        throw new StopIteration('no more items');
+        throw new py.StopIteration('no more items');
     }
 }
 
@@ -333,9 +268,13 @@ _tuple.prototype.__init__ = function(args) {
         var i = null;
         try {
             i  = iter(args);
-        } catch (TypeError) {
-            // let's hope that args is an Array
-            this._items = args;
+        } catch (exc) {
+            if (isinstance(exc, py.TypeError)) {
+                // let's hope that args is an Array
+                this._items = args;
+            } else {
+                throw exc;
+            }
         }
         if (i != null) {
             var seq = [];
@@ -343,8 +282,12 @@ _tuple.prototype.__init__ = function(args) {
                 while (true) {
                     seq.push(i.next());
                 }
-            } catch (StopIteration) {
-                // pass
+            } catch (exc) {
+                if (isinstance(exc, py.StopIteration)) {
+                    // pass
+                } else {
+                    throw exc;
+                }
             }
             this._items = seq;
         }
@@ -411,15 +354,15 @@ _tuple.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)]
     else
-        throw new IndexError("list assignment index out of range");
+        throw new py.IndexError("list assignment index out of range");
 }
 
 _tuple.prototype.__setitem__ = function(index, value) {
-    throw new TypeError("'tuple' object doesn't support item assignment");
+    throw new py.TypeError("'tuple' object doesn't support item assignment");
 }
 
 _tuple.prototype.__delitem__ = function(index) {
-    throw new TypeError("'tuple' object doesn't support item deletion");
+    throw new py.TypeError("'tuple' object doesn't support item deletion");
 }
 
 _tuple.prototype.count = function(value) {
@@ -451,7 +394,7 @@ _tuple.prototype.index = function(value, start, end) {
         }
     }
 
-    throw new ValueError("tuple.index(x): x not in list");
+    throw new py.ValueError("tuple.index(x): x not in list");
 }
 
 /* Python 'list' type */
@@ -472,9 +415,13 @@ _list.prototype.__init__ = function(args) {
         var i = null;
         try {
             i  = iter(args);
-        } catch (TypeError) {
-            // let's hope that args is an Array
-            this._items = args;
+        } catch (exc) {
+            if (isinstance(exc, py.TypeError)) {
+                // let's hope that args is an Array
+                this._items = args;
+            } else {
+                throw exc;
+            }
         }
         if (i != null) {
             var seq = [];
@@ -482,12 +429,17 @@ _list.prototype.__init__ = function(args) {
                 while (true) {
                     seq.push(i.next());
                 }
-            } catch (StopIteration) {
-                // pass
+            } catch (exc) {
+                if (isinstance(exc, py.StopIteration)) {
+                    // pass
+                } else {
+                    throw exc;
+                }
             }
             this._items = seq;
-        } else
+        } else {
             this._items = args;
+        }
     } else {
         this._items = [];
     }
@@ -536,7 +488,7 @@ _list.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)]
     else
-        throw new IndexError("list assignment index out of range");
+        throw new py.IndexError("list assignment index out of range");
 }
 
 _list.prototype.__setitem__ = function(index, value) {
@@ -545,7 +497,7 @@ _list.prototype.__setitem__ = function(index, value) {
     else if ((index < 0) && (index >= -len(this)))
         this._items[index+len(this)] = value
     else
-        throw new IndexError("list assignment index out of range");
+        throw new py.IndexError("list assignment index out of range");
 }
 
 _list.prototype.__delitem__ = function(index) {
@@ -555,7 +507,7 @@ _list.prototype.__delitem__ = function(index) {
         this._items = a.concat(b)
         this._len = -1;
     } else
-        throw new IndexError("list assignment index out of range");
+        throw new py.IndexError("list assignment index out of range");
 }
 
 _list.prototype.count = function(value) {
@@ -587,7 +539,7 @@ _list.prototype.index = function(value, start, end) {
         }
     }
 
-    throw new ValueError("list.index(x): x not in list");
+    throw new py.ValueError("list.index(x): x not in list");
 }
 
 _list.prototype.append = function(value) {
@@ -631,7 +583,7 @@ _dict.prototype.toString = function () {
 }
 
 _dict.prototype.__hash__ = function () {
-    throw new TypeError("unhashable type: 'dict'");
+    throw new py.TypeError("unhashable type: 'dict'");
 }
 
 _dict.prototype.__len__ = function() {
@@ -658,7 +610,7 @@ _dict.prototype.__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw new KeyError(str(key));
+        throw new py.KeyError(str(key));
     }
 }
 
@@ -670,7 +622,7 @@ _dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
         delete this._items[key];
     } else {
-        throw new KeyError(str(key));
+        throw new py.KeyError(str(key));
     }
 }
 
@@ -739,7 +691,7 @@ _dict.prototype.pop = function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw new KeyError(str(key));
+            throw new py.KeyError(str(key));
         }
     }
 
@@ -757,7 +709,7 @@ _dict.prototype.popitem = function() {
     if (defined(key)) {
         return [_key, this._items[_key]];
     } else {
-        throw new KeyError("popitem(): dictionary is empty");
+        throw new py.KeyError("popitem(): dictionary is empty");
     }
 }
 
@@ -765,7 +717,7 @@ _dict.prototype.popitem = function() {
 
 function test(code) {
     if (!code()) {
-        throw new AssertionError("test failed: " + code);
+        throw new py.AssertionError("test failed: " + code);
     }
 }
 
@@ -778,11 +730,11 @@ function raises(exc, code) {
         if (name == exc.__name__) {
             return;
         } else {
-            throw new AssertionError(name + " exception was thrown in " + code);
+            throw new py.AssertionError(name + " exception was thrown in " + code);
         }
     }
 
-    throw new AssertionError("did not raise " + exc.__name__ + " in " + code);
+    throw new py.AssertionError("did not raise " + exc.__name__ + " in " + code);
 }
 
 function test_dict() {
@@ -791,15 +743,15 @@ function test_dict() {
     test(function() { return str(d) == '{}' });
     test(function() { return len(d) == 0 });
 
-    raises(KeyError, function() { d.popitem() });
+    raises(py.KeyError, function() { d.popitem() });
 
-    raises(KeyError, function() { d.pop(0) });
-    raises(KeyError, function() { d.__getitem__(0) });
-    raises(KeyError, function() { d.__delitem__(0) });
+    raises(py.KeyError, function() { d.pop(0) });
+    raises(py.KeyError, function() { d.__getitem__(0) });
+    raises(py.KeyError, function() { d.__delitem__(0) });
 
-    raises(KeyError, function() { d.pop('a') });
-    raises(KeyError, function() { d.__getitem__('a') });
-    raises(KeyError, function() { d.__delitem__('a') });
+    raises(py.KeyError, function() { d.pop('a') });
+    raises(py.KeyError, function() { d.__getitem__('a') });
+    raises(py.KeyError, function() { d.__delitem__('a') });
 
     d.__setitem__(0, 1);
 
@@ -825,7 +777,7 @@ function test_iter() {
     test(function() { return i.next() == 1 });
     test(function() { return i.next() == 2 });
 
-    raises(StopIteration, function() { i.next() });
+    raises(py.StopIteration, function() { i.next() });
 
     var t = tuple([7, 3, 5]);
     var i = iter(t);
@@ -834,7 +786,7 @@ function test_iter() {
     test(function() { return i.next() == 3 });
     test(function() { return i.next() == 5 });
 
-    raises(StopIteration, function() { i.next() });
+    raises(py.StopIteration, function() { i.next() });
 
     var t = list([7, 3, 5]);
     var i = iter(t);
@@ -843,7 +795,7 @@ function test_iter() {
     test(function() { return i.next() == 3 });
     test(function() { return i.next() == 5 });
 
-    raises(StopIteration, function() { i.next() });
+    raises(py.StopIteration, function() { i.next() });
 
     var i = iter(range(5));
 
@@ -853,7 +805,7 @@ function test_iter() {
     test(function() { return i.next() == 3 });
     test(function() { return i.next() == 4 });
 
-    raises(StopIteration, function() { i.next() });
+    raises(py.StopIteration, function() { i.next() });
 }
 
 function test_tuple() {
@@ -863,12 +815,12 @@ function test_tuple() {
     test(function() { return len(t) == 0 });
 
     test(function() { return t.__contains__(5) == false });
-    raises(IndexError, function() { t.__getitem__(0) });
+    raises(py.IndexError, function() { t.__getitem__(0) });
 
-    raises(TypeError, function() { t.__setitem__(7, 0) });
-    raises(TypeError, function() { t.__delitem__(7) });
+    raises(py.TypeError, function() { t.__setitem__(7, 0) });
+    raises(py.TypeError, function() { t.__delitem__(7) });
 
-    raises(ValueError, function() { t.index(5) });
+    raises(py.ValueError, function() { t.index(5) });
     test(function() { return t.count(5) == 0 });
 
     test(function() { return hash(t) == 3430008 });
@@ -891,8 +843,8 @@ function test_tuple() {
     test(function() { return t.__getitem__(4) == 4 });
     test(function() { return t.__getitem__(5) == 4 });
     test(function() { return t.__getitem__(6) == 1 });
-    raises(IndexError, function() { t.__getitem__(7) });
-    raises(IndexError, function() { t.__getitem__(8) });
+    raises(py.IndexError, function() { t.__getitem__(7) });
+    raises(py.IndexError, function() { t.__getitem__(8) });
     test(function() { return t.__getitem__(-1) == 1 });
     test(function() { return t.__getitem__(-2) == 4 });
     test(function() { return t.__getitem__(-3) == 4 });
@@ -900,11 +852,11 @@ function test_tuple() {
     test(function() { return t.__getitem__(-5) == 5 });
     test(function() { return t.__getitem__(-6) == 4 });
     test(function() { return t.__getitem__(-7) == 3 });
-    raises(IndexError, function() { t.__getitem__(-8) });
-    raises(IndexError, function() { t.__getitem__(-9) });
+    raises(py.IndexError, function() { t.__getitem__(-8) });
+    raises(py.IndexError, function() { t.__getitem__(-9) });
 
-    raises(TypeError, function() { t.__setitem__(7, 0) });
-    raises(TypeError, function() { t.__delitem__(7) });
+    raises(py.TypeError, function() { t.__setitem__(7, 0) });
+    raises(py.TypeError, function() { t.__delitem__(7) });
 
     test(function() { return t.index(5) == 2 });
     test(function() { return t.count(5) == 2 });
@@ -934,15 +886,15 @@ function test_list() {
     test(function() { return len(t) == 0 });
 
     test(function() { return t.__contains__(5) == false });
-    raises(IndexError, function() { t.__getitem__(0) });
+    raises(py.IndexError, function() { t.__getitem__(0) });
 
-    raises(IndexError, function() { t.__setitem__(7, 0) });
-    raises(IndexError, function() { t.__delitem__(7) });
+    raises(py.IndexError, function() { t.__setitem__(7, 0) });
+    raises(py.IndexError, function() { t.__delitem__(7) });
 
-    raises(ValueError, function() { t.index(5) });
+    raises(py.ValueError, function() { t.index(5) });
     test(function() { return t.count(5) == 0 });
 
-    raises(AttributeError, function() { return hash(t) });
+    raises(py.AttributeError, function() { return hash(t) });
 
     var t = list([3, 4, 5, 5, 4, 4, 1]);
 
@@ -957,8 +909,8 @@ function test_list() {
     test(function() { return t.__getitem__(4) == 4 });
     test(function() { return t.__getitem__(5) == 4 });
     test(function() { return t.__getitem__(6) == 1 });
-    raises(IndexError, function() { t.__getitem__(7) });
-    raises(IndexError, function() { t.__getitem__(8) });
+    raises(py.IndexError, function() { t.__getitem__(7) });
+    raises(py.IndexError, function() { t.__getitem__(8) });
     test(function() { return t.__getitem__(-1) == 1 });
     test(function() { return t.__getitem__(-2) == 4 });
     test(function() { return t.__getitem__(-3) == 4 });
@@ -966,16 +918,16 @@ function test_list() {
     test(function() { return t.__getitem__(-5) == 5 });
     test(function() { return t.__getitem__(-6) == 4 });
     test(function() { return t.__getitem__(-7) == 3 });
-    raises(IndexError, function() { t.__getitem__(-8) });
-    raises(IndexError, function() { t.__getitem__(-9) });
+    raises(py.IndexError, function() { t.__getitem__(-8) });
+    raises(py.IndexError, function() { t.__getitem__(-9) });
 
-    raises(IndexError, function() { t.__setitem__(7, 0) });
-    raises(IndexError, function() { t.__delitem__(7) });
+    raises(py.IndexError, function() { t.__setitem__(7, 0) });
+    raises(py.IndexError, function() { t.__delitem__(7) });
 
     test(function() { return t.index(5) == 2 });
     test(function() { return t.count(5) == 2 });
 
-    raises(AttributeError, function() { return hash(t) });
+    raises(py.AttributeError, function() { return hash(t) });
 
     t.append(3);
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1, 3]' });
@@ -992,7 +944,7 @@ function test_list() {
     test(function() { return str(t) == '[3, 5, 4, 4, 1]' });
     t.__delitem__(0);
     test(function() { return str(t) == '[5, 4, 4, 1]' });
-    raises(IndexError, function() { t.__delitem__(4) });
+    raises(py.IndexError, function() { t.__delitem__(4) });
 
     t.__setitem__(0, 1);
     test(function() { return str(t) == '[1, 4, 4, 1]' });
@@ -1002,8 +954,8 @@ function test_list() {
     test(function() { return str(t) == '[1, 2, 3, 1]' });
     t.__setitem__(3, 4);
     test(function() { return str(t) == '[1, 2, 3, 4]' });
-    raises(IndexError, function() { t.__setitem__(4, 5) });
-    raises(IndexError, function() { t.__setitem__(5, 6) });
+    raises(py.IndexError, function() { t.__setitem__(4, 5) });
+    raises(py.IndexError, function() { t.__setitem__(5, 6) });
     t.__setitem__(-1, 1);
     test(function() { return str(t) == '[1, 2, 3, 1]' });
     t.__setitem__(-2, 2);
@@ -1012,8 +964,8 @@ function test_list() {
     test(function() { return str(t) == '[1, 3, 2, 1]' });
     t.__setitem__(-4, 4);
     test(function() { return str(t) == '[4, 3, 2, 1]' });
-    raises(IndexError, function() { t.__setitem__(-5, 5) });
-    raises(IndexError, function() { t.__setitem__(-6, 6) });
+    raises(py.IndexError, function() { t.__setitem__(-5, 5) });
+    raises(py.IndexError, function() { t.__setitem__(-6, 6) });
 
 
     t = list([1, 2, 3, 4])
@@ -1057,8 +1009,8 @@ function test_map() {
     test(function() { return str(map(f, list())) == '[]' });
     test(function() { return str(map(f, a)) == '[1, 4, 9]' });
 
-    raises(TypeError, function() { map(f) });
-    raises(NotImplementedError, function() { map(f, a, a) });
+    raises(py.TypeError, function() { map(f) });
+    raises(py.NotImplementedError, function() { map(f, a, a) });
 }
 
 function test_zip() {
@@ -1087,12 +1039,74 @@ function test_zip() {
 
 function test_isinstance() {
     test(function() {
-        return isinstance(new StopIteration(), StopIteration) == true;
+        return isinstance(new py.StopIteration(), py.StopIteration) == true;
     });
 
     test(function() {
-        return isinstance(new StopIteration(), ValueError) == false;
+        return isinstance(new py.StopIteration(), py.ValueError) == false;
     });
+}
+
+function test_exceptions() {
+    var e = new py.NotImplementedError('not implemented');
+
+    test(function() { return e.__class__.__name__ == 'NotImplementedError' });
+    test(function() { return e.message == 'not implemented' });
+
+    var e = new py.ZeroDivisionError('division by zero');
+
+    test(function() { return e.__class__.__name__ == 'ZeroDivisionError' });
+    test(function() { return e.message == 'division by zero' });
+
+    var e = new py.AssertionError('assertion error');
+
+    test(function() { return e.__class__.__name__ == 'AssertionError' });
+    test(function() { return e.message == 'assertion error' });
+
+    var e = new py.AttributeError('attribute error');
+
+    test(function() { return e.__class__.__name__ == 'AttributeError' });
+    test(function() { return e.message == 'attribute error' });
+
+    var e = new py.RuntimeError('runtime error');
+
+    test(function() { return e.__class__.__name__ == 'RuntimeError' });
+    test(function() { return e.message == 'runtime error' });
+
+    var e = new py.ImportError('import error');
+
+    test(function() { return e.__class__.__name__ == 'ImportError' });
+    test(function() { return e.message == 'import error' });
+
+    var e = new py.TypeError('type error');
+
+    test(function() { return e.__class__.__name__ == 'TypeError' });
+    test(function() { return e.message == 'type error' });
+
+    var e = new py.ValueError('value error');
+
+    test(function() { return e.__class__.__name__ == 'ValueError' });
+    test(function() { return e.message == 'value error' });
+
+    var e = new py.NameError('name error');
+
+    test(function() { return e.__class__.__name__ == 'NameError' });
+    test(function() { return e.message == 'name error' });
+
+    var e = new py.IndexError('index error');
+
+    test(function() { return e.__class__.__name__ == 'IndexError' });
+    test(function() { return e.message == 'index error' });
+
+    var e = new py.KeyError('key error');
+
+    test(function() { return e.__class__.__name__ == 'KeyError' });
+    test(function() { return e.message == 'key error' });
+
+    var e = new py.StopIteration('stop iteration');
+
+    test(function() { return e.__class__.__name__ == 'StopIteration' });
+    test(function() { return e.message == 'stop iteration' });
 }
 
 function tests() {
@@ -1105,6 +1119,7 @@ function tests() {
         test_map();
         test_zip();
         test_isinstance();
+        test_exceptions();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
