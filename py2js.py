@@ -280,11 +280,15 @@ class JS(object):
                     self.dummy, i))
 
             self.dummy += 1
+        elif isinstance(target, ast.Subscript):
+            js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value),
+                self.visit(target.slice), value)]
         else:
             js = ["%s = %s;" % (self.visit(target), value)]
         return js
 
     def visit_AugAssign(self, node):
+        # TODO: Make sure that all the logic in Assign also works in AugAssign
         target = self.visit(node.target)
         value = self.visit(node.value)
 
@@ -515,7 +519,7 @@ class JS(object):
 
     def visit_List(self, node):
         els = [self.visit(e) for e in node.elts]
-        return "[%s]" % (", ".join(els))
+        return "list([%s])" % (", ".join(els))
 
     def visit_Slice(self, node):
         if node.lower is None and node.upper is None and node.step is None:
@@ -524,7 +528,7 @@ class JS(object):
             raise NotImplementedError("Slice")
 
     def visit_Subscript(self, node):
-        return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
+        return "%s.__getitem__(%s)" % (self.visit(node.value), self.visit(node.slice))
 
     def visit_Index(self, node):
         return self.visit(node.value)

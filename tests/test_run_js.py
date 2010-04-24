@@ -2,6 +2,7 @@ import os
 
 from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
         ifs2, ifs3, ifs4, loop1, tuple1, tuple2, tuple3, tuple4, tuple5,
+        list1, list2, list3,
         Class1, Class2, Class3)
 
 def test(func, run):
@@ -45,6 +46,11 @@ test(tuple4, "assert(tuple4(4) == 1);")
 test(tuple4, "assert(tuple4(5) == 0);")
 test(tuple5, "assert(tuple5(1) == 0);")
 test(tuple5, "assert(tuple5(4) == 3);")
+
+test(list1, "assert(list1(4) == 10);")
+test(list1, "assert(list1(5) == 11);")
+test(list2, "assert(list2() == '[0, 1, 2, 3, 4]');")
+test(list3, "assert(list3() == '[5, 1, 2, 3, 0]');")
 
 test(loop1, "assert(loop1(4) == 6);")
 
