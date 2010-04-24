@@ -1,0 +1,193 @@
+<html>
+<head>
+<script language="JavaScript" src="../defs.js"></script>
+<script language="JavaScript">
+function StartGoL() {
+    window.gol = GoL();
+}
+function GoL() {
+    return new _GoL();
+}
+function _GoL() {
+    this.__init__();
+}
+_GoL.__name__ = 'GoL'
+_GoL.prototype.__class__ = _GoL
+_GoL.prototype.__init__ = function() {
+    this.width = 75;
+    this.height = 75;
+    this.canvas = document.getElementById("canvas").getContext("2d");
+    this.canvas.fillStyle = "rgb(0, 0, 0)";
+    this.grid = list(range((this.width)*(this.height)));
+    var __dummy0__ = iter(range((this.width)*(this.height)));
+    var __dummy1__ = false;
+    while (1) {
+        var i;
+        try {
+            i = __dummy0__.next();
+        } catch (__dummy2__) {
+            if (__dummy2__.__class__ == StopIteration) {
+                __dummy1__ = true;
+                break;
+            } else {
+                throw __dummy2__;
+            }
+        }
+        this.grid.__setitem__(i, Math.random() > 0.5);
+    }
+    setInterval("window.gol.iter()",250);
+    this.draw();
+}
+_GoL.prototype.get = function(x, y) {
+    return this.grid.__getitem__((((x)+(this.width))%(this.width))+((((y)+(this.height))%(this.height))*(this.width)));
+}
+_GoL.prototype.iter = function() {
+    toDie = list([]);
+    toLive = list([]);
+    var __dummy3__ = iter(range(0,this.width));
+    var __dummy4__ = false;
+    while (1) {
+        var x;
+        try {
+            x = __dummy3__.next();
+        } catch (__dummy5__) {
+            if (__dummy5__.__class__ == StopIteration) {
+                __dummy4__ = true;
+                break;
+            } else {
+                throw __dummy5__;
+            }
+        }
+        var __dummy6__ = iter(range(0,this.height));
+        var __dummy7__ = false;
+        while (1) {
+            var y;
+            try {
+                y = __dummy6__.next();
+            } catch (__dummy8__) {
+                if (__dummy8__.__class__ == StopIteration) {
+                    __dummy7__ = true;
+                    break;
+                } else {
+                    throw __dummy8__;
+                }
+            }
+            count = 0;
+            if (this.get((x)-(1),(y)-(1))) {
+                count += 1;
+            }
+            if (this.get(x,(y)-(1))) {
+                count += 1;
+            }
+            if (this.get((x)+(1),(y)-(1))) {
+                count += 1;
+            }
+            if (this.get((x)-(1),y)) {
+                count += 1;
+            }
+            if (this.get((x)+(1),y)) {
+                count += 1;
+            }
+            if (this.get((x)-(1),(y)+(1))) {
+                count += 1;
+            }
+            if (this.get(x,(y)+(1))) {
+                count += 1;
+            }
+            if (this.get((x)+(1),(y)+(1))) {
+                count += 1;
+            }
+            if (this.get(x,y)) {
+                if (count < 2) {
+                    toDie.append((x)+((y)*(this.width)));
+                } else {
+                    if (count > 3) {
+                        toDie.append((x)+((y)*(this.width)));
+                    }
+                }
+            } else {
+                if (count == 3) {
+                    toLive.append((x)+((y)*(this.width)));
+                }
+            }
+        }
+    }
+    var __dummy9__ = iter(range(len(toDie)));
+    var __dummy10__ = false;
+    while (1) {
+        var i;
+        try {
+            i = __dummy9__.next();
+        } catch (__dummy11__) {
+            if (__dummy11__.__class__ == StopIteration) {
+                __dummy10__ = true;
+                break;
+            } else {
+                throw __dummy11__;
+            }
+        }
+        this.grid.__setitem__(toDie.__getitem__(i), false);
+    }
+    var __dummy12__ = iter(range(len(toLive)));
+    var __dummy13__ = false;
+    while (1) {
+        var i;
+        try {
+            i = __dummy12__.next();
+        } catch (__dummy14__) {
+            if (__dummy14__.__class__ == StopIteration) {
+                __dummy13__ = true;
+                break;
+            } else {
+                throw __dummy14__;
+            }
+        }
+        this.grid.__setitem__(toLive.__getitem__(i), true);
+    }
+    this.draw();
+}
+_GoL.prototype.draw = function() {
+    i = 0;
+    var __dummy15__ = iter(range(0,(this.width)*(10),10));
+    var __dummy16__ = false;
+    while (1) {
+        var x;
+        try {
+            x = __dummy15__.next();
+        } catch (__dummy17__) {
+            if (__dummy17__.__class__ == StopIteration) {
+                __dummy16__ = true;
+                break;
+            } else {
+                throw __dummy17__;
+            }
+        }
+        var __dummy18__ = iter(range(0,(this.height)*(10),10));
+        var __dummy19__ = false;
+        while (1) {
+            var y;
+            try {
+                y = __dummy18__.next();
+            } catch (__dummy20__) {
+                if (__dummy20__.__class__ == StopIteration) {
+                    __dummy19__ = true;
+                    break;
+                } else {
+                    throw __dummy20__;
+                }
+            }
+            if (this.grid.__getitem__(i)) {
+                this.canvas.fillRect(x,y,(x)+(10),(y)+(10));
+            } else {
+                this.canvas.clearRect(x,y,(x)+(10),(y)+(10));
+            }
+            i += 1;
+        }
+    }
+}
+</script>
+</head>
+<body onLoad="StartGoL()">
+    <canvas id="canvas" width="750" height="750"></canvas>
+</body>
+</html>
