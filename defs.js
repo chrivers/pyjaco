@@ -578,8 +578,11 @@ _list.prototype.append = function(value) {
 }
 
 _list.prototype.pop = function() {
-    this._len = -1;
-    return this._items.pop();
+    if (len(this) > 0) {
+        this._len = -1;
+        return this._items.pop();
+    } else
+        throw new py.IndexError("pop from empty list");
 }
 
 /* Python 'dict' type */
@@ -1028,6 +1031,7 @@ function test_list() {
     test(function() { return str(t) == '[1]' });
     test(function() { return t.pop() == 1 });
     test(function() { return str(t) == '[]' });
+    raises(py.IndexError, function() { t.pop() });
 
     t = list([4, 3, 1, 2]);
     test(function() { return str(t) == '[4, 3, 1, 2]' });
