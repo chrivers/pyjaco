@@ -296,6 +296,52 @@ _iter.prototype.next = function() {
     }
 }
 
+/* Python 'slice' object */
+
+function slice(start, stop, step) {
+    return new _slice(start, stop, step);
+}
+
+function _slice(start, stop, step) {
+    this.__init__(start, stop, step);
+}
+
+_slice.__name__ = 'slice';
+_slice.prototype.__class__ = _slice;
+
+_slice.prototype.__init__ = function(start, stop, step) {
+    if (!defined(stop) && !defined(step))
+    {
+        stop = start;
+        start = null;
+    }
+    if (!start) start = null;
+    if (!defined(stop)) stop = null;
+    if (!defined(step)) step = null;
+    this.start = start;
+    this.stop = stop;
+    this.step = step;
+}
+
+_slice.prototype.__str__ = function() {
+    return "slice(" + this.start + ", " + this.stop + ", " + this.step + ")";
+};
+
+_slice.prototype.indices = function(n) {
+    var start = this.start;
+    if (start == null)
+        start = 0;
+    if (start > n)
+        start = n;
+    var stop = this.stop;
+    if (stop > n)
+        stop = n;
+    var step = this.step;
+    if (step == null)
+        step = 1;
+    return tuple([start, stop, step])
+};
+
 /* Python 'tuple' type */
 
 function tuple(seq) {
@@ -396,7 +442,11 @@ _tuple.prototype.__contains__ = function(item) {
 }
 
 _tuple.prototype.__getitem__ = function(index) {
-    if ((index >= 0) && (index < len(this)))
+    /*
+    if isinstance(index, _slice) {
+        var s = index;
+        if (s.
+    } else*/ if ((index >= 0) && (index < len(this)))
         return this._items[index]
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)]
@@ -1180,6 +1230,51 @@ function test_exceptions() {
     test(function() { return e.message == 'stop iteration' });
 }
 
+function test_slice() {
+    var s = slice(3);
+    test(function() { return s.start == null });
+    test(function() { return s.stop == 3 });
+    test(function() { return s.step == null });
+    test(function() { return s.indices(10).__eq__(tuple([0, 3, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple([0, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple([0, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple([0, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+
+    s = slice(1, 3);
+    test(function() { return s.start == 1 });
+    test(function() { return s.stop == 3 });
+    test(function() { return s.step == null });
+    test(function() { return s.indices(10).__eq__(tuple([1, 3, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple([1, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple([1, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+
+    s = slice(1, 10, 2);
+    test(function() { return s.start == 1 });
+    test(function() { return s.stop == 10 });
+    test(function() { return s.step == 2 });
+    test(function() { return s.indices(10).__eq__(tuple([1, 10, 2])) });
+    test(function() { return s.indices(3).__eq__(tuple([1, 3, 2])) });
+    test(function() { return s.indices(2).__eq__(tuple([1, 2, 2])) });
+    test(function() { return s.indices(1).__eq__(tuple([1, 1, 2])) });
+    test(function() { return s.indices(0).__eq__(tuple([0, 0, 2])) });
+
+    s = slice(4, 6, 1);
+    test(function() { return s.start == 4 });
+    test(function() { return s.stop == 6 });
+    test(function() { return s.step == 1 });
+    test(function() { return s.indices(10).__eq__(tuple([4, 6, 1])) });
+    test(function() { return s.indices(6).__eq__(tuple([4, 6, 1])) });
+    test(function() { return s.indices(5).__eq__(tuple([4, 5, 1])) });
+    test(function() { return s.indices(4).__eq__(tuple([4, 4, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple([3, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple([2, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+}
+
 function tests() {
     try {
         test_dict();
@@ -1191,6 +1286,7 @@ function tests() {
         test_zip();
         test_isinstance();
         test_exceptions();
+        test_slice();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
