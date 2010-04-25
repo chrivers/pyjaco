@@ -1,8 +1,10 @@
 import os
 
 from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
-        ifs2, ifs3, ifs4, loop1, tuple1, tuple2, tuple3, tuple4, tuple5,
-        list1, list2, list3,
+        ifs2, ifs3, ifs4, loop1,
+        tuple1, tuple2, tuple3, tuple4, tuple5, tuple6, tuple7, tuple8,
+        tuple9, tuple10,
+        list1, list2, list3, list4, list5, list6, list7, list8,
         Class1, Class2, Class3)
 
 def test(func, run):
@@ -46,11 +48,21 @@ test(tuple4, "assert(tuple4(4) == 1);")
 test(tuple4, "assert(tuple4(5) == 0);")
 test(tuple5, "assert(tuple5(1) == 0);")
 test(tuple5, "assert(tuple5(4) == 3);")
+test(tuple6, "assert(tuple6() == '(10, 11)');")
+test(tuple7, "assert(tuple7() == '(8, 9, 10, 11)');")
+test(tuple8, "assert(tuple8() == '(9, 11, 13)');")
+test(tuple9, "assert(tuple9() == '(8, 9, 10, 11, 12, 13, 14)');")
+test(tuple10, "assert(tuple10() == '(12, 13, 14)');")
 
 test(list1, "assert(list1(4) == 10);")
 test(list1, "assert(list1(5) == 11);")
 test(list2, "assert(list2() == '[0, 1, 2, 3, 4]');")
 test(list3, "assert(list3() == '[5, 1, 2, 3, 0]');")
+test(list4, "assert(list4() == '[10, 11]');")
+test(list5, "assert(list5() == '[8, 9, 10, 11]');")
+test(list6, "assert(list6() == '[9, 11, 13]');")
+test(list7, "assert(list7() == '[8, 9, 10, 11, 12, 13, 14]');")
+test(list8, "assert(list8() == '[12, 13, 14]');")
 
 test(loop1, "assert(loop1(4) == 6);")
 

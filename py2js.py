@@ -549,10 +549,19 @@ class JS(object):
         return "list([%s])" % (", ".join(els))
 
     def visit_Slice(self, node):
-        if node.lower is None and node.upper is None and node.step is None:
-            return ":"
-        else:
-            raise NotImplementedError("Slice")
+        if node.lower and node.upper and node.step:
+            return "slice(%s, %s, %s)" % (self.visit(node.lower),
+                    self.visit(node.upper), self.visit(node.step))
+        if node.lower and node.upper:
+            return "slice(%s, %s)" % (self.visit(node.lower),
+                    self.visit(node.upper))
+        if node.upper and not node.step:
+            return "slice(%s)" % (self.visit(node.upper))
+        if node.lower and not node.step:
+            return "slice(%s, null)" % (self.visit(node.lower))
+        if not node.lower and not node.upper and not node.step:
+            return "slice(null)"
+        raise NotImplementedError("Slice")
 
     def visit_Subscript(self, node):
         return "%s.__getitem__(%s)" % (self.visit(node.value), self.visit(node.slice))

@@ -141,6 +141,31 @@ def tuple5(n):
     return a.index(n)
 
 @JavaScript
+def tuple6():
+    a = (8, 9, 10, 11, 12, 13, 14)
+    return a[2:4]
+
+@JavaScript
+def tuple7():
+    a = (8, 9, 10, 11, 12, 13, 14)
+    return a[:4]
+
+@JavaScript
+def tuple8():
+    a = (8, 9, 10, 11, 12, 13, 14)
+    return a[1:6:2]
+
+@JavaScript
+def tuple9():
+    a = (8, 9, 10, 11, 12, 13, 14)
+    return a[:]
+
+@JavaScript
+def tuple10():
+    a = (8, 9, 10, 11, 12, 13, 14)
+    return a[4:]
+
+@JavaScript
 def list1(n):
     a = []
     a.append(1)
@@ -160,6 +185,31 @@ def list3():
     a[0] = 5
     a[4] = 0
     return str(a)
+
+@JavaScript
+def list4():
+    a = [8, 9, 10, 11, 12, 13, 14]
+    return a[2:4]
+
+@JavaScript
+def list5():
+    a = [8, 9, 10, 11, 12, 13, 14]
+    return a[:4]
+
+@JavaScript
+def list6():
+    a = [8, 9, 10, 11, 12, 13, 14]
+    return a[1:6:2]
+
+@JavaScript
+def list7():
+    a = [8, 9, 10, 11, 12, 13, 14]
+    return a[:]
+
+@JavaScript
+def list8():
+    a = [8, 9, 10, 11, 12, 13, 14]
+    return a[4:]
 
 @JavaScript
 def is_on_the_left(c, a, b, pts_list):
