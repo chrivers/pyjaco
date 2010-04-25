@@ -58,6 +58,26 @@ function _new(cls, arg) {
     return new cls(arg)
 }
 
+function to_js(obj) {
+    /*
+       Converts (recursively) a Python object to a javascript builtin object.
+
+       In particular:
+
+       tuple -> Array
+       list -> Array
+       dict -> Array
+
+       It uses the obj._to_js() if it is defined, otherwise it just returns the
+       same object. It is the responsibility of _to_js() to convert recursively
+       the object itself.
+    */
+    if (defined(obj._to_js))
+        return obj._to_js();
+    else
+        return obj;
+}
+
 /* Python built-in exceptions */
 
 py.__exceptions__ = [
@@ -399,6 +419,16 @@ _tuple.prototype.toString = function () {
     return this.__str__();
 }
 
+_tuple.prototype._to_js = function () {
+    var items = [];
+
+    iterate(iter(this), function(item) {
+        items.push(to_js(item));
+    });
+
+    return items;
+}
+
 _tuple.prototype.__hash__ = function () {
     var value = 0x345678;
     var length = this.__len__();
@@ -530,6 +560,8 @@ _list.prototype.__eq__ = _tuple.prototype.__eq__;
 
 _list.prototype.toString = _tuple.prototype.toString;
 
+_list.prototype._to_js = _tuple.prototype._to_js;
+
 _list.prototype.__len__ = _tuple.prototype.__len__;
 
 _list.prototype.__iter__ = _tuple.prototype.__iter__;
@@ -634,6 +666,17 @@ _dict.prototype.__str__ = function () {
 
 _dict.prototype.toString = function () {
     return this.__str__();
+}
+
+_dict.prototype._to_js = function () {
+    var items = {};
+
+    var _this_dict = this; // so that we can access it from within the closure:
+    iterate(iter(this), function(key) {
+        items[key] = to_js(_this_dict.__getitem__(key));
+    });
+
+    return items;
 }
 
 _dict.prototype.__hash__ = function () {

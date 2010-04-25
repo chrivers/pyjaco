@@ -600,6 +600,38 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(list([])) });
 }
 
+function test_to_js() {
+    var t = to_js(tuple([1, "s"]));
+    test(function() { return t.length == 2 });
+    test(function() { return t[0] == 1 });
+    test(function() { return t[1] == "s" });
+
+    t = to_js(list([1, "s"]));
+    test(function() { return t.length == 2 });
+    test(function() { return t[0] == 1 });
+    test(function() { return t[1] == "s" });
+
+    t = to_js(dict({1: "s", 2: 3}));
+    test(function() { return t[1] == "s" });
+    test(function() { return t[2] == 3 });
+
+    var t = to_js(tuple([1, "s", dict({1: "s", 2: 3})]));
+    test(function() { return t.length == 3 });
+    test(function() { return t[0] == 1 });
+    test(function() { return t[1] == "s" });
+    test(function() { return t[2][1] == "s" });
+    test(function() { return t[2][2] == 3 });
+
+    var t = to_js(tuple([1, "s", dict({1: "s", 2: 3, "x": tuple([8, 9])})]));
+    test(function() { return t.length == 3 });
+    test(function() { return t[0] == 1 });
+    test(function() { return t[1] == "s" });
+    test(function() { return t[2][1] == "s" });
+    test(function() { return t[2][2] == 3 });
+    test(function() { return t[2]["x"][0] == 8 });
+    test(function() { return t[2]["x"][1] == 9 });
+}
+
 function tests() {
     try {
         test_dict();
@@ -612,6 +644,7 @@ function tests() {
         test_isinstance();
         test_exceptions();
         test_slice();
+        test_to_js();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
