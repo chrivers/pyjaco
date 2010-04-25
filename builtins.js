@@ -368,13 +368,17 @@ _tuple.prototype.__hash__ = function () {
 }
 
 _tuple.prototype.__len__ = function() {
-    var count = 0;
+    if (this._len == -1) {
+        var count = 0;
 
-    for (var index in this._items) {
-        count += 1;
-    }
+        for (var index in this._items) {
+            count += 1;
+        }
 
-    return count;
+        this._len = count;
+        return count;
+    } else
+        return this._len;
 }
 
 _tuple.prototype.__iter__ = function() {
@@ -457,60 +461,21 @@ function _list(seq) {
 _list.__name__ = 'list';
 _list.prototype.__class__ = _list;
 
-_list.prototype.__init__ = function(seq) {
-    if (!defined(seq)) {
-        this._items = [];
-        this._len = 0;
-    } else {
-        this._items = copy(iter(seq));
-        this._len = -1;
-    }
-}
+_list.prototype.__init__ = _tuple.prototype.__init__;
 
 _list.prototype.__str__ = function () {
     return "[" + this._items.join(", ") + "]";
 }
 
-_list.prototype.toString = function () {
-    return this.__str__();
-}
+_list.prototype.toString = _tuple.prototype.toString;
 
-_list.prototype.__len__ = function() {
-    if (this._len == -1) {
-        var count = 0;
+_list.prototype.__len__ = _tuple.prototype.__len__;
 
-        for (var index in this._items) {
-            count += 1;
-        }
+_list.prototype.__iter__ = _tuple.prototype.__iter__;
 
-        this._len = count;
-        return count;
-    } else
-        return this._len;
-}
+_list.prototype.__contains__ = _tuple.prototype.__contains__;
 
-_list.prototype.__iter__ = function() {
-    return new _iter(this._items);
-}
-
-_list.prototype.__contains__ = function(item) {
-    for (var index in this._items) {
-        if (item == this._items[index]) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-_list.prototype.__getitem__ = function(index) {
-    if ((index >= 0) && (index < len(this)))
-        return this._items[index]
-    else if ((index < 0) && (index >= -len(this)))
-        return this._items[index+len(this)]
-    else
-        throw new py.IndexError("list assignment index out of range");
-}
+_list.prototype.__getitem__ = _tuple.prototype.__getitem__;
 
 _list.prototype.__setitem__ = function(index, value) {
     if ((index >= 0) && (index < len(this)))
@@ -531,17 +496,7 @@ _list.prototype.__delitem__ = function(index) {
         throw new py.IndexError("list assignment index out of range");
 }
 
-_list.prototype.count = function(value) {
-    var count = 0;
-
-    for (var index in this._items) {
-        if (value == this._items[index]) {
-            count += 1;
-        }
-    }
-
-    return count;
-}
+_list.prototype.count = _tuple.prototype.count;
 
 _list.prototype.index = function(value, start, end) {
     if (!defined(start)) {
