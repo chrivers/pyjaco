@@ -336,6 +336,8 @@ _slice.prototype.indices = function(n) {
     var stop = this.stop;
     if (stop > n)
         stop = n;
+    if (stop == null)
+        stop = n;
     var step = this.step;
     if (step == null)
         step = 1;
@@ -378,7 +380,7 @@ _tuple.prototype.__str__ = function () {
 }
 
 _tuple.prototype.__eq__ = function (other) {
-    if (other.__class__.__name__ == "tuple") {
+    if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
             return false
         for (var i = 0; i < len(this); i++) {
@@ -442,11 +444,18 @@ _tuple.prototype.__contains__ = function(item) {
 }
 
 _tuple.prototype.__getitem__ = function(index) {
-    /*
-    if isinstance(index, _slice) {
+    if (isinstance(index, _slice)) {
         var s = index;
-        if (s.
-    } else*/ if ((index >= 0) && (index < len(this)))
+        var inds = s.indices(len(this));
+        var start = inds.__getitem__(0);
+        var stop = inds.__getitem__(1);
+        var step = inds.__getitem__(2);
+        seq = [];
+        for (var i = start; i < stop; i += step) {
+            seq.push(this.__getitem__(i));
+        }
+        return new this.__class__(seq);
+    } else if ((index >= 0) && (index < len(this)))
         return this._items[index]
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)]
@@ -516,6 +525,8 @@ _list.prototype.__init__ = _tuple.prototype.__init__;
 _list.prototype.__str__ = function () {
     return "[" + this._items.join(", ") + "]";
 }
+
+_list.prototype.__eq__ = _tuple.prototype.__eq__;
 
 _list.prototype.toString = _tuple.prototype.toString;
 
@@ -1241,6 +1252,42 @@ function test_slice() {
     test(function() { return s.indices(1).__eq__(tuple([0, 1, 1])) });
     test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
 
+    var t = tuple([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9, 10])) });
+    t = tuple([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
+    t = tuple([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
+    t = list([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list([8, 9, 10])) });
+    t = list([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list([8, 9])) });
+    t = list([8]);
+    test(function() { return t.__getitem__(s).__eq__(list([8])) });
+
+    s = slice(null);
+    test(function() { return s.start == null });
+    test(function() { return s.stop == null });
+    test(function() { return s.step == null });
+    test(function() { return s.indices(10).__eq__(tuple([0, 10, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple([0, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple([0, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple([0, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+
+    var t = tuple([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9, 10, 11, 12])) });
+    t = tuple([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
+    t = tuple([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
+    t = list([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list([8, 9, 10, 11, 12])) });
+    t = list([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list([8, 9])) });
+    t = list([8]);
+    test(function() { return t.__getitem__(s).__eq__(list([8])) });
+
     s = slice(1, 3);
     test(function() { return s.start == 1 });
     test(function() { return s.stop == 3 });
@@ -1251,6 +1298,19 @@ function test_slice() {
     test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
     test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
 
+    t = tuple([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([9, 10])) });
+    t = tuple([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
+    t = tuple([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = list([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list([9, 10])) });
+    t = list([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list([9])) });
+    t = list([8]);
+    test(function() { return t.__getitem__(s).__eq__(list([])) });
+
     s = slice(1, 10, 2);
     test(function() { return s.start == 1 });
     test(function() { return s.stop == 10 });
@@ -1260,6 +1320,23 @@ function test_slice() {
     test(function() { return s.indices(2).__eq__(tuple([1, 2, 2])) });
     test(function() { return s.indices(1).__eq__(tuple([1, 1, 2])) });
     test(function() { return s.indices(0).__eq__(tuple([0, 0, 2])) });
+
+    t = tuple([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([9, 11, 13])) });
+    t = tuple([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([9, 11])) });
+    t = tuple([8, 9, 10]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
+    t = tuple([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = list([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(list([9, 11, 13])) });
+    t = list([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list([9, 11])) });
+    t = list([8, 9, 10]);
+    test(function() { return t.__getitem__(s).__eq__(list([9])) });
+    t = list([8]);
+    test(function() { return t.__getitem__(s).__eq__(list([])) });
 
     s = slice(4, 6, 1);
     test(function() { return s.start == 4 });
@@ -1273,6 +1350,23 @@ function test_slice() {
     test(function() { return s.indices(2).__eq__(tuple([2, 2, 1])) });
     test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
     test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+
+    t = tuple([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([12, 13])) });
+    t = tuple([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([12])) });
+    t = tuple([8, 9, 10, 11]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = tuple([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = list([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(list([12, 13])) });
+    t = list([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list([12])) });
+    t = list([8, 9, 10, 11]);
+    test(function() { return t.__getitem__(s).__eq__(list([])) });
+    t = list([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list([])) });
 }
 
 function tests() {
