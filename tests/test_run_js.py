@@ -7,7 +7,7 @@ from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
 
 def test(func, run):
     run_file = "/tmp/run.js"
-    defs = open("defs.js").read()
+    defs = open("builtins.js").read()
     with open(run_file, "w") as f:
         f.write(defs)
         f.write("\n")

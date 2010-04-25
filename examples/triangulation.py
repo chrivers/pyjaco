@@ -210,7 +210,7 @@ def main():
     print """<html>
 <head>
 <script language="JavaScript" src="../math.js"></script>
-<script language="JavaScript" src="../defs.js"></script>
+<script language="JavaScript" src="../builtins.js"></script>
 <script language="JavaScript">
 %s
 </script>
