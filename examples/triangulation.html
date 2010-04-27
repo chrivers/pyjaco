@@ -127,6 +127,7 @@ function is_boundary_edge(a, b, bdy_edges) {
 function triangulate_af(pts_list, bdy_edges) {
     "\n" + "    Create a triangulation using the advancing front method.\n" + "    ";
     elems = list([]);
+    bdy_edges = bdy_edges.__getitem__(slice(null));
     while (len(bdy_edges) > 0) {
         var __dummy0__ = bdy_edges.pop();
         a = __dummy0__.__getitem__(0);
@@ -189,17 +190,16 @@ function edge_intersects_edges(e1, nodes, edges) {
 function example1() {
     var __dummy0__ = example2();
     nodes = __dummy0__.__getitem__(0);
-    s1 = __dummy0__.__getitem__(1);
+    edges = __dummy0__.__getitem__(1);
     elems = __dummy0__.__getitem__(2);
-    result = ((((str(nodes))+("\n" + ""))+(s1))+("\n" + ""))+(str(elems));
+    result = ((((str(nodes))+("\n" + ""))+(str(edges)))+("\n" + ""))+(str(elems));
     return result;
 }
 function example2() {
     nodes = list([tuple([0, 0]), tuple([1, 0]), tuple([2, 1]), tuple([2, 2]), tuple([1, 2]), tuple([0.5, 1.5]), tuple([0, 1])]);
     edges = list([tuple([0, 1]), tuple([1, 2]), tuple([2, 3]), tuple([3, 4]), tuple([4, 5]), tuple([5, 0])]);
-    s1 = str(edges);
     elems = triangulate_af(nodes,edges);
-    return tuple([nodes, s1, elems]);
+    return tuple([nodes, edges, elems]);
 }
 function start_triag() {
     js_pre = document.getElementById("js_pre");
@@ -210,7 +210,7 @@ function start_triag() {
     js_pre.textContent = example1();
     var __dummy0__ = example2();
     nodes = __dummy0__.__getitem__(0);
-    s1 = __dummy0__.__getitem__(1);
+    edges = __dummy0__.__getitem__(1);
     elems = __dummy0__.__getitem__(2);
     scale = 50;
     x0 = 3;

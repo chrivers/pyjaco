@@ -78,7 +78,7 @@ def triangulate_af(pts_list, bdy_edges):
     """
     # create empty list of elements
     elems = []
-    #bdy_edges = bdy_edges[:]
+    bdy_edges = bdy_edges[:]
     # main loop
     while len(bdy_edges) > 0:
         # take the last item from the list of bdy edges (and remove it)
@@ -137,7 +137,7 @@ def start_triag():
     canvas.fillText("Mesh", 100, 10)
     js_pre.textContent = "triag"
     js_pre.textContent = example1()
-    nodes, s1, elems = example2()
+    nodes, edges, elems = example2()
     scale = 50
     x0 = 3
     canvas.strokeStyle = 'rgb(0, 0, 255)'
@@ -165,8 +165,8 @@ def start_triag():
 
 @JavaScript
 def example1():
-    nodes, s1, elems = example2()
-    result = str(nodes) + "\n" + s1 + "\n" + str(elems)
+    nodes, edges, elems = example2()
+    result = str(nodes) + "\n" + str(edges) + "\n" + str(elems)
     return result
 
 @JavaScript
@@ -181,9 +181,8 @@ def example2():
             (0, 1),
             ]
     edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)]
-    s1 = str(edges)
     elems = triangulate_af(nodes, edges)
-    return nodes, s1, elems
+    return nodes, edges, elems
 
 
 def main():
