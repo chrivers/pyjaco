@@ -22,4 +22,4 @@ python examples/gol.py > examples/gol.html
 License
 -------
 
-BSD
+MIT, see the LICENSE file for exact details.
