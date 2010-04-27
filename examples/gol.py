@@ -69,6 +69,7 @@ class GoL(object):
 def main():
     print """<html>
 <head>
+<!--[if IE]><script type="text/javascript" src="http://excanvas.freehostia.com/excanvas.js"></script><![endif]-->
 <script language="JavaScript" src="../builtins.js"></script>
 <script language="JavaScript">
 %s

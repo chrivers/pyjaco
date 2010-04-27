@@ -173,6 +173,7 @@ def main():
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <!--[if IE]><script type="text/javascript" src="http://excanvas.freehostia.com/excanvas.js"></script><![endif]-->
   <link rel="stylesheet" type="text/css" href="http://www.extjs.com/deploy/dev/resources/css/ext-all.css">
   <script type="text/javascript" src="http://www.extjs.com/deploy/dev/adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="http://www.extjs.com/deploy/dev/ext-all.js"></script>
