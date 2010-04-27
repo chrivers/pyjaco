@@ -4,6 +4,7 @@ from test_compile_js import (f1, f2, f3, f3b, f3c, f3d, f3e, f4, f5, ifs1,
         ifs2, ifs3, ifs4, loop1,
         tuple1, tuple2, tuple3, tuple4, tuple5, tuple6, tuple7, tuple8,
         tuple9, tuple10,
+        dict1, dict2, dict3,
         list1, list2, list3, list4, list5, list6, list7, list8,
         Class1, Class2, Class3)
 
@@ -79,3 +80,7 @@ a = Class3();
 assert(a.test1(3) == 5);
 assert(a.test2(3) == 6);
 """)
+
+test(dict1, "assert(dict1() == 2);")
+test(dict2, "assert(dict2() == 7);")
+test(dict3, "assert(dict3() == 7);")
