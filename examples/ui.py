@@ -52,7 +52,7 @@ def clickHandler():
 
 @JavaScript
 def toolbar_mesh1(b, e):
-    canvas = document.getElementById('canvas').getContext('2d')
+    canvas = Ext.getDom('canvas').getContext('2d')
     canvas.fillText("Mesh I", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
@@ -67,7 +67,7 @@ def toolbar_mesh1(b, e):
 
 @JavaScript
 def toolbar_mesh2(b, e):
-    canvas = document.getElementById('canvas').getContext('2d')
+    canvas = Ext.getDom('canvas').getContext('2d')
     canvas.fillText("Mesh II", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
@@ -82,7 +82,7 @@ def toolbar_mesh2(b, e):
 
 @JavaScript
 def toolbar_mesh3(b, e):
-    canvas = document.getElementById('canvas').getContext('2d')
+    canvas = Ext.getDom('canvas').getContext('2d')
     canvas.fillText("Mesh III", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
