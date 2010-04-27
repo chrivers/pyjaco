@@ -181,7 +181,7 @@ function range(start, end, step) {
     if (py.__python3__)
         return iter(seq);
     else
-        return seq;
+        return list(seq);
 }
 
 function map() {
