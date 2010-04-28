@@ -9,27 +9,27 @@
   <title id="page-title">Title</title>
   <script type="text/javascript">
 function get_menu1() {
-    items = list([dict({text: "Open..."}), dict({text: "Save..."}), "-", dict({text: "Close"})]);
+    var items = list([dict({text: "Open..."}), dict({text: "Save..."}), "-", dict({text: "Close"})]);
     return _new(Ext.menu.Menu,to_js(dict({id: "basicMenu", items: items})));
 }
 function get_menu3() {
-    items = tuple([dict({"text": "Help", "handler": menu_help}), "-", dict({"text": "About Mesh Editor", "handler": menu_about})]);
+    var items = tuple([dict({"text": "Help", "handler": menu_help}), "-", dict({"text": "About Mesh Editor", "handler": menu_about})]);
     return _new(Ext.menu.Menu,to_js(dict({id: "basicMenu2", items: items})));
 }
 function menu_about() {
     Ext.MessageBox.show(to_js(dict({title: "About", msg: "FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR", buttons: Ext.MessageBox.OK, animEl: "mb9", icon: Ext.MessageBox.INFO})));
 }
 function menu_help() {
-    tabs2 = _new(Ext.TabPanel,to_js(dict({activeTab: 2, width: 600, height: 250, plain: true, defaults: dict({autoScroll: true}), items: list([dict({title: "Introduction", html: "This is the mesh editor.<p/><br/>Browse the tabs for more help."}), dict({title: "Mesh", html: "Create the mesh by adding points to the <b>canvas</b>."}), dict({title: "Developing", html: "Documentation:<br/><a href='http://www.extjs.com/deploy/dev/docs/'>ExtJS</a><br/><a href='http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html'>HTML5 Canvas</a>"}), dict({title: "About", html: "Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR."})])})));
-    w = _new(Ext.Window,to_js(dict({renderTo: "mesh-editor-help", layout: "fit", width: 500, height: 300, title: "Help", items: tabs2})));
+    var tabs2 = _new(Ext.TabPanel,to_js(dict({activeTab: 2, width: 600, height: 250, plain: true, defaults: dict({autoScroll: true}), items: list([dict({title: "Introduction", html: "This is the mesh editor.<p/><br/>Browse the tabs for more help."}), dict({title: "Mesh", html: "Create the mesh by adding points to the <b>canvas</b>."}), dict({title: "Developing", html: "Documentation:<br/><a href='http://www.extjs.com/deploy/dev/docs/'>ExtJS</a><br/><a href='http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html'>HTML5 Canvas</a>"}), dict({title: "About", html: "Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR."})])})));
+    var w = _new(Ext.Window,to_js(dict({renderTo: "mesh-editor-help", layout: "fit", width: 500, height: 300, title: "Help", items: tabs2})));
     w.show();
 }
 function get_toolbar() {
-    items = list([dict({text: "File", menu: get_menu1()}), dict({text: "About", menu: get_menu3()}), "-", dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh1, tooltip: "<b>Draw Mesh I</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh2, tooltip: "<b>Draw Mesh II</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh3, tooltip: "<b>Draw Mesh III</b><br/>Show an example mesh"})]);
+    var items = list([dict({text: "File", menu: get_menu1()}), dict({text: "About", menu: get_menu3()}), "-", dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh1, tooltip: "<b>Draw Mesh I</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh2, tooltip: "<b>Draw Mesh II</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh3, tooltip: "<b>Draw Mesh III</b><br/>Show an example mesh"})]);
     return _new(Ext.Toolbar,to_js(dict({renderTo: "mesh-editor", items: items})));
 }
 function get_panel() {
-    p = _new(Ext.Panel,to_js(dict({renderTo: "mesh-editor", width: "200px", title: "Mesh", html: "<canvas id='canvas' width='200' height='200'></canvas>", collapsible: true})));
+    var p = _new(Ext.Panel,to_js(dict({renderTo: "mesh-editor", width: "200px", title: "Mesh", html: "<canvas id='canvas' width='200' height='200'></canvas>", collapsible: true})));
     if (Ext.isIE) {
         G_vmlCanvasManager.initElement(Ext.getDom("canvas"));
     }
@@ -42,7 +42,7 @@ function checkHandler() {
     alert("Checked a menu item");
 }
 function toolbar_mesh1(b, e) {
-    canvas = Ext.getDom("canvas").getContext("2d");
+    var canvas = Ext.getDom("canvas").getContext("2d");
     canvas.fillStyle = "rgb(255, 255, 255)";
     canvas.fillRect(0,0,200,200);
     canvas.fillStyle = "rgb(29, 65, 119)";
@@ -57,7 +57,7 @@ function toolbar_mesh1(b, e) {
     canvas.stroke();
 }
 function toolbar_mesh2(b, e) {
-    canvas = Ext.getDom("canvas").getContext("2d");
+    var canvas = Ext.getDom("canvas").getContext("2d");
     canvas.fillStyle = "rgb(255, 255, 255)";
     canvas.fillRect(0,0,200,200);
     canvas.fillStyle = "rgb(29, 65, 119)";
@@ -72,7 +72,7 @@ function toolbar_mesh2(b, e) {
     canvas.stroke();
 }
 function toolbar_mesh3(b, e) {
-    canvas = Ext.getDom("canvas").getContext("2d");
+    var canvas = Ext.getDom("canvas").getContext("2d");
     canvas.fillStyle = "rgb(255, 255, 255)";
     canvas.fillRect(0,0,200,200);
     canvas.fillStyle = "rgb(29, 65, 119)";

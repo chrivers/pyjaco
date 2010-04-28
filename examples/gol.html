@@ -43,8 +43,8 @@ _GoL.prototype.get = function(x, y) {
     return this.grid.__getitem__((((x)+(this.width))%(this.width))+((((y)+(this.height))%(this.height))*(this.width)));
 }
 _GoL.prototype.iter = function() {
-    toDie = list([]);
-    toLive = list([]);
+    var toDie = list([]);
+    var toLive = list([]);
     var __dummy3__ = iter(range(0,this.width));
     var __dummy4__ = false;
     while (1) {
@@ -73,7 +73,7 @@ _GoL.prototype.iter = function() {
                     throw __dummy8__;
                 }
             }
-            count = 0;
+            var count = 0;
             if (this.get((x)-(1),(y)-(1))) {
                 count += 1;
             }
@@ -148,7 +148,7 @@ _GoL.prototype.iter = function() {
     this.draw();
 }
 _GoL.prototype.draw = function() {
-    i = 0;
+    var i = 0;
     var __dummy15__ = iter(range(0,(this.width)*(10),10));
     var __dummy16__ = false;
     while (1) {
