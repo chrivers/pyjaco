@@ -57,9 +57,10 @@ def clickHandler():
 @JavaScript
 def toolbar_mesh1(b, e):
     canvas = Ext.getDom('canvas').getContext('2d')
-    canvas.fillText("Mesh I", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh I", 80, 10)
     canvas.strokeStyle = 'rgb(0, 255, 0)'
     canvas.beginPath()
     canvas.moveTo(10, 10)
@@ -72,9 +73,10 @@ def toolbar_mesh1(b, e):
 @JavaScript
 def toolbar_mesh2(b, e):
     canvas = Ext.getDom('canvas').getContext('2d')
-    canvas.fillText("Mesh II", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh II", 80, 10)
     canvas.strokeStyle = 'rgb(255, 0, 0)'
     canvas.beginPath()
     canvas.moveTo(100, 100)
@@ -87,9 +89,10 @@ def toolbar_mesh2(b, e):
 @JavaScript
 def toolbar_mesh3(b, e):
     canvas = Ext.getDom('canvas').getContext('2d')
-    canvas.fillText("Mesh III", 100, 10)
     canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh III", 80, 10)
     canvas.strokeStyle = 'rgb(0, 0, 255)'
     canvas.beginPath()
     canvas.moveTo(50, 50)
