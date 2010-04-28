@@ -158,6 +158,9 @@ class JS(object):
         # This is the name of the class that we are currently in:
         self._class_name = None
 
+        # This lists all variables in the local scope:
+        self._scope = []
+
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
         self.dummy += 1
@@ -215,6 +218,7 @@ class JS(object):
 
         js_args = []
         js_defaults = []
+        self._scope = [arg.id for arg in node.args.args]
 
         for arg, default in zip(node.args.args, defaults):
             if not isinstance(arg, ast.Name):
@@ -240,6 +244,7 @@ class JS(object):
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
 
+        self._scope = []
         return js + ["}"]
 
     @scope
@@ -299,7 +304,13 @@ class JS(object):
             js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value),
                 self.visit(target.slice), value)]
         else:
-            js = ["%s = %s;" % (self.visit(target), value)]
+            var = self.visit(target)
+            declare = ""
+            if isinstance(target, ast.Name):
+                if not (var in self._scope):
+                    self._scope.append(var)
+                    declare = "var "
+            js = ["%s%s = %s;" % (declare, var, value)]
         return js
 
     def visit_AugAssign(self, node):
