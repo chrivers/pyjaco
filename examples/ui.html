@@ -29,7 +29,11 @@ function get_toolbar() {
     return _new(Ext.Toolbar,to_js(dict({renderTo: "mesh-editor", items: items})));
 }
 function get_panel() {
-    return _new(Ext.Panel,to_js(dict({renderTo: "mesh-editor", width: "200px", title: "Mesh", html: "<canvas id='canvas' width='200' height='200'></canvas>", collapsible: true})));
+    p = _new(Ext.Panel,to_js(dict({renderTo: "mesh-editor", width: "200px", title: "Mesh", html: "<canvas id='canvas' width='200' height='200'></canvas>", collapsible: true})));
+    if (Ext.isIE) {
+        G_vmlCanvasManager.initElement(Ext.getDom("canvas"));
+    }
+    return p;
 }
 function clickHandler() {
     alert("Clicked on a menu item");
@@ -52,7 +56,7 @@ function toolbar_mesh1(b, e) {
     canvas.stroke();
 }
 function toolbar_mesh2(b, e) {
-    canvas = document.getElementById("canvas").getContext("2d");
+    canvas = Ext.getDom("canvas").getContext("2d");
     canvas.fillText("Mesh II",100,10);
     canvas.fillStyle = "rgb(255, 255, 255)";
     canvas.fillRect(0,0,200,200);
@@ -66,7 +70,7 @@ function toolbar_mesh2(b, e) {
     canvas.stroke();
 }
 function toolbar_mesh3(b, e) {
-    canvas = document.getElementById("canvas").getContext("2d");
+    canvas = Ext.getDom("canvas").getContext("2d");
     canvas.fillText("Mesh III",100,10);
     canvas.fillStyle = "rgb(255, 255, 255)";
     canvas.fillRect(0,0,200,200);
