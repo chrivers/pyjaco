@@ -38,13 +38,17 @@ def get_toolbar():
 
 @JavaScript
 def get_panel():
-    return _new(Ext.Panel, to_js({
+    p = _new(Ext.Panel, to_js({
                 renderTo: 'mesh-editor',
                 width: '200px',
                 title: 'Mesh',
                 html: "<canvas id='canvas' width='200' height='200'></canvas>",
                 collapsible: true
                 }))
+    if Ext.isIE:
+        # This is needed for IE to emulate the canvas element:
+        G_vmlCanvasManager.initElement(Ext.getDom('canvas'))
+    return p
 
 @JavaScript
 def clickHandler():
