@@ -8,14 +8,6 @@
   <script language="JavaScript" src="../py-builtins.js"></script>
   <title id="page-title">Title</title>
   <script type="text/javascript">
-function get_menu1() {
-    var items = list([dict({text: "Open..."}), dict({text: "Save..."}), "-", dict({text: "Close"})]);
-    return _new(Ext.menu.Menu,to_js(dict({id: "basicMenu", items: items})));
-}
-function get_menu3() {
-    var items = tuple([dict({"text": "Help", "handler": menu_help}), "-", dict({"text": "About Mesh Editor", "handler": menu_about})]);
-    return _new(Ext.menu.Menu,to_js(dict({id: "basicMenu2", items: items})));
-}
 function menu_about() {
     Ext.MessageBox.show(to_js(dict({title: "About", msg: "FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR", buttons: Ext.MessageBox.OK, animEl: "mb9", icon: Ext.MessageBox.INFO})));
 }
@@ -25,8 +17,10 @@ function menu_help() {
     w.show();
 }
 function get_toolbar() {
-    var items = list([dict({text: "File", menu: get_menu1()}), dict({text: "About", menu: get_menu3()}), "-", dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh1, tooltip: "<b>Draw Mesh I</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh2, tooltip: "<b>Draw Mesh II</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh3, tooltip: "<b>Draw Mesh III</b><br/>Show an example mesh"})]);
-    return _new(Ext.Toolbar,to_js(dict({renderTo: "mesh-editor", items: items})));
+    var items = list([dict({text: "File", menu: list([dict({text: "Open..."}), dict({text: "Save..."}), "-", dict({text: "Close"})])}), dict({text: "Edit", menu: list([dict({"text": "Undo"}), dict({"text": "Redo"}), "-", dict({"text": "Copy"}), "-", dict({"text": "Delete selected objects"}), "-", dict({"text": "Options"})])}), dict({text: "About", menu: tuple([dict({"text": "Help", "handler": menu_help}), "-", dict({"text": "About Mesh Editor", "handler": menu_about})])})]);
+    _new(Ext.Toolbar,to_js(dict({renderTo: "mesh-editor", items: items})));
+    items = list([dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh1, tooltip: "<b>Draw Mesh I</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh2, tooltip: "<b>Draw Mesh II</b><br/>Show an example mesh"}), dict({icon: "http://www.extjs.com/deploy/dev/examples/menu/list-items.gif", cls: "x-btn-icon", handler: toolbar_mesh3, tooltip: "<b>Draw Mesh III</b><br/>Show an example mesh"})]);
+    _new(Ext.Toolbar,to_js(dict({renderTo: "mesh-editor", items: items})));
 }
 function get_panel() {
     var p = _new(Ext.Panel,to_js(dict({renderTo: "mesh-editor", width: "200px", title: "Mesh", html: "<canvas id='canvas' width='200' height='200'></canvas>", collapsible: true})));

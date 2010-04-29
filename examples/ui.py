@@ -1,29 +1,32 @@
 from py2js import JavaScript
 
 @JavaScript
-def get_menu1():
-    items = [{text: 'Open...'},
-            {text: 'Save...'},
-            '-',
-            {text: 'Close'}
-            ]
-    return _new(Ext.menu.Menu, to_js({id: 'basicMenu', items: items}))
-
-@JavaScript
-def get_menu3():
-    items = (
-            {'text': 'Help', 'handler': menu_help},
-            '-',
-            {'text': 'About Mesh Editor', 'handler': menu_about},
-            )
-    return _new(Ext.menu.Menu, to_js({id: 'basicMenu2', items: items}))
-
-@JavaScript
 def get_toolbar():
     items = [
-            {text:'File', menu: get_menu1()},
-            {text:'About', menu: get_menu3()},
-            "-",
+            {text:'File', menu: [
+                {text: 'Open...'},
+                {text: 'Save...'},
+                '-',
+                {text: 'Close'}
+                ]},
+            {text:'Edit', menu: [
+                {'text': 'Undo'},
+                {'text': 'Redo'},
+                '-',
+                {'text': 'Copy'},
+                '-',
+                {'text': 'Delete selected objects'},
+                '-',
+                {'text': 'Options'},
+                ]},
+            {text:'About', menu: (
+                {'text': 'Help', 'handler': menu_help},
+                '-',
+                {'text': 'About Mesh Editor', 'handler': menu_about},
+                )},
+            ]
+    _new(Ext.Toolbar, to_js({renderTo: 'mesh-editor', items: items}))
+    items = [
             { icon: 'http://www.extjs.com/deploy/dev/examples/menu/list-items.gif', cls: 'x-btn-icon',
                 handler: toolbar_mesh1,
             tooltip: '<b>Draw Mesh I</b><br/>Show an example mesh' },
@@ -34,7 +37,7 @@ def get_toolbar():
                 handler: toolbar_mesh3,
             tooltip: '<b>Draw Mesh III</b><br/>Show an example mesh' },
             ]
-    return _new(Ext.Toolbar, to_js({renderTo: 'mesh-editor', items: items}))
+    _new(Ext.Toolbar, to_js({renderTo: 'mesh-editor', items: items}))
 
 @JavaScript
 def get_panel():
@@ -159,8 +162,6 @@ def initialize():
 
 def main():
     funcs = [
-            get_menu1,
-            get_menu3,
             menu_about,
             menu_help,
             get_toolbar,
