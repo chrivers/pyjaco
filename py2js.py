@@ -154,8 +154,6 @@ class JS(object):
             'GtE'   : ">=",
             'Is'    : "===",
             'IsNot' : "is not", # Not implemented yet
-            'In'    : "in", # Not implemented yet
-            'NotIn' : "not in", # Not implemented yet
         }
 
     def __init__(self):
@@ -494,10 +492,21 @@ class JS(object):
         assert len(node.comparators) == 1
         op = node.ops[0]
         comp = node.comparators[0]
-        return "%s %s %s" % (self.visit(node.left),
-                self.get_comparison_op(op),
-                self.visit(comp)
-                )
+        if isinstance(op, ast.In):
+            return "%s.__contains__(%s)" % (
+                    self.visit(comp),
+                    self.visit(node.left),
+                    )
+        elif isinstance(op, ast.NotIn):
+            return "!(%s.__contains__(%s))" % (
+                    self.visit(comp),
+                    self.visit(node.left),
+                    )
+        else:
+            return "%s %s %s" % (self.visit(node.left),
+                    self.get_comparison_op(op),
+                    self.visit(comp)
+                    )
 
     def visit_Name(self, node):
         try:

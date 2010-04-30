@@ -89,7 +89,6 @@ def main():
                 "tests/functions/sort.py",
                 "tests/functions/ne.py",
                 "tests/functions/aug.py",
-                "tests/functions/in.py",
                 "tests/functions/isinstance.py",
                 "tests/functions/floatdiv.py",
                 "tests/functions/sort23.py",
