@@ -272,11 +272,11 @@ function isinstance(obj, cls) {
     }
 }
 
-function int(value) {
+py._int = function(value) {
     return value;
 }
 
-function float(value) {
+py._float = function(value) {
     return value;
 }
 

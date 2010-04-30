@@ -103,6 +103,9 @@ class JS(object):
         'True'   : 'true',
         'False'  : 'false',
         'None'  : 'null',
+
+        'int' : '_int',
+        'float' : '_float',
     }
 
     builtin = set([
@@ -118,6 +121,9 @@ class JS(object):
         'IndexError',
         'KeyError',
         'StopIteration',
+
+        '_int',
+        '_float',
     ])
 
     bool_op = {
@@ -509,15 +515,16 @@ class JS(object):
                     )
 
     def visit_Name(self, node):
+        id = node.id
         try:
-            return self.name_map[node.id]
+            id = self.name_map[id]
         except KeyError:
             pass
 
-        if node.id in self.builtin:
-            return "py." + node.id;
-        else:
-            return node.id;
+        if id in self.builtin:
+            id = "py." + id;
+
+        return id
 
     def visit_Num(self, node):
         return str(node.n)
