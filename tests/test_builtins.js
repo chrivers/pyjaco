@@ -601,28 +601,28 @@ function test_slice() {
 }
 
 function test_to_js() {
-    var t = to_js(tuple([1, "s"]));
+    var t = js(tuple([1, "s"]));
     test(function() { return t.length == 2 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
 
-    t = to_js(list([1, "s"]));
+    t = js(list([1, "s"]));
     test(function() { return t.length == 2 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
 
-    t = to_js(dict({1: "s", 2: 3}));
+    t = js(dict({1: "s", 2: 3}));
     test(function() { return t[1] == "s" });
     test(function() { return t[2] == 3 });
 
-    var t = to_js(tuple([1, "s", dict({1: "s", 2: 3})]));
+    var t = js(tuple([1, "s", dict({1: "s", 2: 3})]));
     test(function() { return t.length == 3 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
     test(function() { return t[2][1] == "s" });
     test(function() { return t[2][2] == 3 });
 
-    var t = to_js(tuple([1, "s", dict({1: "s", 2: 3, "x": tuple([8, 9])})]));
+    var t = js(tuple([1, "s", dict({1: "s", 2: 3, "x": tuple([8, 9])})]));
     test(function() { return t.length == 3 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });

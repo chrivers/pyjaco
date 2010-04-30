@@ -58,7 +58,7 @@ function _new(cls, arg) {
     return new cls(arg)
 }
 
-function to_js(obj) {
+function js(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
 
@@ -473,7 +473,7 @@ _tuple.prototype._to_js = function () {
     var items = [];
 
     iterate(iter(this), function(item) {
-        items.push(to_js(item));
+        items.push(js(item));
     });
 
     return items;
@@ -735,7 +735,7 @@ _dict.prototype._to_js = function () {
 
     var _this_dict = this; // so that we can access it from within the closure:
     iterate(iter(this), function(key) {
-        items[key] = to_js(_this_dict.__getitem__(key));
+        items[key] = js(_this_dict.__getitem__(key));
     });
 
     return items;

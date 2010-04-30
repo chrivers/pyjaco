@@ -61,7 +61,7 @@ def get_toolbar():
                 {'text': 'About Mesh Editor', 'handler': menu_about},
                 )},
             ]
-    _new(Ext.Toolbar, to_js({renderTo: 'mesh-editor', items: items}))
+    _new(Ext.Toolbar, js({renderTo: 'mesh-editor', items: items}))
     items = [
             { icon: 'http://www.extjs.com/deploy/dev/examples/menu/list-items.gif', cls: 'x-btn-icon',
                 handler: toolbar_mesh1,
@@ -73,11 +73,11 @@ def get_toolbar():
                 handler: toolbar_mesh3,
             tooltip: '<b>Draw Mesh III</b><br/>Show an example mesh' },
             ]
-    _new(Ext.Toolbar, to_js({renderTo: 'mesh-editor', items: items}))
+    _new(Ext.Toolbar, js({renderTo: 'mesh-editor', items: items}))
 
 @JavaScript
 def get_panel():
-    p = _new(Ext.Panel, to_js({
+    p = _new(Ext.Panel, js({
                 renderTo: 'mesh-editor',
                 width: '200px',
                 title: 'Mesh',
@@ -143,7 +143,7 @@ def toolbar_mesh3(b, e):
 
 @JavaScript
 def menu_about():
-    Ext.MessageBox.show(to_js({
+    Ext.MessageBox.show(js({
            title: 'About',
            msg: 'FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR',
            buttons: Ext.MessageBox.OK,
@@ -153,7 +153,7 @@ def menu_about():
 
 @JavaScript
 def menu_help():
-    tabs2 = _new(Ext.TabPanel, to_js({
+    tabs2 = _new(Ext.TabPanel, js({
         activeTab: 2,
         width:600,
         height:250,
@@ -173,7 +173,7 @@ def menu_help():
                 html: "Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR."
             }]
 }))
-    w = _new(Ext.Window, to_js({
+    w = _new(Ext.Window, js({
                 renderTo: 'mesh-editor-help',
                 layout: 'fit',
                 width: 500,
