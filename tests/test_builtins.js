@@ -632,6 +632,36 @@ function test_to_js() {
     test(function() { return t[2]["x"][1] == 9 });
 }
 
+function test_str() {
+    var s = str("some testing string");
+    test(function() { return len(s) == 19 });
+    test(function() { return s.__getitem__(0) == "s" });
+    test(function() { return s.__getitem__(1) == "o" });
+    test(function() { return s.__getitem__(2) == "m" });
+    test(function() { return s.__getitem__(3) == "e" });
+    test(function() { return s.__getitem__(4) == " " });
+    test(function() { return s.__getitem__(5) == "t" });
+    raises(py.TypeError, function() { s.__setitem__(5, 3) });
+    raises(py.TypeError, function() { s.__delitem__(5) });
+
+    test(function() { return s.__getitem__(slice(3, 6)) == "e t" });
+    test(function() { return s.__getitem__(slice(1, 3)) == "om" });
+    test(function() { return s.__getitem__(slice(1, null)) == "ome testing string" });
+    test(function() { return s.__getitem__(slice(null, 3)) == "som" });
+    test(function() { return s.__getitem__(slice(3)) == "som" });
+    test(function() { return s.__getitem__(slice(1, 8, 2)) == "oets" });
+
+    test(function() { return s.count("t") == 3 });
+    test(function() { return s.count("e") == 2 });
+    test(function() { return s.count("m") == 1 });
+    test(function() { return s.count("3") == 0 });
+
+    test(function() { return s.index("t") == 5 });
+    test(function() { return s.index("e") == 3 });
+    test(function() { return s.index("m") == 2 });
+    raises(py.ValueError, function() { s.index("3") });
+}
+
 function tests() {
     try {
         test_dict();
@@ -645,6 +675,7 @@ function tests() {
         test_exceptions();
         test_slice();
         test_to_js();
+        test_str();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
