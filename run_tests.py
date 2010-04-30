@@ -20,20 +20,19 @@ def test2(in_file):
 
 def test3(in_file):
     w = Writer()
-    w.write("Testing the file (Python run): %s" % in_file)
+    w.write("%40s [4]: " % in_file)
     r = os.system("python %s > /tmp/py.out" % (in_file))
-    w.check(r)
-    w.write("    JavaScript compilation")
-    r = os.system("python py2js.py --include-builtins %s > /tmp/js.src 2> /tmp/py2js.err" % (in_file))
-    w.check(r)
+    w.write(".")
     if r == 0:
-        w.write("    JavaScript run")
-        r = os.system("js -f /tmp/js.src > /tmp/js.out 2> /tmp/js.err")
-        w.check(r)
+        r = os.system("python py2js.py --include-builtins %s > /tmp/js.src 2> /tmp/py2js.err" % (in_file))
+        w.write(".")
         if r == 0:
-            w.write("    check JavaScript output equals Python output")
-            r = os.system("diff /tmp/js.out /tmp/py.out > /tmp/js.diff")
-            w.check(r)
+            r = os.system("js -f /tmp/js.src > /tmp/js.out 2> /tmp/js.err")
+            w.write(".")
+            if r == 0:
+                r = os.system("diff /tmp/js.out /tmp/py.out > /tmp/js.diff")
+                w.write(".")
+    w.check(r)
 
 def main():
     parser = OptionParser(usage="%prog [options] filename",
