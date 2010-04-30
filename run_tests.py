@@ -204,7 +204,7 @@ class Writer(object):
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
 
-    def check(self, r, known_to_fail=False):
+    def check(self, r, known_to_fail=False, exit_on_failure=True):
         if r == 0:
             if known_to_fail:
                 self.write("should fail but [OK]", align="right", color="Green")
@@ -215,6 +215,10 @@ class Writer(object):
                 self.write("known to [FAIL]", align="right", color="Purple")
             else:
                 self.write("[FAIL]", align="right", color="Red")
+                if exit_on_failure:
+                    print
+                    print
+                    sys.exit(1)
         self.write("\n")
 
 if __name__ == '__main__':
