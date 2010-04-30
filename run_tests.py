@@ -78,7 +78,6 @@ def main():
                 "tests/basic/oo_static_inherit.py",
                 "tests/basic/del_attr.py",
                 "tests/basic/none.py",
-                "tests/basic/for_step.py",
                 "tests/basic/del_global.py",
                 "tests/basic/del_slice.py",
                 "tests/basic/generator.py",

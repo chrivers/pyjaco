@@ -184,6 +184,10 @@ function range(start, end, step) {
         return list(seq);
 }
 
+function xrange(start, end, step) {
+    return iter(range(start, end, step))
+}
+
 function map() {
     if (arguments.length < 2) {
         throw new py.TypeError("map() requires at least two args");
