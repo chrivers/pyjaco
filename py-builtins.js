@@ -635,6 +635,14 @@ _list.prototype.append = function(value) {
     this._len = -1;
 }
 
+_list.prototype.extend = function(l) {
+    items = this._items;
+    iterate(iter(l), function(item) {
+        items.push(item);
+    });
+    this._len = -1;
+}
+
 _list.prototype.pop = function() {
     if (len(this) > 0) {
         this._len = -1;
