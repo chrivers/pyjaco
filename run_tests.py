@@ -15,7 +15,7 @@ def test1(in_file):
 def test2(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
-    r = os.system("python %s" % (in_file))
+    r = os.system("PYTHONPATH=.:$PYTHONPATH python %s" % (in_file))
     w.check(r)
 
 def test3(in_file, known_to_fail=False):
