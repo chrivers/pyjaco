@@ -68,12 +68,12 @@ function js(obj) {
        list -> Array
        dict -> Array
 
-       It uses the obj._to_js() if it is defined, otherwise it just returns the
-       same object. It is the responsibility of _to_js() to convert recursively
+       It uses the obj._js_() if it is defined, otherwise it just returns the
+       same object. It is the responsibility of _js_() to convert recursively
        the object itself.
     */
-    if (defined(obj._to_js))
-        return obj._to_js();
+    if (defined(obj._js_))
+        return obj._js_();
     else
         return obj;
 }
@@ -469,7 +469,7 @@ _tuple.prototype.toString = function () {
     return this.__str__();
 }
 
-_tuple.prototype._to_js = function () {
+_tuple.prototype._js_ = function () {
     var items = [];
 
     iterate(iter(this), function(item) {
@@ -610,7 +610,7 @@ _list.prototype.__eq__ = _tuple.prototype.__eq__;
 
 _list.prototype.toString = _tuple.prototype.toString;
 
-_list.prototype._to_js = _tuple.prototype._to_js;
+_list.prototype._js_ = _tuple.prototype._js_;
 
 _list.prototype.__len__ = _tuple.prototype.__len__;
 
@@ -730,7 +730,7 @@ _dict.prototype.toString = function () {
     return this.__str__();
 }
 
-_dict.prototype._to_js = function () {
+_dict.prototype._js_ = function () {
     var items = {};
 
     var _this_dict = this; // so that we can access it from within the closure:
