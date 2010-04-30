@@ -637,6 +637,10 @@ _list.prototype.pop = function() {
         throw new py.IndexError("pop from empty list");
 }
 
+_list.prototype.sort = function() {
+    this._items.sort();
+}
+
 /* Python 'dict' type */
 
 function dict(args) {
