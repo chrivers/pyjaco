@@ -9,27 +9,43 @@ def test1(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
     r = os.system('js -f builtins.js -f %s' % in_file)
-    if r == 0:
-        w.write("[OK]", align="right", color="Green")
-    else:
-        w.write("[FAIL]", align="right", color="Red")
-    w.write("\n")
+    w.check(r)
 
 def test2(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
     r = os.system("python %s" % (in_file))
+    w.check(r)
+
+def test3(in_file):
+    w = Writer()
+    w.write("Testing the file (Python run): %s" % in_file)
+    r = os.system("python %s > /tmp/py.out" % (in_file))
+    w.check(r)
+    w.write("    JavaScript compilation")
+    r = os.system("python py2js.py %s > /tmp/js.src 2> /tmp/py2js.err" % \
+            (in_file))
+    w.check(r)
     if r == 0:
-        w.write("[OK]", align="right", color="Green")
-    else:
-        w.write("[FAIL]", align="right", color="Red")
-    w.write("\n")
+        w.write("    JavaScript run")
+        r = os.system("js -f /tmp/js.src > /tmp/js.out 2> /tmp/js.err")
+        w.check(r)
+        if r == 0:
+            w.write("    check JavaScript output equals Python output")
+            r = os.system("diff /tmp/js.out /tmp/py.out > /tmp/js.diff")
+            w.check(r)
 
 def main():
-    test1("tests/test_builtins.js")
-    files = glob("tests/test_*.py")
-    for file in files:
-        test2(file)
+    if len(sys.argv) == 2:
+        test3(sys.argv[1])
+    else:
+        test1("tests/test_builtins.js")
+        files = glob("tests/test_*.py")
+        for file in files:
+            test2(file)
+        files = glob("tests/basic/*.py")
+        for file in files:
+            test3(file)
 
 class Writer(object):
 
@@ -105,5 +121,12 @@ class Writer(object):
             self._write_pos = len(text)-l-1
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
+
+    def check(self, r):
+        if r == 0:
+            self.write("[OK]", align="right", color="Green")
+        else:
+            self.write("[FAIL]", align="right", color="Red")
+        self.write("\n")
 
 main()
