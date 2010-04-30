@@ -18,7 +18,7 @@ def test2(in_file):
     r = os.system("python %s" % (in_file))
     w.check(r)
 
-def test3(in_file):
+def test3(in_file, known_to_fail=False):
     w = Writer()
     w.write("%s [4]: " % in_file)
     r = os.system("python %s > /tmp/py.out" % (in_file))
@@ -32,7 +32,7 @@ def test3(in_file):
             if r == 0:
                 r = os.system("diff /tmp/js.out /tmp/py.out > /tmp/js.diff")
                 w.write(".")
-    w.check(r)
+    w.check(r, known_to_fail)
 
 def main():
     parser = OptionParser(usage="%prog [options] filename",
@@ -94,7 +94,9 @@ def main():
                 ]
         files.sort()
         for file in files:
-            if options.run_all or file not in known_to_fail:
+            if options.run_all:
+                test3(file, file in known_to_fail)
+            elif file not in known_to_fail:
                 test3(file)
 
 class Writer(object):
@@ -172,11 +174,17 @@ class Writer(object):
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
 
-    def check(self, r):
+    def check(self, r, known_to_fail=False):
         if r == 0:
-            self.write("[OK]", align="right", color="Green")
+            if known_to_fail:
+                self.write("should fail but [OK]", align="right", color="Green")
+            else:
+                self.write("[OK]", align="right", color="Green")
         else:
-            self.write("[FAIL]", align="right", color="Red")
+            if known_to_fail:
+                self.write("known to [FAIL]", align="right", color="Purple")
+            else:
+                self.write("[FAIL]", align="right", color="Red")
         self.write("\n")
 
 if __name__ == '__main__':
