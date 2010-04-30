@@ -48,7 +48,7 @@ def main():
         files = glob("tests/test_*.py")
         for file in files:
             test2(file)
-        files = glob("tests/basic/*.py")
+        files = glob("tests/basic/*.py") + glob("tests/functions/*.py")
         known_to_fail = [
                 "tests/basic/for_in.py",
                 "tests/basic/vars.py",
@@ -84,6 +84,16 @@ def main():
                 "tests/basic/generator.py",
                 "tests/basic/raise.py",
                 "tests/basic/docstring.py",
+
+                "tests/functions/int.py",
+                "tests/functions/sort_cmp.py",
+                "tests/functions/sort.py",
+                "tests/functions/ne.py",
+                "tests/functions/aug.py",
+                "tests/functions/in.py",
+                "tests/functions/isinstance.py",
+                "tests/functions/floatdiv.py",
+                "tests/functions/sort23.py",
                 ]
         for file in files:
             if options.run_all or file not in known_to_fail:
