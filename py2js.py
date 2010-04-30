@@ -534,12 +534,11 @@ class JS(object):
         return str(node.n)
 
     def visit_Str(self, node):
-        if node.s.find("\n") == -1:
-            return '"%s"' % node.s
-        else:
-            s = node.s.split("\n")
-            s = '\\n" + "'.join(s)
-            return '"%s"' % s
+        def escape(s):
+            s = s.replace("\n", "\\n")
+            s = s.replace('"', '\\"')
+            return s
+        return '"%s"' % escape(node.s)
 
     def visit_Call(self, node):
         if node.keywords:
