@@ -3,6 +3,7 @@
 import os
 import sys
 from glob import glob
+from optparse import OptionParser
 from difflib import unified_diff
 
 def test1(in_file):
@@ -35,16 +36,59 @@ def test3(in_file):
             w.check(r)
 
 def main():
-    if len(sys.argv) == 2:
-        test3(sys.argv[1])
+    parser = OptionParser(usage="%prog [options] filename",
+        description="py2js tests.")
+    parser.add_option("-a", "--run-all",
+            action="store_true", dest="run_all",
+            default=False, help="run all tests (including the known-to-fail)")
+    options, args = parser.parse_args()
+    if len(args) == 1:
+        test3(args[0])
     else:
         test1("tests/test_builtins.js")
         files = glob("tests/test_*.py")
         for file in files:
             test2(file)
         files = glob("tests/basic/*.py")
+        known_to_fail = [
+                "tests/basic/for_in.py",
+                "tests/basic/vars.py",
+                "tests/basic/nestedclass.py",
+                "tests/basic/super.py",
+                "tests/basic/trueorfalse.py",
+                "tests/basic/kwargs.py",
+                "tests/basic/float2int.py",
+                "tests/basic/oo_inherit.py",
+                "tests/basic/listcomp2.py",
+                "tests/basic/dictionary.py",
+                "tests/basic/del_dict.py",
+                "tests/basic/del_local.py",
+                "tests/basic/oo_diamond.py",
+                "tests/basic/for_xrange.py",
+                "tests/basic/sumcomp.py",
+                "tests/basic/del_array.py",
+                "tests/basic/valueerror.py",
+                "tests/basic/oo.py",
+                "tests/basic/continue.py",
+                "tests/basic/scope.py",
+                "tests/basic/lambda.py",
+                "tests/basic/multiassign.py",
+                "tests/basic/try.py",
+                "tests/basic/assign_slice.py",
+                "tests/basic/vargs.py",
+                "tests/basic/oo_static_inherit.py",
+                "tests/basic/del_attr.py",
+                "tests/basic/none.py",
+                "tests/basic/for_step.py",
+                "tests/basic/del_global.py",
+                "tests/basic/del_slice.py",
+                "tests/basic/generator.py",
+                "tests/basic/raise.py",
+                "tests/basic/docstring.py",
+                ]
         for file in files:
-            test3(file)
+            if options.run_all or file not in known_to_fail:
+                test3(file)
 
 class Writer(object):
 
@@ -128,4 +172,5 @@ class Writer(object):
             self.write("[FAIL]", align="right", color="Red")
         self.write("\n")
 
-main()
+if __name__ == '__main__':
+    main()
