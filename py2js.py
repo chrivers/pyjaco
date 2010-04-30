@@ -696,7 +696,7 @@ def main():
     if len(args) == 1:
         filename = args[0]
         s = open(filename).read()
-        builtins = open("builtins.js").read()
+        builtins = open("py-builtins.js").read()
         js = convert_py2js(s)
         if options.include_builtins:
             print builtins

@@ -1,4 +1,4 @@
-/* TESTS for the builtins.js module */
+/* TESTS for the py-builtins.js module */
 
 function test(code) {
     if (!code()) {

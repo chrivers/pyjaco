@@ -9,7 +9,7 @@ from difflib import unified_diff
 def test1(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
-    r = os.system('js -f builtins.js -f %s' % in_file)
+    r = os.system('js -f py-builtins.js -f %s' % in_file)
     w.check(r)
 
 def test2(in_file):
