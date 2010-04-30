@@ -48,7 +48,16 @@ def main():
         files = glob("tests/test_*.py")
         for file in files:
             test2(file)
-        files = glob("tests/basic/*.py") + glob("tests/functions/*.py")
+        dirs = [
+            "tests/basic/*.py",
+            "tests/errors/*.py",
+            "tests/functions/*.py",
+            "tests/lists/*.py",
+            "tests/strings/*.py",
+                ]
+        files = []
+        for dir in dirs:
+            files.extend(glob(dir))
         known_to_fail = [
                 "tests/basic/vars.py",
                 "tests/basic/nestedclass.py",
@@ -82,6 +91,35 @@ def main():
                 "tests/functions/isinstance.py",
                 "tests/functions/floatdiv.py",
                 "tests/functions/sort23.py",
+
+                "tests/errors/decorator.py",
+
+                "tests/lists/extend.py",
+                "tests/lists/filter.py",
+                "tests/lists/max.py",
+                "tests/lists/min.py",
+                "tests/lists/reduce.py",
+                "tests/lists/sum.py",
+
+                "tests/strings/count.py",
+                "tests/strings/find.py",
+                "tests/strings/lstrip0.py",
+                "tests/strings/lstrip1.py",
+                "tests/strings/replace.py",
+                "tests/strings/rfind.py",
+                "tests/strings/rstrip0.py",
+                "tests/strings/rstrip1.py",
+                "tests/strings/split.py",
+                "tests/strings/splitlines.py",
+                "tests/strings/string_format_d.py",
+                "tests/strings/string_format_efg.py",
+                "tests/strings/string_format_i.py",
+                "tests/strings/string_format_o.py",
+                "tests/strings/string_format_u.py",
+                "tests/strings/string_format_x.py",
+                "tests/strings/strip.py",
+                "tests/strings/strip1.py",
+                "tests/strings/ulcase.py",
                 ]
         files.sort()
         for file in files:
