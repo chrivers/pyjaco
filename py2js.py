@@ -679,11 +679,17 @@ class JavaScript(object):
 def main():
     parser = OptionParser(usage="%prog [options] filename",
         description="Python to JavaScript compiler.")
+    parser.add_option("--include-builtins",
+            action="store_true", dest="include_builtins",
+            default=False, help="include py-builtins.js library in the output")
     options, args = parser.parse_args()
     if len(args) == 1:
         filename = args[0]
         s = open(filename).read()
-        print convert_py2js(s)
+        builtins = open("builtins.js").read()
+        js = convert_py2js(s)
+        print builtins
+        print js
     else:
         parser.print_help()
 
