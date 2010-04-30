@@ -272,6 +272,10 @@ function isinstance(obj, cls) {
     }
 }
 
+function int(value) {
+    return value;
+}
+
 function float(value) {
     return value;
 }
