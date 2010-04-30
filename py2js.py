@@ -1,4 +1,8 @@
+#! /usr/bin/env python
+
 """
+Python grammar, the AST classes contain those arguments as properties.
+
 module Python version "$Revision: 62047 $"
 {
     mod = Module(stmt* body)
@@ -83,6 +87,7 @@ module Python version "$Revision: 62047 $"
 
 import ast
 import inspect
+from optparse import OptionParser
 
 def scope(func):
     func.scope = True
@@ -670,3 +675,17 @@ class JavaScript(object):
 
     def __call__(self, *args, **kwargs):
         return self._obj(*args, **kwargs)
+
+def main():
+    parser = OptionParser(usage="%prog [options] filename",
+        description="Python to JavaScript compiler.")
+    options, args = parser.parse_args()
+    if len(args) == 1:
+        filename = args[0]
+        s = open(filename).read()
+        print convert_py2js(s)
+    else:
+        parser.print_help()
+
+if __name__ == '__main__':
+    main()
