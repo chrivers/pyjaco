@@ -124,6 +124,9 @@ class JS(object):
 
         '_int',
         '_float',
+        'max',
+        'min',
+        'sum',
     ])
 
     bool_op = {

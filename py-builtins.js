@@ -280,6 +280,46 @@ py._float = function(value) {
     return value;
 }
 
+py.max = function(list) {
+    if (len(list) == 0)
+        throw new py.ValueError("max() arg is an empty sequence");
+    else {
+        var result = null;
+
+        iterate(iter(list), function(item) {
+                if ((result == null) || (item > result))
+                    result = item;
+        });
+
+        return result;
+    }
+}
+
+py.min = function(list) {
+    if (len(list) == 0)
+        throw new py.ValueError("min() arg is an empty sequence");
+    else {
+        var result = null;
+
+        iterate(iter(list), function(item) {
+                if ((result == null) || (item < result))
+                    result = item;
+        });
+
+        return result;
+    }
+}
+
+py.sum = function(list) {
+    var result = 0;
+
+    iterate(iter(list), function(item) {
+        result += item;
+    });
+
+    return result;
+}
+
 /* Python 'iter' type */
 
 function iter(obj) {

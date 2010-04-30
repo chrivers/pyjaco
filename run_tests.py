@@ -96,8 +96,6 @@ def main():
                 "tests/errors/decorator.py",
 
                 "tests/lists/filter.py",
-                "tests/lists/max.py",
-                "tests/lists/min.py",
                 "tests/lists/reduce.py",
                 "tests/lists/sum.py",
 
