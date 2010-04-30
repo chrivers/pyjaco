@@ -20,7 +20,7 @@ def test2(in_file):
 
 def test3(in_file):
     w = Writer()
-    w.write("%40s [4]: " % in_file)
+    w.write("%s [4]: " % in_file)
     r = os.system("python %s > /tmp/py.out" % (in_file))
     w.write(".")
     if r == 0:
@@ -94,6 +94,7 @@ def main():
                 "tests/functions/floatdiv.py",
                 "tests/functions/sort23.py",
                 ]
+        files.sort()
         for file in files:
             if options.run_all or file not in known_to_fail:
                 test3(file)
