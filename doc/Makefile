@@ -36,7 +36,7 @@ html:
 	@mkdir -p _static
 	@cp -r ../examples _static/
 	@cp -r ../math.js _static/
-	@cp -r ../builtins.js _static/
+	@cp -r ../py-builtins.js _static/
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
