@@ -76,7 +76,6 @@ def main():
                 "tests/basic/raise.py",
                 "tests/basic/docstring.py",
 
-                "tests/functions/int.py",
                 "tests/functions/sort_cmp.py",
                 "tests/functions/ne.py",
                 "tests/functions/aug.py",
