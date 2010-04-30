@@ -60,7 +60,6 @@ def main():
         for dir in dirs:
             files.extend(glob(dir))
         known_to_fail = [
-                "tests/basic/vars.py",
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
                 "tests/basic/kwargs.py",

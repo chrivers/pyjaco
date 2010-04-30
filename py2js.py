@@ -464,8 +464,9 @@ class JS(object):
     def _visit_Exec(self, node):
         pass
 
-    def _visit_Global(self, node):
-        pass
+    def visit_Global(self, node):
+        self._scope.extend(node.names)
+        return []
 
     def visit_Expr(self, node):
         return [self.visit(node.value) + ";"]
