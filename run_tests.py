@@ -54,6 +54,7 @@ def main():
             "tests/functions/*.py",
             "tests/lists/*.py",
             "tests/strings/*.py",
+            "tests/algorithms/*.py",
                 ]
         files = []
         for dir in dirs:
