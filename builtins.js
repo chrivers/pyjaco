@@ -281,6 +281,8 @@ function float(value) {
 function iter(obj) {
     if (obj instanceof Array) {
         return new _iter(obj);
+    } else if (typeof(obj) === "string") {
+        return iter(obj.split(""));
     } else if (obj.__class__ == _iter) {
         return obj;
     } else if (defined(obj.__iter__)) {
