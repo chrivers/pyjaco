@@ -23,8 +23,7 @@ def test3(in_file):
     r = os.system("python %s > /tmp/py.out" % (in_file))
     w.check(r)
     w.write("    JavaScript compilation")
-    r = os.system("python py2js.py %s > /tmp/js.src 2> /tmp/py2js.err" % \
-            (in_file))
+    r = os.system("python py2js.py --include-builtins %s > /tmp/js.src 2> /tmp/py2js.err" % (in_file))
     w.check(r)
     if r == 0:
         w.write("    JavaScript run")
