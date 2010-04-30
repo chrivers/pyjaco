@@ -688,7 +688,8 @@ def main():
         s = open(filename).read()
         builtins = open("builtins.js").read()
         js = convert_py2js(s)
-        print builtins
+        if options.include_builtins:
+            print builtins
         print js
     else:
         parser.print_help()
