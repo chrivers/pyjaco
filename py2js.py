@@ -102,6 +102,7 @@ class JS(object):
         'self'   : 'this',
         'True'   : 'true',
         'False'  : 'false',
+        'None'  : 'null',
     }
 
     builtin = set([
