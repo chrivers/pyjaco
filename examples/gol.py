@@ -70,7 +70,7 @@ def main():
     print """<html>
 <head>
 <!--[if IE]><script type="text/javascript" src="http://explorercanvas.googlecode.com/svn/trunk/excanvas.js"></script><![endif]-->
-<script language="JavaScript" src="../builtins.js"></script>
+<script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
 %s
 </script>
