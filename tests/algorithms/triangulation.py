@@ -87,7 +87,7 @@ def triangulate_af(pts_list, bdy_edges):
     elems = []
     bdy_edges = bdy_edges[:]
     # main loop
-    while len(bdy_edges) > 0:
+    while bdy_edges != []:
         # take the last item from the list of bdy edges (and remove it)
         a,b = bdy_edges.pop()
         c = find_third_point(a, b, pts_list, bdy_edges)
@@ -120,9 +120,23 @@ def two_edges_intersect(nodes, e1, e2):
     D = nodes[e2[1]]
     return intersect(A, B, C, D)
 
+def any_edges_intersect(nodes, edges):
+    """
+    Returns True if any two edges intersect.
+    """
+    for i in range(len(edges)):
+        for j in range(i+1, len(edges)):
+            e1 = edges[i]
+            e2 = edges[j]
+            if e1[1] == e2[0] or e1[0] == e2[1]:
+                continue
+            if two_edges_intersect(nodes, e1, e2):
+                return True
+    return False
+
 def edge_intersects_edges(e1, nodes, edges):
     """
-    Returns True if 'e1' intersects any edge from 'edges'.
+    Returns True if "e1" intersects any edge from "edges".
     """
     for i in range(len(edges)):
         e2 = edges[i]
