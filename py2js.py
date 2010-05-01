@@ -512,6 +512,17 @@ class JS(object):
                     self.visit(comp),
                     self.visit(node.left),
                     )
+        elif isinstance(op, ast.Eq):
+            return "py.eq(%s, %s)" % (
+                    self.visit(node.left),
+                    self.visit(comp),
+                    )
+        elif isinstance(op, ast.NotEq):
+            #In fact, we'll have to override this too:
+            return "!(py.eq(%s, %s))" % (
+                    self.visit(node.left),
+                    self.visit(comp),
+                    )
         else:
             return "%s %s %s" % (self.visit(node.left),
                     self.get_comparison_op(op),

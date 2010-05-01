@@ -268,6 +268,15 @@ function isinstance(obj, cls) {
     }
 }
 
+py.eq = function(a, b) {
+    if ((a != null) && defined(a.__eq__))
+        return a.__eq__(b);
+    else if ((b != null) && defined(b.__eq__))
+        return b.__eq__(a);
+    else
+        return a == b;
+}
+
 py._int = function(value) {
     return value;
 }
