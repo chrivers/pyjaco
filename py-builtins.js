@@ -1153,6 +1153,10 @@ _str.prototype.rstrip = function(chars) {
     return this.__getitem__(slice(i+1));
 };
 
+_str.prototype.strip = function(chars) {
+    return this.lstrip(chars).rstrip(chars);
+}
+
 _str.prototype.split = function(sep) {
     if (defined(sep)) {
         var r = list(this._obj.split(sep));

@@ -105,8 +105,6 @@ def main():
                 "tests/strings/string_format_o.py",
                 "tests/strings/string_format_u.py",
                 "tests/strings/string_format_x.py",
-                "tests/strings/strip.py",
-                "tests/strings/strip1.py",
                 "tests/strings/ulcase.py",
                 ]
         files.sort()
