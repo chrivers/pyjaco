@@ -106,6 +106,9 @@ class JS(object):
 
         'int' : '_int',
         'float' : '_float',
+
+        # ideally we should check, that this name is available:
+        'py' : '___py_hard_to_collide',
     }
 
     builtin = set([
