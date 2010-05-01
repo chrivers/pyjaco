@@ -418,7 +418,7 @@ class JS(object):
 
     @scope
     def visit_If(self, node):
-        js = ["if (%s) {" % self.visit(node.test)]
+        js = ["if (py.bool(%s)) {" % self.visit(node.test)]
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
