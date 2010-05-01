@@ -1078,3 +1078,17 @@ _str.prototype.replace = function(old, _new, count) {
     }
     return new_s;
 }
+
+_str.prototype.lstrip = function(chars) {
+    if (len(this) == 0)
+        return this
+    if (defined(chars))
+        chars = tuple(chars);
+    else
+        chars = tuple(["\n", "\t", " "]);
+    var i = 0;
+    while ((i < len(this)) && (chars.__contains__(this.__getitem__(i)))) {
+        i += 1;
+    }
+    return this.__getitem__(slice(i, null));
+}
