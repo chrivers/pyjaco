@@ -706,7 +706,17 @@ _dict.prototype.__class__ = _dict;
 
 _dict.prototype.__init__ = function(args) {
     if (defined(args)) {
-        this._items = args;
+        if (defined(args.__iter__)) {
+            items = {};
+            iterate(iter(args), function(item) {
+                    key = js(item.__getitem__(0));
+                    value = item.__getitem__(1);
+                    items[key] = value;
+            });
+            this._items = items;
+        }
+        else
+            this._items = args;
     } else {
         this._items = {};
     }

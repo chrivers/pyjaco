@@ -52,6 +52,30 @@ function test_dict() {
 
     test(function() { return d.pop(0) == 2 });
     test(function() { return len(d) == 0 });
+
+    d = dict({1: 6, 2: 8});
+    test(function() { return str(d) == '{1: 6, 2: 8}' });
+    d = dict(tuple([tuple([1, 6]), tuple([2, 8])]));
+    test(function() { return str(d) == '{1: 6, 2: 8}' });
+    d = dict(tuple([tuple([1, "x"]), tuple([2, "y"])]));
+    // This will change when repr() is implemented:
+    test(function() { return str(d) == '{1: x, 2: y}' });
+
+    d = dict(tuple([tuple([1, str("x")]), tuple([2, str("y")])]));
+    // This will change when repr() is implemented:
+    test(function() { return str(d) == '{1: x, 2: y}' });
+
+    d = dict(tuple([tuple(["a", str("x")]), tuple(["b", str("y")])]));
+    // This will change when repr() is implemented:
+    test(function() { return str(d) == '{a: x, b: y}' });
+
+    d = dict(tuple([tuple([str("a"), str("x")]), tuple([str("b"), str("y")])]));
+    // This will change when repr() is implemented:
+    test(function() { return str(d) == '{a: x, b: y}' });
+
+    d = dict(list([list([str("a"), str("x")]), list([str("b"), str("y")])]));
+    // This will change when repr() is implemented:
+    test(function() { return str(d) == '{a: x, b: y}' });
 }
 
 function test_iter() {
