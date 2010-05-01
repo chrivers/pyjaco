@@ -14,9 +14,9 @@
 
 */
 
-var py = {};
+var py_builtins = {};
 
-py.__python3__ = false;
+py_builtins.__python3__ = false;
 
 /* JavaScript helper functions */
 
@@ -26,7 +26,7 @@ function defined(obj) {
 
 function assert(cond, msg) {
     if (!cond) {
-        throw new py.AssertionError(msg);
+        throw new py_builtins.AssertionError(msg);
     }
 }
 
@@ -35,7 +35,7 @@ function iterate(seq, func) {
         try {
             func(seq.next());
         } catch (exc) {
-            if (isinstance(exc, py.StopIteration)) {
+            if (isinstance(exc, py_builtins.StopIteration)) {
                 break;
             } else {
                 throw exc;
@@ -80,7 +80,7 @@ function js(obj) {
 
 /* Python built-in exceptions */
 
-py.__exceptions__ = [
+py_builtins.__exceptions__ = [
     'NotImplementedError',
     'ZeroDivisionError',
     'AssertionError',
@@ -95,23 +95,23 @@ py.__exceptions__ = [
     'StopIteration'
 ];
 
-for (var i in py.__exceptions__) {
-    var name = py.__exceptions__[i];
+for (var i in py_builtins.__exceptions__) {
+    var name = py_builtins.__exceptions__[i];
 
-    py[name] = function() {
+    py_builtins[name] = function() {
         return function(message) {
             this.message = defined(message) ? message : "";
         };
     }();
 
-    py[name].__name__ = name;
-    py[name].prototype.__class__ = py[name];
+    py_builtins[name].__name__ = name;
+    py_builtins[name].prototype.__class__ = py_builtins[name];
 
-    py[name].prototype.__str__ = function() {
+    py_builtins[name].prototype.__str__ = function() {
         return str(js(this.__class__.__name__) + ": " + js(this.message));
     };
 
-    py[name].prototype.toString = function() {
+    py_builtins[name].prototype.toString = function() {
         return js(this.__str__());
     };
 }
@@ -131,7 +131,7 @@ function getattr(obj, name, value) {
         if (defined(value)) {
             return value;
         } else {
-            throw new py.AttributeError(obj, name);
+            throw new py_builtins.AttributeError(obj, name);
         }
     }
 }
@@ -146,7 +146,7 @@ function hash(obj) {
     } else if (typeof(obj) == 'number') {
         return obj == -1 ? -2 : obj;
     } else {
-        throw new py.AttributeError(obj, '__hash__');
+        throw new py_builtins.AttributeError(obj, '__hash__');
     }
 }
 
@@ -154,7 +154,7 @@ function len(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
-        throw new py.AttributeError(obj, '__name__');
+        throw new py_builtins.AttributeError(obj, '__name__');
     }
 }
 
@@ -174,7 +174,7 @@ function range(start, end, step) {
         seq.push(i);
     }
 
-    if (py.__python3__)
+    if (py_builtins.__python3__)
         return iter(seq);
     else
         return list(seq);
@@ -186,11 +186,11 @@ function xrange(start, end, step) {
 
 function map() {
     if (arguments.length < 2) {
-        throw new py.TypeError("map() requires at least two args");
+        throw new py_builtins.TypeError("map() requires at least two args");
     }
 
     if (arguments.length > 2) {
-        throw new py.NotImplementedError("only one sequence allowed in map()");
+        throw new py_builtins.NotImplementedError("only one sequence allowed in map()");
     }
 
     var func = arguments[0];
@@ -202,7 +202,7 @@ function map() {
         items.append(func(item));
     });
 
-    if (py.__python3__)
+    if (py_builtins.__python3__)
         return iter(items);
     else
         return items;
@@ -229,7 +229,7 @@ function zip() {
             try {
                 var value = iters.__getitem__(i).next();
             } catch (exc) {
-                if (isinstance(exc, py.StopIteration)) {
+                if (isinstance(exc, py_builtins.StopIteration)) {
                     return items;
                 } else {
                     throw exc;
@@ -269,7 +269,7 @@ function isinstance(obj, cls) {
     }
 }
 
-py.bool = function(a) {
+py_builtins.bool = function(a) {
     if ((a != null) && defined(a.__bool__))
         return a.__bool__();
     else {
@@ -280,7 +280,7 @@ py.bool = function(a) {
     }
 };
 
-py.eq = function(a, b) {
+py_builtins.eq = function(a, b) {
     if ((a != null) && defined(a.__eq__))
         return a.__eq__(b);
     else if ((b != null) && defined(b.__eq__))
@@ -289,17 +289,17 @@ py.eq = function(a, b) {
         return a == b;
 };
 
-py._int = function(value) {
+py_builtins._int = function(value) {
     return value;
 };
 
-py._float = function(value) {
+py_builtins._float = function(value) {
     return value;
 };
 
-py.max = function(list) {
+py_builtins.max = function(list) {
     if (len(list) == 0)
-        throw new py.ValueError("max() arg is an empty sequence");
+        throw new py_builtins.ValueError("max() arg is an empty sequence");
     else {
         var result = null;
 
@@ -312,9 +312,9 @@ py.max = function(list) {
     }
 };
 
-py.min = function(list) {
+py_builtins.min = function(list) {
     if (len(list) == 0)
-        throw new py.ValueError("min() arg is an empty sequence");
+        throw new py_builtins.ValueError("min() arg is an empty sequence");
     else {
         var result = null;
 
@@ -327,7 +327,7 @@ py.min = function(list) {
     }
 };
 
-py.sum = function(list) {
+py_builtins.sum = function(list) {
     var result = 0;
 
     iterate(iter(list), function(item) {
@@ -349,7 +349,7 @@ function iter(obj) {
     } else if (defined(obj.__iter__)) {
         return obj.__iter__();
     } else {
-        throw new py.TypeError("object is not iterable");
+        throw new py_builtins.TypeError("object is not iterable");
     }
 }
 
@@ -379,7 +379,7 @@ _iter.prototype.next = function() {
     if (defined(value)) {
         return value;
     } else {
-        throw new py.StopIteration('no more items');
+        throw new py_builtins.StopIteration('no more items');
     }
 };
 
@@ -437,7 +437,7 @@ function tuple(seq) {
     if (arguments.length <= 1) {
         return new _tuple(seq);
     } else {
-        throw new py.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
+        throw new py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     }
 }
 
@@ -532,7 +532,7 @@ _tuple.prototype.__iter__ = function() {
 
 _tuple.prototype.__contains__ = function(item) {
     for (var index in this._items) {
-        if (py.eq(item, this._items[index])) {
+        if (py_builtins.eq(item, this._items[index])) {
             return true;
         }
     }
@@ -558,15 +558,15 @@ _tuple.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)];
     else
-        throw new py.IndexError("list assignment index out of range");
+        throw new py_builtins.IndexError("list assignment index out of range");
 };
 
 _tuple.prototype.__setitem__ = function(index, value) {
-    throw new py.TypeError("'tuple' object doesn't support item assignment");
+    throw new py_builtins.TypeError("'tuple' object doesn't support item assignment");
 };
 
 _tuple.prototype.__delitem__ = function(index) {
-    throw new py.TypeError("'tuple' object doesn't support item deletion");
+    throw new py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
 _tuple.prototype.count = function(value) {
@@ -598,7 +598,7 @@ _tuple.prototype.index = function(value, start, end) {
         }
     }
 
-    throw new py.ValueError("tuple.index(x): x not in list");
+    throw new py_builtins.ValueError("tuple.index(x): x not in list");
 };
 
 /* Python 'list' type */
@@ -607,7 +607,7 @@ function list(seq) {
     if (arguments.length <= 1) {
         return new _list(seq);
     } else {
-        throw new py.TypeError("list() takes at most 1 argument (" + arguments.length + " given)");
+        throw new py_builtins.TypeError("list() takes at most 1 argument (" + arguments.length + " given)");
     }
 }
 
@@ -644,7 +644,7 @@ _list.prototype.__setitem__ = function(index, value) {
     else if ((index < 0) && (index >= -len(this)))
         this._items[index+len(this)] = value;
     else
-        throw new py.IndexError("list assignment index out of range");
+        throw new py_builtins.IndexError("list assignment index out of range");
 };
 
 _list.prototype.__delitem__ = function(index) {
@@ -654,7 +654,7 @@ _list.prototype.__delitem__ = function(index) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw new py.IndexError("list assignment index out of range");
+        throw new py_builtins.IndexError("list assignment index out of range");
 };
 
 _list.prototype.count = _tuple.prototype.count;
@@ -681,7 +681,7 @@ _list.prototype.index = function(value, start, end) {
         }
     }
 
-    throw new py.ValueError("list.index(x): x not in list");
+    throw new py_builtins.ValueError("list.index(x): x not in list");
 };
 
 _list.prototype.remove = function(value) {
@@ -707,7 +707,7 @@ _list.prototype.pop = function() {
         this._len = -1;
         return this._items.pop();
     } else
-        throw new py.IndexError("pop from empty list");
+        throw new py_builtins.IndexError("pop from empty list");
 };
 
 _list.prototype.sort = function() {
@@ -790,7 +790,7 @@ _dict.prototype._js_ = function () {
 };
 
 _dict.prototype.__hash__ = function () {
-    throw new py.TypeError("unhashable type: 'dict'");
+    throw new py_builtins.TypeError("unhashable type: 'dict'");
 };
 
 _dict.prototype.__len__ = function() {
@@ -817,7 +817,7 @@ _dict.prototype.__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw new py.KeyError(str(key));
+        throw new py_builtins.KeyError(str(key));
     }
 };
 
@@ -829,7 +829,7 @@ _dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
         delete this._items[key];
     } else {
-        throw new py.KeyError(str(key));
+        throw new py_builtins.KeyError(str(key));
     }
 };
 
@@ -898,7 +898,7 @@ _dict.prototype.pop = function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw new py.KeyError(str(key));
+            throw new py_builtins.KeyError(str(key));
         }
     }
 
@@ -916,7 +916,7 @@ _dict.prototype.popitem = function() {
     if (defined(key)) {
         return [_key, this._items[_key]];
     } else {
-        throw new py.KeyError("popitem(): dictionary is empty");
+        throw new py_builtins.KeyError("popitem(): dictionary is empty");
     }
 };
 
@@ -998,7 +998,7 @@ _str.prototype.__iter__ = function() {
 };
 
 _str.prototype.__bool__ = function() {
-    return py.bool(this._obj);
+    return py_builtins.bool(this._obj);
 };
 
 _str.prototype.__eq__ = function(s) {
@@ -1039,15 +1039,15 @@ _str.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._obj[index+len(this)];
     else
-        throw new py.IndexError("string index out of range");
+        throw new py_builtins.IndexError("string index out of range");
 };
 
 _str.prototype.__setitem__ = function(index, value) {
-    throw new py.TypeError("'str' object doesn't support item assignment");
+    throw new py_builtins.TypeError("'str' object doesn't support item assignment");
 };
 
 _str.prototype.__delitem__ = function(index) {
-    throw new py.TypeError("'str' object doesn't support item deletion");
+    throw new py_builtins.TypeError("'str' object doesn't support item deletion");
 };
 
 _str.prototype.count = function(value) {
@@ -1079,7 +1079,7 @@ _str.prototype.index = function(value, start, end) {
         }
     }
 
-    throw new py.ValueError("substring not found");
+    throw new py_builtins.ValueError("substring not found");
 };
 
 _str.prototype.find = function(s) {

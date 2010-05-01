@@ -4,13 +4,13 @@ if a == 1:
 else:
     print "no"
 
-py = 1
-if py == 1:
+py_builtins = 1
+if py_builtins == 1:
     print "ok"
 else:
     print "no"
 
-for py in range(5):
-    a += py
+for py_builtins in range(5):
+    a += py_builtins
 
 print a

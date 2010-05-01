@@ -108,7 +108,7 @@ class JS(object):
         'float' : '_float',
 
         # ideally we should check, that this name is available:
-        'py' : '___py_hard_to_collide',
+        'py_builtins' : '___py_hard_to_collide',
     }
 
     builtin = set([
@@ -365,7 +365,7 @@ class JS(object):
         js.append("    try {")
         js.append("        %s = %s.next();" % (for_target, iter_dummy))
         js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (isinstance(%s, py.StopIteration)) {" % exc_dummy)
+        js.append("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
         js.append("            break;")
         js.append("        } else {")
@@ -421,7 +421,7 @@ class JS(object):
 
     @scope
     def visit_If(self, node):
-        js = ["if (py.bool(%s)) {" % self.visit(node.test)]
+        js = ["if (py_builtins.bool(%s)) {" % self.visit(node.test)]
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -516,13 +516,13 @@ class JS(object):
                     self.visit(node.left),
                     )
         elif isinstance(op, ast.Eq):
-            return "py.eq(%s, %s)" % (
+            return "py_builtins.eq(%s, %s)" % (
                     self.visit(node.left),
                     self.visit(comp),
                     )
         elif isinstance(op, ast.NotEq):
             #In fact, we'll have to override this too:
-            return "!(py.eq(%s, %s))" % (
+            return "!(py_builtins.eq(%s, %s))" % (
                     self.visit(node.left),
                     self.visit(comp),
                     )
@@ -540,7 +540,7 @@ class JS(object):
             pass
 
         if id in self.builtin:
-            id = "py." + id;
+            id = "py_builtins." + id;
 
         return id
 
