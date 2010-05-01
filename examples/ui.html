@@ -24,7 +24,7 @@ function get_toolbar() {
 }
 function get_panel() {
     var p = _new(Ext.Panel,js(dict(tuple([tuple([str("renderTo"), str("mesh-editor")]), tuple([str("width"), str("200px")]), tuple([str("title"), str("Mesh")]), tuple([str("html"), str("<canvas id='canvas' width='200' height='200'></canvas>")]), tuple([str("collapsible"), true])]))));
-    if (py.bool(Ext.isIE)) {
+    if (py_builtins.bool(Ext.isIE)) {
         G_vmlCanvasManager.initElement(Ext.getDom(str("canvas")));
     }
     return p;

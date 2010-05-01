@@ -13,10 +13,10 @@ function is_on_the_left(c, a, b, pts_list) {
     var __dummy2__ = pts_list.__getitem__(c);
     cx = __dummy2__.__getitem__(0);
     cy = __dummy2__.__getitem__(1);
-    var ux = py._float((bx)-(ax));
-    var uy = py._float((by)-(ay));
-    var vx = py._float((cx)-(ax));
-    var vy = py._float((cy)-(ay));
+    var ux = py_builtins._float((bx)-(ax));
+    var uy = py_builtins._float((by)-(ay));
+    var vx = py_builtins._float((cx)-(ax));
+    var vy = py_builtins._float((cy)-(ay));
     return ((ux)*(vy))-((uy)*(vx)) > 0;
 }
 function criterion(a, b, c, pts_list) {
@@ -29,10 +29,10 @@ function criterion(a, b, c, pts_list) {
     var __dummy2__ = pts_list.__getitem__(c);
     cx = __dummy2__.__getitem__(0);
     cy = __dummy2__.__getitem__(1);
-    var ux = py._float((ax)-(cx));
-    var uy = py._float((ay)-(cy));
-    var vx = py._float((bx)-(cx));
-    var vy = py._float((by)-(cy));
+    var ux = py_builtins._float((ax)-(cx));
+    var uy = py_builtins._float((ay)-(cy));
+    var vx = py_builtins._float((bx)-(cx));
+    var vy = py_builtins._float((by)-(cy));
     var len_u = sqrt(((ux)*(ux))+((uy)*(uy)));
     var len_v = sqrt(((vx)*(vx))+((vy)*(vy)));
     return (((ux)*(vx))+((uy)*(vy)))/((len_u)*(len_v));
@@ -50,7 +50,7 @@ function find_third_point(a, b, pts_list, edges) {
         try {
             c_point = __dummy0__.next();
         } catch (__dummy2__) {
-            if (isinstance(__dummy2__, py.StopIteration)) {
+            if (isinstance(__dummy2__, py_builtins.StopIteration)) {
                 __dummy1__ = true;
                 break;
             } else {
@@ -58,11 +58,11 @@ function find_third_point(a, b, pts_list, edges) {
             }
         }
         c_index += 1;
-        if (py.bool((!(py.eq(c_index, a)))&&(!(py.eq(c_index, b)))&&(is_on_the_left(c_index,a,b,pts_list)))) {
+        if (py_builtins.bool((!(py_builtins.eq(c_index, a)))&&(!(py_builtins.eq(c_index, b)))&&(is_on_the_left(c_index,a,b,pts_list)))) {
             var edge_intersects = (edge_intersects_edges(tuple([a, c_index]),pts_list,edges))||(edge_intersects_edges(tuple([b, c_index]),pts_list,edges));
-            if (py.bool(!(edge_intersects))) {
+            if (py_builtins.bool(!(edge_intersects))) {
                 var crit = criterion(a,b,c_index,pts_list);
-                if (py.bool(crit < minimum)) {
+                if (py_builtins.bool(crit < minimum)) {
                     minimum = crit;
                     pt_index = c_index;
                     found = 1;
@@ -70,7 +70,7 @@ function find_third_point(a, b, pts_list, edges) {
             }
         }
     }
-    if (py.bool(py.eq(found, 0))) {
+    if (py_builtins.bool(py_builtins.eq(found, 0))) {
         throw TriangulationError(str("ERROR: Optimal point not found in find_third_point()."));
     }
     return pt_index;
@@ -83,7 +83,7 @@ function lies_inside(c, bdy_edges) {
         try {
             edge = __dummy0__.next();
         } catch (__dummy2__) {
-            if (isinstance(__dummy2__, py.StopIteration)) {
+            if (isinstance(__dummy2__, py_builtins.StopIteration)) {
                 __dummy1__ = true;
                 break;
             } else {
@@ -93,7 +93,7 @@ function lies_inside(c, bdy_edges) {
         var __dummy3__ = edge;
         a = __dummy3__.__getitem__(0);
         b = __dummy3__.__getitem__(1);
-        if (py.bool((py.eq(c, a))||(py.eq(c, b)))) {
+        if (py_builtins.bool((py_builtins.eq(c, a))||(py_builtins.eq(c, b)))) {
             return false;
         }
     }
@@ -108,7 +108,7 @@ function is_boundary_edge(a, b, bdy_edges) {
         try {
             edge = __dummy0__.next();
         } catch (__dummy2__) {
-            if (isinstance(__dummy2__, py.StopIteration)) {
+            if (isinstance(__dummy2__, py_builtins.StopIteration)) {
                 __dummy1__ = true;
                 break;
             } else {
@@ -118,7 +118,7 @@ function is_boundary_edge(a, b, bdy_edges) {
         var __dummy3__ = edge;
         a0 = __dummy3__.__getitem__(0);
         b0 = __dummy3__.__getitem__(1);
-        if (py.bool((py.eq(a, a0))&&(py.eq(b, b0)))) {
+        if (py_builtins.bool((py_builtins.eq(a, a0))&&(py_builtins.eq(b, b0)))) {
             return true;
         }
     }
@@ -134,12 +134,12 @@ function triangulate_af(pts_list, bdy_edges) {
         b = __dummy0__.__getitem__(1);
         var c = find_third_point(a,b,pts_list,bdy_edges);
         elems.append(tuple([a, b, c]));
-        if (py.bool(is_boundary_edge(c,a,bdy_edges))) {
+        if (py_builtins.bool(is_boundary_edge(c,a,bdy_edges))) {
             bdy_edges.remove(tuple([c, a]));
         } else {
             bdy_edges.append(tuple([a, c]));
         }
-        if (py.bool(is_boundary_edge(b,c,bdy_edges))) {
+        if (py_builtins.bool(is_boundary_edge(b,c,bdy_edges))) {
             bdy_edges.remove(tuple([b, c]));
         } else {
             bdy_edges.append(tuple([c, b]));
@@ -151,7 +151,7 @@ function ccw(A, B, C) {
     return ((C.__getitem__(1))-(A.__getitem__(1)))*((B.__getitem__(0))-(A.__getitem__(0))) > ((B.__getitem__(1))-(A.__getitem__(1)))*((C.__getitem__(0))-(A.__getitem__(0)));
 }
 function intersect(A, B, C, D) {
-    return (!(py.eq(ccw(A,C,D), ccw(B,C,D))))&&(!(py.eq(ccw(A,B,C), ccw(A,B,D))));
+    return (!(py_builtins.eq(ccw(A,C,D), ccw(B,C,D))))&&(!(py_builtins.eq(ccw(A,B,C), ccw(A,B,D))));
 }
 function two_edges_intersect(nodes, e1, e2) {
     str("\n    Checks whether the two edges intersect.\n\n    It assumes that e1 and e2 are tuples of (a_id, b_id) of ids into the nodes.\n    ");
@@ -170,7 +170,7 @@ function edge_intersects_edges(e1, nodes, edges) {
         try {
             i = __dummy0__.next();
         } catch (__dummy2__) {
-            if (isinstance(__dummy2__, py.StopIteration)) {
+            if (isinstance(__dummy2__, py_builtins.StopIteration)) {
                 __dummy1__ = true;
                 break;
             } else {
@@ -178,10 +178,10 @@ function edge_intersects_edges(e1, nodes, edges) {
             }
         }
         var e2 = edges.__getitem__(i);
-        if (py.bool((py.eq(e1.__getitem__(1), e2.__getitem__(0)))||(py.eq(e1.__getitem__(0), e2.__getitem__(1))))) {
+        if (py_builtins.bool((py_builtins.eq(e1.__getitem__(1), e2.__getitem__(0)))||(py_builtins.eq(e1.__getitem__(0), e2.__getitem__(1))))) {
             continue;
         }
-        if (py.bool(two_edges_intersect(nodes,e1,e2))) {
+        if (py_builtins.bool(two_edges_intersect(nodes,e1,e2))) {
             return true;
         }
     }
@@ -222,7 +222,7 @@ function start_triag() {
         try {
             el = __dummy1__.next();
         } catch (__dummy3__) {
-            if (isinstance(__dummy3__, py.StopIteration)) {
+            if (isinstance(__dummy3__, py_builtins.StopIteration)) {
                 __dummy2__ = true;
                 break;
             } else {
@@ -261,7 +261,7 @@ function start_triag() {
         try {
             n = __dummy9__.next();
         } catch (__dummy11__) {
-            if (isinstance(__dummy11__, py.StopIteration)) {
+            if (isinstance(__dummy11__, py_builtins.StopIteration)) {
                 __dummy10__ = true;
                 break;
             } else {
