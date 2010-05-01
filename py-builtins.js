@@ -1179,3 +1179,11 @@ _str.prototype.split = function(sep) {
 _str.prototype.splitlines = function() {
     return this.split("\n");
 };
+
+_str.prototype.lower = function() {
+    return str(this._obj.toLowerCase());
+};
+
+_str.prototype.upper = function() {
+    return str(this._obj.toUpperCase());
+};
