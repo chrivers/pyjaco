@@ -99,7 +99,6 @@ def main():
                 "tests/lists/sum.py",
 
                 "tests/strings/count.py",
-                "tests/strings/find.py",
                 "tests/strings/lstrip0.py",
                 "tests/strings/lstrip1.py",
                 "tests/strings/replace.py",
