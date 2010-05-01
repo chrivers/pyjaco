@@ -99,7 +99,6 @@ def main():
                 "tests/lists/sum.py",
 
                 "tests/strings/count.py",
-                "tests/strings/splitlines.py",
                 "tests/strings/string_format_d.py",
                 "tests/strings/string_format_efg.py",
                 "tests/strings/string_format_i.py",

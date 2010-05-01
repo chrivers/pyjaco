@@ -1171,3 +1171,7 @@ _str.prototype.split = function(sep) {
         return r_new;
     }
 };
+
+_str.prototype.splitlines = function() {
+    return this.split("\n");
+};
