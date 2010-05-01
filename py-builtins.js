@@ -1104,3 +1104,17 @@ _str.prototype.lstrip = function(chars) {
     }
     return this.__getitem__(slice(i, null));
 };
+
+_str.prototype.rstrip = function(chars) {
+    if (len(this) == 0)
+        return this
+    if (defined(chars))
+        chars = tuple(chars);
+    else
+        chars = tuple(["\n", "\t", " "]);
+    var i = len(this)-1;
+    while ((i >= 0) && (chars.__contains__(this.__getitem__(i)))) {
+        i -= 1;
+    }
+    return this.__getitem__(slice(i+1));
+}
