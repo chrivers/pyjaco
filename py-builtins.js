@@ -714,6 +714,21 @@ _list.prototype.sort = function() {
     this._items.sort();
 };
 
+_list.prototype.insert = function(index, x) {
+    var a = this._items.slice(0, index)
+    var b = this._items.slice(index, len(this))
+    this._items = a.concat([x], b)
+    this._len = -1;
+}
+
+_list.prototype.reverse = function() {
+    var new_list = list([]);
+    iterate(iter(this), function(item) {
+            new_list.insert(0, item);
+    });
+    this._items = new_list._items;
+}
+
 /* Python 'dict' type */
 
 function dict(args) {
@@ -1070,6 +1085,25 @@ _str.prototype.index = function(value, start, end) {
 _str.prototype.find = function(s) {
     return this._obj.search(s);
 };
+
+_str.prototype.rfind = function(s) {
+    rev = function(s) {
+        var a = list(str(s));
+        a.reverse();
+        a = str("").join(a);
+        return a;
+    }
+    var a = rev(this);
+    var b = rev(s);
+    var r = a.find(b);
+    if (r == -1)
+        return r;
+    return len(this)-len(b)-r
+}
+
+_str.prototype.join = function(s) {
+    return str(js(s).join(js(this)));
+}
 
 _str.prototype.replace = function(old, _new, count) {
     old = js(old);
