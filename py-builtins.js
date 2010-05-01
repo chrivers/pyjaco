@@ -531,7 +531,7 @@ _tuple.prototype.__iter__ = function() {
 
 _tuple.prototype.__contains__ = function(item) {
     for (var index in this._items) {
-        if (item == this._items[index]) {
+        if (py.eq(item, this._items[index])) {
             return true;
         }
     }
@@ -973,6 +973,19 @@ _str.prototype.__len__ = function() {
 
 _str.prototype.__iter__ = function() {
     return iter(this._obj);
+}
+
+_str.prototype.__bool__ = function() {
+    return py.bool(this._obj);
+}
+
+_str.prototype.__eq__ = function(s) {
+    if (typeof(s) === "string")
+        return this._obj == s;
+    else if (isinstance(s, _str))
+        return this._obj == s._obj;
+    else
+        return false;
 }
 
 _str.prototype.__contains__ = function(item) {

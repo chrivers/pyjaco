@@ -693,6 +693,24 @@ function test_str() {
     test(function() { return s.find("test") == 5 });
     test(function() { return s.find("testi") == 5 });
     test(function() { return s.find("testix") == -1 });
+
+    var t = tuple(["a", "b", "c"]);
+    test(function() { return t.__contains__("a") == true });
+    test(function() { return t.__contains__("b") == true });
+    test(function() { return t.__contains__("c") == true });
+    test(function() { return t.__contains__("d") == false });
+    test(function() { return t.__contains__(88) == false });
+
+    var t = tuple([str("a"), str("b"), str("c")]);
+    test(function() { return t.__contains__("a") == true });
+    test(function() { return t.__contains__("b") == true });
+    test(function() { return t.__contains__("c") == true });
+    test(function() { return t.__contains__("d") == false });
+    test(function() { return t.__contains__(88) == false });
+    test(function() { return t.__contains__(str("a")) == true });
+    test(function() { return t.__contains__(str("b")) == true });
+    test(function() { return t.__contains__(str("c")) == true });
+    test(function() { return t.__contains__(str("d")) == false });
 }
 
 function tests() {
