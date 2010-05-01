@@ -9,12 +9,12 @@ class GoL(object):
     def __init__(self):
         self.width = 75
         self.height = 75
-        self.canvas = document.getElementById('canvas').getContext('2d')
-        self.canvas.fillStyle = 'rgb(0, 0, 0)'
+        self.canvas = document.getElementById(js('canvas')).getContext(js('2d'))
+        self.canvas.fillStyle = js('rgb(0, 0, 0)')
         self.grid = list(range(self.width*self.height))
         for i in range(self.width*self.height):
             self.grid[i] = Math.random() > 0.5
-        setInterval('window.gol.iter()', 250)
+        setInterval(js('window.gol.iter()'), 250)
         self.draw()
     def get(self, x, y):
         return self.grid[((x + self.width) % self.width) + ((y + self.height) % self.height) * self.width]
@@ -40,7 +40,7 @@ class GoL(object):
                     count += 1
                 if self.get(x+1, y+1):
                     count += 1
-                
+
                 if self.get(x, y):
                     if count < 2:
                         toDie.append(x + y*self.width)
@@ -49,12 +49,12 @@ class GoL(object):
                 else:
                     if count == 3:
                         toLive.append(x + y*self.width)
-        
+
         for i in range(len(toDie)):
             self.grid[toDie[i]] = False
         for i in range(len(toLive)):
             self.grid[toLive[i]] = True
-        
+
         self.draw()
     def draw(self):
         i = 0

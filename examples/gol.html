@@ -17,8 +17,8 @@ _GoL.prototype.__class__ = _GoL
 _GoL.prototype.__init__ = function() {
     this.width = 75;
     this.height = 75;
-    this.canvas = document.getElementById("canvas").getContext("2d");
-    this.canvas.fillStyle = "rgb(0, 0, 0)";
+    this.canvas = document.getElementById(js(str("canvas"))).getContext(js(str("2d")));
+    this.canvas.fillStyle = js(str("rgb(0, 0, 0)"));
     this.grid = list(range((this.width)*(this.height)));
     var __dummy0__ = iter(range((this.width)*(this.height)));
     var __dummy1__ = false;
@@ -36,7 +36,7 @@ _GoL.prototype.__init__ = function() {
         }
         this.grid.__setitem__(i, Math.random() > 0.5);
     }
-    setInterval("window.gol.iter()",250);
+    setInterval(js(str("window.gol.iter()")),250);
     this.draw();
 }
 _GoL.prototype.get = function(x, y) {
@@ -74,40 +74,40 @@ _GoL.prototype.iter = function() {
                 }
             }
             var count = 0;
-            if (this.get((x)-(1),(y)-(1))) {
+            if (py.bool(this.get((x)-(1),(y)-(1)))) {
                 count += 1;
             }
-            if (this.get(x,(y)-(1))) {
+            if (py.bool(this.get(x,(y)-(1)))) {
                 count += 1;
             }
-            if (this.get((x)+(1),(y)-(1))) {
+            if (py.bool(this.get((x)+(1),(y)-(1)))) {
                 count += 1;
             }
-            if (this.get((x)-(1),y)) {
+            if (py.bool(this.get((x)-(1),y))) {
                 count += 1;
             }
-            if (this.get((x)+(1),y)) {
+            if (py.bool(this.get((x)+(1),y))) {
                 count += 1;
             }
-            if (this.get((x)-(1),(y)+(1))) {
+            if (py.bool(this.get((x)-(1),(y)+(1)))) {
                 count += 1;
             }
-            if (this.get(x,(y)+(1))) {
+            if (py.bool(this.get(x,(y)+(1)))) {
                 count += 1;
             }
-            if (this.get((x)+(1),(y)+(1))) {
+            if (py.bool(this.get((x)+(1),(y)+(1)))) {
                 count += 1;
             }
-            if (this.get(x,y)) {
-                if (count < 2) {
+            if (py.bool(this.get(x,y))) {
+                if (py.bool(count < 2)) {
                     toDie.append((x)+((y)*(this.width)));
                 } else {
-                    if (count > 3) {
+                    if (py.bool(count > 3)) {
                         toDie.append((x)+((y)*(this.width)));
                     }
                 }
             } else {
-                if (count == 3) {
+                if (py.bool(py.eq(count, 3))) {
                     toLive.append((x)+((y)*(this.width)));
                 }
             }
@@ -177,7 +177,7 @@ _GoL.prototype.draw = function() {
                     throw __dummy20__;
                 }
             }
-            if (this.grid.__getitem__(i)) {
+            if (py.bool(this.grid.__getitem__(i))) {
                 this.canvas.fillRect(x,y,(x)+(10),(y)+(10));
             } else {
                 this.canvas.clearRect(x,y,(x)+(10),(y)+(10));
