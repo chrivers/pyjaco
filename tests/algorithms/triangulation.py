@@ -146,6 +146,17 @@ def edge_intersects_edges(e1, nodes, edges):
             return True
     return False
 
+def example1():
+    nodes = [
+            (0, 0),
+            (1, 0),
+            (1, 1),
+            (0, 1),
+            ]
+    edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
+    elems = triangulate_af(nodes, edges)
+    return nodes, edges, elems
+
 def example2():
     nodes = [
             (0, 0),
@@ -160,7 +171,17 @@ def example2():
     elems = triangulate_af(nodes, edges)
     return nodes, edges, elems
 
+nodes, edges, elems = example1()
+print nodes
+print edges
+print elems
+if not any_edges_intersect(nodes, edges):
+    print "ok"
+
+print
 nodes, edges, elems = example2()
 print nodes
 print edges
 print elems
+if not any_edges_intersect(nodes, edges):
+    print "ok"
