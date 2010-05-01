@@ -92,7 +92,7 @@ py.__exceptions__ = [
     'NameError',
     'IndexError',
     'KeyError',
-    'StopIteration',
+    'StopIteration'
 ];
 
 for (var i in py.__exceptions__) {
@@ -214,8 +214,9 @@ function zip() {
     }
 
     var iters = list();
-
-    for (var i = 0; i < arguments.length; i++) {
+    var i;
+    
+    for (i = 0; i < arguments.length; i++) {
         iters.append(iter(arguments[i]));
     }
 
@@ -224,7 +225,7 @@ function zip() {
     while (true) {
         var item = list();
 
-        for (var i = 0; i < arguments.length; i++) {
+        for (i = 0; i < arguments.length; i++) {
             try {
                 var value = iters.__getitem__(i).next();
             } catch (exc) {
@@ -540,6 +541,7 @@ _tuple.prototype.__contains__ = function(item) {
 };
 
 _tuple.prototype.__getitem__ = function(index) {
+    var seq;
     if (isinstance(index, _slice)) {
         var s = index;
         var inds = s.indices(len(this));
@@ -692,6 +694,7 @@ _list.prototype.append = function(value) {
 };
 
 _list.prototype.extend = function(l) {
+    var items;
     items = this._items;
     iterate(iter(l), function(item) {
         items.push(item);
@@ -725,6 +728,10 @@ _dict.__name__ = 'dict';
 _dict.prototype.__class__ = _dict;
 
 _dict.prototype.__init__ = function(args) {
+    var items;
+    var key;
+    var value;
+    
     if (defined(args)) {
         if (defined(args.__iter__)) {
             items = {};
@@ -999,6 +1006,8 @@ _str.prototype.__contains__ = function(item) {
 };
 
 _str.prototype.__getitem__ = function(index) {
+    
+    var seq;
     if (isinstance(index, _slice)) {
         var s = index;
         var inds = s.indices(len(this));
@@ -1065,6 +1074,9 @@ _str.prototype.find = function(s) {
 _str.prototype.replace = function(old, _new, count) {
     old = js(old);
     _new = js(_new);
+    var old_s;
+    var new_s;
+
     if (defined(count))
         count = js(count);
     else
