@@ -1099,11 +1099,11 @@ _str.prototype.rfind = function(s) {
     if (r == -1)
         return r;
     return len(this)-len(b)-r
-}
+};
 
 _str.prototype.join = function(s) {
     return str(js(s).join(js(this)));
-}
+};
 
 _str.prototype.replace = function(old, _new, count) {
     old = js(old);
@@ -1155,7 +1155,7 @@ _str.prototype.rstrip = function(chars) {
 
 _str.prototype.strip = function(chars) {
     return this.lstrip(chars).rstrip(chars);
-}
+};
 
 _str.prototype.split = function(sep) {
     if (defined(sep)) {
