@@ -55,7 +55,7 @@ function copy(iterator) {
 }
 
 function _new(cls, arg) {
-    return new cls(arg)
+    return new cls(arg);
 }
 
 function js(obj) {
@@ -101,7 +101,7 @@ for (var i in py.__exceptions__) {
     py[name] = function() {
         return function(message) {
             this.message = defined(message) ? message : "";
-        }
+        };
     }();
 
     py[name].__name__ = name;
@@ -109,11 +109,11 @@ for (var i in py.__exceptions__) {
 
     py[name].prototype.__str__ = function() {
         return str(js(this.__class__.__name__) + ": " + js(this.message));
-    }
+    };
 
     py[name].prototype.toString = function() {
         return js(this.__str__());
-    }
+    };
 }
 
 /* Python built-in functions */
@@ -181,7 +181,7 @@ function range(start, end, step) {
 }
 
 function xrange(start, end, step) {
-    return iter(range(start, end, step))
+    return iter(range(start, end, step));
 }
 
 function map() {
@@ -277,7 +277,7 @@ py.bool = function(a) {
         else
             return false;
     }
-}
+};
 
 py.eq = function(a, b) {
     if ((a != null) && defined(a.__eq__))
@@ -286,15 +286,15 @@ py.eq = function(a, b) {
         return b.__eq__(a);
     else
         return a == b;
-}
+};
 
 py._int = function(value) {
     return value;
-}
+};
 
 py._float = function(value) {
     return value;
-}
+};
 
 py.max = function(list) {
     if (len(list) == 0)
@@ -309,7 +309,7 @@ py.max = function(list) {
 
         return result;
     }
-}
+};
 
 py.min = function(list) {
     if (len(list) == 0)
@@ -324,7 +324,7 @@ py.min = function(list) {
 
         return result;
     }
-}
+};
 
 py.sum = function(list) {
     var result = 0;
@@ -334,7 +334,7 @@ py.sum = function(list) {
     });
 
     return result;
-}
+};
 
 /* Python 'iter' type */
 
@@ -362,15 +362,15 @@ _iter.prototype.__class__ = _iter;
 _iter.prototype.__init__ = function(seq) {
     this._seq = seq;
     this._index = 0;
-}
+};
 
 _iter.prototype.__str__ = function () {
     return str("<iter of " + this._seq + " at " + this._index + ">");
-}
+};
 
 _iter.prototype.toString = function () {
     return js(this.__str__());
-}
+};
 
 _iter.prototype.next = function() {
     var value = this._seq[this._index++];
@@ -380,7 +380,7 @@ _iter.prototype.next = function() {
     } else {
         throw new py.StopIteration('no more items');
     }
-}
+};
 
 /* Python 'slice' object */
 
@@ -407,7 +407,7 @@ _slice.prototype.__init__ = function(start, stop, step) {
     this.start = start;
     this.stop = stop;
     this.step = step;
-}
+};
 
 _slice.prototype.__str__ = function() {
     return str("slice(" + this.start + ", " + this.stop + ", " + this.step + ")");
@@ -427,7 +427,7 @@ _slice.prototype.indices = function(n) {
     var step = this.step;
     if (step == null)
         step = 1;
-    return tuple([start, stop, step])
+    return tuple([start, stop, step]);
 };
 
 /* Python 'tuple' type */
@@ -455,7 +455,7 @@ _tuple.prototype.__init__ = function(seq) {
         this._items = copy(iter(seq));
         this._len = -1;
     }
-}
+};
 
 _tuple.prototype.__str__ = function () {
     if (this.__len__() == 1) {
@@ -463,27 +463,27 @@ _tuple.prototype.__str__ = function () {
     } else {
         return str("(" + this._items.join(", ") + ")");
     }
-}
+};
 
 _tuple.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
-            return false
+            return false;
         for (var i = 0; i < len(this); i++) {
             // TODO: use __eq__ here as well:
             if (this._items[i] != other._items[i])
-                return false
+                return false;
         }
-        return true
+        return true;
         // This doesn't take into account hash collisions:
         //return hash(this) == hash(other)
     } else
-        return false
-}
+        return false;
+};
 
 _tuple.prototype.toString = function () {
     return js(this.__str__());
-}
+};
 
 _tuple.prototype._js_ = function () {
     var items = [];
@@ -493,7 +493,7 @@ _tuple.prototype._js_ = function () {
     });
 
     return items;
-}
+};
 
 _tuple.prototype.__hash__ = function () {
     var value = 0x345678;
@@ -505,11 +505,11 @@ _tuple.prototype.__hash__ = function () {
     }
 
     if (value == -1) {
-        value = -2
+        value = -2;
     }
 
-    return value
-}
+    return value;
+};
 
 _tuple.prototype.__len__ = function() {
     if (this._len == -1) {
@@ -523,11 +523,11 @@ _tuple.prototype.__len__ = function() {
         return count;
     } else
         return this._len;
-}
+};
 
 _tuple.prototype.__iter__ = function() {
     return new _iter(this._items);
-}
+};
 
 _tuple.prototype.__contains__ = function(item) {
     for (var index in this._items) {
@@ -537,7 +537,7 @@ _tuple.prototype.__contains__ = function(item) {
     }
 
     return false;
-}
+};
 
 _tuple.prototype.__getitem__ = function(index) {
     if (isinstance(index, _slice)) {
@@ -552,20 +552,20 @@ _tuple.prototype.__getitem__ = function(index) {
         }
         return new this.__class__(seq);
     } else if ((index >= 0) && (index < len(this)))
-        return this._items[index]
+        return this._items[index];
     else if ((index < 0) && (index >= -len(this)))
-        return this._items[index+len(this)]
+        return this._items[index+len(this)];
     else
         throw new py.IndexError("list assignment index out of range");
-}
+};
 
 _tuple.prototype.__setitem__ = function(index, value) {
     throw new py.TypeError("'tuple' object doesn't support item assignment");
-}
+};
 
 _tuple.prototype.__delitem__ = function(index) {
     throw new py.TypeError("'tuple' object doesn't support item deletion");
-}
+};
 
 _tuple.prototype.count = function(value) {
     var count = 0;
@@ -577,7 +577,7 @@ _tuple.prototype.count = function(value) {
     }
 
     return count;
-}
+};
 
 _tuple.prototype.index = function(value, start, end) {
     if (!defined(start)) {
@@ -597,7 +597,7 @@ _tuple.prototype.index = function(value, start, end) {
     }
 
     throw new py.ValueError("tuple.index(x): x not in list");
-}
+};
 
 /* Python 'list' type */
 
@@ -620,7 +620,7 @@ _list.prototype.__init__ = _tuple.prototype.__init__;
 
 _list.prototype.__str__ = function () {
     return str("[" + this._items.join(", ") + "]");
-}
+};
 
 _list.prototype.__eq__ = _tuple.prototype.__eq__;
 
@@ -638,22 +638,22 @@ _list.prototype.__getitem__ = _tuple.prototype.__getitem__;
 
 _list.prototype.__setitem__ = function(index, value) {
     if ((index >= 0) && (index < len(this)))
-        this._items[index] = value
+        this._items[index] = value;
     else if ((index < 0) && (index >= -len(this)))
-        this._items[index+len(this)] = value
+        this._items[index+len(this)] = value;
     else
         throw new py.IndexError("list assignment index out of range");
-}
+};
 
 _list.prototype.__delitem__ = function(index) {
     if ((index >= 0) && (index < len(this))) {
-        var a = this._items.slice(0, index)
-        var b = this._items.slice(index+1, len(this))
-        this._items = a.concat(b)
+        var a = this._items.slice(0, index);
+        var b = this._items.slice(index+1, len(this));
+        this._items = a.concat(b);
         this._len = -1;
     } else
         throw new py.IndexError("list assignment index out of range");
-}
+};
 
 _list.prototype.count = _tuple.prototype.count;
 
@@ -675,21 +675,21 @@ _list.prototype.index = function(value, start, end) {
 
         if (defined(_value.__eq__)) {
             if (_value.__eq__(value))
-                return i
+                return i;
         }
     }
 
     throw new py.ValueError("list.index(x): x not in list");
-}
+};
 
 _list.prototype.remove = function(value) {
     this.__delitem__(this.index(value));
-}
+};
 
 _list.prototype.append = function(value) {
-    this._items.push(value)
+    this._items.push(value);
     this._len = -1;
-}
+};
 
 _list.prototype.extend = function(l) {
     items = this._items;
@@ -697,7 +697,7 @@ _list.prototype.extend = function(l) {
         items.push(item);
     });
     this._len = -1;
-}
+};
 
 _list.prototype.pop = function() {
     if (len(this) > 0) {
@@ -705,11 +705,11 @@ _list.prototype.pop = function() {
         return this._items.pop();
     } else
         throw new py.IndexError("pop from empty list");
-}
+};
 
 _list.prototype.sort = function() {
     this._items.sort();
-}
+};
 
 /* Python 'dict' type */
 
@@ -740,7 +740,7 @@ _dict.prototype.__init__ = function(args) {
     } else {
         this._items = {};
     }
-}
+};
 
 _dict.prototype.__str__ = function () {
     var strings = [];
@@ -750,11 +750,11 @@ _dict.prototype.__str__ = function () {
     }
 
     return str("{" + strings.join(", ") + "}");
-}
+};
 
 _dict.prototype.toString = function () {
     return js(this.__str__());
-}
+};
 
 _dict.prototype._js_ = function () {
     var items = {};
@@ -765,11 +765,11 @@ _dict.prototype._js_ = function () {
     });
 
     return items;
-}
+};
 
 _dict.prototype.__hash__ = function () {
     throw new py.TypeError("unhashable type: 'dict'");
-}
+};
 
 _dict.prototype.__len__ = function() {
     var count = 0;
@@ -779,15 +779,15 @@ _dict.prototype.__len__ = function() {
     }
 
     return count;
-}
+};
 
 _dict.prototype.__iter__ = function() {
     return new _iter(this.keys());
-}
+};
 
 _dict.prototype.__contains__ = function(key) {
     return defined(this._items[key]);
-}
+};
 
 _dict.prototype.__getitem__ = function(key) {
     var value = this._items[key];
@@ -797,11 +797,11 @@ _dict.prototype.__getitem__ = function(key) {
     } else {
         throw new py.KeyError(str(key));
     }
-}
+};
 
 _dict.prototype.__setitem__ = function(key, value) {
     this._items[key] = value;
-}
+};
 
 _dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
@@ -809,7 +809,7 @@ _dict.prototype.__delitem__ = function(key) {
     } else {
         throw new py.KeyError(str(key));
     }
-}
+};
 
 _dict.prototype.get = function(key, value) {
     var _value = this._items[key];
@@ -823,7 +823,7 @@ _dict.prototype.get = function(key, value) {
             return null;
         }
     }
-}
+};
 
 _dict.prototype.items = function() {
     var items = [];
@@ -833,7 +833,7 @@ _dict.prototype.items = function() {
     }
 
     return items;
-}
+};
 
 _dict.prototype.keys = function() {
     var keys = [];
@@ -843,7 +843,7 @@ _dict.prototype.keys = function() {
     }
 
     return keys;
-}
+};
 
 _dict.prototype.values = function() {
     var values = [];
@@ -853,19 +853,19 @@ _dict.prototype.values = function() {
     }
 
     return values;
-}
+};
 
 _dict.prototype.update = function(other) {
     for (var key in other) {
         this._items[key] = other[key];
     }
-}
+};
 
 _dict.prototype.clear = function() {
     for (var key in this._items) {
         delete this._items[key];
     }
-}
+};
 
 _dict.prototype.pop = function(key, value) {
     var _value = this._items[key];
@@ -881,7 +881,7 @@ _dict.prototype.pop = function(key, value) {
     }
 
     return _value;
-}
+};
 
 _dict.prototype.popitem = function() {
     var _key;
@@ -896,7 +896,7 @@ _dict.prototype.popitem = function() {
     } else {
         throw new py.KeyError("popitem(): dictionary is empty");
     }
-}
+};
 
 /* Python 'str' type */
 
@@ -924,32 +924,32 @@ _str.prototype.__init__ = function(s) {
         } else
             this._obj = js(s);
     }
-}
+};
 
 _str.prototype.__str__ = function () {
     return this;
-}
+};
 
 _str.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
-            return false
+            return false;
         for (var i = 0; i < len(this); i++) {
             if (this._obj[i] != other._obj[i])
-                return false
+                return false;
         }
-        return true
+        return true;
     } else
-        return false
-}
+        return false;
+};
 
 _str.prototype.toString = function () {
     return js(this.__str__());
-}
+};
 
 _str.prototype._js_ = function () {
     return this._obj;
-}
+};
 
 _str.prototype.__hash__ = function () {
     var value = 0x345678;
@@ -961,23 +961,23 @@ _str.prototype.__hash__ = function () {
     }
 
     if (value == -1) {
-        value = -2
+        value = -2;
     }
 
-    return value
-}
+    return value;
+};
 
 _str.prototype.__len__ = function() {
     return this._obj.length;
-}
+};
 
 _str.prototype.__iter__ = function() {
     return iter(this._obj);
-}
+};
 
 _str.prototype.__bool__ = function() {
     return py.bool(this._obj);
-}
+};
 
 _str.prototype.__eq__ = function(s) {
     if (typeof(s) === "string")
@@ -986,7 +986,7 @@ _str.prototype.__eq__ = function(s) {
         return this._obj == s._obj;
     else
         return false;
-}
+};
 
 _str.prototype.__contains__ = function(item) {
     for (var index in this._obj) {
@@ -996,7 +996,7 @@ _str.prototype.__contains__ = function(item) {
     }
 
     return false;
-}
+};
 
 _str.prototype.__getitem__ = function(index) {
     if (isinstance(index, _slice)) {
@@ -1011,20 +1011,20 @@ _str.prototype.__getitem__ = function(index) {
         }
         return new this.__class__(seq);
     } else if ((index >= 0) && (index < len(this)))
-        return this._obj[index]
+        return this._obj[index];
     else if ((index < 0) && (index >= -len(this)))
-        return this._obj[index+len(this)]
+        return this._obj[index+len(this)];
     else
         throw new py.IndexError("string index out of range");
-}
+};
 
 _str.prototype.__setitem__ = function(index, value) {
     throw new py.TypeError("'str' object doesn't support item assignment");
-}
+};
 
 _str.prototype.__delitem__ = function(index) {
     throw new py.TypeError("'str' object doesn't support item deletion");
-}
+};
 
 _str.prototype.count = function(value) {
     var count = 0;
@@ -1036,7 +1036,7 @@ _str.prototype.count = function(value) {
     }
 
     return count;
-}
+};
 
 _str.prototype.index = function(value, start, end) {
     if (!defined(start)) {
@@ -1056,11 +1056,11 @@ _str.prototype.index = function(value, start, end) {
     }
 
     throw new py.ValueError("substring not found");
-}
+};
 
 _str.prototype.find = function(s) {
     return this._obj.search(s);
-}
+};
 
 _str.prototype.replace = function(old, _new, count) {
     old = js(old);
@@ -1077,11 +1077,11 @@ _str.prototype.replace = function(old, _new, count) {
         count -= 1;
     }
     return new_s;
-}
+};
 
 _str.prototype.lstrip = function(chars) {
     if (len(this) == 0)
-        return this
+        return this;
     if (defined(chars))
         chars = tuple(chars);
     else
@@ -1091,4 +1091,4 @@ _str.prototype.lstrip = function(chars) {
         i += 1;
     }
     return this.__getitem__(slice(i, null));
-}
+};
