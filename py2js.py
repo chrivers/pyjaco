@@ -549,7 +549,7 @@ class JS(object):
             s = s.replace("\n", "\\n")
             s = s.replace('"', '\\"')
             return s
-        return '"%s"' % escape(node.s)
+        return 'str("%s")' % escape(node.s)
 
     def visit_Call(self, node):
         if node.keywords:
