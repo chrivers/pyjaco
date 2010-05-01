@@ -1117,4 +1117,23 @@ _str.prototype.rstrip = function(chars) {
         i -= 1;
     }
     return this.__getitem__(slice(i+1));
-}
+};
+
+_str.prototype.split = function(sep) {
+    if (defined(sep)) {
+        var r = list(this._obj.split(sep));
+        var r_new = list([]);
+        iterate(iter(r), function(item) {
+                r_new.append(str(item));
+        });
+        return r_new;
+    }
+    else {
+        var r_new = list([]);
+        iterate(iter(this.split(" ")), function(item) {
+                if (len(item) > 0)
+                    r_new.append(item);
+        });
+        return r_new;
+    }
+};

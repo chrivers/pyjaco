@@ -100,7 +100,6 @@ def main():
 
                 "tests/strings/count.py",
                 "tests/strings/rfind.py",
-                "tests/strings/split.py",
                 "tests/strings/splitlines.py",
                 "tests/strings/string_format_d.py",
                 "tests/strings/string_format_efg.py",
