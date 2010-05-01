@@ -1024,3 +1024,7 @@ _str.prototype.index = function(value, start, end) {
 
     throw new py.ValueError("substring not found");
 }
+
+_str.prototype.find = function(s) {
+    return this._obj.search(s);
+}

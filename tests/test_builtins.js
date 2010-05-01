@@ -684,6 +684,15 @@ function test_str() {
     test(function() { return s.index("e") == 3 });
     test(function() { return s.index("m") == 2 });
     raises(py.ValueError, function() { s.index("3") });
+
+    test(function() { return s.find("t") == 5 });
+    test(function() { return s.find("e") == 3 });
+    test(function() { return s.find("m") == 2 });
+    test(function() { return s.find("3") == -1 });
+
+    test(function() { return s.find("test") == 5 });
+    test(function() { return s.find("testi") == 5 });
+    test(function() { return s.find("testix") == -1 });
 }
 
 function tests() {
