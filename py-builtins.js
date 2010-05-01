@@ -72,7 +72,7 @@ function js(obj) {
        same object. It is the responsibility of _js_() to convert recursively
        the object itself.
     */
-    if (defined(obj._js_))
+    if ((obj != null) && defined(obj._js_))
         return obj._js_();
     else
         return obj;
@@ -1060,4 +1060,21 @@ _str.prototype.index = function(value, start, end) {
 
 _str.prototype.find = function(s) {
     return this._obj.search(s);
+}
+
+_str.prototype.replace = function(old, _new, count) {
+    old = js(old);
+    _new = js(_new);
+    if (defined(count))
+        count = js(count);
+    else
+        count = -1;
+    old_s = "";
+    new_s = this._obj;
+    while ((count != 0) && (new_s != old_s)) {
+        old_s = new_s;
+        new_s = new_s.replace(old, _new);
+        count -= 1;
+    }
+    return new_s;
 }
