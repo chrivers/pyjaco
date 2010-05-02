@@ -66,7 +66,7 @@ function js(obj) {
 
        tuple -> Array
        list -> Array
-       dict -> Array
+       dict -> Object
 
        It uses the obj._js_() if it is defined, otherwise it just returns the
        same object. It is the responsibility of _js_() to convert recursively
@@ -215,7 +215,7 @@ function zip() {
 
     var iters = list();
     var i;
-    
+
     for (i = 0; i < arguments.length; i++) {
         iters.append(iter(arguments[i]));
     }
@@ -746,7 +746,7 @@ _dict.prototype.__init__ = function(args) {
     var items;
     var key;
     var value;
-    
+
     if (defined(args)) {
         if (defined(args.__iter__)) {
             items = {};
@@ -1021,7 +1021,7 @@ _str.prototype.__contains__ = function(item) {
 };
 
 _str.prototype.__getitem__ = function(index) {
-    
+
     var seq;
     if (isinstance(index, _slice)) {
         var s = index;
