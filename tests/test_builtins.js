@@ -622,6 +622,24 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(list([])) });
     t = list([8, 9]);
     test(function() { return t.__getitem__(s).__eq__(list([])) });
+
+    s = slice(0, -20);
+    test(function() { return s.start == 0 });
+    test(function() { return s.stop == -20 });
+    test(function() { return s.step == null });
+    test(function() { return s.indices(50).__eq__(tuple([0, 30, 1])) });
+    test(function() { return s.indices(40).__eq__(tuple([0, 20, 1])) });
+    test(function() { return s.indices(21).__eq__(tuple([0, 1, 1])) });
+    test(function() { return s.indices(20).__eq__(tuple([0, 0, 1])) });
+
+    s = slice(-3, -20);
+    test(function() { return s.start == -3 });
+    test(function() { return s.stop == -20 });
+    test(function() { return s.step == null });
+    test(function() { return s.indices(50).__eq__(tuple([47, 30, 1])) });
+    test(function() { return s.indices(40).__eq__(tuple([37, 20, 1])) });
+    test(function() { return s.indices(21).__eq__(tuple([18, 1, 1])) });
+    test(function() { return s.indices(20).__eq__(tuple([17, 0, 1])) });
 }
 
 function test_to_js() {

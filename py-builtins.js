@@ -402,7 +402,7 @@ _slice.prototype.__init__ = function(start, stop, step) {
         stop = start;
         start = null;
     }
-    if (!start) start = null;
+    if (!start && start != 0) start = null;
     if (!defined(stop)) stop = null;
     if (!defined(step)) step = null;
     this.start = start;
@@ -420,11 +420,15 @@ _slice.prototype.indices = function(n) {
         start = 0;
     if (start > n)
         start = n;
+    if (start < 0)
+        start = n+start;
     var stop = this.stop;
     if (stop > n)
         stop = n;
     if (stop == null)
         stop = n;
+    if (stop < 0)
+        stop = n+stop;
     var step = this.step;
     if (step == null)
         step = 1;
@@ -1050,15 +1054,19 @@ _str.prototype.__delitem__ = function(index) {
     throw new py_builtins.TypeError("'str' object doesn't support item deletion");
 };
 
-_str.prototype.count = function(value) {
+_str.prototype.count = function(str, start, end) {
+    if (!defined(start))
+        start = 0;
+    if (!defined(end))
+        end = null;
     var count = 0;
-
-    for (var index in this._obj) {
-        if (value == this._obj[index]) {
-            count += 1;
-        }
+    s = this.__getitem__(slice(start, end));
+    idx = s.find(str);
+    while (idx != -1) {
+        count += 1;
+        s = s.__getitem__(slice(idx+1, null));
+        idx = s.find(str);
     }
-
     return count;
 };
 
