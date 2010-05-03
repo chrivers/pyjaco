@@ -19,6 +19,18 @@ can generate that file using
 
 python examples/gol.py > examples/gol.html
 
+Tests
+-----
+
+./run_tests.py
+
+will run all tests, that are supposed to work. If any test fails, it's a bug.
+
+./run_tests.py -a
+
+will run all tests including those that are known to fail (currently). It
+should be understandable from the output.
+
 License
 -------
 
