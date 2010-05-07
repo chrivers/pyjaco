@@ -227,8 +227,8 @@ class JS(object):
         if node.args.kwarg is not None:
             raise JSError("keyword arguments are not supported")
 
-        #if node.decorator_list:
-        #    raise JSError("decorators are not supported")
+        if node.decorator_list:
+            raise JSError("decorators are not supported")
 
         defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 

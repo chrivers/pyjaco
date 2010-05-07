@@ -4,9 +4,6 @@ This test only tests that Python code can be compiled using the py2js.
 It doesn't test if the resulting javascript makes any sense.
 """
 
-from py2js import JavaScript
-
-@JavaScript
 def is_on_the_left(c, a, b, pts_list):
    ax, ay = pts_list[a]
    bx, by = pts_list[b]
@@ -17,7 +14,6 @@ def is_on_the_left(c, a, b, pts_list):
    vy = float(cy - ay)
    return (ux*vy - uy*vx > 0)
 
-@JavaScript
 def criterion(a, b, c, pts_list):
    ax, ay = pts_list[a]
    bx, by = pts_list[b]
@@ -30,7 +26,6 @@ def criterion(a, b, c, pts_list):
    len_v = sqrt(vx*vx + vy*vy)
    return (ux*vx + uy*vy)/(len_u*len_v)
 
-@JavaScript
 def find_third_point(a, b, pts_list, edges):
     """
     Take a boundary edge (a,b), and in the list of points
@@ -57,14 +52,12 @@ def find_third_point(a, b, pts_list, edges):
         raise TriangulationError("ERROR: Optimal point not found in find_third_point().")
     return pt_index
 
-@JavaScript
 def lies_inside(c, bdy_edges):
    for edge in bdy_edges:
        a,b = edge
        if c == a or c == b: return False
    return True
 
-@JavaScript
 def is_boundary_edge(a, b, bdy_edges):
     """
     Checks whether edge (a, b) is in the list of boundary edges
@@ -75,7 +68,6 @@ def is_boundary_edge(a, b, bdy_edges):
             return True
     return False
 
-@JavaScript
 def triangulate_af(pts_list, bdy_edges):
     """
     Create a triangulation using the advancing front method.
@@ -99,7 +91,6 @@ def triangulate_af(pts_list, bdy_edges):
             bdy_edges.append((c,b))
     return elems
 
-@JavaScript
 class TestClass(object):
     def __init__(self):
         alert('TestClass created')
@@ -112,7 +103,6 @@ class TestClass(object):
         alert(self.value)
         self.value += 1
 
-@JavaScript
 class TestClass(object):
     count = 0
     def __init__(self):
@@ -122,12 +112,10 @@ class TestClass(object):
     def test(self):
         alert(self.count)
 
-@JavaScript
 def onCountClick(event):
     window.testObj.next()
     window.testObj.test()
 
-@JavaScript
 def helloWorld():
     window.testObj = TestClass.new()
 
@@ -177,17 +165,14 @@ def helloWorld():
         }
     )
 
-@JavaScript
 def onButtonClick(event, target='World'):
     if target == 'World':
         target = 'Big Blue World'
     alert('Hello, ' + target + '!')
 
-@JavaScript
 def StartGoL():
     window.gol = GoL.new()
 
-@JavaScript
 class GoL(object):
     def __init__(self):
         self.width = 75
