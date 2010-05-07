@@ -579,17 +579,23 @@ class JS(object):
 
     def visit_Call(self, node):
         if node.keywords:
-            raise JSError("only positional arguments supported")
+            keywords = []
+            for kw in node.keywords:
+                keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
+            keywords = "{" + ", ".join(keywords) + "}"
+            js_args = ",".join([ self.visit(arg) for arg in node.args ])
+            return "%s.args([%s], %s)" % (self.visit(node.func), js_args,
+                    keywords)
+        else:
+            if node.starargs is not None:
+                raise JSError("star arguments are not supported")
 
-        if node.starargs is not None:
-            raise JSError("star arguments are not supported")
+            if node.kwargs is not None:
+                raise JSError("keyword arguments are not supported")
 
-        if node.kwargs is not None:
-            raise JSError("keyword arguments are not supported")
+            js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
-        js_args = ",".join([ self.visit(arg) for arg in node.args ])
-
-        return "%s(%s)" % (self.visit(node.func), js_args)
+            return "%s(%s)" % (self.visit(node.func), js_args)
 
     def visit_Raise(self, node):
         assert node.inst is None
