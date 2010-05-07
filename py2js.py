@@ -221,47 +221,70 @@ class JS(object):
 
     @scope
     def visit_FunctionDef(self, node):
-        if node.args.vararg is not None:
-            raise JSError("star arguments are not supported")
-
-        if node.args.kwarg is not None:
-            raise JSError("keyword arguments are not supported")
-
         if node.decorator_list:
             raise JSError("decorators are not supported")
 
-        defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
-
-        js_args = []
-        js_defaults = []
-        self._scope = [arg.id for arg in node.args.args]
-
-        for arg, default in zip(node.args.args, defaults):
-            if not isinstance(arg, ast.Name):
-                raise JSError("tuples in argument list are not supported")
-
-            js_args.append(arg.id)
-
-            if default is not None:
-                js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
-
         if self._class_name:
-            prep = "_%s.prototype.%s = function(" % \
-                    (self._class_name, node.name)
-            if not (js_args[0] == "self"):
-                raise NotImplementedError("The first argument must be 'self'.")
-            del js_args[0]
+            if node.args.vararg is not None:
+                raise JSError("star arguments are not supported")
+
+            if node.args.kwarg is not None:
+                raise JSError("keyword arguments are not supported")
+
+            if node.decorator_list:
+                raise JSError("decorators are not supported")
+
+            defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
+
+            js_args = []
+            js_defaults = []
+            self._scope = [arg.id for arg in node.args.args]
+
+            for arg, default in zip(node.args.args, defaults):
+                if not isinstance(arg, ast.Name):
+                    raise JSError("tuples in argument list are not supported")
+
+                js_args.append(arg.id)
+
+                if default is not None:
+                    js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
+
+            if self._class_name:
+                prep = "_%s.prototype.%s = function(" % \
+                        (self._class_name, node.name)
+                if not (js_args[0] == "self"):
+                    raise NotImplementedError("The first argument must be 'self'.")
+                del js_args[0]
+            else:
+                prep = "function %s(" % node.name
+            js = [prep + ", ".join(js_args) + ") {"]
+
+            js.extend(self.indent(js_defaults))
+
+            for stmt in node.body:
+                js.extend(self.indent(self.visit(stmt)))
+
+            self._scope = []
+            return js + ["}"]
         else:
-            prep = "function %s(" % node.name
-        js = [prep + ", ".join(js_args) + ") {"]
+            defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
-        js.extend(self.indent(js_defaults))
-
-        for stmt in node.body:
-            js.extend(self.indent(self.visit(stmt)))
-
-        self._scope = []
-        return js + ["}"]
+            args = []
+            defaults2 = []
+            for arg, default in zip(node.args.args, defaults):
+                if not isinstance(arg, ast.Name):
+                    raise JSError("tuples in argument list are not supported")
+                if default:
+                    defaults2.append("%s: %s" % (arg.id, self.visit(default)))
+                args.append(arg.id)
+            defaults = "{" + ", ".join(defaults2) + "}"
+            args = ", ".join(args)
+            js = ["var %s = $def(%s, function(%s) {" % (node.name,
+                defaults, args)]
+            self._scope = [arg.id for arg in node.args.args]
+            for stmt in node.body:
+                js.extend(self.indent(self.visit(stmt)))
+            return js + ["});"]
 
     @scope
     def visit_ClassDef(self, node):
