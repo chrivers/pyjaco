@@ -222,7 +222,12 @@ class JS(object):
     @scope
     def visit_FunctionDef(self, node):
         if node.decorator_list:
-            raise JSError("decorators are not supported")
+            if len(node.decorator_list) == 1 and \
+                    isinstance(node.decorator_list[0], ast.Name) and \
+                    node.decorator_list[0].id == "JavaScript":
+                pass # this is our own decorator
+            else:
+                raise JSError("decorators are not supported")
 
         if self._class_name:
             if node.args.vararg is not None:
