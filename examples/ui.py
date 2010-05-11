@@ -142,7 +142,7 @@ def toolbar_mesh3(b, e):
     canvas.stroke()
 
 @JavaScript
-def menu_about():
+def menu_about(e, t):
     Ext.MessageBox.show(js({
            "title": 'About',
            "msg": 'FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR',
@@ -152,7 +152,7 @@ def menu_about():
         }))
 
 @JavaScript
-def menu_help():
+def menu_help(e, t):
     tabs2 = _new(Ext.TabPanel, js({
         "activeTab": 2,
         "width": 600,

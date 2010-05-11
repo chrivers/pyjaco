@@ -8,34 +8,181 @@
   <script language="JavaScript" src="../py-builtins.js"></script>
   <title id="page-title">Title</title>
   <script type="text/javascript">
-function menu_about() {
-    Ext.MessageBox.show(js(dict(tuple([tuple([str("title"), str("About")]), tuple([str("msg"), str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")]), tuple([str("buttons"), Ext.MessageBox.OK]), tuple([str("animEl"), str("mb9")]), tuple([str("icon"), Ext.MessageBox.INFO])]))));
-}
-function menu_help() {
-    var tabs2 = _new(Ext.TabPanel,js(dict(tuple([tuple([str("activeTab"), 2]), tuple([str("width"), 600]), tuple([str("height"), 250]), tuple([str("plain"), true]), tuple([str("defaults"), dict(tuple([tuple([str("autoScroll"), true])]))]), tuple([str("items"), list([dict(tuple([tuple([str("title"), str("Introduction")]), tuple([str("html"), str("This is the mesh editor.<p/><br/>Browse the tabs for more help.")])])), dict(tuple([tuple([str("title"), str("Mesh")]), tuple([str("html"), str("Create the mesh by adding points to the <b>canvas</b>.")])])), dict(tuple([tuple([str("title"), str("Developing")]), tuple([str("html"), str("Documentation:<br/><a href='http://www.extjs.com/deploy/dev/docs/'>ExtJS</a><br/><a href='http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html'>HTML5 Canvas</a>")])])), dict(tuple([tuple([str("title"), str("About")]), tuple([str("html"), str("Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR.")])]))])])]))));
-    var w = _new(Ext.Window,js(dict(tuple([tuple([str("renderTo"), str("mesh-editor-help")]), tuple([str("layout"), str("fit")]), tuple([str("width"), 500]), tuple([str("height"), 300]), tuple([str("title"), str("Help")]), tuple([str("items"), tabs2])]))));
+var menu_about = $def({}, function(e, t) {
+    Ext.MessageBox.show(js(dict(tuple([
+    tuple([str("title"), str("About")]),
+    tuple([str("msg"), str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")]),
+    tuple([str("buttons"), Ext.MessageBox.OK]),
+    tuple([str("animEl"), str("mb9")]),
+    tuple([str("icon"), Ext.MessageBox.INFO])
+]))));
+});
+var menu_help = $def({}, function(e, t) {
+    var tabs2 = _new(Ext.TabPanel,js(dict(tuple([
+    tuple([str("activeTab"), 2]),
+    tuple([str("width"), 600]),
+    tuple([str("height"), 250]),
+    tuple([str("plain"), true]),
+    tuple([str("defaults"), dict(tuple([
+    tuple([str("autoScroll"), true])
+]))]),
+    tuple([str("items"), list([dict(tuple([
+    tuple([str("title"), str("Introduction")]),
+    tuple([str("html"), str("This is the mesh editor.<p/><br/>Browse the tabs for more help.")])
+])), dict(tuple([
+    tuple([str("title"), str("Mesh")]),
+    tuple([str("html"), str("Create the mesh by adding points to the <b>canvas</b>.")])
+])), dict(tuple([
+    tuple([str("title"), str("Developing")]),
+    tuple([str("html"), str("Documentation:<br/><a href='http://www.extjs.com/deploy/dev/docs/'>ExtJS</a><br/><a href='http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html'>HTML5 Canvas</a>")])
+])), dict(tuple([
+    tuple([str("title"), str("About")]),
+    tuple([str("html"), str("Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR.")])
+]))])])
+]))));
+    var w = _new(Ext.Window,js(dict(tuple([
+    tuple([str("renderTo"), str("mesh-editor-help")]),
+    tuple([str("layout"), str("fit")]),
+    tuple([str("width"), 500]),
+    tuple([str("height"), 300]),
+    tuple([str("title"), str("Help")]),
+    tuple([str("items"), tabs2])
+]))));
     w.show();
-}
-function get_toolbar() {
-    var items = list([dict(tuple([tuple([str("text"), str("File")]), tuple([str("menu"), list([dict(tuple([tuple([str("text"), str("Open...")])])), dict(tuple([tuple([str("text"), str("Save...")])])), str("-"), dict(tuple([tuple([str("text"), str("Close")])]))])])])), dict(tuple([tuple([str("text"), str("Edit")]), tuple([str("menu"), list([dict(tuple([tuple([str("text"), str("Undo")])])), dict(tuple([tuple([str("text"), str("Redo")])])), str("-"), dict(tuple([tuple([str("text"), str("Copy")])])), str("-"), dict(tuple([tuple([str("text"), str("Delete selected objects")])])), str("-"), dict(tuple([tuple([str("text"), str("Options")])]))])])])), dict(tuple([tuple([str("text"), str("View")]), tuple([str("menu"), list([dict(tuple([tuple([str("text"), str("Zoom best fit")])])), dict(tuple([tuple([str("text"), str("Zoom region")])])), dict(tuple([tuple([str("text"), str("Zoom in")])])), dict(tuple([tuple([str("text"), str("Zoom out")])])), str("-"), dict(tuple([tuple([str("text"), str("Fullscreen mode")])])), str("-"), dict(tuple([tuple([str("text"), str("Scene properties")])]))])])])), dict(tuple([tuple([str("text"), str("Problem")]), tuple([str("menu"), list([dict(tuple([tuple([str("text"), str("Operate on nodes")])])), dict(tuple([tuple([str("text"), str("Operate on edges")])])), dict(tuple([tuple([str("text"), str("Operate on labels")])])), dict(tuple([tuple([str("text"), str("Postprocessor")])])), str("-"), dict(tuple([tuple([str("text"), str("Add")])])), str("-"), dict(tuple([tuple([str("text"), str("Select region")])])), dict(tuple([tuple([str("text"), str("Transform")])])), str("-"), dict(tuple([tuple([str("text"), str("Local Values")])])), dict(tuple([tuple([str("text"), str("Surface Integrals")])])), dict(tuple([tuple([str("text"), str("Volume Integrals")])])), dict(tuple([tuple([str("text"), str("Select by marker")])]))])])])), dict(tuple([tuple([str("text"), str("Tools")]), tuple([str("menu"), list([dict(tuple([tuple([str("text"), str("Chart")])])), str("-"), dict(tuple([tuple([str("text"), str("Script editor")])])), dict(tuple([tuple([str("text"), str("Run script...")])])), dict(tuple([tuple([str("text"), str("Run command...")])])), str("-"), dict(tuple([tuple([str("text"), str("Report...")])])), dict(tuple([tuple([str("text"), str("Create video...")])]))])])])), dict(tuple([tuple([str("text"), str("Help")]), tuple([str("menu"), tuple([dict(tuple([tuple([str("text"), str("Help")]), tuple([str("handler"), menu_help])])), str("-"), dict(tuple([tuple([str("text"), str("About Mesh Editor")]), tuple([str("handler"), menu_about])]))])])]))]);
-    _new(Ext.Toolbar,js(dict(tuple([tuple([str("renderTo"), str("mesh-editor")]), tuple([str("items"), items])]))));
-    items = list([dict(tuple([tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]), tuple([str("cls"), str("x-btn-icon")]), tuple([str("handler"), toolbar_mesh1]), tuple([str("tooltip"), str("<b>Draw Mesh I</b><br/>Show an example mesh")])])), dict(tuple([tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]), tuple([str("cls"), str("x-btn-icon")]), tuple([str("handler"), toolbar_mesh2]), tuple([str("tooltip"), str("<b>Draw Mesh II</b><br/>Show an example mesh")])])), dict(tuple([tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]), tuple([str("cls"), str("x-btn-icon")]), tuple([str("handler"), toolbar_mesh3]), tuple([str("tooltip"), str("<b>Draw Mesh III</b><br/>Show an example mesh")])]))]);
-    _new(Ext.Toolbar,js(dict(tuple([tuple([str("renderTo"), str("mesh-editor")]), tuple([str("items"), items])]))));
-}
-function get_panel() {
-    var p = _new(Ext.Panel,js(dict(tuple([tuple([str("renderTo"), str("mesh-editor")]), tuple([str("width"), str("200px")]), tuple([str("title"), str("Mesh")]), tuple([str("html"), str("<canvas id='canvas' width='200' height='200'></canvas>")]), tuple([str("collapsible"), true])]))));
+});
+var get_toolbar = $def({}, function() {
+    var items = list([dict(tuple([
+    tuple([str("text"), str("File")]),
+    tuple([str("menu"), list([dict(tuple([
+    tuple([str("text"), str("Open...")])
+])), dict(tuple([
+    tuple([str("text"), str("Save...")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Close")])
+]))])])
+])), dict(tuple([
+    tuple([str("text"), str("Edit")]),
+    tuple([str("menu"), list([dict(tuple([
+    tuple([str("text"), str("Undo")])
+])), dict(tuple([
+    tuple([str("text"), str("Redo")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Copy")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Delete selected objects")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Options")])
+]))])])
+])), dict(tuple([
+    tuple([str("text"), str("View")]),
+    tuple([str("menu"), list([dict(tuple([
+    tuple([str("text"), str("Zoom best fit")])
+])), dict(tuple([
+    tuple([str("text"), str("Zoom region")])
+])), dict(tuple([
+    tuple([str("text"), str("Zoom in")])
+])), dict(tuple([
+    tuple([str("text"), str("Zoom out")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Fullscreen mode")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Scene properties")])
+]))])])
+])), dict(tuple([
+    tuple([str("text"), str("Problem")]),
+    tuple([str("menu"), list([dict(tuple([
+    tuple([str("text"), str("Operate on nodes")])
+])), dict(tuple([
+    tuple([str("text"), str("Operate on edges")])
+])), dict(tuple([
+    tuple([str("text"), str("Operate on labels")])
+])), dict(tuple([
+    tuple([str("text"), str("Postprocessor")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Add")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Select region")])
+])), dict(tuple([
+    tuple([str("text"), str("Transform")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Local Values")])
+])), dict(tuple([
+    tuple([str("text"), str("Surface Integrals")])
+])), dict(tuple([
+    tuple([str("text"), str("Volume Integrals")])
+])), dict(tuple([
+    tuple([str("text"), str("Select by marker")])
+]))])])
+])), dict(tuple([
+    tuple([str("text"), str("Tools")]),
+    tuple([str("menu"), list([dict(tuple([
+    tuple([str("text"), str("Chart")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Script editor")])
+])), dict(tuple([
+    tuple([str("text"), str("Run script...")])
+])), dict(tuple([
+    tuple([str("text"), str("Run command...")])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("Report...")])
+])), dict(tuple([
+    tuple([str("text"), str("Create video...")])
+]))])])
+])), dict(tuple([
+    tuple([str("text"), str("Help")]),
+    tuple([str("menu"), tuple([dict(tuple([
+    tuple([str("text"), str("Help")]),
+    tuple([str("handler"), menu_help])
+])), str("-"), dict(tuple([
+    tuple([str("text"), str("About Mesh Editor")]),
+    tuple([str("handler"), menu_about])
+]))])])
+]))]);
+    _new(Ext.Toolbar,js(dict(tuple([
+    tuple([str("renderTo"), str("mesh-editor")]),
+    tuple([str("items"), items])
+]))));
+    items = list([dict(tuple([
+    tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]),
+    tuple([str("cls"), str("x-btn-icon")]),
+    tuple([str("handler"), toolbar_mesh1]),
+    tuple([str("tooltip"), str("<b>Draw Mesh I</b><br/>Show an example mesh")])
+])), dict(tuple([
+    tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]),
+    tuple([str("cls"), str("x-btn-icon")]),
+    tuple([str("handler"), toolbar_mesh2]),
+    tuple([str("tooltip"), str("<b>Draw Mesh II</b><br/>Show an example mesh")])
+])), dict(tuple([
+    tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]),
+    tuple([str("cls"), str("x-btn-icon")]),
+    tuple([str("handler"), toolbar_mesh3]),
+    tuple([str("tooltip"), str("<b>Draw Mesh III</b><br/>Show an example mesh")])
+]))]);
+    _new(Ext.Toolbar,js(dict(tuple([
+    tuple([str("renderTo"), str("mesh-editor")]),
+    tuple([str("items"), items])
+]))));
+});
+var get_panel = $def({}, function() {
+    var p = _new(Ext.Panel,js(dict(tuple([
+    tuple([str("renderTo"), str("mesh-editor")]),
+    tuple([str("width"), str("200px")]),
+    tuple([str("title"), str("Mesh")]),
+    tuple([str("html"), str("<canvas id='canvas' width='200' height='200'></canvas>")]),
+    tuple([str("collapsible"), true])
+]))));
     if (py_builtins.bool(Ext.isIE)) {
         G_vmlCanvasManager.initElement(Ext.getDom(str("canvas")));
     }
     return p;
-}
-function clickHandler() {
+});
+var clickHandler = $def({}, function() {
     alert(str("Clicked on a menu item"));
-}
-function checkHandler() {
+});
+var checkHandler = $def({}, function() {
     alert(str("Checked a menu item"));
-}
-function toolbar_mesh1(b, e) {
+});
+var toolbar_mesh1 = $def({}, function(b, e) {
     var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
     canvas.fillStyle = js(str("rgb(255, 255, 255)"));
     canvas.fillRect(0,0,200,200);
@@ -49,8 +196,8 @@ function toolbar_mesh1(b, e) {
     canvas.lineTo(100,100);
     canvas.lineTo(10,10);
     canvas.stroke();
-}
-function toolbar_mesh2(b, e) {
+});
+var toolbar_mesh2 = $def({}, function(b, e) {
     var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
     canvas.fillStyle = js(str("rgb(255, 255, 255)"));
     canvas.fillRect(0,0,200,200);
@@ -64,8 +211,8 @@ function toolbar_mesh2(b, e) {
     canvas.lineTo(100,100);
     canvas.lineTo(100,10);
     canvas.stroke();
-}
-function toolbar_mesh3(b, e) {
+});
+var toolbar_mesh3 = $def({}, function(b, e) {
     var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
     canvas.fillStyle = js(str("rgb(255, 255, 255)"));
     canvas.fillRect(0,0,200,200);
@@ -79,13 +226,13 @@ function toolbar_mesh3(b, e) {
     canvas.lineTo(20,100);
     canvas.lineTo(50,50);
     canvas.stroke();
-}
-function initialize() {
+});
+var initialize = $def({}, function() {
     Ext.get(document.body).update(str("<div id='mesh-editor'></div><div id='mesh-editor-help'></div>"));
     Ext.QuickTips.init();
     get_toolbar();
     get_panel();
-}
+});
 
   Ext.onReady(initialize);
   </script>
