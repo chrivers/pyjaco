@@ -362,7 +362,7 @@ class JS(object):
         #self._classes remembers all classes defined
         self._classes[class_name] = node
         js.append("function %s() {" % class_name)
-        js.append("    t = new _%s;" % class_name)
+        js.append("    t = new _%s();" % class_name)
         js.append("    _%s.prototype.__init__.apply(t,arguments);" % class_name)
         js.append("    return t;")
         js.append("}")
