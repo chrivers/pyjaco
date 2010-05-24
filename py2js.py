@@ -176,6 +176,7 @@ class JS(object):
 
         # This lists all variables in the local scope:
         self._scope = []
+        self._classes = {'object':None}
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -196,6 +197,52 @@ class JS(object):
 
     def get_comparison_op(self, node):
         return self.comparison_op[node.__class__.__name__]
+
+    def mro(self, class_name):
+        '''Run through parent classes usingthe C3 algorithm
+        of new-type python classes
+        '''
+        #TODO: catch unknown base exception (now it gives KeyError)
+        if class_name=='object':
+            return ['object']
+        bs = [n.id for n in self._classes[class_name].bases]
+        if not bs:
+            return [class_name]
+        if len(bs) == 1:
+            return [class_name] + self.mro(bs[0])
+        ls = [self.mro(base) for base in bs]
+        N = len(ls)
+        first_elts = [ps[0] for ps in ls]
+        tails = [ps[1:] for ps in ls]
+        for j in range(N):
+            if any(first_elts[j] in t for t in tails[j+1:]):
+                raise TypeError("Cannot create a consistent method resolution order (MRO) for bases")
+        return [class_name] + first_elts + self.C3_merge(tails)
+
+    def C3_merge(self,ls,known=None):
+        #TODO: read again the official document on mro
+        #and check it does exactly the same
+        #Find whether pypy has an implementation of mro
+        if not known:known = set()
+        if not ls:return []
+        N = len(ls)
+        
+        for j in range(N):
+            ps = ls[j]
+            candidate = ps[0]
+            if candidate in known:
+                if len(ps) == 1:
+                    return self.C3_merge(ls[:j]+ls[j+1:], known)
+                else:
+                    return self.C3_merge(ls[:j] + [ps[1:]] + ls[j+1:], known)
+            elif all(candidate not in ls[k][1:] for k in range(N) if k!=j):
+                if len(ps) == 1:
+                    known.add(candidate)
+                    return [candidate] + self.C3_merge(ls[:j]+ls[j+1:], known)
+                else:
+                    known.add(candidate)
+                    return [candidate] + self.C3_merge(ls[:j] + [ps[1:]] + ls[j+1:], known)
+        raise TypeError("Cannot create a consistent method resolution order (MRO) for bases")
 
     def visit(self, node, scope=None):
         try:
@@ -221,11 +268,17 @@ class JS(object):
 
     @scope
     def visit_FunctionDef(self, node):
+        is_static = False
         if node.decorator_list:
             if len(node.decorator_list) == 1 and \
                     isinstance(node.decorator_list[0], ast.Name) and \
                     node.decorator_list[0].id == "JavaScript":
                 pass # this is our own decorator
+            elif self._class_name and \
+                    len(node.decorator_list) == 1 and \
+                    isinstance(node.decorator_list[0], ast.Name) and \
+                    node.decorator_list[0].id == "staticmethod":
+                is_static = True
             else:
                 raise JSError("decorators are not supported")
 
@@ -236,7 +289,7 @@ class JS(object):
             if node.args.kwarg is not None:
                 raise JSError("keyword arguments are not supported")
 
-            if node.decorator_list:
+            if node.decorator_list and not is_static:
                 raise JSError("decorators are not supported")
 
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
@@ -257,9 +310,10 @@ class JS(object):
             if self._class_name:
                 prep = "_%s.prototype.%s = function(" % \
                         (self._class_name, node.name)
-                if not (js_args[0] == "self"):
-                    raise NotImplementedError("The first argument must be 'self'.")
-                del js_args[0]
+                if not is_static:
+                    if not (js_args[0] == "self"):
+                        raise NotImplementedError("The first argument must be 'self'.")
+                    del js_args[0]
             else:
                 prep = "function %s(" % node.name
             js = [prep + ", ".join(js_args) + ") {"]
@@ -269,8 +323,15 @@ class JS(object):
             for stmt in node.body:
                 js.extend(self.indent(self.visit(stmt)))
 
+            js.append('}')
+
+            #If method is static, we also add it directly to the class
+            if is_static:
+                js.append("%s.%s = _%s.prototype.%s;" % \
+                        (self._class_name, node.name, self._class_name, node.name))
+
             self._scope = []
-            return js + ["}"]
+            return js
         else:
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
@@ -298,22 +359,53 @@ class JS(object):
         assert len(bases) >= 1
         bases = ", ".join(bases)
         class_name = node.name
+        #self._classes remembers all classes defined
+        self._classes[class_name] = node
         js.append("function %s() {" % class_name)
-        js.append("    return new _%s();" % class_name)
+        js.append("    t = new _%s;" % class_name)
+        js.append("    _%s.prototype.__init__.apply(t,arguments);" % class_name)
+        js.append("    return t;")
         js.append("}")
         js.append("function _%s() {" % class_name)
-        js.append("    this.__init__();")
         js.append("}")
-        js.append("_%s.__name__ = '%s'" % (class_name, class_name))
-        js.append("_%s.prototype.__class__ = _%s" % (class_name, class_name))
+        js.append("_%s.__name__ = '%s';" % (class_name, class_name))
+        js.append("_%s.prototype.__class__ = _%s;" % (class_name, class_name))
         from ast import dump
         methods = []
+        all_attributes = set()
         self._class_name = class_name
         for stmt in node.body:
             if isinstance(stmt, ast.FunctionDef):
                 methods.append(stmt)
-            js.extend(self.visit(stmt))
+                all_attributes.add(stmt.name)
+            if isinstance(stmt, ast.Assign):
+                value = self.visit(stmt.value)
+                for t in stmt.targets:
+                    all_attributes.add(t.id )
+                    var = self.visit(t)
+                    js.append("%s.%s = %s;" % (class_name, var, value))
+                    js.append("_%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
+            else:
+                js.extend(self.visit(stmt))
         self._class_name = None
+        #TODO: take care of super keyword
+#        print self.mro(class_name)
+        for cls in self.mro(class_name)[1:-1]:
+            base_node = self._classes[cls]
+            for stmt in base_node.body:
+                if isinstance(stmt, ast.FunctionDef) and not stmt.name in all_attributes:
+                    all_attributes.add(stmt.name)
+                    js.append("_%s.prototype.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
+                    if len(stmt.decorator_list) == 1 and \
+                    isinstance(stmt.decorator_list[0], ast.Name) and \
+                    stmt.decorator_list[0].id == "staticmethod":
+                        js.append("%s.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
+                elif isinstance(stmt, ast.Assign):
+                    for t in stmt.targets:
+                        if not t.id in all_attributes:
+                            all_attributes.add(t.id)
+                            js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
+
         methods_names = [m.name for m in methods]
         if not "__init__" in methods_names:
             # if the user didn't define __init__(), we have to add it ourselves
@@ -335,6 +427,8 @@ class JS(object):
     def visit_Assign(self, node):
         assert len(node.targets) == 1
         target = node.targets[0]
+        #~ if self._class_name:
+            #~ target = self._class_name + '.' + target
         value = self.visit(node.value)
         if isinstance(target, (ast.Tuple, ast.List)):
             js = ["var __dummy%d__ = %s;" % (self.dummy, value)]

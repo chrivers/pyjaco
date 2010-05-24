@@ -1,26 +1,26 @@
 
 class foo(object):
-	
-	registered = []
+    
+    registered = []
 
-	def __init__(self,val):
-		self.fval = val
-		self.register(self)
+    def __init__(self,val):
+        self.fval = val
+        self.register(self)
 
-	def inc(self):
-		self.fval += 1
+    def inc(self):
+        self.fval += 1
 
-	def msg(self):
-		return "foo says:"+str(self.fval)
+    def msg(self):
+        return "foo says:"+str(self.fval)
 
-	@staticmethod
-	def register(f):
-		foo.registered.append(f)
+    @staticmethod
+    def register(f):
+        foo.registered.append(f)
 
-	@staticmethod
-	def printregistered():
-		for r in foo.registered:
-			print r.msg()
+    @staticmethod
+    def printregistered():
+        for r in foo.registered:
+            print r.msg()
 
 a = foo(10)
 b = foo(20)
