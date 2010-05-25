@@ -6,6 +6,6 @@ print x
 del x
 
 try:
-	print x
+    print x
 except:
-	print "x is gone"
+    print "x is gone"

@@ -2,12 +2,12 @@
 x = 'hello'
 
 if x != 'hello':
-	print "1"
-	pass
-	print "2"
+    print "1"
+    pass
+    print "2"
 else:
-	print "3"
-	pass
-	print "4"
+    print "3"
+    pass
+    print "4"
 
 

@@ -1,17 +1,17 @@
 
 
 class foobar(object):
-	
-	x = 1
+    
+    x = 1
 
-	def __init__(self):
-		self.foovar = 1
+    def __init__(self):
+        self.foovar = 1
 
-	def foo(self,x):
-		self.foovar = self.foovar + x
+    def foo(self,x):
+        self.foovar = self.foovar + x
 
-	def bar(self):
-		print self.foovar
+    def bar(self):
+        print self.foovar
 
 f = foobar()
 f.bar()
