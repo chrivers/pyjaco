@@ -106,7 +106,11 @@ _Canvas.__name__ = 'Canvas';
 _Canvas.prototype.__class__ = _Canvas;
 _Canvas.prototype.toString = _iter.prototype.toString;
 _Canvas.prototype.__init__ = function(id) {
-    this._obj = Ext.getDom(js(id)).getContext(js(str("2d")));
+    var dom = Ext.getDom(js(id));
+    if (py_builtins.bool(Ext.isIE)) {
+        G_vmlCanvasManager.initElement(dom);
+    }
+    this._obj = dom.getContext(js(str("2d")));
 }
 _Canvas.prototype.fillRect = function(x1, y1, w, h) {
     this._obj.fillStyle = js(this.fillStyle);
@@ -286,9 +290,6 @@ var get_panel = $def({}, function() {
     tuple([str("html"), str("<canvas id='canvas' width='200' height='200'></canvas>")]),
     tuple([str("collapsible"), true])
 ])));
-    if (py_builtins.bool(Ext.isIE)) {
-        G_vmlCanvasManager.initElement(Ext.getDom(str("canvas")));
-    }
     return p;
 });
 var toolbar_mesh1 = $def({}, function(b, e) {

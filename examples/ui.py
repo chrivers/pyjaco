@@ -80,9 +80,6 @@ def get_panel():
             "html": "<canvas id='canvas' width='200' height='200'></canvas>",
             "collapsible": true
             })
-    if Ext.isIE:
-        # This is needed for IE to emulate the canvas element:
-        G_vmlCanvasManager.initElement(Ext.getDom('canvas'))
     return p
 
 def toolbar_mesh1(b, e):
@@ -210,7 +207,11 @@ def info_box(title, msg):
 class Canvas(object):
 
     def __init__(self, id):
-        self._obj = Ext.getDom(js(id)).getContext(js('2d'))
+        dom = Ext.getDom(js(id))
+        if Ext.isIE:
+            # This is needed for IE to emulate the canvas element:
+            G_vmlCanvasManager.initElement(dom)
+        self._obj = dom.getContext(js('2d'))
 
     def fillRect(self, x1, y1, w, h):
         self._obj.fillStyle = js(self.fillStyle)
