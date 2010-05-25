@@ -65,6 +65,7 @@ def main():
                 "tests/basic/kwargs.py",
                 "tests/basic/float2int.py",
                 "tests/basic/oo_inherit.py",
+                "tests/basic/oo_inherit_simple2.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_dict.py",
                 "tests/basic/del_local.py",
