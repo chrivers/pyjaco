@@ -234,10 +234,12 @@ class Canvas(object):
     def stroke(self):
         self._obj.stroke()
 
+##################################################
+# Main code that translates the above to JS
+
 import inspect
 
 from py2js import convert_py2js
-
 
 def main():
     funcs = [
