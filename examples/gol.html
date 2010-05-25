@@ -7,13 +7,15 @@ var StartGoL = $def({}, function() {
     window.gol = GoL();
 });
 function GoL() {
-    return new _GoL();
+    t = new _GoL();
+    _GoL.prototype.__init__.apply(t,arguments);
+    return t;
 }
 function _GoL() {
-    this.__init__();
 }
-_GoL.__name__ = 'GoL'
-_GoL.prototype.__class__ = _GoL
+_GoL.__name__ = 'GoL';
+_GoL.prototype.__class__ = _GoL;
+_GoL.prototype.toString = _iter.prototype.toString;
 _GoL.prototype.__init__ = function() {
     this.width = 75;
     this.height = 75;
