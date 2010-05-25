@@ -85,9 +85,6 @@ def get_panel():
         G_vmlCanvasManager.initElement(Ext.getDom('canvas'))
     return p
 
-def clickHandler():
-    alert('Clicked on a menu item')
-
 def toolbar_mesh1(b, e):
     canvas = Ext.getDom(js('canvas')).getContext(js('2d'))
     canvas.fillStyle = js('rgb(255, 255, 255)')
@@ -167,9 +164,6 @@ def menu_help(e, t):
                 })
     w.show()
 
-def checkHandler():
-    alert('Checked a menu item')
-
 def initialize():
     Ext.get(document.body).update("<div id='mesh-editor'></div><div id='mesh-editor-help'></div>")
     Ext.QuickTips.init()
@@ -231,8 +225,6 @@ def main():
             menu_help,
             get_toolbar,
             get_panel,
-            clickHandler,
-            checkHandler,
             toolbar_mesh1,
             toolbar_mesh2,
             toolbar_mesh3,

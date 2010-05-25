@@ -257,12 +257,6 @@ var get_panel = $def({}, function() {
     }
     return p;
 });
-var clickHandler = $def({}, function() {
-    alert(str("Clicked on a menu item"));
-});
-var checkHandler = $def({}, function() {
-    alert(str("Checked a menu item"));
-});
 var toolbar_mesh1 = $def({}, function(b, e) {
     var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
     canvas.fillStyle = js(str("rgb(255, 255, 255)"));
