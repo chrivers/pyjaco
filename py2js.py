@@ -370,6 +370,8 @@ class JS(object):
         js.append("}")
         js.append("_%s.__name__ = '%s';" % (class_name, class_name))
         js.append("_%s.prototype.__class__ = _%s;" % (class_name, class_name))
+        js.append("_%s.prototype.toString = _iter.prototype.toString;" % \
+                (class_name))
         from ast import dump
         methods = []
         all_attributes = set()
