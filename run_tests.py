@@ -94,6 +94,7 @@ def main():
                 "tests/lists/filter.py",
                 "tests/lists/reduce.py",
                 "tests/lists/sum.py",
+                "tests/lists/subclass.py",
 
                 "tests/strings/string_format_d.py",
                 "tests/strings/string_format_efg.py",
