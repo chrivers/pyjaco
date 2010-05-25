@@ -58,7 +58,7 @@ def get_toolbar():
                 {'text': 'About Mesh Editor', 'handler': menu_about},
                 )},
             ]
-    _new(Ext.Toolbar, js({"renderTo": 'mesh-editor', "items": items}))
+    Toolbar({"renderTo": 'mesh-editor', "items": items})
     items = [
             { "icon": 'http://www.extjs.com/deploy/dev/examples/menu/list-items.gif', "cls": 'x-btn-icon',
                 "handler": toolbar_mesh1,
@@ -70,16 +70,16 @@ def get_toolbar():
                 "handler": toolbar_mesh3,
             "tooltip": '<b>Draw Mesh III</b><br/>Show an example mesh' },
             ]
-    _new(Ext.Toolbar, js({"renderTo": 'mesh-editor', "items": items}))
+    Toolbar({"renderTo": 'mesh-editor', "items": items})
 
 def get_panel():
-    p = _new(Ext.Panel, js({
+    p = Panel({
             "renderTo": 'mesh-editor',
             "width": '200px',
             "title": 'Mesh',
             "html": "<canvas id='canvas' width='200' height='200'></canvas>",
             "collapsible": true
-            }))
+            })
     if Ext.isIE:
         # This is needed for IE to emulate the canvas element:
         G_vmlCanvasManager.initElement(Ext.getDom('canvas'))
@@ -134,16 +134,10 @@ def toolbar_mesh3(b, e):
     canvas.stroke()
 
 def menu_about(e, t):
-    Ext.MessageBox.show(js({
-           "title": 'About',
-           "msg": 'FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR',
-           "buttons": Ext.MessageBox.OK,
-           "animEl": 'mb9',
-           "icon": Ext.MessageBox.INFO,
-        }))
+    info_box("About", "FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")
 
 def menu_help(e, t):
-    tabs2 = _new(Ext.TabPanel, js({
+    tabs2 = TabPanel({
         "activeTab": 2,
         "width": 600,
         "height": 250,
@@ -162,17 +156,15 @@ def menu_help(e, t):
                 "title": 'About',
                 "html": "Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR."
             }]
-}))
-    w = _new(Ext.Window, js({
+    })
+    w = Window({
                 "renderTo": 'mesh-editor-help',
                 "layout": 'fit',
                 "width": 500,
                 "height": 300,
                 "title": "Help",
                 "items": tabs2
-                }))
-
-
+                })
     w.show()
 
 def checkHandler():
@@ -186,7 +178,40 @@ def initialize():
 
 
 #########################################################################
-# End of the section that is translated to JS.
+# End of the section that works both on the desktop and in JS.
+
+# JS wrappers for Ext:
+
+class ExtObject(object):
+
+    def __init__(self, args):
+        self._obj = _new(eval("Ext." + self.__class__.__name__), js(args))
+
+    def _js_(self):
+        return self._obj
+
+class Window(ExtObject):
+
+    def show(self):
+        self._obj.show()
+
+class Panel(ExtObject):
+    pass
+
+class TabPanel(ExtObject):
+    pass
+
+class Toolbar(ExtObject):
+    pass
+
+def info_box(title, msg):
+    Ext.MessageBox.show(js({
+           "title": title,
+           "msg": msg,
+           "buttons": Ext.MessageBox.OK,
+           "animEl": 'mb9',
+           "icon": Ext.MessageBox.INFO,
+        }))
 
 import inspect
 
@@ -195,6 +220,13 @@ from py2js import convert_py2js
 
 def main():
     funcs = [
+            ExtObject,
+            Window,
+            Panel,
+            TabPanel,
+            Toolbar,
+            info_box,
+
             menu_about,
             menu_help,
             get_toolbar,
@@ -206,10 +238,10 @@ def main():
             toolbar_mesh3,
             initialize,
             ]
-    js = ""
+    source = ""
     for f in funcs:
-        obj_source = inspect.getsource(f)
-        js += convert_py2js(obj_source) + "\n"
+        source += inspect.getsource(f) + "\n"
+    js = convert_py2js(source)
 
     print """\
 <html>
