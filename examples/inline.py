@@ -18,6 +18,7 @@ class TestClass(object):
         alert(self.value)
         self.value += 1
 
+@JavaScript
 class AjaxHelper(object):
     def call(self, method, uri, query=''):
         callback = {
@@ -47,7 +48,7 @@ class AjaxHelper(object):
         o.argument[0].failure(o)
 
 @JavaScript
-class AjaxTest(AjaxHelper):
+class AjaxTest(object):
     def __init__(self):
         self.post('/some/url')
 
