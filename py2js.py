@@ -269,11 +269,12 @@ class JS(object):
     @scope
     def visit_FunctionDef(self, node):
         is_static = False
+        is_javascript = False
         if node.decorator_list:
             if len(node.decorator_list) == 1 and \
                     isinstance(node.decorator_list[0], ast.Name) and \
                     node.decorator_list[0].id == "JavaScript":
-                pass # this is our own decorator
+                is_javascript = True # this is our own decorator
             elif self._class_name and \
                     len(node.decorator_list) == 1 and \
                     isinstance(node.decorator_list[0], ast.Name) and \
@@ -282,14 +283,16 @@ class JS(object):
             else:
                 raise JSError("decorators are not supported")
 
-        if self._class_name:
+        # XXX: disable $def for now, because it doesn't work in IE:
+        #if self._class_name:
+        if 1:
             if node.args.vararg is not None:
                 raise JSError("star arguments are not supported")
 
             if node.args.kwarg is not None:
                 raise JSError("keyword arguments are not supported")
 
-            if node.decorator_list and not is_static:
+            if node.decorator_list and not is_static and not is_javascript:
                 raise JSError("decorators are not supported")
 
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
