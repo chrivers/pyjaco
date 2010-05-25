@@ -86,12 +86,12 @@ def get_panel():
     return p
 
 def toolbar_mesh1(b, e):
-    canvas = Ext.getDom(js('canvas')).getContext(js('2d'))
-    canvas.fillStyle = js('rgb(255, 255, 255)')
+    canvas = Canvas('canvas')
+    canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
-    canvas.fillStyle = js('rgb(29, 65, 119)')
-    canvas.fillText(js("Mesh I"), 80, 10)
-    canvas.strokeStyle = js('rgb(0, 255, 0)')
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh I", 80, 10)
+    canvas.strokeStyle = 'rgb(0, 255, 0)'
     canvas.beginPath()
     canvas.moveTo(10, 10)
     canvas.lineTo(20, 50)
@@ -101,12 +101,12 @@ def toolbar_mesh1(b, e):
     canvas.stroke()
 
 def toolbar_mesh2(b, e):
-    canvas = Ext.getDom(js('canvas')).getContext(js('2d'))
-    canvas.fillStyle = js('rgb(255, 255, 255)')
+    canvas = Canvas('canvas')
+    canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
-    canvas.fillStyle = js('rgb(29, 65, 119)')
-    canvas.fillText(js("Mesh II"), 80, 10)
-    canvas.strokeStyle = js('rgb(255, 0, 0)')
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh II", 80, 10)
+    canvas.strokeStyle = 'rgb(255, 0, 0)'
     canvas.beginPath()
     canvas.moveTo(100, 100)
     canvas.lineTo(200, 50)
@@ -116,12 +116,12 @@ def toolbar_mesh2(b, e):
     canvas.stroke()
 
 def toolbar_mesh3(b, e):
-    canvas = Ext.getDom(js('canvas')).getContext(js('2d'))
-    canvas.fillStyle = js('rgb(255, 255, 255)')
+    canvas = Canvas('canvas')
+    canvas.fillStyle = 'rgb(255, 255, 255)'
     canvas.fillRect(0, 0, 200, 200)
-    canvas.fillStyle = js('rgb(29, 65, 119)')
-    canvas.fillText(js("Mesh III"), 80, 10)
-    canvas.strokeStyle = js('rgb(0, 0, 255)')
+    canvas.fillStyle = 'rgb(29, 65, 119)'
+    canvas.fillText("Mesh III", 80, 10)
+    canvas.strokeStyle = 'rgb(0, 0, 255)'
     canvas.beginPath()
     canvas.moveTo(50, 50)
     canvas.lineTo(100, 180)
@@ -207,6 +207,32 @@ def info_box(title, msg):
            "icon": Ext.MessageBox.INFO,
         }))
 
+class Canvas(object):
+
+    def __init__(self, id):
+        self._obj = Ext.getDom(js(id)).getContext(js('2d'))
+
+    def fillRect(self, x1, y1, w, h):
+        self._obj.fillStyle = js(self.fillStyle)
+        self._obj.fillRect(x1, y1, w, h)
+
+    def fillText(self, text, x, y):
+        self._obj.fillStyle = js(self.fillStyle)
+        self._obj.fillText(js(text), x, y)
+
+    def beginPath(self):
+        self._obj.strokeStyle = js(self.strokeStyle)
+        self._obj.beginPath()
+
+    def moveTo(self, x, y):
+        self._obj.moveTo(x, y)
+
+    def lineTo(self, x, y):
+        self._obj.lineTo(x, y)
+
+    def stroke(self):
+        self._obj.stroke()
+
 import inspect
 
 from py2js import convert_py2js
@@ -220,6 +246,7 @@ def main():
             TabPanel,
             Toolbar,
             info_box,
+            Canvas,
 
             menu_about,
             menu_help,

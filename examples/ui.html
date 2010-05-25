@@ -95,6 +95,40 @@ var info_box = $def({}, function(title, msg) {
     tuple([str("icon"), Ext.MessageBox.INFO])
 ]))));
 });
+function Canvas() {
+    t = new _Canvas();
+    _Canvas.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _Canvas() {
+}
+_Canvas.__name__ = 'Canvas';
+_Canvas.prototype.__class__ = _Canvas;
+_Canvas.prototype.toString = _iter.prototype.toString;
+_Canvas.prototype.__init__ = function(id) {
+    this._obj = Ext.getDom(js(id)).getContext(js(str("2d")));
+}
+_Canvas.prototype.fillRect = function(x1, y1, w, h) {
+    this._obj.fillStyle = js(this.fillStyle);
+    this._obj.fillRect(x1,y1,w,h);
+}
+_Canvas.prototype.fillText = function(text, x, y) {
+    this._obj.fillStyle = js(this.fillStyle);
+    this._obj.fillText(js(text),x,y);
+}
+_Canvas.prototype.beginPath = function() {
+    this._obj.strokeStyle = js(this.strokeStyle);
+    this._obj.beginPath();
+}
+_Canvas.prototype.moveTo = function(x, y) {
+    this._obj.moveTo(x,y);
+}
+_Canvas.prototype.lineTo = function(x, y) {
+    this._obj.lineTo(x,y);
+}
+_Canvas.prototype.stroke = function() {
+    this._obj.stroke();
+}
 var menu_about = $def({}, function(e, t) {
     info_box(str("About"),str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR"));
 });
@@ -258,12 +292,12 @@ var get_panel = $def({}, function() {
     return p;
 });
 var toolbar_mesh1 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh I")),80,10);
-    canvas.strokeStyle = js(str("rgb(0, 255, 0)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh I"),80,10);
+    canvas.strokeStyle = str("rgb(0, 255, 0)");
     canvas.beginPath();
     canvas.moveTo(10,10);
     canvas.lineTo(20,50);
@@ -273,12 +307,12 @@ var toolbar_mesh1 = $def({}, function(b, e) {
     canvas.stroke();
 });
 var toolbar_mesh2 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh II")),80,10);
-    canvas.strokeStyle = js(str("rgb(255, 0, 0)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh II"),80,10);
+    canvas.strokeStyle = str("rgb(255, 0, 0)");
     canvas.beginPath();
     canvas.moveTo(100,100);
     canvas.lineTo(200,50);
@@ -288,12 +322,12 @@ var toolbar_mesh2 = $def({}, function(b, e) {
     canvas.stroke();
 });
 var toolbar_mesh3 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh III")),80,10);
-    canvas.strokeStyle = js(str("rgb(0, 0, 255)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh III"),80,10);
+    canvas.strokeStyle = str("rgb(0, 0, 255)");
     canvas.beginPath();
     canvas.moveTo(50,50);
     canvas.lineTo(100,180);
