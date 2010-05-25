@@ -1,16 +1,16 @@
 
 def getkey(x):
-	if x < 5:
-		return x + 10
-	else:
-		return x
+    if x < 5:
+        return x + 10
+    else:
+        return x
 
 def revcmp(a,b):
-	if b<a:
-		return -1
-	if b==a:
-		return 0
-	return 1
+    if b<a:
+        return -1
+    if b==a:
+        return 0
+    return 1
 
 l = [4,7,2,3,8,1,3]
 

@@ -7,6 +7,6 @@ l3 = [4,4,4,4]
 l4 = zip(l1,l2,l3)
 
 for item in l4:
-	print "---"
-	for val in item:
-		print val
+    print "---"
+    for val in item:
+        print val

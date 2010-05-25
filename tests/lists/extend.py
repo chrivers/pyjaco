@@ -6,4 +6,4 @@ list3 = list1[:]
 list3.extend(list2)
 
 for item in list3:
-	print item
+    print item

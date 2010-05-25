@@ -1,6 +1,6 @@
 
 def foo(x,y):
-	return x*y
+    return x*y
 
 y = [1,2,3,4,5]
 

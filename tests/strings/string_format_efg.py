@@ -12,7 +12,7 @@ codes = ['e','E','f','F','g','G']
 fmts = ["a=%e","a=%10.5e","a=%+10.5e","a=%#e"]
 
 for code in codes:
-	for fmt in fmts:
-		fmt = fmt.replace('e',code)
-		for v in vars:
-			print fmt + ":", fmt % v
+    for fmt in fmts:
+        fmt = fmt.replace('e',code)
+        for v in vars:
+            print fmt + ":", fmt % v
