@@ -388,6 +388,14 @@ class JS(object):
             else:
                 js.extend(self.visit(stmt))
         self._class_name = None
+
+        methods_names = [m.name for m in methods]
+        if not "__init__" in methods_names:
+            # if the user didn't define __init__(), we have to add it ourselves
+            # because we call it from the constructor above
+            js.append("_%s.prototype.__init__ = function() {" % class_name)
+            js.append("}")
+
         #TODO: take care of super keyword
 #        print self.mro(class_name)
         for cls in self.mro(class_name)[1:-1]:
@@ -406,12 +414,6 @@ class JS(object):
                             all_attributes.add(t.id)
                             js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
 
-        methods_names = [m.name for m in methods]
-        if not "__init__" in methods_names:
-            # if the user didn't define __init__(), we have to add it ourselves
-            # because we call it from the constructor above
-            js.append("_%s.prototype.__init__ = function() {" % class_name)
-            js.append("}")
         return js
 
     def visit_Return(self, node):
