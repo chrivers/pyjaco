@@ -473,9 +473,6 @@ class JS(object):
 
         return ["%s %s= %s;" % (target, self.get_binary_op(node), value)]
 
-    def _visit_Print(self, node):
-        pass
-
     @scope
     def visit_For(self, node):
         if not isinstance(node.target, ast.Name):
@@ -716,7 +713,7 @@ class JS(object):
         assert node.nl
         values = [self.visit(v) for v in node.values]
         values = ", ".join(values)
-        return ["print(%s);" % values]
+        return ["py_builtins.print(%s);" % values]
 
     def visit_Attribute(self, node):
         return "%s.%s" % (self.visit(node.value), node.attr)

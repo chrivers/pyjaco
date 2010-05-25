@@ -337,6 +337,22 @@ py_builtins.sum = function(list) {
     return result;
 };
 
+py_builtins.print = function(s) {
+    if (typeof(console) != "undefined" && defined(console.log))
+        console.log(js(str(s)));
+    else {
+        if (arguments.length <= 1) {
+            if (defined(s))
+                print(s);
+            else
+                print("");
+        } else {
+            var args = tuple(to_array(arguments));
+            print(str(" ").join(args));
+        }
+    }
+};
+
 /* Python 'iter' type */
 
 function iter(obj) {
