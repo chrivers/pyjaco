@@ -4,8 +4,8 @@ y = False
 z = not y
 
 if x:
-	print 'x'
+    print 'x'
 if y:
-	print 'y'
+    print 'y'
 if z:
-	print 'z'
+    print 'z'

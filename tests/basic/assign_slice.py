@@ -4,9 +4,9 @@ a = [1,2,3,4,5,6,7]
 a[4:6] = ['a','b']
 
 def show(x):
-	print "----"
-	for x in a:
-		print x
+    print "----"
+    for x in a:
+        print x
 
 show(a)
 

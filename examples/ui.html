@@ -8,17 +8,136 @@
   <script language="JavaScript" src="../py-builtins.js"></script>
   <title id="page-title">Title</title>
   <script type="text/javascript">
-var menu_about = $def({}, function(e, t) {
+function ExtObject() {
+    t = new _ExtObject();
+    _ExtObject.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _ExtObject() {
+}
+_ExtObject.__name__ = 'ExtObject';
+_ExtObject.prototype.__class__ = _ExtObject;
+_ExtObject.prototype.toString = _iter.prototype.toString;
+_ExtObject.prototype.__init__ = function(args) {
+    this._obj = _new(eval((str("Ext."))+(this.__class__.__name__)),js(args));
+}
+_ExtObject.prototype._js_ = function() {
+    return this._obj;
+}
+function Window() {
+    t = new _Window();
+    _Window.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _Window() {
+}
+_Window.__name__ = 'Window';
+_Window.prototype.__class__ = _Window;
+_Window.prototype.toString = _iter.prototype.toString;
+_Window.prototype.show = function() {
+    this._obj.show();
+}
+_Window.prototype.__init__ = function() {
+}
+_Window.prototype.__init__ = _ExtObject.prototype.__init__;
+_Window.prototype._js_ = _ExtObject.prototype._js_;
+function Panel() {
+    t = new _Panel();
+    _Panel.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _Panel() {
+}
+_Panel.__name__ = 'Panel';
+_Panel.prototype.__class__ = _Panel;
+_Panel.prototype.toString = _iter.prototype.toString;
+/* pass */
+_Panel.prototype.__init__ = function() {
+}
+_Panel.prototype.__init__ = _ExtObject.prototype.__init__;
+_Panel.prototype._js_ = _ExtObject.prototype._js_;
+function TabPanel() {
+    t = new _TabPanel();
+    _TabPanel.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _TabPanel() {
+}
+_TabPanel.__name__ = 'TabPanel';
+_TabPanel.prototype.__class__ = _TabPanel;
+_TabPanel.prototype.toString = _iter.prototype.toString;
+/* pass */
+_TabPanel.prototype.__init__ = function() {
+}
+_TabPanel.prototype.__init__ = _ExtObject.prototype.__init__;
+_TabPanel.prototype._js_ = _ExtObject.prototype._js_;
+function Toolbar() {
+    t = new _Toolbar();
+    _Toolbar.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _Toolbar() {
+}
+_Toolbar.__name__ = 'Toolbar';
+_Toolbar.prototype.__class__ = _Toolbar;
+_Toolbar.prototype.toString = _iter.prototype.toString;
+/* pass */
+_Toolbar.prototype.__init__ = function() {
+}
+_Toolbar.prototype.__init__ = _ExtObject.prototype.__init__;
+_Toolbar.prototype._js_ = _ExtObject.prototype._js_;
+function info_box(title, msg) {
     Ext.MessageBox.show(js(dict(tuple([
-    tuple([str("title"), str("About")]),
-    tuple([str("msg"), str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")]),
+    tuple([str("title"), title]),
+    tuple([str("msg"), msg]),
     tuple([str("buttons"), Ext.MessageBox.OK]),
     tuple([str("animEl"), str("mb9")]),
     tuple([str("icon"), Ext.MessageBox.INFO])
 ]))));
-});
-var menu_help = $def({}, function(e, t) {
-    var tabs2 = _new(Ext.TabPanel,js(dict(tuple([
+}
+function Canvas() {
+    t = new _Canvas();
+    _Canvas.prototype.__init__.apply(t,arguments);
+    return t;
+}
+function _Canvas() {
+}
+_Canvas.__name__ = 'Canvas';
+_Canvas.prototype.__class__ = _Canvas;
+_Canvas.prototype.toString = _iter.prototype.toString;
+_Canvas.prototype.__init__ = function(id) {
+    var dom = Ext.getDom(js(id));
+    if (py_builtins.bool(Ext.isIE)) {
+        G_vmlCanvasManager.initElement(dom);
+    }
+    this._obj = dom.getContext(js(str("2d")));
+}
+_Canvas.prototype.fillRect = function(x1, y1, w, h) {
+    this._obj.fillStyle = js(this.fillStyle);
+    this._obj.fillRect(x1,y1,w,h);
+}
+_Canvas.prototype.fillText = function(text, x, y) {
+    this._obj.fillStyle = js(this.fillStyle);
+    this._obj.fillText(js(text),x,y);
+}
+_Canvas.prototype.beginPath = function() {
+    this._obj.strokeStyle = js(this.strokeStyle);
+    this._obj.beginPath();
+}
+_Canvas.prototype.moveTo = function(x, y) {
+    this._obj.moveTo(x,y);
+}
+_Canvas.prototype.lineTo = function(x, y) {
+    this._obj.lineTo(x,y);
+}
+_Canvas.prototype.stroke = function() {
+    this._obj.stroke();
+}
+function menu_about(e, t) {
+    info_box(str("About"),str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR"));
+}
+function menu_help(e, t) {
+    var tabs2 = TabPanel(dict(tuple([
     tuple([str("activeTab"), 2]),
     tuple([str("width"), 600]),
     tuple([str("height"), 250]),
@@ -39,18 +158,18 @@ var menu_help = $def({}, function(e, t) {
     tuple([str("title"), str("About")]),
     tuple([str("html"), str("Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR.")])
 ]))])])
-]))));
-    var w = _new(Ext.Window,js(dict(tuple([
+])));
+    var w = Window(dict(tuple([
     tuple([str("renderTo"), str("mesh-editor-help")]),
     tuple([str("layout"), str("fit")]),
     tuple([str("width"), 500]),
     tuple([str("height"), 300]),
     tuple([str("title"), str("Help")]),
     tuple([str("items"), tabs2])
-]))));
+])));
     w.show();
-});
-var get_toolbar = $def({}, function() {
+}
+function get_toolbar() {
     var items = list([dict(tuple([
     tuple([str("text"), str("File")]),
     tuple([str("menu"), list([dict(tuple([
@@ -138,10 +257,10 @@ var get_toolbar = $def({}, function() {
     tuple([str("handler"), menu_about])
 ]))])])
 ]))]);
-    _new(Ext.Toolbar,js(dict(tuple([
+    Toolbar(dict(tuple([
     tuple([str("renderTo"), str("mesh-editor")]),
     tuple([str("items"), items])
-]))));
+])));
     items = list([dict(tuple([
     tuple([str("icon"), str("http://www.extjs.com/deploy/dev/examples/menu/list-items.gif")]),
     tuple([str("cls"), str("x-btn-icon")]),
@@ -158,37 +277,28 @@ var get_toolbar = $def({}, function() {
     tuple([str("handler"), toolbar_mesh3]),
     tuple([str("tooltip"), str("<b>Draw Mesh III</b><br/>Show an example mesh")])
 ]))]);
-    _new(Ext.Toolbar,js(dict(tuple([
+    Toolbar(dict(tuple([
     tuple([str("renderTo"), str("mesh-editor")]),
     tuple([str("items"), items])
-]))));
-});
-var get_panel = $def({}, function() {
-    var p = _new(Ext.Panel,js(dict(tuple([
+])));
+}
+function get_panel() {
+    var p = Panel(dict(tuple([
     tuple([str("renderTo"), str("mesh-editor")]),
     tuple([str("width"), str("200px")]),
     tuple([str("title"), str("Mesh")]),
     tuple([str("html"), str("<canvas id='canvas' width='200' height='200'></canvas>")]),
     tuple([str("collapsible"), true])
-]))));
-    if (py_builtins.bool(Ext.isIE)) {
-        G_vmlCanvasManager.initElement(Ext.getDom(str("canvas")));
-    }
+])));
     return p;
-});
-var clickHandler = $def({}, function() {
-    alert(str("Clicked on a menu item"));
-});
-var checkHandler = $def({}, function() {
-    alert(str("Checked a menu item"));
-});
-var toolbar_mesh1 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+}
+function toolbar_mesh1(b, e) {
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh I")),80,10);
-    canvas.strokeStyle = js(str("rgb(0, 255, 0)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh I"),80,10);
+    canvas.strokeStyle = str("rgb(0, 255, 0)");
     canvas.beginPath();
     canvas.moveTo(10,10);
     canvas.lineTo(20,50);
@@ -196,14 +306,14 @@ var toolbar_mesh1 = $def({}, function(b, e) {
     canvas.lineTo(100,100);
     canvas.lineTo(10,10);
     canvas.stroke();
-});
-var toolbar_mesh2 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+}
+function toolbar_mesh2(b, e) {
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh II")),80,10);
-    canvas.strokeStyle = js(str("rgb(255, 0, 0)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh II"),80,10);
+    canvas.strokeStyle = str("rgb(255, 0, 0)");
     canvas.beginPath();
     canvas.moveTo(100,100);
     canvas.lineTo(200,50);
@@ -211,14 +321,14 @@ var toolbar_mesh2 = $def({}, function(b, e) {
     canvas.lineTo(100,100);
     canvas.lineTo(100,10);
     canvas.stroke();
-});
-var toolbar_mesh3 = $def({}, function(b, e) {
-    var canvas = Ext.getDom(js(str("canvas"))).getContext(js(str("2d")));
-    canvas.fillStyle = js(str("rgb(255, 255, 255)"));
+}
+function toolbar_mesh3(b, e) {
+    var canvas = Canvas(str("canvas"));
+    canvas.fillStyle = str("rgb(255, 255, 255)");
     canvas.fillRect(0,0,200,200);
-    canvas.fillStyle = js(str("rgb(29, 65, 119)"));
-    canvas.fillText(js(str("Mesh III")),80,10);
-    canvas.strokeStyle = js(str("rgb(0, 0, 255)"));
+    canvas.fillStyle = str("rgb(29, 65, 119)");
+    canvas.fillText(str("Mesh III"),80,10);
+    canvas.strokeStyle = str("rgb(0, 0, 255)");
     canvas.beginPath();
     canvas.moveTo(50,50);
     canvas.lineTo(100,180);
@@ -226,14 +336,13 @@ var toolbar_mesh3 = $def({}, function(b, e) {
     canvas.lineTo(20,100);
     canvas.lineTo(50,50);
     canvas.stroke();
-});
-var initialize = $def({}, function() {
+}
+function initialize() {
     Ext.get(document.body).update(str("<div id='mesh-editor'></div><div id='mesh-editor-help'></div>"));
     Ext.QuickTips.init();
     get_toolbar();
     get_panel();
-});
-
+}
   Ext.onReady(initialize);
   </script>
 </head>

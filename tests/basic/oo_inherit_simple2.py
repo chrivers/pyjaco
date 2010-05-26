@@ -19,9 +19,12 @@ class foo(bar):
     def inc(self):
         self.fval += 1
 
-    def msg(self,*varargs):
+    def msg(self, a=None, b=None, c=None):
         txt = ''
+        varargs = a, b, c
         for arg in varargs:
+            if arg is None:
+                continue
             txt += str(arg)
             txt += ","
         return txt + self.name + " says:"+str(self.fval)

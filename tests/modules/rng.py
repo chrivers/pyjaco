@@ -2,11 +2,11 @@
 from mtrandom import *
 
 def float2str(v,dp):
-	s = str(v)
-	dotpos = s.find(".")
-	if dotpos >= 0:
-		return s[:dotpos+dp+1]
-	return s
+    s = str(v)
+    dotpos = s.find(".")
+    if dotpos >= 0:
+        return s[:dotpos+dp+1]
+    return s
 
 class RNG:
     def __init__(self):

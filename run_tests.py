@@ -60,11 +60,14 @@ def main():
         for dir in dirs:
             files.extend(glob(dir))
         known_to_fail = [
+                "tests/basic/kwargs2.py",
+
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
                 "tests/basic/kwargs.py",
                 "tests/basic/float2int.py",
                 "tests/basic/oo_inherit.py",
+                "tests/basic/oo_inherit_simple2.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_dict.py",
                 "tests/basic/del_local.py",
@@ -96,6 +99,7 @@ def main():
                 "tests/lists/filter.py",
                 "tests/lists/reduce.py",
                 "tests/lists/sum.py",
+                "tests/lists/subclass.py",
 
                 "tests/strings/string_format_d.py",
                 "tests/strings/string_format_efg.py",

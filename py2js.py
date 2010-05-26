@@ -397,11 +397,12 @@ class JS(object):
     @scope
     def visit_FunctionDef(self, node):
         is_static = False
+        is_javascript = False
         if node.decorator_list:
             if len(node.decorator_list) == 1 and \
                     isinstance(node.decorator_list[0], ast.Name) and \
                     node.decorator_list[0].id == "JavaScript":
-                pass # this is our own decorator
+                is_javascript = True # this is our own decorator
             elif self._class_name and \
                     len(node.decorator_list) == 1 and \
                     isinstance(node.decorator_list[0], ast.Name) and \
@@ -410,14 +411,16 @@ class JS(object):
             else:
                 raise JSError("decorators are not supported")
 
-        if self._class_name:
+        # XXX: disable $def for now, because it doesn't work in IE:
+        #if self._class_name:
+        if 1:
             if node.args.vararg is not None:
                 raise JSError("star arguments are not supported")
 
             if node.args.kwarg is not None:
                 raise JSError("keyword arguments are not supported")
 
-            if node.decorator_list and not is_static:
+            if node.decorator_list and not is_static and not is_javascript:
                 raise JSError("decorators are not supported")
 
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
@@ -498,6 +501,8 @@ class JS(object):
         js.append("}")
         js.append("_%s.__name__ = '%s';" % (class_name, class_name))
         js.append("_%s.prototype.__class__ = _%s;" % (class_name, class_name))
+        js.append("_%s.prototype.toString = _iter.prototype.toString;" % \
+                (class_name))
         from ast import dump
         methods = []
         all_attributes = set()
@@ -516,6 +521,14 @@ class JS(object):
             else:
                 js.extend(self.visit(stmt))
         self._class_name = None
+
+        methods_names = [m.name for m in methods]
+        if not "__init__" in methods_names:
+            # if the user didn't define __init__(), we have to add it ourselves
+            # because we call it from the constructor above
+            js.append("_%s.prototype.__init__ = function() {" % class_name)
+            js.append("}")
+
         #TODO: take care of super keyword
         #~ print self.mro(class_name)
         for cls in self.mro(class_name)[1:-1]:
@@ -534,12 +547,6 @@ class JS(object):
                             all_attributes.add(t.id)
                             js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
 
-        methods_names = [m.name for m in methods]
-        if not "__init__" in methods_names:
-            # if the user didn't define __init__(), we have to add it ourselves
-            # because we call it from the constructor above
-            js.append("_%s.prototype.__init__ = function() {" % class_name)
-            js.append("}")
         return js
 
     def visit_Return(self, node):
@@ -596,9 +603,6 @@ class JS(object):
             return ["%s = Math.floor((%s)/(%s));" % (target, target, value)]
 
         return ["%s %s= %s;" % (target, self.get_binary_op(node), value)]
-
-    def _visit_Print(self, node):
-        pass
 
     @scope
     def visit_For(self, node):
@@ -840,7 +844,7 @@ class JS(object):
         assert node.nl
         values = [self.visit(v) for v in node.values]
         values = ", ".join(values)
-        return ["print(%s);" % values]
+        return ["py_builtins.print(%s);" % values]
 
     def visit_Attribute(self, node):
         return "%s.%s" % (self.visit(node.value), node.attr)
