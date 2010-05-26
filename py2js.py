@@ -176,7 +176,8 @@ class JS(object):
 
         # This lists all variables in the local scope:
         self._scope = []
-        self._classes = {'object':None}
+        #~ self._classes = {'object':None}
+        self._classes = {}
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -198,51 +199,178 @@ class JS(object):
     def get_comparison_op(self, node):
         return self.comparison_op[node.__class__.__name__]
 
-    def mro(self, class_name):
-        '''Run through parent classes usingthe C3 algorithm
-        of new-type python classes
-        '''
-        #TODO: catch unknown base exception (now it gives KeyError)
-        if class_name=='object':
-            return ['object']
-        bs = [n.id for n in self._classes[class_name].bases]
-        if not bs:
-            return [class_name]
-        if len(bs) == 1:
-            return [class_name] + self.mro(bs[0])
-        ls = [self.mro(base) for base in bs]
-        N = len(ls)
-        first_elts = [ps[0] for ps in ls]
-        tails = [ps[1:] for ps in ls]
-        for j in range(N):
-            if any(first_elts[j] in t for t in tails[j+1:]):
-                raise TypeError("Cannot create a consistent method resolution order (MRO) for bases")
-        return [class_name] + first_elts + self.C3_merge(tails)
+    #This python code taken from pypy:
+    #License for files in the pypy/ directory 
+    #==================================================
+    #
+    #Except when otherwise stated (look for LICENSE files in directories or
+    #information at the beginning of each file) all software and
+    #documentation in the 'pypy' directories is licensed as follows: 
+    #
+    #    The MIT License
+    #
+    #    Permission is hereby granted, free of charge, to any person 
+    #    obtaining a copy of this software and associated documentation 
+    #    files (the "Software"), to deal in the Software without 
+    #    restriction, including without limitation the rights to use, 
+    #    copy, modify, merge, publish, distribute, sublicense, and/or 
+    #    sell copies of the Software, and to permit persons to whom the 
+    #    Software is furnished to do so, subject to the following conditions:
+    #
+    #    The above copyright notice and this permission notice shall be included 
+    #    in all copies or substantial portions of the Software.
+    #
+    #    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+    #    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+    #    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+    #    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+    #    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+    #    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+    #    DEALINGS IN THE SOFTWARE.
+    #
+    #
+    #PyPy Copyright holders 2003-2010
+    #----------------------------------- 
+    #
+    #Except when otherwise stated (look for LICENSE files or information at
+    #the beginning of each file) the files in the 'pypy' directory are each
+    #copyrighted by one or more of the following people and organizations:    
+    #
+    #    Armin Rigo
+    #    Maciej Fijalkowski
+    #    Carl Friedrich Bolz
+    #    Samuele Pedroni
+    #    Antonio Cuni
+    #    Michael Hudson
+    #    Christian Tismer
+    #    Holger Krekel
+    #    Eric van Riet Paap
+    #    Richard Emslie
+    #    Anders Chrigstrom
+    #    Amaury Forgeot d Arc
+    #    Aurelien Campeas
+    #    Anders Lehmann
+    #    Niklaus Haldimann
+    #    Seo Sanghyeon
+    #    Leonardo Santagada
+    #    Lawrence Oluyede
+    #    Jakub Gustak
+    #    Guido Wesdorp
+    #    Benjamin Peterson
+    #    Alexander Schremmer
+    #    Niko Matsakis
+    #    Ludovic Aubry
+    #    Alex Martelli
+    #    Toon Verwaest
+    #    Stephan Diehl
+    #    Adrien Di Mascio
+    #    Stefan Schwarzer
+    #    Tomek Meka
+    #    Patrick Maupin
+    #    Jacob Hallen
+    #    Laura Creighton
+    #    Bob Ippolito
+    #    Camillo Bruni
+    #    Simon Burton
+    #    Bruno Gola
+    #    Alexandre Fayolle
+    #    Marius Gedminas
+    #    Guido van Rossum
+    #    Valentino Volonghi
+    #    Adrian Kuhn
+    #    Paul deGrandis
+    #    Gerald Klix
+    #    Wanja Saatkamp
+    #    Anders Hammarquist
+    #    Oscar Nierstrasz
+    #    Eugene Oden
+    #    Lukas Renggli
+    #    Guenter Jantzen
+    #    Dinu Gherman
+    #    Bartosz Skowron
+    #    Georg Brandl
+    #    Ben Young
+    #    Jean-Paul Calderone
+    #    Nicolas Chauvat
+    #    Rocco Moretti
+    #    Michael Twomey
+    #    boria
+    #    Jared Grubb
+    #    Olivier Dormond
+    #    Stuart Williams
+    #    Jens-Uwe Mager
+    #    Justas Sadzevicius
+    #    Mikael Schönenberg
+    #    Brian Dorsey
+    #    Jonathan David Riehl
+    #    Beatrice During
+    #    Elmo Mäntynen
+    #    Andreas Friedge
+    #    Alex Gaynor
+    #    Anders Qvist
+    #    Alan McIntyre
+    #    Bert Freudenberg
+    #
+    #    Heinrich-Heine University, Germany 
+    #    Open End AB (formerly AB Strakt), Sweden
+    #    merlinux GmbH, Germany 
+    #    tismerysoft GmbH, Germany 
+    #    Logilab Paris, France 
+    #    DFKI GmbH, Germany 
+    #    Impara, Germany
+    #    Change Maker, Sweden 
+    #
+    def mro(self, cls):
+        order = []
+        if cls == 'object':return ['object']
+        orderlists = [self.mro(base.id) for base in self._classes[cls].bases if base.id!='object']
+        orderlists.append([cls] + list(c.id for c in self._classes[cls].bases if c.id!='object'))
+        while orderlists:
+            for candidatelist in orderlists:
+                candidate = candidatelist[0]
+                if self.blockinglist(candidate, orderlists) is None:
+                    break    # good candidate
+            else:
+                self.mro_error(orderlists)  # no candidate found
+            assert candidate not in order
+            order.append(candidate)
+            for i in range(len(orderlists)-1, -1, -1):
+                if orderlists[i][0] == candidate:
+                    del orderlists[i][0]
+                    if len(orderlists[i]) == 0:
+                        del orderlists[i]
+        order.append('object')
+        return order
 
-    def C3_merge(self,ls,known=None):
-        #TODO: read again the official document on mro
-        #and check it does exactly the same
-        #Find whether pypy has an implementation of mro
-        if not known:known = set()
-        if not ls:return []
-        N = len(ls)
-        
-        for j in range(N):
-            ps = ls[j]
-            candidate = ps[0]
-            if candidate in known:
-                if len(ps) == 1:
-                    return self.C3_merge(ls[:j]+ls[j+1:], known)
-                else:
-                    return self.C3_merge(ls[:j] + [ps[1:]] + ls[j+1:], known)
-            elif all(candidate not in ls[k][1:] for k in range(N) if k!=j):
-                if len(ps) == 1:
-                    known.add(candidate)
-                    return [candidate] + self.C3_merge(ls[:j]+ls[j+1:], known)
-                else:
-                    known.add(candidate)
-                    return [candidate] + self.C3_merge(ls[:j] + [ps[1:]] + ls[j+1:], known)
-        raise TypeError("Cannot create a consistent method resolution order (MRO) for bases")
+    def blockinglist(self,candidate, orderlists):
+        for lst in orderlists:
+            if candidate in lst[1:]:
+                return lst
+        return None  # good candidate
+
+    def mro_error(self,orderlists):
+        cycle = []
+        candidate = orderlists[0][0]
+        while candidate not in cycle:
+            cycle.append(candidate)
+            nextblockinglist = self.blockinglist(candidate, orderlists)
+            candidate = nextblockinglist[0]
+        # avoid the only use of list.index in the PyPy code base:
+        i = 0
+        for c in cycle:
+            if c == candidate:
+                break
+            i += 1
+        del cycle[:i]
+        cycle.append(candidate)
+        cycle.reverse()
+        #~ names = [cls.__name__ for cls in cycle]
+        raise TypeError, "Cycle among base classes: " + ' < '.join(cycle)
+
+    def mronames(self,cls):
+        #~ names = [cls.__name__ for cls in mro(cls)]
+        #~ return names
+        return self.mro(cls)
 
     def visit(self, node, scope=None):
         try:
