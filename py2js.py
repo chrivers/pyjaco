@@ -176,8 +176,8 @@ class JS(object):
 
         # This lists all variables in the local scope:
         self._scope = []
-        #~ self._classes = {'object':None}
-        self._classes = {}
+        self._classes = {'object':None}
+        #~ self._classes = {}
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -300,11 +300,11 @@ class JS(object):
     #    Stuart Williams
     #    Jens-Uwe Mager
     #    Justas Sadzevicius
-    #    Mikael Schönenberg
+    #    Mikael Schonenberg
     #    Brian Dorsey
     #    Jonathan David Riehl
     #    Beatrice During
-    #    Elmo Mäntynen
+    #    Elmo Mantynen
     #    Andreas Friedge
     #    Alex Gaynor
     #    Anders Qvist
@@ -323,8 +323,8 @@ class JS(object):
     def mro(self, cls):
         order = []
         if cls == 'object':return ['object']
-        orderlists = [self.mro(base.id) for base in self._classes[cls].bases if base.id!='object']
-        orderlists.append([cls] + list(c.id for c in self._classes[cls].bases if c.id!='object'))
+        orderlists = [self.mro(base.id) for base in self._classes[cls].bases if base]
+        orderlists.append([cls] + list(c.id for c in self._classes[cls].bases if c))
         while orderlists:
             for candidatelist in orderlists:
                 candidate = candidatelist[0]
@@ -339,7 +339,7 @@ class JS(object):
                     del orderlists[i][0]
                     if len(orderlists[i]) == 0:
                         del orderlists[i]
-        order.append('object')
+        #~ order.append('object')
         return order
 
     def blockinglist(self,candidate, orderlists):
@@ -517,7 +517,7 @@ class JS(object):
                 js.extend(self.visit(stmt))
         self._class_name = None
         #TODO: take care of super keyword
-#        print self.mro(class_name)
+        #~ print self.mro(class_name)
         for cls in self.mro(class_name)[1:-1]:
             base_node = self._classes[cls]
             for stmt in base_node.body:
