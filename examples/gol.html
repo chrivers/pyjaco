@@ -3,9 +3,9 @@
 <!--[if IE]><script type="text/javascript" src="http://explorercanvas.googlecode.com/svn/trunk/excanvas.js"></script><![endif]-->
 <script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
-function StartGoL() {
+var StartGoL = $def({}, function() {
     window.gol = GoL();
-}
+});
 function GoL() {
     t = new _GoL();
     _GoL.prototype.__init__.apply(t,arguments);
