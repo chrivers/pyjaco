@@ -1213,23 +1213,34 @@ _str.prototype.upper = function() {
 };
 
 /**
-This function is taken from PJs.
-
-  PJs is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  PJs is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with PJs.  If not, see <http://www.gnu.org/licenses/>.
-
 Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
 
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
+
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+
+**/
+
+/** python function madness =) **/
+
+/**
  * How to use:
 
     $def([defaults], [aflag], [kflag], fn);
@@ -1277,118 +1288,176 @@ Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
 **/
 
 var to_array = function(a){return Array.prototype.slice.call(a,0);};
-var fnrx = /function\s+\w*\s*\(([\w,\s]*)\)/;
+var fnrx = /function(?:\s+\w*)?\s*\(([\w,\s]*)\)/;
 
+function defined(x){
+    return typeof(x) != 'undefined';
+}
+/*
 String.prototype.strip = function(){
     return this.replace(/^\s+/,'').replace(/\s+$/,'');
 };
-
-function $def() {
-    var args = to_array(arguments);
-    if (!args.length) {
-        throw "$def requires at least one argument...";
-    }
-    var fn = args.pop();
-    if (typeof(fn)!=='function')
-        throw "ParseError: $def requires a function as the last argument";
-
-    var match = (fn+'').match(fnrx);
+*/
+function get_fn_args(func) {
+    /* get the arguments of a function */
+    var match = (func + '').match(fnrx);
     if (!match)
-        throw "ParseError: sorry, something went wrong on my end; are you sure you're passing me a valid function?" + (fn+'');
-    fn.__args__ = match[1].split(',');
-    if (fn.__args__.length == 1 && !fn.__args__[0].strip())
-        fn.__args__ = [];
-    for (var i=0;i<fn.__args__.length;i++){
-        fn.__args__[i] = fn.__args__[i].strip();
+        throw "ParseError: sorry, something went wrong on my end; are you sure you're passing me a valid function?" + (func+'');
+    var args = match[1].split(',');
+    for (var i=0;i<args.length;i++) {
+        args[i] = args[i].replace(/^\s+/,'').replace(/\s+$/,'');
     }
-    if (fn.__args__.length != fn.length)
-        throw "ParseError: sorry, something went wrong on my end; are you sure you're passing me a valid function? (arg nums didn't line up "+fn.__args__+' '+fn.length+")" + fn;
-
-    var defaults = args.length?args.shift():{};
-    if (defaults === false) { // no args checking...? what?
-        return fn;
-    }
-    var fargs = args.length?args.shift():false;
-    var fkwargs = args.length?args.shift():false;
-
-    if (args.length)
-        throw "$def takes a max of 4 arguments";
-
-    var argnum = fn.__args__.length;
-    if (fargs) argnum-=1;
-    if (fkwargs) argnum-=1;
-
-    var dflag = false;
-    for (var i=0;i<argnum;i++) {
-        if (defined(defaults[fn.__args__[i]])) dflag = true;
-        else if (dflag) {
-            throw "SyntaxError in function " + fn.name + ": non-default argument follows default argument";
-        }
-    }
-    var ndefaults = 0;
-    for (var x in defaults) ndefaults++;
-
-    var meta = function() {
-        var args = to_array(arguments);
-        var catchall = [];
-        var catchdct = {};
-        if (args.length > argnum) {
-            if (fargs) {
-                catchall = args.slice(argnum);
-                args = args.slice(0, argnum);
-            } else
-                throw "TypeError: " + fn.name + "() takes "+argnum+" arguments (" + args.length + " given)";
-        } else {
-            for (var i=args.length;i<argnum; i++){
-                if (!defined(defaults[fn.__args__[i]])) {
-                    throw "TypeError: " + fn.name + "() takes at least " + (argnum-ndefaults) +" arguments (" + args.length + " given)";
-                }
-                args.push(defaults[fn.__args__[i]]);
-            }
-        }
-        if (fargs) args.push(catchall);
-        if (fkwargs) args.push(catchdct);
-        return fn.apply(null, args);
-    };
-    meta.args = function(pos, dict) {
-        var full = {};
-        for (var i=0;i<pos.length && i<argnum;i++) {
-            var name = fn.__args__[i];
-            full[name] = pos[i];
-        }
-        var catchall = pos.slice(i);
-        for (;i<argnum;i++) {
-            var name = fn.__args__[i];
-            if (defined(dict[name])) {
-                full[name] = dict[name];
-                delete dict[name];
-            } else if (defined(defaults[name])) {
-                full[name] = defaults[name];
-            } else
-                throw "TypeError: " + fn.name + " argument " + name + " was not satisfied.";
-        }
-        if (!fargs && catchall.length)
-            throw "TypeError: " + fn.name + "() takes "+argnum+" arguments (" + args.length + " given)";
-        if (!fkwargs && dict) {
-            for (var a in dict)
-                throw "TypeError: " + fn.name + "() got an unexpected keyword argument '" + a + "'";
-        }
-        var args = [];
-        for (var i=0;i<argnum;i++) {
-            args.push(full[fn.__args__[i]]);
-        }
-        if (fargs) args.push(catchall);
-        if (fkwargs) args.push(dict);
-        return fn.apply(null, args);
-    };
-    if (fn.__type__)
-        meta.__type__ = fn.__type__;
-    else
-        meta.__type__ = 'method';
-    meta.__wraps__ = fn;
-    meta.name = fn.name;
-    meta.__name__ = fn.name;
-    return meta;
+    if (args.length == 1 && !args[0])
+        return [];
+    if (args.length !== func.length)
+        throw "ParseError: didn't parse the right number of arguments: "+args.length+' vs '+func.length;
+    return args;
 }
 
-/** end python function madness **/
+function check_defaults(func_args, defaults, argnum) {
+    var dflag = false;
+    for (var i=0;i<argnum;i++) {
+        if (defined(defaults[func_args[i]]))
+            dflag = true;
+        else if (dflag)
+            return false;
+    }
+    return true;
+}
+
+function $def() {
+    var args = Array.prototype.slice.call(arguments);
+    if (!args.length)
+        throw new Error("JS Error: $def requires at least one argument.");
+    var func = args.pop();
+    var name = func.__name__ || func.name;
+    if (typeof(func) !== 'function')
+        throw new Error("JS Error: $def requires a function as the last argument");
+    var func_args = get_fn_args(func);
+    var defaults = args.length?args.shift():{};
+    if (!(defaults instanceof Object))
+        throw new Error("the defaults argument must be an object");
+    var aflag = args.length?args.shift():false;
+    var kflag = args.length?args.shift():false;
+    if (args.length) throw new Error("JS Error: $def takes at most 4 arguments. (" + (4+args.length) + " given)");
+
+    var argnum = func_args.length;
+    if (aflag) argnum--;
+    if (kflag) argnum--;
+    if (argnum < 0)
+        throw new Error('SyntaxError: not enough arguments specified');
+
+    if (!check_defaults(func_args, defaults, argnum))
+        throw new Error("SyntaxError in function " + name + ": non-default argument follows default argument");
+
+    var ndefaults = 0;
+    var first_default = -1;
+    for (var x in defaults){
+        ndefaults++;
+        var at = func_args.slice(0,argnum).indexOf(x);
+        if (at === -1) {
+            throw new Error('ArgumentError: unknown default key ' + x + ' for function ' + name);
+        }
+        else if (first_default === -1 || at < first_default)
+            first_default = at;
+    }
+    if (first_default !== -1)
+        for (var i=first_default;i<argnum;i++)
+            if (!defined(defaults[func_args[i]]))
+                throw new Error('SyntaxError: non-default argument follows default argument');
+
+    var meta = function() {
+        var name = func.__name__ || func.name;
+        var args = to_array(arguments);
+        for (var i=0;i<args.length;i++)
+            if (!defined(args[i])) {
+                var an = func_args[i] || aflag && func_args.slice(-1)[0];
+                throw new Error("TypeError: you passed in something that was undefined to " + __builtins__.str(meta) + '() for argument ' + an);
+            }
+        if (args.length > argnum) {
+            if (!aflag)
+                throw new Error("TypeError: " + name + "() takes at most " + (argnum) + " arguments (" + args.length + " given)");
+            var therest = __builtins__.tuple(args.slice(argnum));
+            args = args.slice(0, argnum);
+            args.push(therest);
+        } else {
+            for (var i=args.length; i<argnum; i++) {
+                if (!defined(defaults[func_args[i]])) {
+                    throw __builtins__.TypeError(name + "() takes at least " + (argnum-ndefaults) +" arguments (" + args.length + " given)");
+                }
+                args.push(defaults[func_args[i]]);
+            }
+            if (aflag)
+                args.push(__builtins__.tuple());
+        }
+        if (kflag)
+            args.push(__builtins__.dict());
+        if (__builtins__)
+            __builtins__._debug_stack.push([name, meta, args]);
+        var result = func.apply(null, args);
+        if (__builtins__)
+            __builtins__._debug_stack.pop();
+        if (result === undefined) result = null;
+        return result;
+    };
+
+    meta.args = function(args, dict) {
+        if (!defined(dict))
+            throw new Error('TypeError: $def(fn).args must be called with both arguments.');
+        if (args.__class__) {
+            if (!__builtins__.isinstance(args, [__builtins__.tuple, __builtins__.list])) {
+                throw new Error('can only pass a list or tuple to .args()');
+            } else {
+                args = args.as_js();
+            }
+        }
+        if (dict.__class__) {
+            if (!__builtins__.isinstance(dict, [__builtins__.dict])) {
+                __builtins__.raise(__builtins__.TypeError('can only pass a dict to .args()'));
+            } else {
+                dict = dict.as_js();
+            }
+        }
+        // convert args, dict to types
+        if (args.length > argnum) {
+            if (!aflag)
+                throw new Error("TypeError: " + name + "() takes at most " + argnum + ' arnuments (' + args.length + ' given)');
+            therest = __builtins__.tuple(args.slice(argnum));
+            args = args.slice(0, argnum);
+            args.push(therest);
+        } else {
+            for (var i=args.length;i<argnum;i++) {
+                var aname = func_args[i];
+                if (defined(dict[aname])) {
+                    args.push(dict[aname]);
+                    delete dict[aname];
+                } else if (defined(defaults[aname]))
+                    args.push(defaults[aname]);
+                else
+                    throw new Error('TypeError: ' + name + '() takes at least ' + argnum-ndefaults + ' non-keyword arguments');
+            }
+            if (aflag)
+                args.push(__builtins__.tuple());
+        }
+        if (kflag)
+            args.push(__builtins__.dict(dict));
+        else
+            for (var kname in dict)
+                throw new Error("TypeError: " + name + '() got unexpected keyword argument: ' + kname);
+        if (__builtins__)
+            __builtins__._debug_stack.push([name, func, [args, dict]]);
+        var result = func.apply(null, args);
+        if (__builtins__)
+            __builtins__._debug_stack.pop();
+        if (result === undefined) result = null;
+        return result;
+    };
+    meta.__wraps__ = func;
+    meta.__type__ = func.__type__?func.__type__:'function';
+    meta.__name__ = func.__name__?func.__name__:func.name;
+    func.__wrapper__ = meta;
+    meta.args.__wraps__ = func;
+    meta.args.__type__ = meta.__type__;
+    meta.args.__name__ = meta.__name__;
+    return meta;
+}
