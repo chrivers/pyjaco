@@ -412,8 +412,8 @@ class JS(object):
                 raise JSError("decorators are not supported")
 
         # XXX: disable $def for now, because it doesn't work in IE:
-        #if self._class_name:
-        if 1:
+        if self._class_name:
+        #if 1:
             if node.args.vararg is not None:
                 raise JSError("star arguments are not supported")
 
