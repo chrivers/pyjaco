@@ -1645,6 +1645,71 @@ function staticmethod(method){
 
 var Class = type;
 
+function _object(){
+}
+_object.prototype.__mro__ = [];
+
+var extend = function(cls, base_list) {
+    var _mro = mro(cls,base_list);
+    cls.prototype.__mro__ = _mro;
+    for (var i = 1; i < _mro.length; i++){
+        base = _mro[i];
+        for(var property in base.prototype){
+            if(!(property in cls.prototype))
+            cls.prototype[property] = base.prototype[property];  
+            }
+        }
+}
+
+var mro = function(cls, base_list) {
+    var order = [];
+    if (cls === _object) {
+        return [_object];
+    }else if(base_list.length === 1 && base_list[0]===_object) {
+        return [cls, _object];
+    }
+    
+    var orderlists = [];
+    for (var i = 0; i < base_list.length; i++){
+        orderlists[i] = base_list[i].prototype.__mro__.slice(0);
+    }
+    orderlists[orderlists.length] = [cls].concat(base_list);
+    while (orderlists.length > 0) {
+        candidate_found = false;
+        for (var i = 0; i < orderlists.length; i++){
+            candidatelist = orderlists[i]
+            candidate = candidatelist[0];
+            if(mro_not_blocking(candidate,orderlists)){
+                /**good candidate */
+                candidate_found = true;
+                break;
+                }
+            }
+        if(!candidate_found || order.indexOf(candidate)>-1){
+            throw Exception;
+            }
+        order[order.length] = candidate;
+        for (var i = orderlists.length-1; i >= 0; i--){
+            if(orderlists[i][0] === candidate){
+                orderlists[i].splice(0,1);
+                if(orderlists[i].length === 0){
+                    orderlists.splice(i,1);
+                    }
+                }
+            }
+        }
+    return order;
+}
+
+var mro_not_blocking = function(candidate, orderlists) {
+    for(var j = 0; j < orderlists.length; j++){
+        if(orderlists[j].indexOf(candidate)>0){
+            return false;
+            }
+        }
+        return true;
+}
+
 /**
 Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
 
