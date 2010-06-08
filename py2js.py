@@ -335,12 +335,12 @@ class JS(object):
         js.append("_%s.prototype.toString = _iter.prototype.toString;" % \
                 (class_name))
         from ast import dump
-        methods = []
+        #~ methods = []
         all_attributes = set()
         self._class_name = class_name
         for stmt in node.body:
             if isinstance(stmt, ast.FunctionDef):
-                methods.append(stmt)
+                #~ methods.append(stmt)
                 all_attributes.add(stmt.name)
             if isinstance(stmt, ast.Assign):
                 value = self.visit(stmt.value)
@@ -362,24 +362,8 @@ class JS(object):
             #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
             #~ js.append("}")
 
-        #TODO: take care of super keyword
         js.append('extend(_%s,[%s]);'%(class_name,
             ', '.join(['_%s'%cls for cls in bases])))
-        #~ for cls in self.mro(class_name)[1:-1]:
-            #~ base_node = self._classes[cls]
-            #~ for stmt in base_node.body:
-                #~ if isinstance(stmt, ast.FunctionDef) and not stmt.name in all_attributes:
-                    #~ all_attributes.add(stmt.name)
-                    #~ js.append("_%s.prototype.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
-                    #~ if len(stmt.decorator_list) == 1 and \
-                    #~ isinstance(stmt.decorator_list[0], ast.Name) and \
-                    #~ stmt.decorator_list[0].id == "staticmethod":
-                        #~ js.append("%s.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
-                #~ elif isinstance(stmt, ast.Assign):
-                    #~ for t in stmt.targets:
-                        #~ if not t.id in all_attributes:
-                            #~ all_attributes.add(t.id)
-                            #~ js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
 
         return js
 
@@ -635,6 +619,9 @@ class JS(object):
 
         if id in self.builtin:
             id = "py_builtins." + id;
+
+        #~ if id in self._classes:
+            #~ id = '_' + id;
 
         return id
 
