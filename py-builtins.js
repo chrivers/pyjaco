@@ -1645,20 +1645,44 @@ function staticmethod(method){
 
 var Class = type;
 
+function object(){
+    return new _object();
+}
 function _object(){
 }
 _object.prototype.__mro__ = [];
+_object.prototype.__inherited__ = {};
+_object.prototype.__init__ = function(){
+}
+_object.__name__ = 'object';
+_object.__bare_class__ = object;
 
 var extend = function(cls, base_list) {
     var _mro = mro(cls,base_list);
     cls.prototype.__mro__ = _mro;
+    //properties not defined in the original definition
+    cls.prototype.__inherited__ = {};
     for (var i = 1; i < _mro.length; i++){
         base = _mro[i];
         for(var property in base.prototype){
-            if(!(property in cls.prototype))
-            cls.prototype[property] = base.prototype[property];  
+            if(!(property in cls.prototype) && !(property in base.prototype.__inherited__)){
+                cls.prototype[property] = base.prototype[property];
+                cls.prototype.__inherited__[property] = base.prototype[property];
             }
         }
+    }
+    bare_class = cls.__bare_class__;
+    //static properties not defined in the original definition
+    bare_class.__inherited__ = {};
+    for (var i = 1; i < _mro.length; i++){
+        bare_base = _mro[i].__bare_class__;
+        for(var property in bare_base){
+            if(!(property in bare_class) && !(property in bare_base.__inherited__)){
+                bare_class[property] = bare_base[property];
+                bare_class.__inherited__[property] = bare_base[property];
+            }
+        }
+    }
 }
 
 var mro = function(cls, base_list) {
@@ -1708,6 +1732,41 @@ var mro_not_blocking = function(candidate, orderlists) {
             }
         }
         return true;
+}
+
+var _super = function(cls,instance){
+    super_instance = {};
+    _mro = instance.__mro__;
+    cls_name = '_' + cls.__name__;
+    function make_caller(base, property){
+        var f = function(){
+            base.prototype[property].apply(instance,arguments);
+        }
+        return f;
+    }
+
+    var k = 0;
+    while(('_'+_mro[k].__name__ !== cls_name) && k<_mro.length){
+        k = k + 1;
+    }
+    if(k === _mro.length){
+        cls_name = '_' + cls.__name__;
+        throw new py_builtins.AttributeError(instance, cls_name);}
+    k = k + 1;
+    for (var i = k; i < _mro.length; i++){
+        base = _mro[i];
+        for(var property in base.prototype){
+            if(!(property in super_instance)){
+                try{
+                    super_instance[property] = make_caller(base,property);
+                }catch(e){
+                    super_instance[property] = base.prototype[property];
+                }
+                }
+        }
+    }
+    //TODO: super of static methods and class attributes
+    return super_instance;
 }
 
 /**

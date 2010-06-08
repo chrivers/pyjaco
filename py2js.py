@@ -107,6 +107,8 @@ class JS(object):
         'int' : '_int',
         'float' : '_float',
 
+        'super' : '_super',
+
         # ideally we should check, that this name is available:
         'py_builtins' : '___py_hard_to_collide',
     }
@@ -198,179 +200,6 @@ class JS(object):
 
     def get_comparison_op(self, node):
         return self.comparison_op[node.__class__.__name__]
-
-    #This python code taken from pypy:
-    #License for files in the pypy/ directory 
-    #==================================================
-    #
-    #Except when otherwise stated (look for LICENSE files in directories or
-    #information at the beginning of each file) all software and
-    #documentation in the 'pypy' directories is licensed as follows: 
-    #
-    #    The MIT License
-    #
-    #    Permission is hereby granted, free of charge, to any person 
-    #    obtaining a copy of this software and associated documentation 
-    #    files (the "Software"), to deal in the Software without 
-    #    restriction, including without limitation the rights to use, 
-    #    copy, modify, merge, publish, distribute, sublicense, and/or 
-    #    sell copies of the Software, and to permit persons to whom the 
-    #    Software is furnished to do so, subject to the following conditions:
-    #
-    #    The above copyright notice and this permission notice shall be included 
-    #    in all copies or substantial portions of the Software.
-    #
-    #    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-    #    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-    #    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-    #    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-    #    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-    #    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-    #    DEALINGS IN THE SOFTWARE.
-    #
-    #
-    #PyPy Copyright holders 2003-2010
-    #----------------------------------- 
-    #
-    #Except when otherwise stated (look for LICENSE files or information at
-    #the beginning of each file) the files in the 'pypy' directory are each
-    #copyrighted by one or more of the following people and organizations:    
-    #
-    #    Armin Rigo
-    #    Maciej Fijalkowski
-    #    Carl Friedrich Bolz
-    #    Samuele Pedroni
-    #    Antonio Cuni
-    #    Michael Hudson
-    #    Christian Tismer
-    #    Holger Krekel
-    #    Eric van Riet Paap
-    #    Richard Emslie
-    #    Anders Chrigstrom
-    #    Amaury Forgeot d Arc
-    #    Aurelien Campeas
-    #    Anders Lehmann
-    #    Niklaus Haldimann
-    #    Seo Sanghyeon
-    #    Leonardo Santagada
-    #    Lawrence Oluyede
-    #    Jakub Gustak
-    #    Guido Wesdorp
-    #    Benjamin Peterson
-    #    Alexander Schremmer
-    #    Niko Matsakis
-    #    Ludovic Aubry
-    #    Alex Martelli
-    #    Toon Verwaest
-    #    Stephan Diehl
-    #    Adrien Di Mascio
-    #    Stefan Schwarzer
-    #    Tomek Meka
-    #    Patrick Maupin
-    #    Jacob Hallen
-    #    Laura Creighton
-    #    Bob Ippolito
-    #    Camillo Bruni
-    #    Simon Burton
-    #    Bruno Gola
-    #    Alexandre Fayolle
-    #    Marius Gedminas
-    #    Guido van Rossum
-    #    Valentino Volonghi
-    #    Adrian Kuhn
-    #    Paul deGrandis
-    #    Gerald Klix
-    #    Wanja Saatkamp
-    #    Anders Hammarquist
-    #    Oscar Nierstrasz
-    #    Eugene Oden
-    #    Lukas Renggli
-    #    Guenter Jantzen
-    #    Dinu Gherman
-    #    Bartosz Skowron
-    #    Georg Brandl
-    #    Ben Young
-    #    Jean-Paul Calderone
-    #    Nicolas Chauvat
-    #    Rocco Moretti
-    #    Michael Twomey
-    #    boria
-    #    Jared Grubb
-    #    Olivier Dormond
-    #    Stuart Williams
-    #    Jens-Uwe Mager
-    #    Justas Sadzevicius
-    #    Mikael Schonenberg
-    #    Brian Dorsey
-    #    Jonathan David Riehl
-    #    Beatrice During
-    #    Elmo Mantynen
-    #    Andreas Friedge
-    #    Alex Gaynor
-    #    Anders Qvist
-    #    Alan McIntyre
-    #    Bert Freudenberg
-    #
-    #    Heinrich-Heine University, Germany 
-    #    Open End AB (formerly AB Strakt), Sweden
-    #    merlinux GmbH, Germany 
-    #    tismerysoft GmbH, Germany 
-    #    Logilab Paris, France 
-    #    DFKI GmbH, Germany 
-    #    Impara, Germany
-    #    Change Maker, Sweden 
-    #
-    def mro(self, cls):
-        order = []
-        if cls == 'object':return ['object']
-        orderlists = [self.mro(base.id) for base in self._classes[cls].bases if base]
-        orderlists.append([cls] + list(c.id for c in self._classes[cls].bases if c))
-        while orderlists:
-            for candidatelist in orderlists:
-                candidate = candidatelist[0]
-                if self.blockinglist(candidate, orderlists) is None:
-                    break    # good candidate
-            else:
-                self.mro_error(orderlists)  # no candidate found
-            assert candidate not in order
-            order.append(candidate)
-            for i in range(len(orderlists)-1, -1, -1):
-                if orderlists[i][0] == candidate:
-                    del orderlists[i][0]
-                    if len(orderlists[i]) == 0:
-                        del orderlists[i]
-        #~ order.append('object')
-        return order
-
-    def blockinglist(self,candidate, orderlists):
-        for lst in orderlists:
-            if candidate in lst[1:]:
-                return lst
-        return None  # good candidate
-
-    def mro_error(self,orderlists):
-        cycle = []
-        candidate = orderlists[0][0]
-        while candidate not in cycle:
-            cycle.append(candidate)
-            nextblockinglist = self.blockinglist(candidate, orderlists)
-            candidate = nextblockinglist[0]
-        # avoid the only use of list.index in the PyPy code base:
-        i = 0
-        for c in cycle:
-            if c == candidate:
-                break
-            i += 1
-        del cycle[:i]
-        cycle.append(candidate)
-        cycle.reverse()
-        #~ names = [cls.__name__ for cls in cycle]
-        raise TypeError, "Cycle among base classes: " + ' < '.join(cycle)
-
-    def mronames(self,cls):
-        #~ names = [cls.__name__ for cls in mro(cls)]
-        #~ return names
-        return self.mro(cls)
 
     def visit(self, node, scope=None):
         try:
@@ -488,7 +317,7 @@ class JS(object):
         js = []
         bases = [self.visit(n) for n in node.bases]
         assert len(bases) >= 1
-        bases = ", ".join(bases)
+        #~ bases = ", ".join(bases)
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
@@ -499,7 +328,9 @@ class JS(object):
         js.append("}")
         js.append("function _%s() {" % class_name)
         js.append("}")
+        js.append("%s.__name__ = '%s';" % (class_name, class_name))
         js.append("_%s.__name__ = '%s';" % (class_name, class_name))
+        js.append("_%s.__bare_class__ = %s;" % (class_name, class_name))
         js.append("_%s.prototype.__class__ = _%s;" % (class_name, class_name))
         js.append("_%s.prototype.toString = _iter.prototype.toString;" % \
                 (class_name))
@@ -522,30 +353,33 @@ class JS(object):
                 js.extend(self.visit(stmt))
         self._class_name = None
 
-        methods_names = [m.name for m in methods]
-        if not "__init__" in methods_names:
-            # if the user didn't define __init__(), we have to add it ourselves
-            # because we call it from the constructor above
-            js.append("_%s.prototype.__init__ = function() {" % class_name)
-            js.append("}")
+        #The following is unnecessary: __init__ is inherited from
+        #'object'
+        #~ methods_names = [m.name for m in methods]
+        #~ if not "__init__" in methods_names:
+            #~ # if the user didn't define __init__(), we have to add it ourselves
+            #~ # because we call it from the constructor above
+            #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
+            #~ js.append("}")
 
         #TODO: take care of super keyword
-        #~ print self.mro(class_name)
-        for cls in self.mro(class_name)[1:-1]:
-            base_node = self._classes[cls]
-            for stmt in base_node.body:
-                if isinstance(stmt, ast.FunctionDef) and not stmt.name in all_attributes:
-                    all_attributes.add(stmt.name)
-                    js.append("_%s.prototype.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
-                    if len(stmt.decorator_list) == 1 and \
-                    isinstance(stmt.decorator_list[0], ast.Name) and \
-                    stmt.decorator_list[0].id == "staticmethod":
-                        js.append("%s.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
-                elif isinstance(stmt, ast.Assign):
-                    for t in stmt.targets:
-                        if not t.id in all_attributes:
-                            all_attributes.add(t.id)
-                            js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
+        js.append('extend(_%s,[%s]);'%(class_name,
+            ', '.join(['_%s'%cls for cls in bases])))
+        #~ for cls in self.mro(class_name)[1:-1]:
+            #~ base_node = self._classes[cls]
+            #~ for stmt in base_node.body:
+                #~ if isinstance(stmt, ast.FunctionDef) and not stmt.name in all_attributes:
+                    #~ all_attributes.add(stmt.name)
+                    #~ js.append("_%s.prototype.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
+                    #~ if len(stmt.decorator_list) == 1 and \
+                    #~ isinstance(stmt.decorator_list[0], ast.Name) and \
+                    #~ stmt.decorator_list[0].id == "staticmethod":
+                        #~ js.append("%s.%s = _%s.prototype.%s;" % (class_name, stmt.name, cls, stmt.name))
+                #~ elif isinstance(stmt, ast.Assign):
+                    #~ for t in stmt.targets:
+                        #~ if not t.id in all_attributes:
+                            #~ all_attributes.add(t.id)
+                            #~ js.append("_%s.prototype.%s = %s.%s;" % (class_name, t.id, cls, t.id))
 
         return js
 
