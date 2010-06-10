@@ -178,8 +178,9 @@ class JS(object):
 
         # This lists all variables in the local scope:
         self._scope = []
-        self._classes = {'object':None}
-        #~ self._classes = {}
+        #All calls to names within _class_names will be preceded by 'new'
+        self._class_names = set()
+        self._classes = {}
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -268,7 +269,7 @@ class JS(object):
                     js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
             if self._class_name:
-                prep = "_%s.prototype.%s = function(" % \
+                prep = "%s.prototype.%s = function(" % \
                         (self._class_name, node.name)
                 if not is_static:
                     if not (js_args[0] == "self"):
@@ -287,7 +288,7 @@ class JS(object):
 
             #If method is static, we also add it directly to the class
             if is_static:
-                js.append("%s.%s = _%s.prototype.%s;" % \
+                js.append("%s.%s = %s.prototype.%s;" % \
                         (self._class_name, node.name, self._class_name, node.name))
 
             self._scope = []
@@ -317,22 +318,16 @@ class JS(object):
         js = []
         bases = [self.visit(n) for n in node.bases]
         assert len(bases) >= 1
-        #~ bases = ", ".join(bases)
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
+        self._class_names.add(class_name)
         js.append("function %s() {" % class_name)
-        js.append("    t = new _%s();" % class_name)
-        js.append("    _%s.prototype.__init__.apply(t,arguments);" % class_name)
-        js.append("    return t;")
-        js.append("}")
-        js.append("function _%s() {" % class_name)
+        js.append("    this.__init__.apply(this,arguments);")
         js.append("}")
         js.append("%s.__name__ = '%s';" % (class_name, class_name))
-        js.append("_%s.__name__ = '%s';" % (class_name, class_name))
-        js.append("_%s.__bare_class__ = %s;" % (class_name, class_name))
-        js.append("_%s.prototype.__class__ = _%s;" % (class_name, class_name))
-        js.append("_%s.prototype.toString = _iter.prototype.toString;" % \
+        js.append("%s.prototype.__class__ = %s;" % (class_name, class_name))
+        js.append("%s.prototype.toString = _iter.prototype.toString;" % \
                 (class_name))
         from ast import dump
         #~ methods = []
@@ -348,7 +343,7 @@ class JS(object):
                     all_attributes.add(t.id )
                     var = self.visit(t)
                     js.append("%s.%s = %s;" % (class_name, var, value))
-                    js.append("_%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
+                    js.append("%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
             else:
                 js.extend(self.visit(stmt))
         self._class_name = None
@@ -362,8 +357,8 @@ class JS(object):
             #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
             #~ js.append("}")
 
-        js.append('extend(_%s,[%s]);'%(class_name,
-            ', '.join(['_%s'%cls for cls in bases])))
+        js.append('extend(%s,[%s]);'%(class_name,
+            ', '.join(['%s'%cls for cls in bases])))
 
         return js
 
@@ -636,13 +631,16 @@ class JS(object):
         return 'str("%s")' % escape(node.s)
 
     def visit_Call(self, node):
+        func = self.visit(node.func)
+        if func in self._class_names:
+            func = 'new '+func
         if node.keywords:
             keywords = []
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
             keywords = "{" + ", ".join(keywords) + "}"
             js_args = ",".join([ self.visit(arg) for arg in node.args ])
-            return "%s.args([%s], %s)" % (self.visit(node.func), js_args,
+            return "%s.args([%s], %s)" % (func, js_args,
                     keywords)
         else:
             if node.starargs is not None:
@@ -653,7 +651,7 @@ class JS(object):
 
             js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
-            return "%s(%s)" % (self.visit(node.func), js_args)
+            return "%s(%s)" % (func, js_args)
 
     def visit_Raise(self, node):
         assert node.inst is None

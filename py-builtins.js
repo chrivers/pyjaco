@@ -1646,16 +1646,13 @@ function staticmethod(method){
 var Class = type;
 
 function object(){
-    return new _object();
 }
-function _object(){
+object.prototype.__class__ = object;
+object.prototype.__mro__ = [];
+object.prototype.__inherited__ = {};
+object.prototype.__init__ = function(){
 }
-_object.prototype.__mro__ = [];
-_object.prototype.__inherited__ = {};
-_object.prototype.__init__ = function(){
-}
-_object.__name__ = 'object';
-_object.__bare_class__ = object;
+object.__name__ = 'object';
 
 var extend = function(cls, base_list) {
     var _mro = mro(cls,base_list);
@@ -1671,15 +1668,14 @@ var extend = function(cls, base_list) {
             }
         }
     }
-    bare_class = cls.__bare_class__;
     //static properties not defined in the original definition
-    bare_class.__inherited__ = {};
+    cls.__inherited__ = {};
     for (var i = 1; i < _mro.length; i++){
-        bare_base = _mro[i].__bare_class__;
-        for(var property in bare_base){
-            if(!(property in bare_class) && !(property in bare_base.__inherited__)){
-                bare_class[property] = bare_base[property];
-                bare_class.__inherited__[property] = bare_base[property];
+        base = _mro[i];
+        for(var property in base){
+            if(!(property in cls) && !(property in base.__inherited__)){
+                cls[property] = base[property];
+                cls.__inherited__[property] = base[property];
             }
         }
     }
@@ -1687,10 +1683,10 @@ var extend = function(cls, base_list) {
 
 var mro = function(cls, base_list) {
     var order = [];
-    if (cls === _object) {
-        return [_object];
-    }else if(base_list.length === 1 && base_list[0]===_object) {
-        return [cls, _object];
+    if (cls === object) {
+        return [object];
+    }else if(base_list.length === 1 && base_list[0]===object) {
+        return [cls, object];
     }
     
     var orderlists = [];
@@ -1737,7 +1733,7 @@ var mro_not_blocking = function(candidate, orderlists) {
 var _super = function(cls,instance){
     super_instance = {};
     _mro = instance.__mro__;
-    cls_name = '_' + cls.__name__;
+    cls_name = cls.__name__;
     function make_caller(base, property){
         var f = function(){
             base.prototype[property].apply(instance,arguments);
@@ -1746,11 +1742,11 @@ var _super = function(cls,instance){
     }
 
     var k = 0;
-    while(('_'+_mro[k].__name__ !== cls_name) && k<_mro.length){
+    while((_mro[k].__name__ !== cls_name) && k<_mro.length){
         k = k + 1;
     }
     if(k === _mro.length){
-        cls_name = '_' + cls.__name__;
+        cls_name = cls.__name__;
         throw new py_builtins.AttributeError(instance, cls_name);}
     k = k + 1;
     for (var i = k; i < _mro.length; i++){
