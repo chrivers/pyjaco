@@ -290,6 +290,12 @@ class JS(object):
             if is_static:
                 js.append("%s.%s = %s.prototype.%s;" % \
                         (self._class_name, node.name, self._class_name, node.name))
+            #Otherwise, we wrap it to take 'self' into account
+            else:
+                func_name = node.name
+                js.append("%s.%s = function() {" % (self._class_name, func_name))
+                js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
+                js.append("}")
 
             self._scope = []
             return js
@@ -331,16 +337,11 @@ class JS(object):
                 (class_name))
         from ast import dump
         #~ methods = []
-        all_attributes = set()
         self._class_name = class_name
         for stmt in node.body:
-            if isinstance(stmt, ast.FunctionDef):
-                #~ methods.append(stmt)
-                all_attributes.add(stmt.name)
             if isinstance(stmt, ast.Assign):
                 value = self.visit(stmt.value)
                 for t in stmt.targets:
-                    all_attributes.add(t.id )
                     var = self.visit(t)
                     js.append("%s.%s = %s;" % (class_name, var, value))
                     js.append("%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
