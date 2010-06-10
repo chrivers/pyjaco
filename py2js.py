@@ -329,7 +329,11 @@ class JS(object):
         self._classes[class_name] = node
         self._class_names.add(class_name)
         js.append("function %s() {" % class_name)
-        js.append("    this.__init__.apply(this,arguments);")
+        js.append("    if( this === _global_object){")
+        js.append("        t = new %s();" % class_name)
+        js.append("        t.__init__.apply(t,arguments);")
+        js.append("        return t;")
+        js.append("    }")
         js.append("}")
         js.append("%s.__name__ = '%s';" % (class_name, class_name))
         js.append("%s.prototype.__class__ = %s;" % (class_name, class_name))
@@ -633,8 +637,8 @@ class JS(object):
 
     def visit_Call(self, node):
         func = self.visit(node.func)
-        if func in self._class_names:
-            func = 'new '+func
+        #~ if func in self._class_names:
+            #~ func = 'new '+func
         if node.keywords:
             keywords = []
             for kw in node.keywords:

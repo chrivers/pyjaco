@@ -18,6 +18,10 @@ var py_builtins = {};
 
 py_builtins.__python3__ = false;
 
+/* A reference to the global object */
+
+var _global_object = this;
+
 /* JavaScript helper functions */
 
 function defined(obj) {
