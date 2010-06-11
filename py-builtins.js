@@ -20,7 +20,7 @@ py_builtins.__python3__ = false;
 
 /* A reference to the global object */
 
-var _global_object = this;
+var _global_this = this;
 
 /* JavaScript helper functions */
 
@@ -1866,6 +1866,27 @@ if (!Array.prototype.indexOf)
     }
     return -1;
   };
+}
+
+//include slice method
+if (!Array.slice)
+{
+    Array.slice= function(){
+        array_like = arguments[0];
+        start = arguments[1];
+        end = arguments[2];
+        arr=[];
+        if(end === undefined){
+            for(var i = start; i < array_like.length; i++){
+                arr[i-start] = array_like[i];
+            }
+        }else{
+            for(var i = start; i < end; i++){
+                arr[i-start] = array_like[i];
+            }
+        }
+        return arr;
+    }
 }
 
 /**

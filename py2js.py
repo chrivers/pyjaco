@@ -329,7 +329,7 @@ class JS(object):
         self._classes[class_name] = node
         self._class_names.add(class_name)
         js.append("function %s() {" % class_name)
-        js.append("    if( this === _global_object){")
+        js.append("    if( this === _global_this){")
         js.append("        t = new %s();" % class_name)
         js.append("        t.__init__.apply(t,arguments);")
         js.append("        return t;")
