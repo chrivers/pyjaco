@@ -9,83 +9,81 @@
   <title id="page-title">Title</title>
   <script type="text/javascript">
 function ExtObject() {
-    t = new _ExtObject();
-    _ExtObject.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new ExtObject();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _ExtObject() {
-}
-_ExtObject.__name__ = 'ExtObject';
-_ExtObject.prototype.__class__ = _ExtObject;
-_ExtObject.prototype.toString = _iter.prototype.toString;
-_ExtObject.prototype.__init__ = function(args) {
+ExtObject.__name__ = 'ExtObject';
+ExtObject.prototype.__class__ = ExtObject;
+ExtObject.prototype.toString = _iter.prototype.toString;
+ExtObject.prototype.__init__ = function(args) {
     this._obj = _new(eval((str("Ext."))+(this.__class__.__name__)),js(args));
 }
-_ExtObject.prototype._js_ = function() {
+ExtObject.__init__ = function() {
+    ExtObject.prototype.__init__.apply(arguments[0],Array.slice(arguments,1));
+}
+ExtObject.prototype._js_ = function() {
     return this._obj;
 }
+ExtObject._js_ = function() {
+    ExtObject.prototype._js_.apply(arguments[0],Array.slice(arguments,1));
+}
+extend(ExtObject,[object]);
 function Window() {
-    t = new _Window();
-    _Window.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new Window();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _Window() {
-}
-_Window.__name__ = 'Window';
-_Window.prototype.__class__ = _Window;
-_Window.prototype.toString = _iter.prototype.toString;
-_Window.prototype.show = function() {
+Window.__name__ = 'Window';
+Window.prototype.__class__ = Window;
+Window.prototype.toString = _iter.prototype.toString;
+Window.prototype.show = function() {
     this._obj.show();
 }
-_Window.prototype.__init__ = function() {
+Window.show = function() {
+    Window.prototype.show.apply(arguments[0],Array.slice(arguments,1));
 }
-_Window.prototype.__init__ = _ExtObject.prototype.__init__;
-_Window.prototype._js_ = _ExtObject.prototype._js_;
+extend(Window,[ExtObject]);
 function Panel() {
-    t = new _Panel();
-    _Panel.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new Panel();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _Panel() {
-}
-_Panel.__name__ = 'Panel';
-_Panel.prototype.__class__ = _Panel;
-_Panel.prototype.toString = _iter.prototype.toString;
+Panel.__name__ = 'Panel';
+Panel.prototype.__class__ = Panel;
+Panel.prototype.toString = _iter.prototype.toString;
 /* pass */
-_Panel.prototype.__init__ = function() {
-}
-_Panel.prototype.__init__ = _ExtObject.prototype.__init__;
-_Panel.prototype._js_ = _ExtObject.prototype._js_;
+extend(Panel,[ExtObject]);
 function TabPanel() {
-    t = new _TabPanel();
-    _TabPanel.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new TabPanel();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _TabPanel() {
-}
-_TabPanel.__name__ = 'TabPanel';
-_TabPanel.prototype.__class__ = _TabPanel;
-_TabPanel.prototype.toString = _iter.prototype.toString;
+TabPanel.__name__ = 'TabPanel';
+TabPanel.prototype.__class__ = TabPanel;
+TabPanel.prototype.toString = _iter.prototype.toString;
 /* pass */
-_TabPanel.prototype.__init__ = function() {
-}
-_TabPanel.prototype.__init__ = _ExtObject.prototype.__init__;
-_TabPanel.prototype._js_ = _ExtObject.prototype._js_;
+extend(TabPanel,[ExtObject]);
 function Toolbar() {
-    t = new _Toolbar();
-    _Toolbar.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new Toolbar();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _Toolbar() {
-}
-_Toolbar.__name__ = 'Toolbar';
-_Toolbar.prototype.__class__ = _Toolbar;
-_Toolbar.prototype.toString = _iter.prototype.toString;
+Toolbar.__name__ = 'Toolbar';
+Toolbar.prototype.__class__ = Toolbar;
+Toolbar.prototype.toString = _iter.prototype.toString;
 /* pass */
-_Toolbar.prototype.__init__ = function() {
-}
-_Toolbar.prototype.__init__ = _ExtObject.prototype.__init__;
-_Toolbar.prototype._js_ = _ExtObject.prototype._js_;
+extend(Toolbar,[ExtObject]);
 var info_box = $def({}, function(title, msg) {
     Ext.MessageBox.show(js(dict(tuple([
     tuple([str("title"), title]),
@@ -96,43 +94,65 @@ var info_box = $def({}, function(title, msg) {
 ]))));
 });
 function Canvas() {
-    t = new _Canvas();
-    _Canvas.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new Canvas();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _Canvas() {
-}
-_Canvas.__name__ = 'Canvas';
-_Canvas.prototype.__class__ = _Canvas;
-_Canvas.prototype.toString = _iter.prototype.toString;
-_Canvas.prototype.__init__ = function(id) {
+Canvas.__name__ = 'Canvas';
+Canvas.prototype.__class__ = Canvas;
+Canvas.prototype.toString = _iter.prototype.toString;
+Canvas.prototype.__init__ = function(id) {
     var dom = Ext.getDom(js(id));
     if (py_builtins.bool(Ext.isIE)) {
         G_vmlCanvasManager.initElement(dom);
     }
     this._obj = dom.getContext(js(str("2d")));
 }
-_Canvas.prototype.fillRect = function(x1, y1, w, h) {
+Canvas.__init__ = function() {
+    Canvas.prototype.__init__.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.fillRect = function(x1, y1, w, h) {
     this._obj.fillStyle = js(this.fillStyle);
     this._obj.fillRect(x1,y1,w,h);
 }
-_Canvas.prototype.fillText = function(text, x, y) {
+Canvas.fillRect = function() {
+    Canvas.prototype.fillRect.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.fillText = function(text, x, y) {
     this._obj.fillStyle = js(this.fillStyle);
     this._obj.fillText(js(text),x,y);
 }
-_Canvas.prototype.beginPath = function() {
+Canvas.fillText = function() {
+    Canvas.prototype.fillText.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.beginPath = function() {
     this._obj.strokeStyle = js(this.strokeStyle);
     this._obj.beginPath();
 }
-_Canvas.prototype.moveTo = function(x, y) {
+Canvas.beginPath = function() {
+    Canvas.prototype.beginPath.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.moveTo = function(x, y) {
     this._obj.moveTo(x,y);
 }
-_Canvas.prototype.lineTo = function(x, y) {
+Canvas.moveTo = function() {
+    Canvas.prototype.moveTo.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.lineTo = function(x, y) {
     this._obj.lineTo(x,y);
 }
-_Canvas.prototype.stroke = function() {
+Canvas.lineTo = function() {
+    Canvas.prototype.lineTo.apply(arguments[0],Array.slice(arguments,1));
+}
+Canvas.prototype.stroke = function() {
     this._obj.stroke();
 }
+Canvas.stroke = function() {
+    Canvas.prototype.stroke.apply(arguments[0],Array.slice(arguments,1));
+}
+extend(Canvas,[object]);
 var menu_about = $def({}, function(e, t) {
     info_box(str("About"),str("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR"));
 });

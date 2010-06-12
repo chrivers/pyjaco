@@ -7,16 +7,16 @@ var StartGoL = $def({}, function() {
     window.gol = GoL();
 });
 function GoL() {
-    t = new _GoL();
-    _GoL.prototype.__init__.apply(t,arguments);
-    return t;
+    if( this === _global_this){
+        t = new GoL();
+        t.__init__.apply(t,arguments);
+        return t;
+    }
 }
-function _GoL() {
-}
-_GoL.__name__ = 'GoL';
-_GoL.prototype.__class__ = _GoL;
-_GoL.prototype.toString = _iter.prototype.toString;
-_GoL.prototype.__init__ = function() {
+GoL.__name__ = 'GoL';
+GoL.prototype.__class__ = GoL;
+GoL.prototype.toString = _iter.prototype.toString;
+GoL.prototype.__init__ = function() {
     this.width = 75;
     this.height = 75;
     this.canvas = document.getElementById(js(str("canvas"))).getContext(js(str("2d")));
@@ -41,10 +41,16 @@ _GoL.prototype.__init__ = function() {
     setInterval(js(str("window.gol.iter()")),250);
     this.draw();
 }
-_GoL.prototype.get = function(x, y) {
+GoL.__init__ = function() {
+    GoL.prototype.__init__.apply(arguments[0],Array.slice(arguments,1));
+}
+GoL.prototype.get = function(x, y) {
     return this.grid.__getitem__((((x)+(this.width))%(this.width))+((((y)+(this.height))%(this.height))*(this.width)));
 }
-_GoL.prototype.iter = function() {
+GoL.get = function() {
+    GoL.prototype.get.apply(arguments[0],Array.slice(arguments,1));
+}
+GoL.prototype.iter = function() {
     var toDie = list([]);
     var toLive = list([]);
     var __dummy3__ = iter(range(0,this.width));
@@ -149,7 +155,10 @@ _GoL.prototype.iter = function() {
     }
     this.draw();
 }
-_GoL.prototype.draw = function() {
+GoL.iter = function() {
+    GoL.prototype.iter.apply(arguments[0],Array.slice(arguments,1));
+}
+GoL.prototype.draw = function() {
     var i = 0;
     var __dummy15__ = iter(range(0,(this.width)*(10),10));
     var __dummy16__ = false;
@@ -188,6 +197,10 @@ _GoL.prototype.draw = function() {
         }
     }
 }
+GoL.draw = function() {
+    GoL.prototype.draw.apply(arguments[0],Array.slice(arguments,1));
+}
+extend(GoL,[object]);
 </script>
 </head>
 <body onLoad="StartGoL()">
