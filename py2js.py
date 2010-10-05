@@ -568,6 +568,10 @@ class JS(object):
         return "%s(%s)" % (self.get_unary_op(node), self.visit(node.operand))
 
     def visit_BinOp(self, node):
+        if isinstance(node.op, ast.Mod) and isinstance(node.left, ast.Str):
+            left = self.visit(node.left)
+            right = self.visit(node.right)
+            return "vsprintf(js(%s), js(%s))" % (left, right)
         left = self.visit(node.left)
         right = self.visit(node.right)
 
