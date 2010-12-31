@@ -18,7 +18,7 @@ PY2JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "py2js.err")
 def test1(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
-    r = os.system('js -f py-builtins.js -f %s' % in_file)
+    r = os.system('js -f py-builtins.js -f \"%s\"' % in_file)
     w.check(r)
 
 def test2(in_file):
@@ -27,7 +27,7 @@ def test2(in_file):
     command = ""
     if sys.platform == "win32":
         command = "set "
-    r = os.system("%sPYTHONPATH=.:$PYTHONPATH python %s" % (command,in_file))
+    r = os.system("%sPYTHONPATH=.:$PYTHONPATH python \"%s\"" % (command,in_file))
     w.check(r)
 
 def test3(in_file, known_to_fail=False):
