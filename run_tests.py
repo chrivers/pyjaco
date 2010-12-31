@@ -2,9 +2,18 @@
 
 import os
 import sys
+import tempfile
 from glob import glob
 from optparse import OptionParser
 from difflib import unified_diff
+
+PY_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "py.out")
+JS_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.out")
+JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.err")
+JS_SRC_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.src")
+JS_DIFF_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.diff")
+PY2JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "py2js.err")
+
 
 def test1(in_file):
     w = Writer()
@@ -15,22 +24,29 @@ def test1(in_file):
 def test2(in_file):
     w = Writer()
     w.write("Testing the file: %s" % in_file)
-    r = os.system("PYTHONPATH=.:$PYTHONPATH python %s" % (in_file))
+    command = ""
+    if sys.platform == "win32":
+        command = "set "
+    r = os.system("%sPYTHONPATH=.:$PYTHONPATH python %s" % (command,in_file))
     w.check(r)
 
 def test3(in_file, known_to_fail=False):
+    PYTHON_COMMAND = "python \"%s\" > \"%s\""
+    PY2JS_COMMAND = "python py2js.py --include-builtins \"%s\" > \"%s\" 2> \"%s\""
+    JS_COMMAND = "js -f \"%s\" > \"%s\" 2> \"%s\""
+    DIFF_COMMAND = "diff \"%s\" \"%s\" > \"%s\""
     w = Writer()
     w.write("%s [4]: " % in_file)
-    r = os.system("python %s > /tmp/py.out" % (in_file))
+    r = os.system(PYTHON_COMMAND % (in_file, PY_OUT_FILE_NAME))
     w.write(".")
     if r == 0:
-        r = os.system("python py2js.py --include-builtins %s > /tmp/js.src 2> /tmp/py2js.err" % (in_file))
+        r = os.system( PY2JS_COMMAND % (in_file, JS_SRC_FILE_NAME, PY2JS_ERR_FILE_NAME ))
         w.write(".")
         if r == 0:
-            r = os.system("js -f /tmp/js.src > /tmp/js.out 2> /tmp/js.err")
+            r = os.system( JS_COMMAND%(JS_SRC_FILE_NAME, JS_OUT_FILE_NAME, JS_ERR_FILE_NAME))
             w.write(".")
             if r == 0:
-                r = os.system("diff /tmp/js.out /tmp/py.out > /tmp/js.diff")
+                r = os.system(DIFF_COMMAND%(JS_OUT_FILE_NAME, PY_OUT_FILE_NAME, JS_DIFF_FILE_NAME))
                 w.write(".")
     w.check(r, known_to_fail)
 
@@ -58,7 +74,7 @@ def main():
                 ]
         files = []
         for dir in dirs:
-            files.extend(glob(dir))
+            files.extend(os.path.abspath(path) for path in glob(dir))
         known_to_fail = [
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
@@ -103,6 +119,7 @@ def main():
                 "tests/strings/string_format_x.py",
                 "tests/strings/ulcase.py",
                 ]
+        known_to_fail = [os.path.abspath(path) for path in known_to_fail]
         files.sort()
         for file in files:
             if options.run_all:
