@@ -397,9 +397,15 @@ class JS(object):
                     var, self.dummy, i))
 
             self.dummy += 1
-        elif isinstance(target, ast.Subscript):
+        elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
+            # found index assignment
             js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value),
                 self.visit(target.slice), value)]
+        elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Slice):
+            # found slice assignmnet
+            js = ["%s.__setslice__(%s, %s, %s);" % (self.visit(target.value),
+                self.visit(target.slice.lower), self.visit(target.slice.upper),
+                value)]
         else:
             var = self.visit(target)
             declare = ""

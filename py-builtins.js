@@ -1,13 +1,5 @@
 /* Python built-ins for JavaScript
 
-   To run tests only, issue:
-
-    $ js -f defs.js
-
-   To run tests and go interactive, issue:
-
-    $ js -f defs.js -f -
-
    Useful links:
 
     * https://developer.mozilla.org/En/SpiderMonkey/Introduction_to_the_JavaScript_shell
@@ -669,6 +661,13 @@ _list.prototype.__setitem__ = function(index, value) {
         this._items[index+len(this)] = value;
     else
         throw new py_builtins.IndexError("list assignment index out of range");
+};
+_list.prototype.__setslice__ = function(lower, upper, value) {
+     var it = list(value)._items;
+     if ( lower < len(this) && upper < len(this)){
+       this._items = this._items.slice(0,lower).concat(it).concat(this._items.slice(upper,len(this)));
+       this._len = -1;
+     }
 };
 
 _list.prototype.__delitem__ = function(index) {
