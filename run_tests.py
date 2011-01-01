@@ -30,13 +30,16 @@ def test2(in_file):
     r = os.system("%sPYTHONPATH=.:$PYTHONPATH python \"%s\"" % (command,in_file))
     w.check(r)
 
-def test3(in_file, known_to_fail=False):
+def test3(name, in_file=None, known_to_fail=False):
+
+    in_file = in_file or name 
+
     PYTHON_COMMAND = "python \"%s\" > \"%s\""
     PY2JS_COMMAND = "python py2js.py --include-builtins \"%s\" > \"%s\" 2> \"%s\""
     JS_COMMAND = "js -f \"%s\" > \"%s\" 2> \"%s\""
     DIFF_COMMAND = "diff \"%s\" \"%s\" > \"%s\""
     w = Writer()
-    w.write("%s [4]: " % in_file)
+    w.write("%s [4]: " % name)
     r = os.system(PYTHON_COMMAND % (in_file, PY_OUT_FILE_NAME))
     w.write(".")
     if r == 0:
@@ -74,7 +77,7 @@ def main():
                 ]
         files = []
         for dir in dirs:
-            files.extend(os.path.abspath(path) for path in glob(dir))
+            files.extend((path,os.path.abspath(path)) for path in glob(dir))
         known_to_fail = [
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
@@ -121,9 +124,9 @@ def main():
                 ]
         known_to_fail = [os.path.abspath(path) for path in known_to_fail]
         files.sort()
-        for file in files:
+        for name,file in files:
             if options.run_all:
-                test3(file, file in known_to_fail)
+                test3(name, file, file in known_to_fail)
             elif file not in known_to_fail:
                 test3(file)
 
