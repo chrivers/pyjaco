@@ -93,7 +93,6 @@ def main():
                 "tests/basic/valueerror.py",
                 "tests/basic/lambda.py",
                 "tests/basic/try.py",
-                "tests/basic/assign_slice.py",
                 "tests/basic/vargs.py",
                 "tests/basic/del_attr.py",
                 "tests/basic/del_global.py",
