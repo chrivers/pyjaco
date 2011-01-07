@@ -1149,7 +1149,7 @@ _str.prototype.replace = function(old, _new, count) {
         new_s = new_s.replace(old, _new);
         count -= 1;
     }
-    return new_s;
+    return str(new_s);
 };
 
 _str.prototype.lstrip = function(chars) {
