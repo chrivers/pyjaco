@@ -8,10 +8,10 @@ Welcome to py2js
 
 py2js is a Python to JavaScript translator.
 
-**Webpage**: http://mattpap.github.com/py2js/html/
+**Webpage**: http://qsnake.github.com/py2js/html/
 
-**Download** using git: ``git clone git://github.com/mattpap/py2js.git``,
-other options: http://github.com/mattpap/py2js
+**Download** using git: ``git clone git://github.com/qsnake/py2js.git``,
+other options: http://github.com/qsnake/py2js
 
 It consists of two parts. The ``builtins.js`` library, which is a standalone
 JavaScript library implementing Python types and builtin functions, and the
