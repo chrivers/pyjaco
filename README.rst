@@ -3,6 +3,8 @@ py2js
 
 Python to JavaScript translator.
 
+Webpage: http://qsnake.github.com/py2js/html/
+
 Installation
 ------------
 
