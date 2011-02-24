@@ -1,12 +1,12 @@
 py2js
------
+=====
 
 Python to JavaScript translator.
 
 Installation
 ------------
 
-git clone git://github.com/mattpap/py2js.git
+git clone git://github.com/qsnake/py2js.git
 cd py2js
 
 Examples
