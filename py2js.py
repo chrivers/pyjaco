@@ -362,8 +362,7 @@ class JS(object):
             #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
             #~ js.append("}")
 
-        js.append('extend(%s,[%s]);'%(class_name,
-            ', '.join(['%s'%cls for cls in bases])))
+        js.append('extend(%s, [%s]);' % (class_name, ', '.join(bases)))
 
         return js
 
