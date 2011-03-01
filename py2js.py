@@ -692,9 +692,13 @@ class JS(object):
         return "tuple([%s])" % (", ".join(els))
 
     def visit_Dict(self, node):
-        els = ["    tuple([%s, %s])" % (self.visit(k),
-            self.visit(v)) for k, v in zip(node.keys, node.values)]
-        return "dict(tuple([\n%s\n]))" % (",\n".join(els))
+        els = []
+        for k, v in zip(node.keys, node.values):
+            if isinstance(k, ast.Name):
+                els.append('tuple(["%s", %s])' % (self.visit(k), self.visit(v)))
+            else:
+                els.append("tuple([%s, %s])" % (self.visit(k), self.visit(v)))
+        return "dict(tuple([%s]))" % (",\n".join(els))
 
     def visit_List(self, node):
         els = [self.visit(e) for e in node.elts]
