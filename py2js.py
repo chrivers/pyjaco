@@ -655,11 +655,9 @@ class JS(object):
         return str(node.n)
 
     def visit_Str(self, node):
-        def escape(s):
-            s = s.replace("\n", "\\n")
-            s = s.replace('"', '\\"')
-            return s
-        return 'str("%s")' % escape(node.s)
+	"""Uses the python built in repr of a string and the strip string type from it.
+this is to ensure Javascript:nes, even when they use things like b"\\x00" or u"\\u0000"."""
+	return "str(%s)" % `node.s`.lstrip("urb") 
 
     def visit_Call(self, node):
         func = self.visit(node.func)

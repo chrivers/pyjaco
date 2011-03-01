@@ -128,7 +128,7 @@ def main():
             if options.run_all:
                 test3(name, file, file in known_to_fail)
             elif file not in known_to_fail:
-                test3(file)
+                test3(name, file)
 
 class Writer(object):
 
