@@ -323,7 +323,8 @@ class JS(object):
     def visit_ClassDef(self, node):
         js = []
         bases = [self.visit(n) for n in node.bases]
-        assert len(bases) >= 1
+        if not bases:
+            bases = ['object']
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
