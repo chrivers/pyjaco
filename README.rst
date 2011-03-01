@@ -10,8 +10,11 @@ Mailinglist: http://groups.google.com/group/py2js
 Installation
 ------------
 
-git clone git://github.com/qsnake/py2js.git
-cd py2js
+Execute the following::
+
+    git clone git://github.com/qsnake/py2js.git
+    cd py2js
+    make
 
 Examples
 --------
