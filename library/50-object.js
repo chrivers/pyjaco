@@ -14,6 +14,14 @@ object.prototype.__init__ = function() {
     /* object constructor */
 };
 
+object.prototype.__getattr__ = function (key) {
+    return this[key];
+};
+
+object.prototype.__setattr__ = function (key, value) {
+    this[key] = value;
+};
+
 var extend = function(cls, base_list) {
     var _mro = mro(cls,base_list);
     cls.prototype.__mro__ = _mro;
