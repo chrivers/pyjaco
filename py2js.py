@@ -337,6 +337,7 @@ class JS(object):
         js.append("    }")
         js.append("}")
         js.append("%s.__name__ = '%s';" % (class_name, class_name))
+        js.append("%s.__setattr__ = object.prototype.__setattr__;" % (class_name))
         js.append("%s.prototype.__class__ = %s;" % (class_name, class_name))
         js.append("%s.prototype.toString = _iter.prototype.toString;" % \
                 (class_name))
@@ -414,11 +415,12 @@ class JS(object):
                     declare = "var "
                 else:
                     declare = ""
-                return ["%s%s = %s;" % (declare, var, value)]
+                js = ["%s%s = %s;" % (declare, var, value)]
             elif isinstance(target, ast.Attribute):
-                return ["%s.__setattr__(\"%s\", %s)" % (self.visit(target.value), str(target.attr), value)]
+                js = ["%s.__setattr__(\"%s\", %s)" % (self.visit(target.value), str(target.attr), value)]
             else:
                 raise JSError("Unsupported assignment type")
+        return js
 
     def visit_AugAssign(self, node):
         # TODO: Make sure that all the logic in Assign also works in AugAssign
