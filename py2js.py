@@ -408,13 +408,17 @@ class JS(object):
                 value)]
         else:
             var = self.visit(target)
-            declare = ""
             if isinstance(target, ast.Name):
                 if not (var in self._scope):
                     self._scope.append(var)
                     declare = "var "
-            js = ["%s%s = %s;" % (declare, var, value)]
-        return js
+                else:
+                    declare = ""
+                return ["%s%s = %s;" % (declare, var, value)]
+            elif isinstance(target, ast.Attribute):
+                return ["%s.__setattr__(\"%s\", %s)" % (self.visit(target.value), str(target.attr), value)]
+            else:
+                raise JSError("Unsupported assignment type")
 
     def visit_AugAssign(self, node):
         # TODO: Make sure that all the logic in Assign also works in AugAssign
