@@ -1,11 +1,18 @@
 function object(){
+    /* object constructor */
 }
-object.prototype.__class__ = object;
-object.prototype.__mro__ = [];
-object.prototype.__inherited__ = {};
-object.prototype.__init__ = function(){
-}
+
 object.__name__ = 'object';
+
+object.prototype.__class__ = object;
+
+object.prototype.__mro__ = [];
+
+object.prototype.__inherited__ = {};
+
+object.prototype.__init__ = function() {
+    /* object constructor */
+};
 
 var extend = function(cls, base_list) {
     var _mro = mro(cls,base_list);
