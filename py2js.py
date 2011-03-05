@@ -13,7 +13,7 @@ def main():
     if len(args) == 1:
         filename = args[0]
         s = open(filename).read() #unsafe for large files!
-        builtins = open("py-builtins.js").read() # unsafe fro large files!
+        builtins = open("py-builtins.js").read() # unsafe for large files!
         js = convert_py2js(s)
         if options.include_builtins:
             print builtins
