@@ -1,9 +1,15 @@
+Original developer:
+
+  Mateusz Paprocki <mattpap@gmail.com>
+
+Currently active developers:
+
+  Christian Iversen <ci@sikkerhed.org>   (compiler design, semantics, interfacing)
+  Samuel Ytterbrink <neppord@gmail.com>  (deep python magic, interfacing)
+  Ondrej Certik <ondrej@certik.cz>       (compiler design, standard library)
+
 People who contributed by sending at least one patch:
 
-Mateusz Paprocki <mattpap@gmail.com>
-Ondrej Certik <ondrej@certik.cz>
-Jonathan Fine <jfine@pytex.org>
-Pablo Angulo <pablo.angulo@uam.es>
-Samuel Ytterbrink <neppord@gmail.com>
-baniel <edn@emolson.net>
-Christian Iversen <ci@sikkerhed.org>
+  Baniel <edn@emolson.net>
+  Jonathan Fine <jfine@pytex.org>
+  Pablo Angulo <pablo.angulo@uam.es>
