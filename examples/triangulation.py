@@ -1,4 +1,4 @@
-from py2js import JavaScript
+from py2js.decorator import JavaScript
 
 from math import sqrt
 
@@ -132,15 +132,15 @@ def edge_intersects_edges(e1, nodes, edges):
 @JavaScript
 def start_triag():
     js_pre = document.getElementById(js('js_pre'))
-    js_pre.textContent = js("start")
+    setattr(js_pre, 'textContent', js("start"))
     canvas = document.getElementById(js('canvas')).getContext(js('2d'))
     canvas.fillText(js("Mesh"), 100, 10)
-    js_pre.textContent = js("triag")
-    js_pre.textContent = example1()
+    setattr(js_pre, 'textContent', js("triag"))
+    setattr(js_pre, 'textContent', example1())
     nodes, edges, elems = example2()
     scale = 50
     x0 = 3
-    canvas.strokeStyle = js('rgb(0, 0, 255)')
+    setattr(canvas, 'strokeStyle',  js('rgb(0, 0, 255)'))
     for el in elems:
         canvas.beginPath()
         x, y = nodes[el[0]]
@@ -152,7 +152,7 @@ def start_triag():
         x, y = nodes[el[0]]
         canvas.lineTo(x*scale+x0, 200-y*scale)
         canvas.stroke()
-    canvas.strokeStyle = js('rgb(0, 255, 0)')
+    setattr(canvas, 'strokeStyle', js('rgb(0, 255, 0)'))
     canvas.beginPath()
     x, y = nodes[0]
     canvas.moveTo(x*scale+x0, 200-y*scale)
