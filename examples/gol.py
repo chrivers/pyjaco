@@ -1,8 +1,8 @@
-from py2js import JavaScript
+from py2js.decorator import JavaScript
 
 @JavaScript
 def StartGoL():
-    window.gol = GoL()
+    setattr(window, 'gol', GoL())
 
 @JavaScript
 class GoL(object):
@@ -10,7 +10,7 @@ class GoL(object):
         self.width = 75
         self.height = 75
         self.canvas = document.getElementById(js('canvas')).getContext(js('2d'))
-        self.canvas.fillStyle = js('rgb(0, 0, 0)')
+        setattr(self.canvas, 'fillStyle', js('rgb(0, 0, 0)'))
         self.grid = list(range(self.width*self.height))
         for i in range(self.width*self.height):
             self.grid[i] = Math.random() > 0.5
@@ -65,6 +65,7 @@ class GoL(object):
                 else:
                     self.canvas.clearRect(x, y, x+10, y+10)
                 i += 1
+
 
 def main():
     print """<html>

@@ -1,3 +1,7 @@
+import inspect
+
+from py2js import convert_py2js
+
 def get_toolbar():
     items = [
             {"text":'File', "menu": [
@@ -236,10 +240,6 @@ class Canvas(object):
 
 ##################################################
 # Main code that translates the above to JS
-
-import inspect
-
-from py2js import convert_py2js
 
 def main():
     funcs = [
