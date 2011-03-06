@@ -597,7 +597,7 @@ class JS(object):
 
             js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
-            return "%s.__call__(%s)" % (func, js_args)
+            return "%s(%s)" % (func, js_args)
 
     def visit_Raise(self, node):
         assert node.inst is None
@@ -612,7 +612,7 @@ class JS(object):
         return ["py_builtins.print(%s);" % values]
 
     def visit_Attribute(self, node):
-        return "%s.__getattr__(str(\"%s\"))" % (self.visit(node.value), node.attr)
+        return "%s.%s" % (self.visit(node.value), node.attr)
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
