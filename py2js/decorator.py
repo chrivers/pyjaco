@@ -1,4 +1,5 @@
-from py2js import convert_py2js
+import py2js
+
 import inspect 
 
 class JavaScript(object):
@@ -72,7 +73,7 @@ class JavaScript(object):
     def __init__(self, obj):
         self._obj = obj
         obj_source = inspect.getsource(obj)
-        self._js = convert_py2js(obj_source)
+        self._js = py2js.compile(obj_source)
 
     def __str__(self):
         return self._js

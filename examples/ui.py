@@ -1,6 +1,5 @@
 import inspect
-
-from py2js import convert_py2js
+import py2js
 
 def get_toolbar():
     items = [
@@ -263,7 +262,7 @@ def main():
     source = ""
     for f in funcs:
         source += inspect.getsource(f) + "\n"
-    js = convert_py2js(source)
+    js = py2js.compile(source)
 
     print """\
 <html>

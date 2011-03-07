@@ -4,6 +4,11 @@ import re
 import StringIO
 import ast
 
+def compile(script):
+    c = Compiler()
+    c.append_string(script)
+    return str(c)
+
 class Compiler(object):
     """
     py2js: A python-to-javascript compiler
@@ -84,3 +89,4 @@ class Compiler(object):
 
     def compile_class(self, code, name = None):
         return self.compile_string(inspect.getsource(code), name)
+
