@@ -3,17 +3,38 @@
 import os
 import sys
 import tempfile
+import subprocess
 from glob import glob
 from optparse import OptionParser
 from difflib import unified_diff
 
-PY_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "py.out")
-JS_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.out")
-JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.err")
-JS_SRC_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.src")
+#PY_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "py.out")
+#JS_OUT_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.out")
+#JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.err")
+#JS_SRC_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.src")
 JS_DIFF_FILE_NAME = os.path.join(tempfile.gettempdir(), "js.diff")
-PY2JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "py2js.err")
+#PY2JS_ERR_FILE_NAME = os.path.join(tempfile.gettempdir(), "py2js.err")
 
+def proc_capture(args, stdin = None, encoding = 'utf-8', env = None):
+    try:
+        ## This can be important in CGI scripts, to ensure headers are passed correctly
+        sys.stdout.flush()
+        sys.stderr.flush()
+        proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env = env)
+        if stdin:
+            if encoding:
+                proc.stdin.write(stdin.encode(encoding))
+            else:
+                proc.stdin.write(stdin)
+        proc.stdin.close()
+        stdout = proc.stdout.readlines()
+        stderr = proc.stderr.readlines()
+        retcode = proc.wait()
+        del proc
+        return (retcode, "".join(stdout), "".join(stderr))
+    except KeyboardInterrupt, e:
+        sys.stdout.write("\r\n")
+        raise e
 
 def test1(in_file):
     w = Writer()
@@ -30,28 +51,33 @@ def test2(in_file):
     r = os.system("%sPYTHONPATH=.:$PYTHONPATH python \"%s\"" % (command,in_file))
     w.check(r)
 
-def test3(name, in_file=None, known_to_fail=False):
+def test3(name, in_file = None, known_to_fail = False, stop_on_error = True):
 
     in_file = in_file or name 
 
-    PYTHON_COMMAND = "python \"%s\" > \"%s\""
+    PYTHON_COMMAND = "python \"%s\" "
     PY2JS_COMMAND = "python pyjs.py --include-builtins \"%s\" > \"%s\" 2> \"%s\""
     JS_COMMAND = "js -f \"%s\" > \"%s\" 2> \"%s\""
     DIFF_COMMAND = "diff \"%s\" \"%s\" > \"%s\""
     w = Writer()
-    w.write("%s [4]: " % name)
-    r = os.system(PYTHON_COMMAND % (in_file, PY_OUT_FILE_NAME))
+    w.write("%s: " % name)
+
+    r, stdout, stderr = proc_capture(["python", in_file])
     w.write(".")
     if r == 0:
-        r = os.system( PY2JS_COMMAND % (in_file, JS_SRC_FILE_NAME, PY2JS_ERR_FILE_NAME ))
+        r, stdout, stderr = proc_capture(["python", "pyjs.py", "--include-builtin", in_file])
         w.write(".")
         if r == 0:
-            r = os.system( JS_COMMAND%(JS_SRC_FILE_NAME, JS_OUT_FILE_NAME, JS_ERR_FILE_NAME))
+            r, stdout, stderr = proc_capture(["js"], stdin = stdout)
             w.write(".")
             if r == 0:
-                r = os.system(DIFF_COMMAND%(JS_OUT_FILE_NAME, PY_OUT_FILE_NAME, JS_DIFF_FILE_NAME))
+                f = file(JS_DIFF_FILE_NAME, "w")
+                f.write(stdout)
+                f.close()
+
+                r, stdout, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout)
                 w.write(".")
-    w.check(r, known_to_fail)
+    w.check(r, known_to_fail, stop_on_error, stderr = stderr)
 
 def main():
     if not os.path.exists("py-builtins.js"):
@@ -60,9 +86,15 @@ def main():
 
     parser = OptionParser(usage="%prog [options] filename",
         description="py2js tests.")
+
     parser.add_option("-a", "--run-all",
             action="store_true", dest="run_all",
             default=False, help="run all tests (including the known-to-fail)")
+
+    parser.add_option("-c", "--continue",
+            action="store_false", dest="stop_on_errors",
+            default=True, help="continue, even if a test fails")
+
     options, args = parser.parse_args()
     if len(args) == 1:
         test3(args[0])
@@ -128,9 +160,9 @@ def main():
         files.sort()
         for name,file in files:
             if options.run_all:
-                test3(name, file, file in known_to_fail)
+                test3(name, file, file in known_to_fail, stop_on_error = options.stop_on_errors)
             elif file not in known_to_fail:
-                test3(name, file)
+                test3(name, file, stop_on_error = options.stop_on_errors)
 
 class Writer(object):
 
@@ -207,7 +239,7 @@ class Writer(object):
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
 
-    def check(self, r, known_to_fail=False, exit_on_failure=True):
+    def check(self, r, known_to_fail = False, stop_on_error = True, stderr = None):
         if r == 0:
             if known_to_fail:
                 self.write("should fail but [OK]", align="right", color="Green")
@@ -218,10 +250,13 @@ class Writer(object):
                 self.write("known to [FAIL]", align="right", color="Purple")
             else:
                 self.write("[FAIL]", align="right", color="Red")
-                if exit_on_failure:
-                    print
-                    print
-                    sys.exit(1)
+
+        if stderr:
+            self.write(stderr)
+
+        if r <> 0 and not known_to_fail and stop_on_error:
+            sys.exit(1)
+
         self.write("\n")
 
 if __name__ == '__main__':
