@@ -208,7 +208,11 @@ def main():
 
     print """<html>
 <head>
-<script language="JavaScript" src="../math.js"></script>
+<script language="JavaScript">
+  function sqrt(value) {
+    return Math.sqrt(value);
+  }
+</script>
 <script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
 %s
