@@ -18,10 +18,10 @@ class Compiler(object):
     c = Compiler()
 
     # Compile a str of python source code, with the section header "Shared code"
-    c.append("function Q(id)\n{\n  return $(js(id))\n};", "Shared code")
+    c.append_string("function Q(id)\n{\n  return $(js(id))\n};", "Shared code")
 
     # Append a raw string to the output (no compilation performed)
-    c.append_string('{"foo": "bar"}')
+    c.append_raw('{"foo": "bar"}')
 
     # Append an entire class, including all methods, with the section header "Class: My class"
     c.append_class(MyClass, "Class: MyClass")
@@ -65,7 +65,7 @@ class Compiler(object):
         if name:
             self.buffer.write(self.format_name(name))
 
-    def append(self, code, name = None):
+    def append_raw(self, code, name = None):
         self.comment_section(name)
         self.buffer.write(code)
         self.buffer.write("\n\n")
