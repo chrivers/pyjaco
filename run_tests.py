@@ -35,7 +35,7 @@ def test3(name, in_file=None, known_to_fail=False):
     in_file = in_file or name 
 
     PYTHON_COMMAND = "python \"%s\" > \"%s\""
-    PY2JS_COMMAND = "python py2js.py --include-builtins \"%s\" > \"%s\" 2> \"%s\""
+    PY2JS_COMMAND = "python pyjs.py --include-builtins \"%s\" > \"%s\" 2> \"%s\""
     JS_COMMAND = "js -f \"%s\" > \"%s\" 2> \"%s\""
     DIFF_COMMAND = "diff \"%s\" \"%s\" > \"%s\""
     w = Writer()
@@ -54,6 +54,10 @@ def test3(name, in_file=None, known_to_fail=False):
     w.check(r, known_to_fail)
 
 def main():
+    if not os.path.exists("py-builtins.js"):
+        print "py-builtins.js not found. Run 'make' to generate it"
+        sys.exit(1)
+
     parser = OptionParser(usage="%prog [options] filename",
         description="py2js tests.")
     parser.add_option("-a", "--run-all",

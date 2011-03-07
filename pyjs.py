@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import sys
 import os.path
 from optparse import OptionParser
 from py2js import convert_py2js
