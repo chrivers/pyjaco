@@ -3,7 +3,7 @@
 import sys
 import os.path
 from optparse import OptionParser
-from py2js import convert_py2js
+from py2js import Compiler
 
 def main():
     parser = OptionParser(usage="%prog [options] filename",
@@ -36,8 +36,9 @@ def main():
                 builtins = open("py-builtins.js").read()
             output.write(builtins)
 
-        s = open(filename).read() #unsafe for large files!
-        output.write(convert_py2js(s))
+        c = Compiler()
+        c.append_string(open(filename).read())
+        output.write(str(c))
     else:
         parser.print_help()
 
