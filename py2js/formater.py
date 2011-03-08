@@ -8,6 +8,7 @@ class Formater(object):
     self.__indentation = 0
     self.__indent_string = indent_string
     self.__indent_temp = ""
+    self.__string_buffer = ""
 
   def dedent(self):
     """
@@ -38,8 +39,26 @@ class Formater(object):
       else:
         self.__buffer.append(s)
 
-  def output(self):
+  def read(self, size=None):
     """
-    Returns a string representation of the buffer. This does not delete or change the buffer.
+    Returns a string representation of the buffer.
     """
-    return "".join(self.__buffer)
+    if size == None:
+      s = self.__string_buffer + "".join(self.__buffer)
+      self.__buffer = []
+      self.__string_buffer = ""
+      return s
+    else:
+      if len(self.__string_buffer) < size:
+        self.__string_buffer += "".join(self.__buffer)
+        self.__buffer = []
+        if len(self.__string_buffer) < size:
+          s, self.__string_buffer = self.__string_buffer, ""
+          return s
+        else:
+          s, self.__string_buffer = self.__string_buffer[:size], self.__string_buffer[size:]
+          return s
+      else:
+        s, self.__string_buffer = self.__string_buffer[:size], self.__string_buffer[size:]
+        return s
+
