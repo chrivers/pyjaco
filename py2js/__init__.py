@@ -301,7 +301,8 @@ class JS(object):
             #~ target = self._class_name + '.' + target
         value = self.visit(node.value)
         if isinstance(target, (ast.Tuple, ast.List)):
-            js = ["var __dummy%d__ = %s;" % (self.dummy, value)]
+            dummy = self.new_dummy()
+            js = ["var %s = %s;" % (dummy, value)]
 
             for i, target in enumerate(target.elts):
                 var = self.visit(target)
@@ -310,8 +311,8 @@ class JS(object):
                     if not (var in self._scope):
                         self._scope.append(var)
                         declare = "var "
-                js.append("%s%s = __dummy%d__.__getitem__(%d);" % (declare,
-                    var, self.dummy, i))
+                js.append("%s%s = %s.__getitem__(%d);" % (declare,
+                    var, dummy, i))
 
             self.dummy += 1
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
