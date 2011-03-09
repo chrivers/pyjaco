@@ -2,6 +2,7 @@
 
 import ast
 import inspect
+import formater
 
 def scope(func):
     func.scope = True
@@ -85,6 +86,7 @@ class JS(object):
         }
 
     def __init__(self):
+        self.__formater = formater.Formater()
         self.dummy = 0
         self.classes = ['dict', 'list', 'tuple']
         # This is the name of the class that we are currently in:
@@ -95,6 +97,18 @@ class JS(object):
         #All calls to names within _class_names will be preceded by 'new'
         self._class_names = set()
         self._classes = {}
+
+    def write(self, *a, **k):
+      return self.__formater.write(*a, **k)
+
+    def read(self, *a, **k):
+      return self.__formater.read(*a, **k)
+
+    def indent(self):
+      return self.__formater.indent()
+
+    def dedent(self):
+      return self.__formater.dedent()
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
@@ -127,16 +141,10 @@ class JS(object):
         else:
             return visitor(node)
 
-    def indent(self, stmts):
-        return [ "    " + stmt for stmt in stmts ]
-
     def visit_Module(self, node):
-        module = []
-
         for stmt in node.body:
-            module.extend(self.visit(stmt))
+            self.visit(stmt)
 
-        return module
 
     @scope
     def visit_FunctionDef(self, node):
@@ -191,28 +199,27 @@ class JS(object):
                     del js_args[0]
             else:
                 prep = "function %s(" % node.name
-            js = [prep + ", ".join(js_args) + ") {"]
-
-            js.extend(self.indent(js_defaults))
-
+            self.write(prep + ", ".join(js_args) + ") {")
+            self.indent()
+            for stmt in js_defaults:
+                self.write(stmt)
             for stmt in node.body:
-                js.extend(self.indent(self.visit(stmt)))
-
-            js.append('}')
+                self.visit(stmt)
+            self.dedent()
+            self.write('}')
 
             #If method is static, we also add it directly to the class
             if is_static:
-                js.append("%s.%s = %s.prototype.%s;" % \
+                self.write("%s.%s = %s.prototype.%s;" % \
                         (self._class_name, node.name, self._class_name, node.name))
             #Otherwise, we wrap it to take 'self' into account
             else:
                 func_name = node.name
-                js.append("%s.%s = function() {" % (self._class_name, func_name))
-                js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
-                js.append("}")
+                self.write("%s.%s = function() {" % (self._class_name, func_name))
+                self.write("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
+                self.write("}")
 
             self._scope = []
-            return js
         else:
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
@@ -226,16 +233,17 @@ class JS(object):
                 args.append(arg.id)
             defaults = "{" + ", ".join(defaults2) + "}"
             args = ", ".join(args)
-            js = ["var %s = $def(%s, function(%s) {" % (node.name,
-                defaults, args)]
+            self.write("var %s = $def(%s, function(%s) {" % (node.name,
+                defaults, args))
             self._scope = [arg.id for arg in node.args.args]
+            self.indent()
             for stmt in node.body:
-                js.extend(self.indent(self.visit(stmt)))
-            return js + ["});"]
+                self.visit(stmt)
+            self.dedent()
+            self.write("});")
 
     @scope
     def visit_ClassDef(self, node):
-        js = []
         bases = [self.visit(n) for n in node.bases]
         if not bases:
             bases = ['object']
@@ -243,19 +251,19 @@ class JS(object):
         #self._classes remembers all classes defined
         self._classes[class_name] = node
         self._class_names.add(class_name)
-        js.append("function %s() {" % class_name)
-        js.append("    if( this === _global_this){")
-        js.append("        t = new %s();" % class_name)
-        js.append("        t.__init__.apply(t,arguments);")
-        js.append("        return t;")
-        js.append("    }")
-        js.append("}")
-        js.append("%s.__name__ = '%s';" % (class_name, class_name))
-        js.append("%s.__setattr__ = object.prototype.__setattr__;" % (class_name))
-        js.append("%s.__getattr__ = object.prototype.__setattr__;" % (class_name))
-        js.append("%s.__call__    = object.prototype.__call__;" % (class_name))
-        js.append("%s.prototype.__class__ = %s;" % (class_name, class_name))
-        js.append("%s.prototype.toString = _iter.prototype.toString;" % \
+        self.write("function %s() {" % class_name)
+        self.write("    if( this === _global_this){")
+        self.write("        t = new %s();" % class_name)
+        self.write("        t.__init__.apply(t,arguments);")
+        self.write("        return t;")
+        self.write("    }")
+        self.write("}")
+        self.write("%s.__name__ = '%s';" % (class_name, class_name))
+        self.write("%s.__setattr__ = object.prototype.__setattr__;" % (class_name))
+        self.write("%s.__getattr__ = object.prototype.__setattr__;" % (class_name))
+        self.write("%s.__call__    = object.prototype.__call__;" % (class_name))
+        self.write("%s.prototype.__class__ = %s;" % (class_name, class_name))
+        self.write("%s.prototype.toString = _iter.prototype.toString;" % \
                 (class_name))
         from ast import dump
         #~ methods = []
@@ -265,10 +273,10 @@ class JS(object):
                 value = self.visit(stmt.value)
                 for t in stmt.targets:
                     var = self.visit(t)
-                    js.append("%s.%s = %s;" % (class_name, var, value))
-                    js.append("%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
+                    self.write("%s.%s = %s;" % (class_name, var, value))
+                    self.write("%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
             else:
-                js.extend(self.visit(stmt))
+                self.visit(stmt)
         self._class_name = None
 
         #The following is unnecessary: __init__ is inherited from
@@ -277,18 +285,16 @@ class JS(object):
         #~ if not "__init__" in methods_names:
             #~ # if the user didn't define __init__(), we have to add it ourselves
             #~ # because we call it from the constructor above
-            #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
+            #~ self.write("_%s.prototype.__init__ = function() {" % class_name)
             #~ js.append("}")
 
-        js.append('extend(%s, [%s]);' % (class_name, ', '.join(bases)))
-
-        return js
+        self.write('extend(%s, [%s]);' % (class_name, ', '.join(bases)))
 
     def visit_Return(self, node):
         if node.value is not None:
-            return ["return %s;" % self.visit(node.value)]
+            self.write("return %s;" % self.visit(node.value))
         else:
-            return ["return;"]
+            self.write("return;")
 
     def visit_Delete(self, node):
         return node
@@ -302,7 +308,7 @@ class JS(object):
         value = self.visit(node.value)
         if isinstance(target, (ast.Tuple, ast.List)):
             dummy = self.new_dummy()
-            js = ["var %s = %s;" % (dummy, value)]
+            self.write("var %s = %s;" % (dummy, value))
 
             for i, target in enumerate(target.elts):
                 var = self.visit(target)
@@ -311,19 +317,17 @@ class JS(object):
                     if not (var in self._scope):
                         self._scope.append(var)
                         declare = "var "
-                js.append("%s%s = %s.__getitem__(%d);" % (declare,
+                self.write("%s%s = %s.__getitem__(%d);" % (declare,
                     var, dummy, i))
-
-            self.dummy += 1
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
-            js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value),
-                self.visit(target.slice), value)]
+            self.write("%s.__setitem__(%s, %s);" % (self.visit(target.value),
+                self.visit(target.slice), value))
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Slice):
             # found slice assignmnet
-            js = ["%s.__setslice__(%s, %s, %s);" % (self.visit(target.value),
+            self.write("%s.__setslice__(%s, %s, %s);" % (self.visit(target.value),
                 self.visit(target.slice.lower), self.visit(target.slice.upper),
-                value)]
+                value))
         else:
             var = self.visit(target)
             if isinstance(target, ast.Name):
@@ -332,12 +336,11 @@ class JS(object):
                     declare = "var "
                 else:
                     declare = ""
-                js = ["%s%s = %s;" % (declare, var, value)]
+                self.write("%s%s = %s;" % (declare, var, value))
             elif isinstance(target, ast.Attribute):
-                js = ["%s.__setattr__(\"%s\", %s);" % (self.visit(target.value), str(target.attr), value)]
+                js = self.write("%s.__setattr__(\"%s\", %s);" % (self.visit(target.value), str(target.attr), value))
             else:
                 raise JSError("Unsupported assignment type")
-        return js
 
     def visit_AugAssign(self, node):
         # TODO: Make sure that all the logic in Assign also works in AugAssign
@@ -345,18 +348,16 @@ class JS(object):
         value = self.visit(node.value)
 
         if isinstance(node.op, ast.Pow):
-            return ["%s = Math.pow(%s, %s);" % (target, target, value)]
+            self.write("%s = Math.pow(%s, %s);" % (target, target, value))
         if isinstance(node.op, ast.FloorDiv):
-            return ["%s = Math.floor((%s)/(%s));" % (target, target, value)]
+            self.write("%s = Math.floor((%s)/(%s));" % (target, target, value))
 
-        return ["%s %s= %s;" % (target, self.get_binary_op(node), value)]
+        self.write("%s %s= %s;" % (target, self.get_binary_op(node), value))
 
     @scope
     def visit_For(self, node):
         if not isinstance(node.target, ast.Name):
             raise JSError("argument decomposition in 'for' loop is not supported")
-
-        js = []
 
         for_target = self.visit(node.target)
         for_iter = self.visit(node.iter)
@@ -365,81 +366,77 @@ class JS(object):
         orelse_dummy = self.new_dummy()
         exc_dummy = self.new_dummy()
 
-        js.append("var %s = iter(%s);" % (iter_dummy, for_iter))
-        js.append("var %s = false;" % orelse_dummy)
-        js.append("while (1) {")
-        js.append("    var %s;" % for_target)
-        js.append("    try {")
-        js.append("        %s = %s.next();" % (for_target, iter_dummy))
-        js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
-        js.append("            %s = true;" % orelse_dummy)
-        js.append("            break;")
-        js.append("        } else {")
-        js.append("            throw %s;" % exc_dummy)
-        js.append("        }")
-        js.append("    }")
-
+        self.write("var %s = iter(%s);" % (iter_dummy, for_iter))
+        self.write("var %s = false;" % orelse_dummy)
+        self.write("while (1) {")
+        self.write("    var %s;" % for_target)
+        self.write("    try {")
+        self.write("        %s = %s.next();" % (for_target, iter_dummy))
+        self.write("    } catch (%s) {" % exc_dummy)
+        self.write("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
+        self.write("            %s = true;" % orelse_dummy)
+        self.write("            break;")
+        self.write("        } else {")
+        self.write("            throw %s;" % exc_dummy)
+        self.write("        }")
+        self.write("    }")
+        self.indent()
         for stmt in node.body:
-            js.extend(self.indent(self.visit(stmt)))
-
-        js.append("}")
+            self.visit(stmt)
+        self.dedent()
+        self.write("}")
 
         if node.orelse:
-            js.append("if (%s) {" % orelse_dummy)
-
+            self.write("if (%s) {" % orelse_dummy)
+            self.indent()
             for stmt in node.orelse:
-                js.extend(self.indent(self.visit(stmt)))
-
-            js.append("}")
-
-        return js
+                self.visit(stmt)
+            self.dedent()
+            self.write("}")
 
     @scope
     def visit_While(self, node):
-        js = []
 
         if not node.orelse:
-            js.append("while (%s) {" % self.visit(node.test))
+            self.write("while (%s) {" % self.visit(node.test))
         else:
             orelse_dummy = self.new_dummy()
 
-            js.append("var %s = false;" % orelse_dummy)
-            js.append("while (1) {");
-            js.append("    if (!(%s)) {" % self.visit(node.test))
-            js.append("        %s = true;" % orelse_dummy)
-            js.append("        break;")
-            js.append("    }")
-
+            self.write("var %s = false;" % orelse_dummy)
+            self.write("while (1) {");
+            self.write("    if (!(%s)) {" % self.visit(node.test))
+            self.write("        %s = true;" % orelse_dummy)
+            self.write("        break;")
+            self.write("    }")
+        self.indent()
         for stmt in node.body:
-            js.extend(self.indent(self.visit(stmt)))
+            self.visit(stmt)
+        self.dedent()
 
-        js.append("}")
+        self.write("}")
 
         if node.orelse:
-            js.append("if (%s) {" % orelse_dummy)
-
+            self.write("if (%s) {" % orelse_dummy)
+            self.indent()
             for stmt in node.orelse:
-                js.extend(self.indent(self.visit(stmt)))
-
-            js.append("}")
-
-        return js
+                self.visit(stmt)
+            self.dedent()
+            self.write("}")
 
     @scope
     def visit_If(self, node):
-        js = ["if (py_builtins.bool(%s)) {" % self.visit(node.test)]
-
+        self.write("if (py_builtins.bool(%s)) {" % self.visit(node.test))
+        self.indent()
         for stmt in node.body:
-            js.extend(self.indent(self.visit(stmt)))
-
+            self.visit(stmt)
+        self.dedent()
         if node.orelse:
-            js.append("} else {")
-
+            self.write("} else {")
+            self.indent()
             for stmt in node.orelse:
-                js.extend(self.indent(self.visit(stmt)))
-
-        return js + ["}"]
+                self.visit(stmt)
+            self.dedent()
+        self.write("}")
 
     @scope
     def _visit_With(self, node):
@@ -461,9 +458,9 @@ class JS(object):
         test = self.visit(node.test)
 
         if node.msg is not None:
-            return ["assert(%s, %s);" % (test, self.visit(node.msg))]
+            self.write("assert(%s, %s);" % (test, self.visit(node.msg)))
         else:
-            return ["assert(%s);" % test]
+            self.write("assert(%s);" % test)
 
     def _visit_Import(self, node):
         pass
@@ -476,19 +473,19 @@ class JS(object):
 
     def visit_Global(self, node):
         self._scope.extend(node.names)
-        return []
 
     def visit_Expr(self, node):
-        return [self.visit(node.value) + ";"]
+        #FIXME: kanske fel?
+        self.write(self.visit(node.value) + ";")
 
     def visit_Pass(self, node):
-        return ["/* pass */"]
+        self.write("/* pass */")
 
     def visit_Break(self, node):
-        return ["break;"]
+        self.write("break;")
 
     def visit_Continue(self, node):
-        return ["continue;"]
+        self.write("continue;")
 
     def visit_arguments(self, node):
         return ", ".join([self.visit(arg) for arg in node.args])
@@ -603,14 +600,14 @@ class JS(object):
     def visit_Raise(self, node):
         assert node.inst is None
         assert node.tback is None
-        return ["throw %s;" % self.visit(node.type)]
+        self.write("throw %s;" % self.visit(node.type))
 
     def visit_Print(self, node):
         assert node.dest is None
         assert node.nl
         values = [self.visit(v) for v in node.values]
         values = ", ".join(values)
-        return ["py_builtins.print(%s);" % values]
+        self.write("py_builtins.print(%s);" % values)
 
     def visit_Attribute(self, node):
         return "%s.%s" % (self.visit(node.value), node.attr)
@@ -663,6 +660,7 @@ def convert_py2js(s):
     'x.__getitem__(slice(3, null));'
 
     """
-    v = JS()
     t = ast.parse(s)
-    return "\n".join(v.visit(t))
+    v = JS()
+    v.visit(t)
+    return v.read()
