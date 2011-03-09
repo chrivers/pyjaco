@@ -475,7 +475,6 @@ class JS(object):
         self._scope.extend(node.names)
 
     def visit_Expr(self, node):
-        #FIXME: kanske fel?
         self.write(self.visit(node.value) + ";")
 
     def visit_Pass(self, node):
