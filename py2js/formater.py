@@ -29,15 +29,10 @@ class Formater(object):
     Writes the string s to the buffer with indentation and a newline if not specified otherwise.
     """
     if indent:
-      if newline:
-        self.__buffer.append(self.__indent_temp + s + "\n")
-      else:
-        self.__buffer.append(self.__indent_temp + s)
-    else:
-      if newline:
-        self.__buffer.append(s + "\n")
-      else:
-        self.__buffer.append(s)
+      self.__buffer.append(self.__indent_temp)
+    self.__buffer.append(s)
+    if newline:
+      self.__buffer.append("\n")
 
   def read(self, size=None):
     """
