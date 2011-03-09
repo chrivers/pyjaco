@@ -3,7 +3,7 @@ class Formater(object):
   A very simple code formater that handles efficient concatenation and indentation of lines.
   """
 
-  def __init__(self, indent_string ="  "):
+  def __init__(self, indent_string="  "):
     self.__buffer = []
     self.__indentation = 0
     self.__indent_string = indent_string
@@ -14,17 +14,17 @@ class Formater(object):
     """
     Subtracts one indentation level.
     """
-    self.__indentation -=1
+    self.__indentation -= 1
     self.__indent_temp = self.__indent_string*self.__indentation
 
   def indent(self):
     """
     Adds one indentation level.
     """
-    self.__indentation +=1
+    self.__indentation += 1
     self.__indent_temp = self.__indent_string*self.__indentation
 
-  def write(self, s, indent=True ,newline=True):
+  def write(self, s, indent=True, newline=True):
     """
     Writes the string s to the buffer with indentation and a newline if not specified otherwise.
     """
