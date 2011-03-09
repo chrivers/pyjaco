@@ -1,5 +1,7 @@
 import py2js.compiler
 import py2js.compiler.python
+import py2js.compiler.javascript
+import py2js.compiler.multiplexer
 import re
 import StringIO
 import ast
@@ -33,7 +35,7 @@ class Compiler(object):
     re_comment = re.compile("^[ ]*#")
 
     def __init__(self):
-        self.compiler = py2js.compiler.python.Compiler()
+        self.compiler = py2js.compiler.multiplexer.Compiler()
         self.reset()
 
     def reset(self):
