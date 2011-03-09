@@ -2,23 +2,9 @@ import py2js
 import py2js.compiler
 import ast
 import inspect
+from py2js.compiler import JSError
 
 class Compiler(py2js.compiler.BaseCompiler):
-
-    def name(self, node):
-        return node.__class__.__name__
-
-    def get_bool_op(self, node):
-        return self.bool_op[node.op.__class__.__name__]
-
-    def get_unary_op(self, node):
-        return self.unary_op[node.op.__class__.__name__]
-
-    def get_binary_op(self, node):
-        return self.binary_op[node.op.__class__.__name__]
-
-    def get_comparison_op(self, node):
-        return self.comparison_op[node.__class__.__name__]
 
     def visit_Module(self, node):
         module = []
@@ -492,7 +478,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         return ["py_builtins.print(%s);" % values]
 
     def visit_Attribute(self, node):
-        return "%s.%s" % (self.visit(node.value), node.attr)
+        return """%s.__getattr__("%s")""" % (self.visit(node.value), node.attr)
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
