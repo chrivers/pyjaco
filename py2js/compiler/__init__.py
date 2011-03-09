@@ -94,17 +94,30 @@ class BaseCompiler(object):
         self.dummy_index += 1
         return "__dummy%d__" % self.dummy_index
 
-    def visit(self, node, scope=None):
+    def visit(self, node):
         try:
             visitor = getattr(self, 'visit_' + self.name(node))
         except AttributeError:
             raise JSError("syntax not supported (%s)" % node)
 
-        if hasattr(visitor, 'statement'):
-            return visitor(node, scope)
-        else:
-            return visitor(node)
+        return visitor(node)
 
     def indent(self, stmts):
         return [ "    " + stmt for stmt in stmts ]
 
+    ## Shared code
+
+    def name(self, node):
+        return node.__class__.__name__
+
+    def get_bool_op(self, node):
+        return self.bool_op[node.op.__class__.__name__]
+
+    def get_unary_op(self, node):
+        return self.unary_op[node.op.__class__.__name__]
+
+    def get_binary_op(self, node):
+        return self.binary_op[node.op.__class__.__name__]
+
+    def get_comparison_op(self, node):
+        return self.comparison_op[node.__class__.__name__]
