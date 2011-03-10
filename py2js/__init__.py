@@ -87,6 +87,10 @@ class JS(object):
 
     def __init__(self):
         self.__formater = formater.Formater()
+        self.write = self.__formater.write
+        self.read = self.__formater.read
+        self.indent = self.__formater.indent
+        self.dedent = self.__formater.dedent
         self.dummy = 0
         self.classes = ['dict', 'list', 'tuple']
         # This is the name of the class that we are currently in:
@@ -97,18 +101,6 @@ class JS(object):
         #All calls to names within _class_names will be preceded by 'new'
         self._class_names = set()
         self._classes = {}
-
-    def write(self, *a, **k):
-      return self.__formater.write(*a, **k)
-
-    def read(self, *a, **k):
-      return self.__formater.read(*a, **k)
-
-    def indent(self):
-      return self.__formater.indent()
-
-    def dedent(self):
-      return self.__formater.dedent()
 
     def new_dummy(self):
         dummy = "__dummy%d__" % self.dummy
