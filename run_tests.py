@@ -57,6 +57,9 @@ def main():
     if not os.path.exists("py-builtins.js"):
         print "py-builtins.js not found. Run 'make' to generate it"
         return False
+    if not (os.path.exists("js") or os.path.exists("js.exe")):
+        print "the js shell doesn't exsist or is named wrong."
+        return False
 
     parser = OptionParser(usage="%prog [options] filename",
         description="py2js tests.")
