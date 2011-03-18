@@ -1,3 +1,6 @@
 *.py[co]
 .*.swp
 py-builtins.js
+tests/*/*.out
+tests/*/*.diff
+tests/*/*.py.js
