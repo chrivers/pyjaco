@@ -1,17 +1,11 @@
 /* Python 'str' type */
 
-function str(s) {
-    return new _str(s);
-}
+var str = __inherit(object);
 
-function _str(s) {
-    this.__init__(s);
-}
+str.__name__ = 'str';
+str.prototype.__class__ = str;
 
-_str.__name__ = 'str';
-_str.prototype.__class__ = _str;
-
-_str.prototype.__init__ = function(s) {
+str.prototype.__init__ = function(s) {
     if (!defined(s)) {
         this._obj = '';
     } else {
@@ -26,11 +20,11 @@ _str.prototype.__init__ = function(s) {
     }
 };
 
-_str.prototype.__str__ = function () {
+str.prototype.__str__ = function () {
     return this;
 };
 
-_str.prototype.__eq__ = function (other) {
+str.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
             return false;
@@ -43,15 +37,15 @@ _str.prototype.__eq__ = function (other) {
         return false;
 };
 
-_str.prototype.toString = function () {
+str.prototype.toString = function () {
     return js(this.__str__());
 };
 
-_str.prototype._js_ = function () {
+str.prototype._js_ = function () {
     return this._obj;
 };
 
-_str.prototype.__hash__ = function () {
+str.prototype.__hash__ = function () {
     var value = 0x345678;
     var length = this.__len__();
 
@@ -67,28 +61,28 @@ _str.prototype.__hash__ = function () {
     return value;
 };
 
-_str.prototype.__len__ = function() {
+str.prototype.__len__ = function() {
     return this._obj.length;
 };
 
-_str.prototype.__iter__ = function() {
+str.prototype.__iter__ = function() {
     return iter(this._obj);
 };
 
-_str.prototype.__bool__ = function() {
+str.prototype.__bool__ = function() {
     return py_builtins.bool(this._obj);
 };
 
-_str.prototype.__eq__ = function(s) {
+str.prototype.__eq__ = function(s) {
     if (typeof(s) === "string")
         return this._obj == s;
-    else if (isinstance(s, _str))
+    else if (isinstance(s, str))
         return this._obj == s._obj;
     else
         return false;
 };
 
-_str.prototype.__contains__ = function(item) {
+str.prototype.__contains__ = function(item) {
     for (var index in this._obj) {
         if (item == this._obj[index]) {
             return true;
@@ -98,7 +92,7 @@ _str.prototype.__contains__ = function(item) {
     return false;
 };
 
-_str.prototype.__getitem__ = function(index) {
+str.prototype.__getitem__ = function(index) {
 
     var seq;
     if (isinstance(index, _slice)) {
@@ -111,7 +105,7 @@ _str.prototype.__getitem__ = function(index) {
         for (var i = start; i < stop; i += step) {
             seq = seq + js(this.__getitem__(i));
         }
-        return new this.__class__(seq);
+        return this.__class__.__call__(seq);
     } else if ((index >= 0) && (index < len(this)))
         return this._obj[index];
     else if ((index < 0) && (index >= -len(this)))
@@ -120,15 +114,15 @@ _str.prototype.__getitem__ = function(index) {
         throw new py_builtins.IndexError("string index out of range");
 };
 
-_str.prototype.__setitem__ = function(index, value) {
+str.prototype.__setitem__ = function(index, value) {
     throw new py_builtins.TypeError("'str' object doesn't support item assignment");
 };
 
-_str.prototype.__delitem__ = function(index) {
+str.prototype.__delitem__ = function(index) {
     throw new py_builtins.TypeError("'str' object doesn't support item deletion");
 };
 
-_str.prototype.count = function(str, start, end) {
+str.prototype.count = function(str, start, end) {
     if (!defined(start))
         start = 0;
     if (!defined(end))
@@ -144,7 +138,7 @@ _str.prototype.count = function(str, start, end) {
     return count;
 };
 
-_str.prototype.index = function(value, start, end) {
+str.prototype.index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -164,15 +158,15 @@ _str.prototype.index = function(value, start, end) {
     throw new py_builtins.ValueError("substring not found");
 };
 
-_str.prototype.find = function(s) {
+str.prototype.find = function(s) {
     return this._obj.search(s);
 };
 
-_str.prototype.rfind = function(s) {
+str.prototype.rfind = function(s) {
     rev = function(s) {
-        var a = list(str(s));
+        var a = list(str.__call__(s));
         a.reverse();
-        a = str("").join(a);
+        a = str.__call__("").join(a);
         return a;
     }
     var a = rev(this);
@@ -183,11 +177,11 @@ _str.prototype.rfind = function(s) {
     return len(this)-len(b)-r
 };
 
-_str.prototype.join = function(s) {
-    return str(js(s).join(js(this)));
+str.prototype.join = function(s) {
+    return str.__call__(js(s).join(js(this)));
 };
 
-_str.prototype.replace = function(old, _new, count) {
+str.prototype.replace = function(old, _new, count) {
     old = js(old);
     _new = js(_new);
     var old_s;
@@ -204,10 +198,10 @@ _str.prototype.replace = function(old, _new, count) {
         new_s = new_s.replace(old, _new);
         count -= 1;
     }
-    return str(new_s);
+    return str.__call__(new_s);
 };
 
-_str.prototype.lstrip = function(chars) {
+str.prototype.lstrip = function(chars) {
     if (len(this) == 0)
         return this;
     if (defined(chars))
@@ -221,7 +215,7 @@ _str.prototype.lstrip = function(chars) {
     return this.__getitem__(slice(i, null));
 };
 
-_str.prototype.rstrip = function(chars) {
+str.prototype.rstrip = function(chars) {
     if (len(this) == 0)
         return this
     if (defined(chars))
@@ -235,16 +229,16 @@ _str.prototype.rstrip = function(chars) {
     return this.__getitem__(slice(i+1));
 };
 
-_str.prototype.strip = function(chars) {
+str.prototype.strip = function(chars) {
     return this.lstrip(chars).rstrip(chars);
 };
 
-_str.prototype.split = function(sep) {
+str.prototype.split = function(sep) {
     if (defined(sep)) {
         var r = list(this._obj.split(sep));
         var r_new = list([]);
         iterate(iter(r), function(item) {
-                r_new.append(str(item));
+                r_new.append(str.__call__(item));
         });
         return r_new;
     }
@@ -258,15 +252,15 @@ _str.prototype.split = function(sep) {
     }
 };
 
-_str.prototype.splitlines = function() {
+str.prototype.splitlines = function() {
     return this.split("\n");
 };
 
-_str.prototype.lower = function() {
-    return str(this._obj.toLowerCase());
+str.prototype.lower = function() {
+    return str.__call__(this._obj.toLowerCase());
 };
 
-_str.prototype.upper = function() {
-    return str(this._obj.toUpperCase());
+str.prototype.upper = function() {
+    return str.__call__(this._obj.toUpperCase());
 };
 
