@@ -74,3 +74,7 @@ function js(obj) {
         return obj;
 }
 
+var Function = function(func) {
+    func.__call__ = func;
+    return func;
+};
