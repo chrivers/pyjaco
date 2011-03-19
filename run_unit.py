@@ -1,5 +1,6 @@
 import tests
+import test
 import unittest
 
-unittest.main(tests, catchbreak=True, exit=False, verbosity=2, buffer=True)
+unittest.main(tests, testRunner=test.Py2JsTestRunner(verbosity=2), exit=False, verbosity=2, buffer=True)
 
