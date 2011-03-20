@@ -19,7 +19,7 @@ _dict.prototype.__init__ = function(args) {
     if (defined(args)) {
         if (defined(args.__iter__)) {
             items = {};
-            iterate(iter(args), function(item) {
+            iterate(iter.__call__(args), function(item) {
                     key = js(item.__getitem__(0));
                     value = item.__getitem__(1);
                     items[key] = value;
@@ -37,10 +37,10 @@ _dict.prototype.__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
-        strings.push(js(str(key)) + ": " + js(str(this._items[key])));
+        strings.push(js(str.__call__(key)) + ": " + js(str.__call__(this._items[key])));
     }
 
-    return str("{" + strings.join(", ") + "}");
+    return str.__call__("{" + strings.join(", ") + "}");
 };
 
 _dict.prototype.toString = function () {
@@ -51,7 +51,7 @@ _dict.prototype._js_ = function () {
     var items = {};
 
     var _this_dict = this; // so that we can access it from within the closure:
-    iterate(iter(this), function(key) {
+    iterate(iter.__call__(this), function(key) {
         items[key] = js(_this_dict.__getitem__(key));
     });
 
@@ -73,7 +73,7 @@ _dict.prototype.__len__ = function() {
 };
 
 _dict.prototype.__iter__ = function() {
-    return new _iter(this.keys());
+    return iter.__call__(this.keys());
 };
 
 _dict.prototype.__contains__ = function(key) {
@@ -86,7 +86,7 @@ _dict.prototype.__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw new py_builtins.KeyError(str(key));
+        throw new py_builtins.KeyError(str.__call__(key));
     }
 };
 
@@ -98,7 +98,7 @@ _dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
         delete this._items[key];
     } else {
-        throw new py_builtins.KeyError(str(key));
+        throw new py_builtins.KeyError(str.__call__(key));
     }
 };
 
@@ -167,7 +167,7 @@ _dict.prototype.pop = function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw new py_builtins.KeyError(str(key));
+            throw new py_builtins.KeyError(str.__call__(key));
         }
     }
 
