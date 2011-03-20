@@ -20,16 +20,16 @@ _tuple.prototype.__init__ = function(seq) {
         this._items = [];
         this._len = 0;
     } else {
-        this._items = copy(iter(seq));
+        this._items = copy(iter.__call__(seq));
         this._len = -1;
     }
 };
 
 _tuple.prototype.__str__ = function () {
     if (this.__len__() == 1) {
-        return str("(" + this._items[0] + ",)");
+        return str.__call__("(" + this._items[0] + ",)");
     } else {
-        return str("(" + this._items.join(", ") + ")");
+        return str.__call__("(" + this._items.join(", ") + ")");
     }
 };
 
@@ -56,7 +56,7 @@ _tuple.prototype.toString = function () {
 _tuple.prototype._js_ = function () {
     var items = [];
 
-    iterate(iter(this), function(item) {
+    iterate(iter.__call__(this), function(item) {
         items.push(js(item));
     });
 
@@ -94,7 +94,7 @@ _tuple.prototype.__len__ = function() {
 };
 
 _tuple.prototype.__iter__ = function() {
-    return new _iter(this._items);
+    return iter.__call__(this._items);
 };
 
 _tuple.prototype.__contains__ = function(item) {
