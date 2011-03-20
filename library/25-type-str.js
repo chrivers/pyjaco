@@ -66,7 +66,7 @@ str.prototype.__len__ = function() {
 };
 
 str.prototype.__iter__ = function() {
-    return iter(this._obj);
+    return iter.__call__(this._obj);
 };
 
 str.prototype.__bool__ = function() {
@@ -237,14 +237,14 @@ str.prototype.split = function(sep) {
     if (defined(sep)) {
         var r = list(this._obj.split(sep));
         var r_new = list([]);
-        iterate(iter(r), function(item) {
+        iterate(iter.__call__(r), function(item) {
                 r_new.append(str.__call__(item));
         });
         return r_new;
     }
     else {
         var r_new = list([]);
-        iterate(iter(this.split(" ")), function(item) {
+        iterate(iter.__call__(this.split(" ")), function(item) {
                 if (len(item) > 0)
                     r_new.append(item);
         });
