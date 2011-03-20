@@ -3,4 +3,5 @@
 py-builtins.js
 tests/*/*.out
 tests/*/*.diff
+tests/*/*.err
 tests/*/*.py.js
