@@ -1,40 +1,35 @@
 /* Python 'iter' type */
 
-function iter(obj) {
+var iter = __inherit(object);
+
+iter.prototype.__init__ = function(obj) {
+    this._index = 0;
+
     if (obj instanceof Array) {
-        return new _iter(obj);
+        this._seq = obj;
     } else if (typeof(obj) === "string") {
-        return iter(obj.split(""));
-    } else if (obj.__class__ == _iter) {
-        return obj;
+        this._seq = obj.split("");
+    } else if (obj.__class__ == iter) {
+        this._seq = obj._seq;
     } else if (defined(obj.__iter__)) {
-        return obj.__iter__();
+        this._seq = obj.__iter__()._seq;
     } else {
         throw new py_builtins.TypeError("object is not iterable");
     }
 }
 
-function _iter(seq) {
-    this.__init__(seq);
-}
+iter.__name__ = 'iter';
+iter.prototype.__class__ = iter;
 
-_iter.__name__ = 'iter';
-_iter.prototype.__class__ = _iter;
-
-_iter.prototype.__init__ = function(seq) {
-    this._seq = seq;
-    this._index = 0;
+iter.prototype.__str__ = function () {
+    return str.__call__("<iter of " + this._seq + " at " + this._index + ">");
 };
 
-_iter.prototype.__str__ = function () {
-    return str("<iter of " + this._seq + " at " + this._index + ">");
-};
-
-_iter.prototype.toString = function () {
+iter.prototype.toString = function () {
     return js(this.__str__());
 };
 
-_iter.prototype.next = function() {
+iter.prototype.next = function() {
     var value = this._seq[this._index++];
 
     if (defined(value)) {
