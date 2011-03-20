@@ -28,7 +28,7 @@ for (var i in py_builtins.__exceptions__) {
     py_builtins[name].prototype.__class__ = py_builtins[name];
 
     py_builtins[name].prototype.__str__ = function() {
-        return str(js(this.__class__.__name__) + ": " + js(this.message));
+        return str.__call__(js(this.__class__.__name__) + ": " + js(this.message));
     };
 
     py_builtins[name].prototype.toString = function() {
@@ -95,13 +95,13 @@ function range(start, end, step) {
     }
 
     if (py_builtins.__python3__)
-        return iter(seq);
+        return iter.__call__(seq);
     else
         return list(seq);
 }
 
 function xrange(start, end, step) {
-    return iter(range(start, end, step));
+    return iter.__call__(range(start, end, step));
 }
 
 function map() {
@@ -114,7 +114,7 @@ function map() {
     }
 
     var func = arguments[0];
-    var seq = iter(arguments[1]);
+    var seq = iter.__call__(arguments[1]);
 
     var items = list();
 
@@ -123,7 +123,7 @@ function map() {
     });
 
     if (py_builtins.__python3__)
-        return iter(items);
+        return iter.__call__(items);
     else
         return items;
 }
@@ -137,7 +137,7 @@ function zip() {
     var i;
 
     for (i = 0; i < arguments.length; i++) {
-        iters.append(iter(arguments[i]));
+        iters.append(iter.__call__(arguments[i]));
     }
 
     var items = list();
@@ -184,7 +184,11 @@ function isinstance(obj, cls) {
         if (defined(obj.__class__) && defined(cls.__name__)) {
             return obj.__class__ == cls;
         } else {
-            return obj instanceof cls;
+            if (defined(cls.__call__)) {
+                return obj instanceof cls.__call__;
+            } else {
+                return obj instanceof cls;
+            }
         }
     }
 }
@@ -209,13 +213,13 @@ py_builtins.eq = function(a, b) {
         return a == b;
 };
 
-py_builtins._int = function(value) {
+py_builtins._int = Function(function(value) {
     return value;
-};
+});
 
-py_builtins._float = function(value) {
+py_builtins._float = Function(function(value) {
     return value;
-};
+});
 
 py_builtins.max = function(list) {
     if (len(list) == 0)
@@ -223,7 +227,7 @@ py_builtins.max = function(list) {
     else {
         var result = null;
 
-        iterate(iter(list), function(item) {
+        iterate(iter.__call__(list), function(item) {
                 if ((result == null) || (item > result))
                     result = item;
         });
@@ -238,7 +242,7 @@ py_builtins.min = function(list) {
     else {
         var result = null;
 
-        iterate(iter(list), function(item) {
+        iterate(iter.__call__(list), function(item) {
                 if ((result == null) || (item < result))
                     result = item;
         });
@@ -250,7 +254,7 @@ py_builtins.min = function(list) {
 py_builtins.sum = function(list) {
     var result = 0;
 
-    iterate(iter(list), function(item) {
+    iterate(iter.__call__(list), function(item) {
         result += item;
     });
 
@@ -259,7 +263,7 @@ py_builtins.sum = function(list) {
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log))
-        console.log(js(str(s)));
+        console.log(js(str.__call__(s)));
     else {
         if (arguments.length <= 1) {
             if (defined(s))
@@ -268,7 +272,7 @@ py_builtins.print = function(s) {
                 print("");
         } else {
             var args = tuple(to_array(arguments));
-            print(str(" ").join(args));
+            print(str.__call__(" ").join(args));
         }
     }
 };
