@@ -79,12 +79,14 @@ def main():
             "tests/errors/*.py",
             "tests/functions/*.py",
             "tests/lists/*.py",
+            "tests/libraries/*.py",
+            "tests/modules/*.py",
             "tests/strings/*.py",
             "tests/algorithms/*.py",
                 ]
         files = []
         for dir in dirs:
-            files.extend((path,os.path.abspath(path)) for path in glob(dir))
+            files.extend((path.replace("\\","/"), os.path.abspath(path)) for path in glob(dir))
         known_to_fail = [
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
@@ -119,6 +121,19 @@ def main():
                 "tests/lists/sum.py",
                 "tests/lists/subclass.py",
 
+                "tests/libraries/xmlwriter.py",
+
+                "tests/modules/classname.py",
+                "tests/modules/from_import.py",
+                "tests/modules/import.py",
+                "tests/modules/import_alias.py",
+                "tests/modules/import_class.py",
+                "tests/modules/import_diamond.py",
+                "tests/modules/import_global.py",
+                "tests/modules/import_multi.py",
+                "tests/modules/module_name.py",
+                "tests/modules/rng.py",
+
                 "tests/strings/string_format_d.py",
                 "tests/strings/string_format_efg.py",
                 "tests/strings/string_format_i.py",
@@ -129,7 +144,7 @@ def main():
                 ]
         known_to_fail = [os.path.abspath(path) for path in known_to_fail]
         files.sort()
-        for name,file in files:
+        for name, file in files:
             if options.run_all:
                 test3(name, file, file in known_to_fail)
             elif file not in known_to_fail:
