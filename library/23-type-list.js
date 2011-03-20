@@ -18,7 +18,7 @@ _list.prototype.__class__ = _list;
 _list.prototype.__init__ = _tuple.prototype.__init__;
 
 _list.prototype.__str__ = function () {
-    return str("[" + this._items.join(", ") + "]");
+    return str.__call__("[" + this._items.join(", ") + "]");
 };
 
 _list.prototype.__eq__ = _tuple.prototype.__eq__;
@@ -100,7 +100,7 @@ _list.prototype.append = function(value) {
 _list.prototype.extend = function(l) {
     var items;
     items = this._items;
-    iterate(iter(l), function(item) {
+    iterate(iter.__call__(l), function(item) {
         items.push(item);
     });
     this._len = -1;
@@ -127,7 +127,7 @@ _list.prototype.insert = function(index, x) {
 
 _list.prototype.reverse = function() {
     var new_list = list([]);
-    iterate(iter(this), function(item) {
+    iterate(iter.__call__(this), function(item) {
             new_list.insert(0, item);
     });
     this._items = new_list._items;
