@@ -80,14 +80,14 @@ function test_dict() {
 
 function test_iter() {
     var a = [0, 1, 2];
-    var i = iter(a);
+    var i = iter.__call__(a);
 
     test(function() { return i.next() == 0 });
     test(function() { return i.next() == 1 });
     test(function() { return i.next() == 2 });
 
     var d = dict({0: 1, 1: 2, 2: 3});
-    var i = iter(d);
+    var i = iter.__call__(d);
 
     test(function() { return i.next() == 0 });
     test(function() { return i.next() == 1 });
@@ -96,7 +96,7 @@ function test_iter() {
     raises(py_builtins.StopIteration, function() { i.next() });
 
     var t = tuple([7, 3, 5]);
-    var i = iter(t);
+    var i = iter.__call__(t);
 
     test(function() { return i.next() == 7 });
     test(function() { return i.next() == 3 });
@@ -105,7 +105,7 @@ function test_iter() {
     raises(py_builtins.StopIteration, function() { i.next() });
 
     var t = list([7, 3, 5]);
-    var i = iter(t);
+    var i = iter.__call__(t);
 
     test(function() { return i.next() == 7 });
     test(function() { return i.next() == 3 });
@@ -113,7 +113,7 @@ function test_iter() {
 
     raises(py_builtins.StopIteration, function() { i.next() });
 
-    var i = iter(range(5));
+    var i = iter.__call__(range(5));
 
     test(function() { return i.next() == 0 });
     test(function() { return i.next() == 1 });
@@ -185,16 +185,16 @@ function test_tuple() {
     test(function() { return str.__call__(t) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list(t)) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list(iter.__call__(t))) == '[1, 2, 3, 4]' })
     test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list(tuple(t))) == '[1, 2, 3, 4]' })
     test(function() { return str.__call__(tuple(list(t))) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list(list(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter(tuple(t)))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter(list(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter(list(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple(iter.__call__(list(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list(iter.__call__(list(t)))) == '[1, 2, 3, 4]' })
 }
 
 function test_list() {
@@ -292,16 +292,16 @@ function test_list() {
     test(function() { return str.__call__(t) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list(t)) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter(t))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list(iter.__call__(t))) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list(tuple(t))) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(list(t))) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list(list(t))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter(tuple(t)))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter(tuple(t)))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter(list(t)))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter(list(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple(iter.__call__(list(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list(iter.__call__(list(t)))) == '[1, 2, 3, 4]' });
 
     t = list([]);
     test(function() { return str.__call__(t) == '[]' });
@@ -352,7 +352,7 @@ function test_range() {
     test(function() { return str.__call__(t) == '[1, 3]' });
 
     // test iter:
-    var t = list(iter(range(5)));
+    var t = list(iter.__call__(range(5)));
     test(function() { return str.__call__(t) == '[0, 1, 2, 3, 4]' });
 }
 
