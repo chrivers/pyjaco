@@ -69,7 +69,7 @@ class Writer(object):
             color = ""
 
         if self._line_wrap:
-            if text[0] != "\n":
+            if text != "" and text[0] != "\n":
                 self._file.write("\n")
 
         if color == "":
@@ -126,8 +126,8 @@ class Py2JsTestResult(unittest.TestResult):
     self.__color = "Red"
     self.__state = "[FAIL]"
   def stopTestRun(self):
-    super(Py2JsTestResult, self).stopTestRun(test)
-    print
+    super(Py2JsTestResult, self).stopTestRun()
+    self.__writer.write("\n")
 
 class Py2JsTestRunner(unittest.TextTestRunner):
   resultclass = Py2JsTestResult
@@ -149,16 +149,22 @@ def compile_and_run_file_test(file_path, file_name=None):
         def reportProgres(self, test):
           pass
         def runTest(self):
+            import difflib
             self.number_of_tests_cleard = 0
             commands = (
                 'python "%(py_path)s" > "%(py_out_path)s" 2> "%(error)s"' % self.templ,
                 'python pyjs.py --include-builtins "%(py_path)s" > "%(js_path)s" 2> "%(error)s"' % self.templ,
                 'js -f "%(js_path)s" > "%(js_out_path)s" 2> "%(error)s"' % self.templ,
-                'diff "%(py_out_path)s" "%(js_out_path)s" > "%(diff_path)s" 2> "%(error)s"' % self.templ,
                 )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
                 self.reportProgres(self)
+            self.assertEqual(
+                file(self.templ["py_out_path"]).readlines(),
+                file(self.templ["js_out_path"]).readlines()
+                )
+            self.reportProgres(self)
+
         def __str__(self):
             return "%(py_path)s [4]: " % self.templ
 
