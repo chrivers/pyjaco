@@ -121,3 +121,15 @@ class BaseCompiler(object):
 
     def get_comparison_op(self, node):
         return self.comparison_op[node.__class__.__name__]
+
+    ## Shared visit functions
+
+    def visit_Assign(self, node):
+        if len(node.targets) > 1:
+            tmp = self.new_dummy()
+            q = ["var %s = %s" % (tmp, self.visit(node.value))]
+            for t in node.targets:
+                q.extend(self.visit_AssignSimple(t, tmp))
+            return q
+        else:
+            return self.visit_AssignSimple(node.targets[0], self.visit(node.value))
