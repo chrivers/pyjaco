@@ -132,6 +132,32 @@ class Py2JsTestResult(unittest.TestResult):
 class Py2JsTestRunner(unittest.TextTestRunner):
   resultclass = Py2JsTestResult
 
+def compile_file_test(file_path, file_name=None):
+    file_name = file_name if file_name else file_path
+    
+    class CompileFile(unittest.TestCase):
+        templ = {
+        "py_path": file_path, 
+        "py_unix_path": file_path, 
+        "py_out_path": file_path + ".out",
+        "py_error": file_path + ".err",
+        "name": file_name,
+        }
+        def reportProgres(self, test):
+          pass
+        def runTest(self):
+          commands = (
+              'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
+              )
+          for cmd in commands:
+            os.system(cmd)
+            self.reportProgres(self)
+        def __str__(self):
+          return "%(py_unix_path)s [1]: " % self.templ
+    return CompileFile
+
+
+
 
 def compile_and_run_file_test(file_path, file_name=None):
     file_name = file_name if file_name else file_path
@@ -139,22 +165,23 @@ def compile_and_run_file_test(file_path, file_name=None):
     class CompileAndRunFile(unittest.TestCase):
         templ = {
         "py_path": file_path, 
+        "py_unix_path": file_path, 
         "py_out_path": file_path + ".out",
         "js_path": file_path + ".js",
         "js_out_path": file_path + ".js.out",
-        "diff_path": file_path + ".diff",
-        "error": file_path + ".err",
+        "py_error": file_path + ".err",
+        "js_error": file_path + "js.err",
+        "compiler_error": file_path + ".comp.err",
         "name": file_name,
         }
         def reportProgres(self, test):
           pass
         def runTest(self):
-            import difflib
             self.number_of_tests_cleard = 0
             commands = (
-                'python "%(py_path)s" > "%(py_out_path)s" 2> "%(error)s"' % self.templ,
-                'python pyjs.py --include-builtins "%(py_path)s" > "%(js_path)s" 2> "%(error)s"' % self.templ,
-                'js -f "%(js_path)s" > "%(js_out_path)s" 2> "%(error)s"' % self.templ,
+                'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
+                'python pyjs.py --include-builtins "%(py_path)s" > "%(js_path)s" 2> "%(compiler_error)s"' % self.templ,
+                'js -f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"' % self.templ,
                 )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
@@ -166,7 +193,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             self.reportProgres(self)
 
         def __str__(self):
-            return "%(py_path)s [4]: " % self.templ
+            return "%(py_unix_path)s [4]: " % self.templ
 
     return CompileAndRunFile
 
