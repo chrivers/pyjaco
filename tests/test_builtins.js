@@ -73,7 +73,7 @@ function test_dict() {
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{a: x, b: y}' });
 
-    d = dict(list([list([str.__call__("a"), str.__call__("x")]), list([str.__call__("b"), str.__call__("y")])]));
+    d = dict(list.__call__([list.__call__([str.__call__("a"), str.__call__("x")]), list.__call__([str.__call__("b"), str.__call__("y")])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{a: x, b: y}' });
 }
@@ -104,7 +104,7 @@ function test_iter() {
 
     raises(py_builtins.StopIteration, function() { i.next() });
 
-    var t = list([7, 3, 5]);
+    var t = list.__call__([7, 3, 5]);
     var i = iter.__call__(t);
 
     test(function() { return i.next() == 7 });
@@ -184,23 +184,23 @@ function test_tuple() {
     t = tuple([1, 2, 3, 4])
     test(function() { return str.__call__(t) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(t)) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(list.__call__(t)) == '[1, 2, 3, 4]' })
     test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter.__call__(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(list.__call__(iter.__call__(t))) == '[1, 2, 3, 4]' })
     test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(tuple(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(list(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(list(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(list.__call__(tuple(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple(list.__call__(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list.__call__(list.__call__(t))) == '[1, 2, 3, 4]' })
     test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter.__call__(list(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list(iter.__call__(list(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(list.__call__(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list.__call__(iter.__call__(list.__call__(t)))) == '[1, 2, 3, 4]' })
 }
 
 function test_list() {
-    raises(py_builtins.TypeError, function() { list(1, 2, 3) });
+    raises(py_builtins.TypeError, function() { list.__call__(1, 2, 3) });
 
-    var t = list();
+    var t = list.__call__();
 
     test(function() { return str.__call__(t) == '[]' });
     test(function() { return len(t) == 0 });
@@ -216,7 +216,7 @@ function test_list() {
 
     raises(py_builtins.AttributeError, function() { return hash(t) });
 
-    var t = list([3, 4, 5, 5, 4, 4, 1]);
+    var t = list.__call__([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str.__call__(t) == '[3, 4, 5, 5, 4, 4, 1]' });
     test(function() { return len(t) == 7 });
@@ -288,22 +288,22 @@ function test_list() {
     raises(py_builtins.IndexError, function() { t.__setitem__(-6, 6) });
 
 
-    t = list([1, 2, 3, 4]);
+    t = list.__call__([1, 2, 3, 4]);
     test(function() { return str.__call__(t) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(t)) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(list.__call__(t)) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter.__call__(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(list.__call__(iter.__call__(t))) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(tuple(t))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(list(t))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(list(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(list.__call__(tuple(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple(list.__call__(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list.__call__(list.__call__(t))) == '[1, 2, 3, 4]' });
     test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter.__call__(list(t)))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list(iter.__call__(list(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(list.__call__(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list.__call__(iter.__call__(list.__call__(t)))) == '[1, 2, 3, 4]' });
 
-    t = list([]);
+    t = list.__call__([]);
     test(function() { return str.__call__(t) == '[]' });
     t.append(1);
     test(function() { return str.__call__(t) == '[1]' });
@@ -315,7 +315,7 @@ function test_list() {
     test(function() { return str.__call__(t) == '[]' });
     raises(py_builtins.IndexError, function() { t.pop() });
 
-    t = list([4, 3, 1, 2]);
+    t = list.__call__([4, 3, 1, 2]);
     test(function() { return str.__call__(t) == '[4, 3, 1, 2]' });
     t.remove(3);
     test(function() { return str.__call__(t) == '[4, 1, 2]' });
@@ -330,7 +330,7 @@ function test_list() {
 
     var t1 = tuple([1, 2]);
     var t2 = tuple([1, 3]);
-    t = list([t1, t2]);
+    t = list.__call__([t1, t2]);
     test(function() { return str.__call__(t) == '[(1, 2), (1, 3)]' });
     test(function() { return t.index(t1) == 0 });
     test(function() { return t.index(t2) == 1 });
@@ -342,25 +342,25 @@ function test_range() {
     // Test tuple/list conversion from range()
     var t = tuple(range(5));
     test(function() { return str.__call__(t) == '(0, 1, 2, 3, 4)' });
-    var t = list(range(5));
+    var t = list.__call__(range(5));
     test(function() { return str.__call__(t) == '[0, 1, 2, 3, 4]' });
 
     // test min/max/step in range():
-    t = list(range(1, 3));
+    t = list.__call__(range(1, 3));
     test(function() { return str.__call__(t) == '[1, 2]' });
-    t = list(range(1, 5, 2));
+    t = list.__call__(range(1, 5, 2));
     test(function() { return str.__call__(t) == '[1, 3]' });
 
     // test iter:
-    var t = list(iter.__call__(range(5)));
+    var t = list.__call__(iter.__call__(range(5)));
     test(function() { return str.__call__(t) == '[0, 1, 2, 3, 4]' });
 }
 
 function test_map() {
     var f = function(x) { return x*x };
-    var a = list([1, 2, 3]);
+    var a = list.__call__([1, 2, 3]);
 
-    test(function() { return str.__call__(map(f, list())) == '[]' });
+    test(function() { return str.__call__(map(f, list.__call__())) == '[]' });
     test(function() { return str.__call__(map(f, a)) == '[1, 4, 9]' });
 
     raises(py_builtins.TypeError, function() { map(f) });
@@ -370,16 +370,16 @@ function test_map() {
 function test_zip() {
     test(function() { return str.__call__(zip()) == "[]" });
 
-    var a = list([1, 2, 3]);
-    var b = list([4, 5, 6]);
-    var c = list([7, 8, 9]);
+    var a = list.__call__([1, 2, 3]);
+    var b = list.__call__([4, 5, 6]);
+    var c = list.__call__([7, 8, 9]);
 
     test(function() { return str.__call__(zip(a)) == "[(1,), (2,), (3,)]" });
     test(function() { return str.__call__(zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
     test(function() { return str.__call__(zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
 
-    var d = list([7, 8, 9, 10]);
-    var e = list([7, 8, 9, 10, 11]);
+    var d = list.__call__([7, 8, 9, 10]);
+    var e = list.__call__([7, 8, 9, 10, 11]);
 
     test(function() { return str.__call__(zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
     test(function() { return str.__call__(zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
@@ -513,12 +513,12 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
     t = tuple([8]);
     test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
-    t = list([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(list([8, 9, 10])) });
-    t = list([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(list([8, 9])) });
-    t = list([8]);
-    test(function() { return t.__getitem__(s).__eq__(list([8])) });
+    t = list.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9, 10])) });
+    t = list.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9])) });
+    t = list.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8])) });
 
     s = slice(null);
     test(function() { return s.start == null });
@@ -536,12 +536,12 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
     t = tuple([8]);
     test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
-    t = list([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(list([8, 9, 10, 11, 12])) });
-    t = list([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(list([8, 9])) });
-    t = list([8]);
-    test(function() { return t.__getitem__(s).__eq__(list([8])) });
+    t = list.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9, 10, 11, 12])) });
+    t = list.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9])) });
+    t = list.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([8])) });
 
     s = slice(1, 3);
     test(function() { return s.start == 1 });
@@ -559,12 +559,12 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
     t = tuple([8]);
     test(function() { return t.__getitem__(s).__eq__(tuple([])) });
-    t = list([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(list([9, 10])) });
-    t = list([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(list([9])) });
-    t = list([8]);
-    test(function() { return t.__getitem__(s).__eq__(list([])) });
+    t = list.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([9, 10])) });
+    t = list.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([9])) });
+    t = list.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
     s = slice(1, 10, 2);
     test(function() { return s.start == 1 });
@@ -584,14 +584,14 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
     t = tuple([8]);
     test(function() { return t.__getitem__(s).__eq__(tuple([])) });
-    t = list([8, 9, 10, 11, 12, 13, 14]);
-    test(function() { return t.__getitem__(s).__eq__(list([9, 11, 13])) });
-    t = list([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(list([9, 11])) });
-    t = list([8, 9, 10]);
-    test(function() { return t.__getitem__(s).__eq__(list([9])) });
-    t = list([8]);
-    test(function() { return t.__getitem__(s).__eq__(list([])) });
+    t = list.__call__([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([9, 11, 13])) });
+    t = list.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([9, 11])) });
+    t = list.__call__([8, 9, 10]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([9])) });
+    t = list.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
     s = slice(4, 6, 1);
     test(function() { return s.start == 4 });
@@ -614,14 +614,14 @@ function test_slice() {
     test(function() { return t.__getitem__(s).__eq__(tuple([])) });
     t = tuple([8, 9]);
     test(function() { return t.__getitem__(s).__eq__(tuple([])) });
-    t = list([8, 9, 10, 11, 12, 13, 14]);
-    test(function() { return t.__getitem__(s).__eq__(list([12, 13])) });
-    t = list([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(list([12])) });
-    t = list([8, 9, 10, 11]);
-    test(function() { return t.__getitem__(s).__eq__(list([])) });
-    t = list([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(list([])) });
+    t = list.__call__([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([12, 13])) });
+    t = list.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([12])) });
+    t = list.__call__([8, 9, 10, 11]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
+    t = list.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
     s = slice(0, -20);
     test(function() { return s.start == 0 });
@@ -648,7 +648,7 @@ function test_to_js() {
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
 
-    t = js(list([1, "s"]));
+    t = js(list.__call__([1, "s"]));
     test(function() { return t.length == 2 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
