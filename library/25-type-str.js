@@ -4,6 +4,7 @@ var str = __inherit(object);
 
 str.__name__ = 'str';
 str.prototype.__class__ = str;
+str.prototype.MARK = "str";
 
 str.prototype.__init__ = function(s) {
     if (!defined(s)) {
@@ -164,7 +165,7 @@ str.prototype.find = function(s) {
 
 str.prototype.rfind = function(s) {
     rev = function(s) {
-        var a = list(str.__call__(s));
+        var a = list.__call__(str.__call__(s));
         a.reverse();
         a = str.__call__("").join(a);
         return a;
@@ -235,15 +236,15 @@ str.prototype.strip = function(chars) {
 
 str.prototype.split = function(sep) {
     if (defined(sep)) {
-        var r = list(this._obj.split(sep));
-        var r_new = list([]);
+        var r = list.__call__(this._obj.split(sep));
+        var r_new = list.__call__([]);
         iterate(iter.__call__(r), function(item) {
                 r_new.append(str.__call__(item));
         });
         return r_new;
     }
     else {
-        var r_new = list([]);
+        var r_new = list.__call__([]);
         iterate(iter.__call__(this.split(" ")), function(item) {
                 if (len(item) > 0)
                     r_new.append(item);
