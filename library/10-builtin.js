@@ -97,7 +97,7 @@ function range(start, end, step) {
     if (py_builtins.__python3__)
         return iter.__call__(seq);
     else
-        return list(seq);
+        return list.__call__(seq);
 }
 
 function xrange(start, end, step) {
@@ -116,7 +116,7 @@ function map() {
     var func = arguments[0];
     var seq = iter.__call__(arguments[1]);
 
-    var items = list();
+    var items = list.__call__();
 
     iterate(seq, function(item) {
         items.append(func(item));
@@ -130,20 +130,20 @@ function map() {
 
 function zip() {
     if (!arguments.length) {
-        return list();
+        return list.__call__();
     }
 
-    var iters = list();
+    var iters = list.__call__();
     var i;
 
     for (i = 0; i < arguments.length; i++) {
         iters.append(iter.__call__(arguments[i]));
     }
 
-    var items = list();
+    var items = list.__call__();
 
     while (true) {
-        var item = list();
+        var item = list.__call__();
 
         for (i = 0; i < arguments.length; i++) {
             try {
