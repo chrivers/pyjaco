@@ -58,14 +58,14 @@ class Compiler(py2js.compiler.BaseCompiler):
                     js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
             if self._class_name:
-                prep = "%s.prototype.%s = Function(function(" % \
-                        (self._class_name, node.name)
+                prep = "%s.prototype.%s = Function(function(" % (self._class_name, node.name)
                 if not is_static:
                     if not (js_args[0] == "self"):
                         raise NotImplementedError("The first argument must be 'self'.")
                     del js_args[0]
             else:
                 prep = "Function(function %s(" % node.name
+
             js = [prep + ", ".join(js_args) + ") {"]
 
             js.extend(self.indent(js_defaults))
@@ -171,13 +171,10 @@ class Compiler(py2js.compiler.BaseCompiler):
             self.dummy_index += 1
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
-            js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value),
-                self.visit(target.slice), value)]
+            js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value), self.visit(target.slice), value)]
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Slice):
             # found slice assignmnet
-            js = ["%s.__setslice__(%s, %s, %s);" % (self.visit(target.value),
-                self.visit(target.slice.lower), self.visit(target.slice.upper),
-                value)]
+            js = ["%s.__setslice__(%s, %s, %s);" % (self.visit(target.value), self.visit(target.slice.lower), self.visit(target.slice.upper), value)]
         else:
             var = self.visit(target)
             if isinstance(target, ast.Name):
