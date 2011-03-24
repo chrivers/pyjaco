@@ -31,7 +31,7 @@ def main():
 
         if options.include_builtins:
             if os.path.dirname(__file__):
-                builtins = open(os.path.join(os.path.dirname(__file__)), "py-builtins.js").read()
+                builtins = open(os.path.join(os.path.dirname(__file__), "py-builtins.js")).read()
             else:
                 builtins = open("py-builtins.js").read()
             output.write(builtins)
