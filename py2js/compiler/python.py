@@ -152,12 +152,9 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Delete(self, node):
         return node
 
-    def visit_Assign(self, node):
-        assert len(node.targets) == 1
-        target = node.targets[0]
-        #~ if self._class_name:
-            #~ target = self._class_name + '.' + target
-        value = self.visit(node.value)
+    def visit_AssignSimple(self, left, right):
+        target = left
+        value  = right
         if isinstance(target, (ast.Tuple, ast.List)):
             js = ["var __dummy%d__ = %s;" % (self.dummy_index, value)]
 
@@ -448,7 +445,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
             js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
-            return "%s(%s)" % (func, js_args)
+            return "%s.__call__(%s)" % (func, js_args)
 
     def visit_Raise(self, node):
         assert node.inst is None
