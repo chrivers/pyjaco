@@ -14,6 +14,7 @@ function _tuple(seq) {
 
 _tuple.__name__ = 'tuple';
 _tuple.prototype.__class__ = _tuple;
+_tuple.prototype.MARK = "tuple";
 
 _tuple.prototype.__init__ = function(seq) {
     if (!defined(seq)) {
