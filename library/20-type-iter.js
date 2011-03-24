@@ -2,6 +2,8 @@
 
 var iter = __inherit(object);
 
+iter.prototype.MARK = "iter";
+
 iter.prototype.__init__ = function(obj) {
     this._index = 0;
 
