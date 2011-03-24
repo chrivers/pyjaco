@@ -10,6 +10,7 @@ function _dict(args) {
 
 _dict.__name__ = 'dict';
 _dict.prototype.__class__ = _dict;
+_dict.prototype.MARK = "iter";
 
 _dict.prototype.__init__ = function(args) {
     var items;
