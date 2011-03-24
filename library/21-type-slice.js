@@ -10,6 +10,7 @@ function _slice(start, stop, step) {
 
 _slice.__name__ = 'slice';
 _slice.prototype.__class__ = _slice;
+_slice.prototype.MARK = "slice";
 
 _slice.prototype.__init__ = function(start, stop, step) {
     if (!defined(stop) && !defined(step))
