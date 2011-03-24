@@ -58,14 +58,14 @@ class Compiler(py2js.compiler.BaseCompiler):
                     js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
             if self._class_name:
-                prep = "%s.prototype.%s = function(" % \
+                prep = "%s.prototype.%s = Function(function(" % \
                         (self._class_name, node.name)
                 if not is_static:
                     if not (js_args[0] == "self"):
                         raise NotImplementedError("The first argument must be 'self'.")
                     del js_args[0]
             else:
-                prep = "function %s(" % node.name
+                prep = "Function(function %s(" % node.name
             js = [prep + ", ".join(js_args) + ") {"]
 
             js.extend(self.indent(js_defaults))
@@ -73,18 +73,18 @@ class Compiler(py2js.compiler.BaseCompiler):
             for stmt in node.body:
                 js.extend(self.indent(self.visit(stmt)))
 
-            js.append('}')
+            js.append('});')
 
-            #If method is static, we also add it directly to the class
-            if is_static:
-                js.append("%s.%s = %s.prototype.%s;" % \
-                        (self._class_name, node.name, self._class_name, node.name))
-            #Otherwise, we wrap it to take 'self' into account
-            else:
-                func_name = node.name
-                js.append("%s.%s = function() {" % (self._class_name, func_name))
-                js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
-                js.append("}")
+            # #If method is static, we also add it directly to the class
+            # if is_static:
+            #     js.append("%s.%s = %s.prototype.%s;" % \
+            #             (self._class_name, node.name, self._class_name, node.name))
+            # #Otherwise, we wrap it to take 'self' into account
+            # else:
+            #     func_name = node.name
+            #     js.append("%s.%s = function() {" % (self._class_name, func_name))
+            #     js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
+            #     js.append("}")
 
             self._scope = []
             return js
@@ -101,8 +101,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 args.append(arg.id)
             defaults = "{" + ", ".join(defaults2) + "}"
             args = ", ".join(args)
-            js = ["var %s = $def(%s, function(%s) {" % (node.name,
-                defaults, args)]
+            js = ["var %s = Function(function(%s) {" % (node.name, args)]
             self._scope = [arg.id for arg in node.args.args]
             for stmt in node.body:
                 js.extend(self.indent(self.visit(stmt)))
@@ -113,25 +112,14 @@ class Compiler(py2js.compiler.BaseCompiler):
         bases = [self.visit(n) for n in node.bases]
         if not bases:
             bases = ['object']
+        assert len(bases) == 1;
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
         self._class_names.add(class_name)
-        js.append("function %s() {" % class_name)
-        js.append("    if( this === _global_this){")
-        js.append("        t = new %s();" % class_name)
-        js.append("        t.__init__.apply(t,arguments);")
-        js.append("        return t;")
-        js.append("    }")
-        js.append("}")
-        js.append("%s.__name__ = '%s';" % (class_name, class_name))
-        js.append("%s.__setattr__ = object.prototype.__setattr__;" % (class_name))
-        js.append("%s.__getattr__ = object.prototype.__setattr__;" % (class_name))
-        js.append("%s.__call__    = object.prototype.__call__;" % (class_name))
-        js.append("%s.prototype.__class__ = %s;" % (class_name, class_name))
-        js.append("%s.prototype.toString = _iter.prototype.toString;" % \
-                (class_name))
-        from ast import dump
+
+        js.append("var %s = __inherit(%s);" % (class_name, bases[0]));
+
         #~ methods = []
         self._class_name = class_name
         for stmt in node.body:
@@ -140,7 +128,6 @@ class Compiler(py2js.compiler.BaseCompiler):
                 for t in stmt.targets:
                     var = self.visit(t)
                     js.append("%s.%s = %s;" % (class_name, var, value))
-                    js.append("%s.prototype.%s = %s.%s;" % (class_name, var, class_name, var))
             else:
                 js.extend(self.visit(stmt))
         self._class_name = None
@@ -153,8 +140,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             #~ # because we call it from the constructor above
             #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
             #~ js.append("}")
-
-        js.append('extend(%s, [%s]);' % (class_name, ', '.join(bases)))
 
         return js
 
