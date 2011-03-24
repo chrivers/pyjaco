@@ -4,10 +4,11 @@ import py2js.compiler.javascript
 import py2js.compiler.python
 import ast
 import inspect
+import operator
 from py2js.compiler import JSError
 
 def dump(node):
-    s = ast.dump(node)
+    s = "%r -> %s" % (node, ast.dump(node))
     indent = 0
     buf = ""
     for c in s:
@@ -39,9 +40,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.comp_js.visit = self.visit
 
         self.modestack = []
+        self.modecache = {}
 
-        ## A hack to test out mode switching
-        self.jsvars = ["jQuery"]
+        self.jsvars = []
 
         self.enter("py")
 
@@ -58,27 +59,72 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.modestack.pop()
         self.enter(self.modestack.pop())
 
-    def visit(self, node):
+    def visit(self, node, multiplex = True):
+        mode = self.get_mode(node)
+        if mode:
+            self.enter(mode)
+
         name = 'visit_' + self.name(node)
-        if hasattr(self, name):
-            return getattr(self, name)(node)
+        if hasattr(self, name) and multiplex:
+            res = getattr(self, name)(node)
         else:
-            return self.visit_current(node)
+            res = self.visit_current(node)
 
-    def visit_Call(self, node):
-        if isinstance(node.func, ast.Name):
-            if node.func.id in self.jsvars:
-                self.enter("js")
+        if mode:
+            self.leave()
+        return res
+
+    def get_mode(self, node):
+        if not node in self.modecache:
+            self.modecache[node] = self.get_mode_simple(node)
+        return self.modecache[node]
+
+    def get_mode_simple(self, node):
+        if isinstance(node, ast.Call):
+            return self.get_mode(node.func)
+
+        elif isinstance(node, ast.Attribute):
+            if isinstance(node.value, ast.Name):
+                for i, x in enumerate(self.jsvars):
+                    if len(x) == 1 and node.value.id == x[0]:
+                        return "js"
+                    elif len(x) == 2 and node.value.id == x[0] and node.attr == x[1]:
+                        return "js"
             else:
-                self.enter("py")
-        else:
-            self.enter("py")
+                return self.get_mode(node.value)
 
-        res = self.visit_current(node)
-        self.leave()
+        elif isinstance(node, ast.Name):
+            if node.id in map(operator.itemgetter(0), self.jsvars):
+                return "js"
+            else:
+                return "py"
+
+        elif isinstance(node, ast.Assign):
+            return self.get_mode(node.targets[0])
+
+    def visit_Assign(self, node):
+        return self.visit(node, False)
+
+    def visit_FunctionDef(self, node):
+        added = 0
+        dec = node.decorator_list
+        i = 0
+        while i < len(dec):
+            if isinstance(dec[i], ast.Call) and isinstance(dec[i].func, ast.Name) and dec[i].func.id == 'JSVar':
+                for a in dec[i].args:
+                    if isinstance(a, ast.Str):
+                        self.jsvars.append(a.s.split("."))
+                        added += 1
+                    else:
+                        raise JSError("JSVar decorator must only be used with string literals")
+                del dec[i]
+            else:
+                i += 1
+        res = self.visit(node, False)
+        while added:
+            self.jsvars.pop()
+            added -= 1
         return res
 
     def visit_Return(self, node):
-        dump(node)
-        print "#"*80
         return self.visit_current(node)
