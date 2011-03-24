@@ -5,6 +5,7 @@ import py2js.compiler.multiplexer
 import re
 import StringIO
 import ast
+import inspect
 
 def compile(script):
     c = Compiler()
@@ -61,7 +62,7 @@ class Compiler(object):
         return "\n".join(res)
 
     def format_name(self, name):
-        return "/* %s */\n" % ("* %s *" % name).center(80, "#")
+        return "/*%s*/\n" % ("| %s |" % name).center(80, "*")
 
     def comment_section(self, name):
         if name:
@@ -77,7 +78,7 @@ class Compiler(object):
         self.buffer.write("\n".join(self.compiler.visit(ast.parse(code))))
         self.buffer.write("\n\n")
 
-    def append_method(self, code, body = True, name = None):
+    def append_method(self, code, name = None, body = False):
         self.append_string(self.dedent(inspect.getsource(code), body), name)
 
     def append_class(self, code, name = None):
@@ -86,7 +87,7 @@ class Compiler(object):
     def compile_string(self, code, name = None):
         return "\n".join(self.compiler.visit(ast.parse(code)))
 
-    def compile_method(self, code, body = True, name = None):
+    def compile_method(self, code, name = None, body = False):
         return self.compile_string(self.dedent(inspect.getsource(code), body), name)
 
     def compile_class(self, code, name = None):
