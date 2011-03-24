@@ -2,6 +2,14 @@ import py2js
 
 import inspect 
 
+class JSVar(object):
+
+    def __init__(self, *names):
+        self.names = map(lambda x: x.split("."), names)
+
+    def __call__(self, obj):
+        return obj
+
 class JavaScript(object):
     """
     Decorator that you can use to convert methods to JavaScript.
