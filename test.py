@@ -1,9 +1,18 @@
+try:
+  import colorama
+  colorama.init()
+  has_colorama = True
+except:
+  has_colorama = False
 import unittest
 import os
+import sys
 
 class Writer(object):
 
     def __init__(self, file = None):
+        import sys
+        self._file = file or sys.stdout
         self._line_wrap = False
         self._write_pos = 0
 
@@ -49,24 +58,24 @@ class Writer(object):
                 self.write("\n")
             self.write(" "*(width-self._write_pos-len(text)))
 
-        if hasattr(sys.stdout, 'isatty') and not sys.stdout.isatty():
+        if hasattr(self._file, 'isatty') and not self._file.isatty():
             # the stdout is not a terminal, this for example happens if the
             # output is piped to less, e.g. "bin/test | less". In this case,
             # the terminal control sequences would be printed verbatim, so
             # don't use any colors.
             color = ""
-        if sys.platform == "win32":
+        if sys.platform == "win32" and not has_colorama:
             # Windows consoles don't support ANSI escape sequences
             color = ""
 
         if self._line_wrap:
             if text[0] != "\n":
-                sys.stdout.write("\n")
+                self._file.write("\n")
 
         if color == "":
-            sys.stdout.write(text)
+            self._file.write(text)
         else:
-            sys.stdout.write("%s%s%s" % (c_color % colors[color], text, c_normal))
+            self._file.write("%s%s%s" % (c_color % colors[color], text, c_normal))
         sys.stdout.flush()
         l = text.rfind("\n")
         if l == -1:
@@ -76,65 +85,51 @@ class Writer(object):
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
 
-    def check(self, r, known_to_fail=False, exit_on_failure=True):
-        if r == 0:
-            if known_to_fail:
-                self.write("should fail but [OK]", align="right", color="Green")
-            else:
-                self.write("[OK]", align="right", color="Green")
-        else:
-            if known_to_fail:
-                self.write("known to [FAIL]", align="right", color="Purple")
-            else:
-                self.write("[FAIL]", align="right", color="Red")
-                if exit_on_failure:
-                    print
-                    print
-                    sys.exit(1)
-        self.write("\n")
-
-if __name__ == '__main__':
-    main()
-
-class Py2JsTestResult(unittest.result.TestResult):
+class Py2JsTestResult(unittest.TestResult):
 
   def __init__(self, *a, **k):
     super(Py2JsTestResult, self).__init__(*a, **k)
+    self.__writer = Writer(a[0])
     self.__faild = False
 
   def startTest(self, test):
     super(Py2JsTestResult, self).startTest(test)
     test.reportProgres = self.addProgress
-    row = str(test)
-    self.__length = len(row) 
-    print row,
+    self.__writer.write(str(test))
     self.__state = "[Error]"
+    self.__color = "Red"
 
   def stopTest(self, test):
     super(Py2JsTestResult, self).stopTest(test)
-    print " " * (80 - self.__length - len(self.__state)) + self.__state
+    self.__writer.write(self.__state, align="right", color=self.__color)
 
   def addProgress(self, test):
-    self.__length += 2
-    print ".",
+    self.__writer.write(".")
 
   def addSuccess(self, test):
     super(Py2JsTestResult, self).addSuccess(test)
+    self.__color = "Green"
     self.__state = "[OK]"
 
   def addUnexpectedSuccess(self, test):
     super(Py2JsTestResult, self).addUnexpectedSuccess(test)
+    self.__color = "Green"
     self.__state = "should fail but [OK]"
 
   def addExpectedFailure(self, test, err):
     super(Py2JsTestResult, self).addExpectedFailure(test, err)
+    self.__color = "Purple"
     self.__state = "known to [FAIL]"
 
   def addFailure(self, test, err):
     super(Py2JsTestResult, self).addFailure(test, err)
+    self.__color = "Red"
     self.__state = "[FAIL]"
+  def stopTestRun(self):
+    super(Py2JsTestResult, self).stopTestRun(test)
+    print
 
-class Py2JsTestRunner(unittest.runner.TextTestRunner):
+class Py2JsTestRunner(unittest.TextTestRunner):
   resultclass = Py2JsTestResult
 
 
