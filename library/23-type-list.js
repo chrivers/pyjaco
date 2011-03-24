@@ -1,41 +1,40 @@
 /* Python 'list' type */
 
-function list(seq) {
-    if (arguments.length <= 1) {
-        return new _list(seq);
+var list = __inherit(object);
+
+list.__name__ = 'list';
+list.prototype.__class__ = list;
+list.prototype.MARK = "list";
+
+list.prototype.__init__ = function(seq) {
+    if (!defined(seq)) {
+        this._items = [];
+        this._len = 0;
     } else {
-        throw new py_builtins.TypeError("list() takes at most 1 argument (" + arguments.length + " given)");
+        this._items = copy(iter.__call__(seq));
+        this._len = -1;
     }
-}
+};
 
-function _list(seq) {
-    this.__init__(seq);
-}
-
-_list.__name__ = 'list';
-_list.prototype.__class__ = _list;
-
-_list.prototype.__init__ = _tuple.prototype.__init__;
-
-_list.prototype.__str__ = function () {
+list.prototype.__str__ = function () {
     return str.__call__("[" + this._items.join(", ") + "]");
 };
 
-_list.prototype.__eq__ = _tuple.prototype.__eq__;
+list.prototype.__eq__ = _tuple.prototype.__eq__;
 
-_list.prototype.toString = _tuple.prototype.toString;
+list.prototype.toString = _tuple.prototype.toString;
 
-_list.prototype._js_ = _tuple.prototype._js_;
+list.prototype._js_ = _tuple.prototype._js_;
 
-_list.prototype.__len__ = _tuple.prototype.__len__;
+list.prototype.__len__ = _tuple.prototype.__len__;
 
-_list.prototype.__iter__ = _tuple.prototype.__iter__;
+list.prototype.__iter__ = _tuple.prototype.__iter__;
 
-_list.prototype.__contains__ = _tuple.prototype.__contains__;
+list.prototype.__contains__ = _tuple.prototype.__contains__;
 
-_list.prototype.__getitem__ = _tuple.prototype.__getitem__;
+list.prototype.__getitem__ = _tuple.prototype.__getitem__;
 
-_list.prototype.__setitem__ = function(index, value) {
+list.prototype.__setitem__ = function(index, value) {
     if ((index >= 0) && (index < len(this)))
         this._items[index] = value;
     else if ((index < 0) && (index >= -len(this)))
@@ -43,15 +42,15 @@ _list.prototype.__setitem__ = function(index, value) {
     else
         throw new py_builtins.IndexError("list assignment index out of range");
 };
-_list.prototype.__setslice__ = function(lower, upper, value) {
-     var it = list(value)._items;
+list.prototype.__setslice__ = function(lower, upper, value) {
+     var it = list.__call__(value)._items;
      if ( lower < len(this) && upper < len(this)){
        this._items = this._items.slice(0,lower).concat(it).concat(this._items.slice(upper,len(this)));
        this._len = -1;
      }
 };
 
-_list.prototype.__delitem__ = function(index) {
+list.prototype.__delitem__ = function(index) {
     if ((index >= 0) && (index < len(this))) {
         var a = this._items.slice(0, index);
         var b = this._items.slice(index+1, len(this));
@@ -61,9 +60,9 @@ _list.prototype.__delitem__ = function(index) {
         throw new py_builtins.IndexError("list assignment index out of range");
 };
 
-_list.prototype.count = _tuple.prototype.count;
+list.prototype.count = _tuple.prototype.count;
 
-_list.prototype.index = function(value, start, end) {
+list.prototype.index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -88,16 +87,16 @@ _list.prototype.index = function(value, start, end) {
     throw new py_builtins.ValueError("list.index(x): x not in list");
 };
 
-_list.prototype.remove = function(value) {
+list.prototype.remove = function(value) {
     this.__delitem__(this.index(value));
 };
 
-_list.prototype.append = function(value) {
+list.prototype.append = function(value) {
     this._items.push(value);
     this._len = -1;
 };
 
-_list.prototype.extend = function(l) {
+list.prototype.extend = function(l) {
     var items;
     items = this._items;
     iterate(iter.__call__(l), function(item) {
@@ -106,7 +105,7 @@ _list.prototype.extend = function(l) {
     this._len = -1;
 };
 
-_list.prototype.pop = function() {
+list.prototype.pop = function() {
     if (len(this) > 0) {
         this._len = -1;
         return this._items.pop();
@@ -114,19 +113,19 @@ _list.prototype.pop = function() {
         throw new py_builtins.IndexError("pop from empty list");
 };
 
-_list.prototype.sort = function() {
+list.prototype.sort = function() {
     this._items.sort();
 };
 
-_list.prototype.insert = function(index, x) {
-    var a = this._items.slice(0, index)
-    var b = this._items.slice(index, len(this))
-    this._items = a.concat([x], b)
+list.prototype.insert = function(index, x) {
+    var a = this._items.slice(0, index);
+    var b = this._items.slice(index, len(this));
+    this._items = a.concat([x], b);
     this._len = -1;
 }
 
-_list.prototype.reverse = function() {
-    var new_list = list([]);
+list.prototype.reverse = function() {
+    var new_list = list.__call__([]);
     iterate(iter.__call__(this), function(item) {
             new_list.insert(0, item);
     });
