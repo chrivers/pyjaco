@@ -27,14 +27,12 @@ class Compiler(py2js.compiler.BaseCompiler):
             return ["return;"]
 
     def visit_Delete(self, node):
+
         return ["delete %s;" % ", ".join(map(self.visit, node.targets))]
 
-    def visit_Assign(self, node):
-        assert len(node.targets) == 1
-        target = node.targets[0]
-        #~ if self._class_name:
-            #~ target = self._class_name + '.' + target
-        value = self.visit(node.value)
+    def visit_AssignSimple(self, left, right):
+        target = left
+        value  = right
         if isinstance(target, (ast.Tuple, ast.List)):
             js = ["var __dummy%d__ = %s;" % (self.dummy_index, value)]
 
@@ -64,7 +62,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     declare = ""
                 js = ["%s%s = %s;" % (declare, var, value)]
             elif isinstance(target, ast.Attribute):
-                js = ["%s[\"%s\"] = %s;" % (self.visit(target.value), str(target.attr), value)]
+                js = ["%s.%s = %s;" % (self.visit(target.value), str(target.attr), value)]
             else:
                 raise JSError("Unsupported assignment type")
         return js
@@ -293,7 +291,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
             keywords = "{" + ", ".join(keywords) + "}"
-            js_args = ",".join([ self.visit(arg) for arg in node.args ])
+            js_args = ", ".join([ self.visit(arg) for arg in node.args ])
             return "%s.args([%s], %s)" % (func, js_args,
                     keywords)
         else:
@@ -303,7 +301,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             if node.kwargs is not None:
                 raise JSError("keyword arguments are not supported")
 
-            js_args = ",".join([ self.visit(arg) for arg in node.args ])
+            js_args = ", ".join([ self.visit(arg) for arg in node.args ])
 
             return "%s(%s)" % (func, js_args)
 
