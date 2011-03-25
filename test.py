@@ -132,28 +132,51 @@ class Py2JsTestResult(unittest.TestResult):
 class Py2JsTestRunner(unittest.TextTestRunner):
   resultclass = Py2JsTestResult
 
+def run_with_stdlib(file_path, file_name=None):
+    file_name = file_name if file_name else file_path
+
+    class TestStdLib(unittest.TestCase):
+        templ = {
+            "js_path": file_path, 
+            "js_unix_path": file_path, 
+            "js_out_path": file_path + ".out",
+            "js_error": file_path + ".err",
+            "name": file_name,
+        }
+        def reportProgres(self, test):
+            pass
+    
+        def runTest(self):
+            cmd = 'js -f "py-builtins.js" -f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"' % self.templ
+            self.assertEqual(0, os.system(cmd))
+            self.reportProgres(self)
+        def __str__(self):
+            return "%(js_unix_path)s [1]: " % self.templ
+
+    return TestStdLib
+
 def compile_file_test(file_path, file_name=None):
     file_name = file_name if file_name else file_path
     
     class CompileFile(unittest.TestCase):
         templ = {
-        "py_path": file_path, 
-        "py_unix_path": file_path, 
-        "py_out_path": file_path + ".out",
-        "py_error": file_path + ".err",
-        "name": file_name,
+            "py_path": file_path, 
+            "py_unix_path": file_path, 
+            "py_out_path": file_path + ".out",
+            "py_error": file_path + ".err",
+            "name": file_name,
         }
         def reportProgres(self, test):
-          pass
+            pass
         def runTest(self):
-          commands = (
+            commands = (
               'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
               )
-          for cmd in commands:
-            self.assertEqual(0, os.system(cmd))
-            self.reportProgres(self)
+            for cmd in commands:
+                self.assertEqual(0, os.system(cmd))
+                self.reportProgres(self)
         def __str__(self):
-          return "%(py_unix_path)s [1]: " % self.templ
+            return "%(py_unix_path)s [1]: " % self.templ
     return CompileFile
 
 

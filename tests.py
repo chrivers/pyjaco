@@ -58,25 +58,32 @@ known_to_fail = [
                 "tests/strings/ulcase.py",
                 ]
 
+
 test_cases = []
 
 test_paths = glob.glob("tests/test_*.py")
 test_paths.sort()
 for test_path in test_paths:
-  test_cases.append(test.compile_file_test(test_path, os.path.basename(test_path)))
+    test_cases.append(test.compile_file_test(test_path, os.path.basename(test_path)))
+
+test_paths = glob.glob("tests/test_*.js")
+test_paths.sort()
+for test_path in test_paths:
+    test_cases.append(test.run_with_stdlib(test_path, os.path.basename(test_path)))
+
 
 test_paths = glob.glob("tests/*/*.py")
 test_paths.sort()
 for test_path in test_paths:
     if test_path.replace("\\","/") not in known_to_fail:
-      test_cases.append(test.compile_and_run_file_test(test_path, os.path.basename(test_path)))
+        test_cases.append(test.compile_and_run_file_test(test_path, os.path.basename(test_path)))
     else:
-      test_cases.append(test.compile_and_run_file_failing_test(test_path, os.path.basename(test_path)))
+        test_cases.append(test.compile_and_run_file_failing_test(test_path, os.path.basename(test_path)))
       
 
 def load_tests(loader, standard_tests, none):
     suite = unittest.TestSuite()
     for case in test_cases:
-      tests = loader.loadTestsFromTestCase(case)
-      suite.addTests(tests)
+        tests = loader.loadTestsFromTestCase(case)
+        suite.addTests(tests)
     return suite
