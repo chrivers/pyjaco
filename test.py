@@ -150,7 +150,7 @@ def compile_file_test(file_path, file_name=None):
               'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
               )
           for cmd in commands:
-            os.system(cmd)
+            self.assertEqual(0, os.system(cmd))
             self.reportProgres(self)
         def __str__(self):
           return "%(py_unix_path)s [1]: " % self.templ
