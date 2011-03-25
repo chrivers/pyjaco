@@ -5,3 +5,5 @@ tests/*/*.out
 tests/*/*.diff
 tests/*/*.err
 tests/*/*.py.js
+tests/*.err
+tests/*.out
