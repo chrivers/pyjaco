@@ -1,12 +1,15 @@
+import sys
 try:
-  import colorama
-  colorama.init()
-  has_colorama = True
+    if sys.stdout.isatty():
+        import colorama
+        colorama.init()
+        has_colorama = True
+    else:
+        has_colorama = False
 except:
   has_colorama = False
 import unittest
 import os
-import sys
 
 class Writer(object):
 
