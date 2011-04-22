@@ -1,21 +1,28 @@
+"""
+Module that defiens Tool functions and test runers/result for use with
+the unittestlibrary.
+"""
 import sys
 try:
     if sys.stdout.isatty():
         import colorama
         colorama.init()
-        has_colorama = True
+        HAS_COLORAMA = True
     else:
-        has_colorama = False
-except:
-  has_colorama = False
+        HAS_COLORAMA = False
+except ImportError:
+    HAS_COLORAMA = False
 import unittest
 import os
 
 class Writer(object):
+    (
+        "Object that writes ther results to a file like object "
+        "with color, if it is posible."
+        )
 
-    def __init__(self, file = None):
-        import sys
-        self._file = file or sys.stdout
+    def __init__(self, in_file = None):
+        self._file = in_file or sys.stdout
         self._line_wrap = False
         self._write_pos = 0
 
@@ -67,7 +74,7 @@ class Writer(object):
             # the terminal control sequences would be printed verbatim, so
             # don't use any colors.
             color = ""
-        if sys.platform == "win32" and not has_colorama:
+        if sys.platform == "win32" and not HAS_COLORAMA:
             # Windows consoles don't support ANSI escape sequences
             color = ""
 
@@ -78,67 +85,73 @@ class Writer(object):
         if color == "":
             self._file.write(text)
         else:
-            self._file.write("%s%s%s" % (c_color % colors[color], text, c_normal))
+            color_str = c_color % colors[color]
+            self._file.write("%s%s%s" % (color_str, text, c_normal))
         sys.stdout.flush()
-        l = text.rfind("\n")
-        if l == -1:
+        next_new_line = text.rfind("\n")
+        if next_new_line == -1:
             self._write_pos += len(text)
         else:
-            self._write_pos = len(text)-l-1
+            self._write_pos = len(text) - next_new_line - 1
         self._line_wrap = self._write_pos >= width
         self._write_pos %= width
 
 class Py2JsTestResult(unittest.TestResult):
+    """Test result class handeling all the results reported by the tests"""
 
-  def __init__(self, *a, **k):
-    super(Py2JsTestResult, self).__init__(*a, **k)
-    self.__writer = Writer(a[0])
-    self.__faild = False
+    def __init__(self, *a, **k):
+        super(Py2JsTestResult, self).__init__(*a, **k)
+        self.__writer = Writer(a[0])
+        self.__faild = False
 
-  def startTest(self, test):
-    super(Py2JsTestResult, self).startTest(test)
-    test.reportProgres = self.addProgress
-    self.__writer.write(str(test))
-    self.__state = "[Error]"
-    self.__color = "Red"
+    def startTest(self, test):
+        super(Py2JsTestResult, self).startTest(test)
+        test.reportProgres = self.addProgress
+        self.__writer.write(str(test))
+        self.__state = "[Error]"
+        self.__color = "Red"
 
-  def stopTest(self, test):
-    super(Py2JsTestResult, self).stopTest(test)
-    self.__writer.write(self.__state, align="right", color=self.__color)
+    def stopTest(self, test):
+        super(Py2JsTestResult, self).stopTest(test)
+        self.__writer.write(self.__state, align="right", color=self.__color)
 
-  def addProgress(self, test):
-    self.__writer.write(".")
+    def addProgress(self, test):
+        self.__writer.write(".")
 
-  def addSuccess(self, test):
-    super(Py2JsTestResult, self).addSuccess(test)
-    self.__color = "Green"
-    self.__state = "[OK]"
+    def addSuccess(self, test):
+        super(Py2JsTestResult, self).addSuccess(test)
+        self.__color = "Green"
+        self.__state = "[OK]"
 
-  def addUnexpectedSuccess(self, test):
-    super(Py2JsTestResult, self).addUnexpectedSuccess(test)
-    self.__color = "Green"
-    self.__state = "should fail but [OK]"
+    def addUnexpectedSuccess(self, test):
+        super(Py2JsTestResult, self).addUnexpectedSuccess(test)
+        self.__color = "Green"
+        self.__state = "should fail but [OK]"
 
-  def addExpectedFailure(self, test, err):
-    super(Py2JsTestResult, self).addExpectedFailure(test, err)
-    self.__color = "Purple"
-    self.__state = "known to [FAIL]"
+    def addExpectedFailure(self, test, err):
+        super(Py2JsTestResult, self).addExpectedFailure(test, err)
+        self.__color = "Purple"
+        self.__state = "known to [FAIL]"
 
-  def addFailure(self, test, err):
-    super(Py2JsTestResult, self).addFailure(test, err)
-    self.__color = "Red"
-    self.__state = "[FAIL]"
-  def stopTestRun(self):
-    super(Py2JsTestResult, self).stopTestRun()
-    self.__writer.write("\n")
+    def addFailure(self, test, err):
+        super(Py2JsTestResult, self).addFailure(test, err)
+        self.__color = "Red"
+        self.__state = "[FAIL]"
+    
+    def stopTestRun(self):
+        super(Py2JsTestResult, self).stopTestRun()
+        self.__writer.write("\n")
 
 class Py2JsTestRunner(unittest.TextTestRunner):
-  resultclass = Py2JsTestResult
+    """Test runner with Py2JsTestResult as result class"""
+    resultclass = Py2JsTestResult
 
 def run_with_stdlib(file_path, file_name=None):
+    """Creats a test that runs a js file with the stdlib."""
     file_name = file_name if file_name else file_path
 
     class TestStdLib(unittest.TestCase):
+        """Tests js code with the stdlib"""
         templ = {
             "js_path": file_path, 
             "js_unix_path": file_path, 
@@ -150,7 +163,10 @@ def run_with_stdlib(file_path, file_name=None):
             pass
     
         def runTest(self):
-            cmd = 'js -f "py-builtins.js" -f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"' % self.templ
+            cmd = (
+                  'js -f "py-builtins.js" '
+                  '-f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"'
+                  )% self.templ
             self.assertEqual(0, os.system(cmd))
             self.reportProgres(self)
         def __str__(self):
@@ -159,9 +175,12 @@ def run_with_stdlib(file_path, file_name=None):
     return TestStdLib
 
 def compile_file_test(file_path, file_name=None):
+    """Creates a test that tests if a file can be compield by python"""
     file_name = file_name if file_name else file_path
     
     class CompileFile(unittest.TestCase):
+        """Test if a file can be compield by python."""
+
         templ = {
             "py_path": file_path, 
             "py_unix_path": file_path, 
@@ -173,7 +192,10 @@ def compile_file_test(file_path, file_name=None):
             pass
         def runTest(self):
             commands = (
-              'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
+                (
+                'python "%(py_path)s" > '
+                '"%(py_out_path)s" 2> "%(py_error)s"'
+                ) % self.templ,
               )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
@@ -186,9 +208,11 @@ def compile_file_test(file_path, file_name=None):
 
 
 def compile_and_run_file_test(file_path, file_name=None):
+    """Creats a test that compiles and runs the python file as js"""
     file_name = file_name if file_name else file_path
 
     class CompileAndRunFile(unittest.TestCase):
+        """Tests that a file can be compiled and run as js"""
         templ = {
         "py_path": file_path, 
         "py_unix_path": file_path, 
@@ -201,13 +225,26 @@ def compile_and_run_file_test(file_path, file_name=None):
         "name": file_name,
         }
         def reportProgres(self, test):
-          pass
+            pass
         def runTest(self):
             self.number_of_tests_cleard = 0
+            python_command = (
+                'python "%(py_path)s" > "%(py_out_path)s" 2> '
+                '"%(py_error)s"'
+                ) % self.templ
+            compile_command = (
+                'python pyjs.py --include-builtins '
+                '"%(py_path)s" > "%(js_path)s" 2> '
+                '"%(compiler_error)s"'
+                ) % self.templ 
+            javascript_command = (
+                'js -f "%(js_path)s" > "%(js_out_path)s" 2> '
+                '"%(js_error)s"' 
+                ) % self.templ
             commands = (
-                'python "%(py_path)s" > "%(py_out_path)s" 2> "%(py_error)s"' % self.templ,
-                'python pyjs.py --include-builtins "%(py_path)s" > "%(js_path)s" 2> "%(compiler_error)s"' % self.templ,
-                'js -f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"' % self.templ,
+                python_command,
+                compile_command,
+                javascript_command
                 )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
@@ -224,12 +261,14 @@ def compile_and_run_file_test(file_path, file_name=None):
     return CompileAndRunFile
 
 def compile_and_run_file_failing_test(*a, **k):
+    """Turn a test to a failing test"""
     _class = compile_and_run_file_test(*a, **k)
 
     class FailingTest(_class):
+        """Failing test"""
         @unittest.expectedFailure
         def runTest(self):
-          return super(FailingTest, self).runTest()
+            return super(FailingTest, self).runTest()
 
     return FailingTest
 
