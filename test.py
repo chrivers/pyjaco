@@ -103,6 +103,8 @@ class Py2JsTestResult(unittest.TestResult):
         super(Py2JsTestResult, self).__init__(*a, **k)
         self.__writer = Writer(a[0])
         self.__faild = False
+        self.__color = ""
+        self.__state = ""
 
     def startTest(self, test):
         super(Py2JsTestResult, self).startTest(test)
@@ -115,7 +117,8 @@ class Py2JsTestResult(unittest.TestResult):
         super(Py2JsTestResult, self).stopTest(test)
         self.__writer.write(self.__state, align="right", color=self.__color)
 
-    def addProgress(self, test):
+    def addProgress(self):
+        """Part of tests done"""
         self.__writer.write(".")
 
     def addSuccess(self, test):
@@ -159,16 +162,17 @@ def run_with_stdlib(file_path, file_name=None):
             "js_error": file_path + ".err",
             "name": file_name,
         }
-        def reportProgres(self, test):
-            pass
+        def reportProgres(self):
+            """Should be overloaded by the Testresult class."""
     
         def runTest(self):
+            """The actual test goes here."""
             cmd = (
                   'js -f "py-builtins.js" '
                   '-f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"'
                   )% self.templ
             self.assertEqual(0, os.system(cmd))
-            self.reportProgres(self)
+            self.reportProgres()
         def __str__(self):
             return "%(js_unix_path)s [1]: " % self.templ
 
@@ -188,9 +192,11 @@ def compile_file_test(file_path, file_name=None):
             "py_error": file_path + ".err",
             "name": file_name,
         }
-        def reportProgres(self, test):
-            pass
+        def reportProgres(self):
+            """Should be overloaded by the Testresult class"""
+
         def runTest(self):
+            """The actual test goes here."""
             commands = (
                 (
                 'python "%(py_path)s" > '
@@ -199,7 +205,7 @@ def compile_file_test(file_path, file_name=None):
               )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
-                self.reportProgres(self)
+                self.reportProgres()
         def __str__(self):
             return "%(py_unix_path)s [1]: " % self.templ
     return CompileFile
@@ -224,10 +230,11 @@ def compile_and_run_file_test(file_path, file_name=None):
         "compiler_error": file_path + ".comp.err",
         "name": file_name,
         }
-        def reportProgres(self, test):
-            pass
+        def reportProgres(self):
+            """Should be overloaded by Testresult class"""
+
         def runTest(self):
-            self.number_of_tests_cleard = 0
+            """The actual test goes here."""
             python_command = (
                 'python "%(py_path)s" > "%(py_out_path)s" 2> '
                 '"%(py_error)s"'
@@ -248,12 +255,12 @@ def compile_and_run_file_test(file_path, file_name=None):
                 )
             for cmd in commands:
                 self.assertEqual(0, os.system(cmd))
-                self.reportProgres(self)
+                self.reportProgres()
             self.assertEqual(
                 file(self.templ["py_out_path"]).readlines(),
                 file(self.templ["js_out_path"]).readlines()
                 )
-            self.reportProgres(self)
+            self.reportProgres()
 
         def __str__(self):
             return "%(py_unix_path)s [4]: " % self.templ
