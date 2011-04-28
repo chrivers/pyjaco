@@ -32,6 +32,7 @@ class Writer(object):
         self._line_wrap = False
         self._write_pos = 0
         self._file = in_file or sys.stdout
+        #self._file = sys.stdout
         if not (hasattr(self._file, 'isatty') and self._file.isatty()):
             # the stdout is not a terminal, this for example happens if the
             # output is piped to less, e.g. "bin/test | less". In this case,
@@ -62,7 +63,7 @@ class Writer(object):
         width ... the screen width
         """
 
-    def normal_write(self, text, color, align="left", width=80):
+    def normal_write(self, text, color="", align="left", width=80):
         "ignores color but uses alignment and width"
         _color = color
         if align == "right":
@@ -90,17 +91,25 @@ class Writer(object):
 
     def ansi_write(self, text, color="", align="left", width=80):
         "Writes with color, alignment and width"
-        return self.normal_write(
-                text=(
-                  "%s%s%s" % (
-                    self.c_color % self.colors[color], 
-                    text, 
-                    self.c_normal
-                    )
-                  if color in self.colors
-                  else text 
-                  ),
+        try:
+            return self.normal_write(
+                    text=(
+                      "%s%s%s" % (
+                        self.c_color % self.colors[color], 
+                        text, 
+                        self.c_normal
+                        )
+                      if color in self.colors
+                      else text 
+                      ),
+                    color=color,
+                    align=align,
+                    width=width
+                )
+        except AssertionError:
+            return self.normal_write(
+                text=text,
                 color=color,
                 align=align,
                 width=width
-            )
+                )

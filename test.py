@@ -2,106 +2,15 @@
 Module that defiens Tool functions and test runers/result for use with
 the unittestlibrary.
 """
-import sys
-try:
-    if sys.stdout.isatty():
-        import colorama
-        colorama.init()
-        HAS_COLORAMA = True
-    else:
-        HAS_COLORAMA = False
-except ImportError:
-    HAS_COLORAMA = False
 import unittest
 import os
-
-class Writer(object):
-    (
-        "Object that writes ther results to a file like object "
-        "with color, if it is posible."
-        )
-
-    def __init__(self, in_file = None):
-        self._file = in_file or sys.stdout
-        self._line_wrap = False
-        self._write_pos = 0
-
-    def write(self, text, color="", align="left", width=80):
-        """
-        Prints a text on the screen.
-
-        It uses sys.stdout.write(), so no readline library is necessary.
-
-        color ... choose from the colors below, "" means default color
-        align ... left/right, left is a normal print, right is aligned on the
-                  right hand side of the screen, filled with " " if necessary
-        width ... the screen width
-        """
-        color_templates = (
-            ("Black"       , "0;30"),
-            ("Red"         , "0;31"),
-            ("Green"       , "0;32"),
-            ("Brown"       , "0;33"),
-            ("Blue"        , "0;34"),
-            ("Purple"      , "0;35"),
-            ("Cyan"        , "0;36"),
-            ("LightGray"   , "0;37"),
-            ("DarkGray"    , "1;30"),
-            ("LightRed"    , "1;31"),
-            ("LightGreen"  , "1;32"),
-            ("Yellow"      , "1;33"),
-            ("LightBlue"   , "1;34"),
-            ("LightPurple" , "1;35"),
-            ("LightCyan"   , "1;36"),
-            ("White"       , "1;37"),  )
-
-        colors = {}
-
-        for name, value in color_templates:
-            colors[name] = value
-        c_normal = '\033[0m'
-        c_color = '\033[%sm'
-
-        if align == "right":
-            if self._write_pos+len(text) > width:
-                # we don't fit on the current line, create a new line
-                self.write("\n")
-            self.write(" "*(width-self._write_pos-len(text)))
-
-        if hasattr(self._file, 'isatty') and not self._file.isatty():
-            # the stdout is not a terminal, this for example happens if the
-            # output is piped to less, e.g. "bin/test | less". In this case,
-            # the terminal control sequences would be printed verbatim, so
-            # don't use any colors.
-            color = ""
-        if sys.platform == "win32" and not HAS_COLORAMA:
-            # Windows consoles don't support ANSI escape sequences
-            color = ""
-
-        if self._line_wrap:
-            if text != "" and text[0] != "\n":
-                self._file.write("\n")
-
-        if color == "":
-            self._file.write(text)
-        else:
-            color_str = c_color % colors[color]
-            self._file.write("%s%s%s" % (color_str, text, c_normal))
-        sys.stdout.flush()
-        next_new_line = text.rfind("\n")
-        if next_new_line == -1:
-            self._write_pos += len(text)
-        else:
-            self._write_pos = len(text) - next_new_line - 1
-        self._line_wrap = self._write_pos >= width
-        self._write_pos %= width
-
 class Py2JsTestResult(unittest.TestResult):
     """Test result class handeling all the results reported by the tests"""
 
     def __init__(self, *a, **k):
+        import testtools.writer
         super(Py2JsTestResult, self).__init__(*a, **k)
-        self.__writer = Writer(a[0])
+        self.__writer = testtools.writer.Writer(a[0])
         self.__faild = False
         self.__color = ""
         self.__state = ""
