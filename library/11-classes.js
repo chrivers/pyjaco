@@ -1,7 +1,7 @@
 var ObjectMetaClass = function(cls) {
 
     this.__call__ = function() {
-        obj = new cls();
+        var obj = new cls();
         obj.__init__.apply(obj, arguments);
         return obj;
     };
@@ -15,7 +15,6 @@ var ObjectMetaClass = function(cls) {
     };
 
     this.prototype = cls.prototype;
-
 };
 
 var object = function() {
