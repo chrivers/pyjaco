@@ -21,11 +21,8 @@ class EnviromentTest(unittest.TestCase):
       self.reportProgres()
       self.stop_if_not_equal(True, os.path.exists("py-builtins.js"))
       self.reportProgres()
-      
-
-
 
     def __str__(self):
-        return "checking enviroment [2]: "
+        return 'Looking for "js" and "py-builtins" [2]: '
 
 
