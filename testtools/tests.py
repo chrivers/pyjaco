@@ -1,8 +1,10 @@
 """module which findes tests from the test directory and convert them to
 the unittest framwork classes."""
-import test
+
+import testtools.util as util
 import glob
 import os
+
 KNOWN_TO_FAIL = [
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
@@ -69,14 +71,14 @@ def create_cases():
     test_paths.sort()
     for test_path in test_paths:
         test_cases.append(
-            test.compile_file_test(test_path, os.path.basename(test_path))
+            util.compile_file_test(test_path, os.path.basename(test_path))
             )
 
     test_paths = glob.glob("tests/test_*.js")
     test_paths.sort()
     for test_path in test_paths:
         test_cases.append(
-            test.run_with_stdlib(test_path, os.path.basename(test_path))
+            util.run_with_stdlib(test_path, os.path.basename(test_path))
             )
 
 
@@ -85,14 +87,14 @@ def create_cases():
     for test_path in test_paths:
         if test_path.replace("\\","/") not in KNOWN_TO_FAIL:
             test_cases.append(
-                test.compile_and_run_file_test(
+                util.compile_and_run_file_test(
                   test_path, 
                   os.path.basename(test_path)
                   )
                 )
         else:
             test_cases.append(
-                test.compile_and_run_file_failing_test(
+                util.compile_and_run_file_failing_test(
                   test_path, 
                   os.path.basename(test_path)
                   )
