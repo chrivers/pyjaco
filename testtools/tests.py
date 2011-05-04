@@ -1,6 +1,7 @@
 """module which findes tests from the test directory and convert them to
 the unittest framwork classes."""
 
+import testtools.env_tests as env_tests
 import testtools.util as util
 import glob
 import os
@@ -65,7 +66,9 @@ KNOWN_TO_FAIL = [
 def create_cases():
     """Helper function to find all tests in the test folders
     and wraping them into the corect test class"""
-    test_cases = []
+    test_cases = [
+        env_tests.EnviromentTest
+        ]
 
     test_paths = glob.glob("tests/test_*.py")
     test_paths.sort()

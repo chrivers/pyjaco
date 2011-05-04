@@ -14,6 +14,7 @@ class Py2JsTestResult(unittest.TestResult):
     def startTest(self, test):
         super(Py2JsTestResult, self).startTest(test)
         test.reportProgres = self.addProgress
+        test.stop = self.stop
         self.__writer.write(str(test))
         self.__state = "[Error]"
         self.__color = "Red"
