@@ -1,5 +1,6 @@
 import os
 import unittest
+import tempfile
 class EnviromentTest(unittest.TestCase):
     "Testcase that makeshure that the env is up"
     def reportProgres(self):
@@ -8,18 +9,21 @@ class EnviromentTest(unittest.TestCase):
     def stop(self):
       """Should be overloaded by Testresult class"""
 
-    def stop_if_not_equal(self, value1, value2):
-      """If value1!=value2 stop all tests"""
-      if value1 != value2:
-        self.stop()
-      else:
-        self.assertEqual(value1, value2)
-
     def runTest(self):
       """The actual test goes here."""
-      self.stop_if_not_equal(True, os.path.exists("js") or os.path.exists("js.exe"))
+      if os.system(
+          "js --help > %s" % 
+          os.path.join(
+            tempfile.gettempdir(),
+            tempfile.gettempprefix()
+            )
+          ):
+          self.stop()
+          raise RuntimeError("""Can't find the "js" command.""")
       self.reportProgres()
-      self.stop_if_not_equal(True, os.path.exists("py-builtins.js"))
+      if not os.path.exists("py-builtins.js"):
+          self.stop()
+          raise RuntimeError("""Can't find the "py-builtins.js" command.""")
       self.reportProgres()
 
     def __str__(self):
