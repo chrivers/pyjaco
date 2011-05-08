@@ -1,3 +1,4 @@
+"""lists all the tests that is known to fail"""
 KNOWN_TO_FAIL = [
     "tests/basic/nestedclass.py",
     "tests/basic/super.py",

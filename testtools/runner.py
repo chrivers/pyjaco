@@ -1,3 +1,6 @@
+"""\
+The special runners that looks for progres in a test and has nicer out put then
+the original.""" 
 import sys
 if sys.version_info < (2, 7):
     import unittest2 as unittest

@@ -11,12 +11,13 @@ import os
 import posixpath
 
 def get_posix_path(path):
-  heads = []
-  tail = path
-  while tail!='':
-    tail, head = os.path.split(tail)
-    heads.append(head)
-  return posixpath.join(*heads[::-1])
+    """transalets path to a posix path"""
+    heads = []
+    tail = path
+    while tail != '':
+        tail, head = os.path.split(tail)
+        heads.append(head)
+    return posixpath.join(*heads[::-1])
 
 def run_with_stdlib(file_path, file_name=None):
     """Creats a test that runs a js file with the stdlib."""

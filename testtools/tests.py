@@ -11,7 +11,7 @@ import os
 def create_cases():
     """Helper function to find all tests in the test folders
     and wraping them into the corect test class"""
-    
+
     test_cases = unittest.TestSuite()
     test_cases.addTest(
         unittest.TestLoader().loadTestsFromTestCase(
@@ -69,12 +69,15 @@ NOT_KNOWN_TO_FAIL, KNOWN_TO_FAIL = create_cases()
 ALL = unittest.TestSuite((NOT_KNOWN_TO_FAIL, KNOWN_TO_FAIL))
 
 def get_tests(names):
+    """filters out all tests that dont excists in names and 
+    adds them to a new test suit"""
     def flatten(itr):
+        """tryes to flatten out a suit to the indevidual tests"""
         import itertools
         try:
-          return itertools.chain.from_iterable(flatten(item) for item in iter)
+            return itertools.chain.from_iterable(flatten(item) for item in iter)
         except TypeError:
-          return itertools.chain(*itr)
+            return itertools.chain(*itr)
 
     return_suite = unittest.TestSuite()
     return_suite.addTest(
@@ -84,11 +87,11 @@ def get_tests(names):
         )
     for suite in flatten(iter(ALL)):
         test_name = str(suite._tests[0])
-        if filter(lambda name:name in test_name, names):
+        if any(True for name in names if name in test_name):
             return_suite.addTest(suite)
     return return_suite
 
-def load_tests(loader, standard_tests, _search_pattern):
+def load_tests(_loader, standard_tests, _search_pattern):
     """function called by the unittest framework to find tests in a module"""
     suite = standard_tests
     suite.addTests(ALL)
