@@ -2,7 +2,11 @@
 Module that defiens Tool functions and test runers/result for use with
 the unittestlibrary.
 """
-import unittest
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 import os
 import posixpath
 

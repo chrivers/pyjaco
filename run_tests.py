@@ -3,7 +3,6 @@ import optparse
 import testtools.runner
 import testtools.util
 import testtools.tests
-import unittest
 def main():
     option_parser = optparse.OptionParser(
         usage="%prog [options] [filenames]",

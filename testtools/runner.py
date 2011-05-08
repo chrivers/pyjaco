@@ -1,4 +1,8 @@
-import unittest
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 class Py2JsTestResult(unittest.TestResult):
     """Test result class handeling all the results reported by the tests"""
