@@ -1,5 +1,5 @@
-"""module which findes tests from the test directory and convert them to
-the unittest framwork classes."""
+"""module which finds tests from the test directory and convert them to
+the unittest framework classes."""
 
 import testtools.env_tests as env_tests
 import testtools.known_to_fail as known_to_fail
@@ -10,7 +10,7 @@ import os
 
 def create_cases():
     """Helper function to find all tests in the test folders
-    and wraping them into the corect test class"""
+    and wrapping them into the correct test class"""
 
     test_cases = unittest.TestSuite()
     test_cases.addTest(
@@ -69,10 +69,10 @@ NOT_KNOWN_TO_FAIL, KNOWN_TO_FAIL = create_cases()
 ALL = unittest.TestSuite((NOT_KNOWN_TO_FAIL, KNOWN_TO_FAIL))
 
 def get_tests(names):
-    """filters out all tests that dont excists in names and 
+    """filters out all tests that don't exists in names and 
     adds them to a new test suit"""
     def flatten(itr):
-        """tryes to flatten out a suit to the indevidual tests"""
+        """trys to flatten out a suit to the individual tests"""
         import itertools
         try:
             return itertools.chain.from_iterable(flatten(item) for item in iter)

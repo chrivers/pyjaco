@@ -1,6 +1,6 @@
 """
-Module that defiens Tool functions and test runers/result for use with
-the unittestlibrary.
+Module that defines Tool functions and test runners/result for use with
+the unittest library.
 """
 import sys
 if sys.version_info < (2, 7):
@@ -11,7 +11,7 @@ import os
 import posixpath
 
 def get_posix_path(path):
-    """transalets path to a posix path"""
+    """translates path to a posix path"""
     heads = []
     tail = path
     while tail != '':
@@ -20,7 +20,7 @@ def get_posix_path(path):
     return posixpath.join(*heads[::-1])
 
 def run_with_stdlib(file_path, file_name=None):
-    """Creats a test that runs a js file with the stdlib."""
+    """Creates a test that runs a js file with the stdlib."""
     file_name = file_name if file_name else file_path
 
     class TestStdLib(unittest.TestCase):
@@ -33,7 +33,7 @@ def run_with_stdlib(file_path, file_name=None):
             "name": file_name,
         }
         def reportProgres(self):
-            """Should be overloaded by the Testresult class."""
+            """Should be overloaded by the test result class."""
     
         def runTest(self):
             """The actual test goes here."""
@@ -49,11 +49,11 @@ def run_with_stdlib(file_path, file_name=None):
     return TestStdLib
 
 def compile_file_test(file_path, file_name=None):
-    """Creates a test that tests if a file can be compield by python"""
+    """Creates a test that tests if a file can be compiled by python"""
     file_name = file_name if file_name else file_path
     
     class CompileFile(unittest.TestCase):
-        """Test if a file can be compield by python."""
+        """Test if a file can be compiled by python."""
 
         templ = {
             "py_path": file_path, 
@@ -63,7 +63,7 @@ def compile_file_test(file_path, file_name=None):
             "name": file_name,
         }
         def reportProgres(self):
-            """Should be overloaded by the Testresult class"""
+            """Should be overloaded by the test result class"""
 
         def runTest(self):
             """The actual test goes here."""
@@ -84,7 +84,7 @@ def compile_file_test(file_path, file_name=None):
 
 
 def compile_and_run_file_test(file_path, file_name=None):
-    """Creats a test that compiles and runs the python file as js"""
+    """Creates a test that compiles and runs the python file as js"""
     file_name = file_name if file_name else file_path
 
     class CompileAndRunFile(unittest.TestCase):
@@ -101,7 +101,7 @@ def compile_and_run_file_test(file_path, file_name=None):
         "name": file_name,
         }
         def reportProgres(self):
-            """Should be overloaded by Testresult class"""
+            """Should be overloaded by the test result class"""
 
         def runTest(self):
             """The actual test goes here."""

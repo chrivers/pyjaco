@@ -1,6 +1,6 @@
-"""
-  Includes tests that check the setup for the tests.
-  If the library is compiled and if there is a js interpreter.
+"""\
+Includes tests that check the setup for the tests.
+If the library is compiled and if there is a js interpreter.
 """
 import os
 import sys
@@ -10,12 +10,12 @@ else:
     import unittest
 import tempfile
 class EnviromentTest(unittest.TestCase):
-    "Testcase that makeshure that the env is up"
+    "Test case that make sure that the environment is up and working"
     def reportProgres(self):
-        """Should be overloaded by Testresult class"""
+        """Should be overloaded by the test result class"""
     
     def stop(self):
-        """Should be overloaded by Testresult class"""
+        """Should be overloaded by the test result class"""
 
     def runTest(self):
         """The actual test goes here."""

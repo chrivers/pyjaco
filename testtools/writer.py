@@ -1,7 +1,7 @@
-"""module with the Writer class that helps write colorfull output"""
+"""module with the Writer class that helps write colorful output"""
 
 class Writer(object):
-    "Class wich helps to print in color and with alignment and width"    
+    "Class which helps to print in color and with alignment and width"    
 
     color_templates = (
         ("Black"       , "0;30"),
@@ -64,7 +64,7 @@ class Writer(object):
         """
 
     def normal_write(self, text, color="", align="left", width=80):
-        "ignores color but uses alignment and width"
+        "Ignores color but uses alignment and width"
         _color = color
         if align == "right":
             if self._write_pos + len(text) > width:

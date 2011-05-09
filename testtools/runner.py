@@ -1,5 +1,5 @@
 """\
-The special runners that looks for progres in a test and has nicer out put then
+The special runners that looks for progress in a test and has nicer out put then
 the original.""" 
 import sys
 if sys.version_info < (2, 7):
@@ -8,7 +8,7 @@ else:
     import unittest
 
 class Py2JsTestResult(unittest.TestResult):
-    """Test result class handeling all the results reported by the tests"""
+    """Test result class, handling all the results reported by the tests"""
 
     def __init__(self, *a, **k):
         import testtools.writer
