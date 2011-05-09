@@ -1,6 +1,6 @@
 """\
-The special runners that looks for progress in a test and has nicer out put then
-the original.""" 
+The special runners that look for progress in a test and have nicer output than
+the original."""
 import sys
 if sys.version_info < (2, 7):
     import unittest2 as unittest
@@ -53,7 +53,7 @@ class Py2JsTestResult(unittest.TestResult):
         super(Py2JsTestResult, self).addFailure(test, err)
         self.__color = "Red"
         self.__state = "[FAIL]"
-    
+
     def stopTestRun(self):
         super(Py2JsTestResult, self).stopTestRun()
         self.__writer.write("\n")

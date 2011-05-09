@@ -10,17 +10,17 @@ else:
     import unittest
 import tempfile
 class EnviromentTest(unittest.TestCase):
-    "Test case that make sure that the environment is up and working"
+    "Test case that makes sure that the environment is up and working"
     def reportProgres(self):
         """Should be overloaded by the test result class"""
-    
+
     def stop(self):
         """Should be overloaded by the test result class"""
 
     def runTest(self):
         """The actual test goes here."""
         if os.system(
-            "js --help > %s" % 
+            "js --help > %s" %
             os.path.join(
                 tempfile.gettempdir(),
                 tempfile.gettempprefix()
