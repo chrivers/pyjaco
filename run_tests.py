@@ -1,4 +1,4 @@
-#! python
+#! /usr/bin/python
 
 import optparse
 import testtools.runner
