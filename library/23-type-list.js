@@ -62,7 +62,7 @@ list.prototype.__delitem__ = function(index) {
 
 list.prototype.count = tuple.prototype.count;
 
-list.prototype.index = function(value, start, end) {
+list.prototype.index = Function(function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -85,7 +85,7 @@ list.prototype.index = function(value, start, end) {
     }
 
     throw new py_builtins.ValueError("list.index(x): x not in list");
-};
+});
 
 list.prototype.remove = Function(function(value) {
     this.__delitem__(this.index(value));
