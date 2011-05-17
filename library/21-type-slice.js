@@ -24,7 +24,7 @@ slice.prototype.__str__ = function() {
     return str("slice(" + this.start + ", " + this.stop + ", " + this.step + ")");
 };
 
-slice.prototype.indices = function(n) {
+slice.prototype.indices = Function(function(n) {
     var start = this.start;
     if (start == null)
         start = 0;
@@ -43,5 +43,4 @@ slice.prototype.indices = function(n) {
     if (step == null)
         step = 1;
     return tuple.__call__([start, stop, step]);
-};
-
+});
