@@ -1,23 +1,16 @@
 /* Python 'tuple' type */
 
-function tuple(seq) {
-    if (arguments.length <= 1) {
-        return new _tuple(seq);
-    } else {
+var tuple = __inherit(object);
+
+tuple.__name__ = 'tuple';
+tuple.prototype.__class__ = tuple;
+tuple.prototype.MARK = "tuple";
+
+tuple.prototype.__init__ = function(seq) {
+
+    if (arguments.length > 1) {
         throw new py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
-    }
-}
-
-function _tuple(seq) {
-    this.__init__(seq);
-}
-
-_tuple.__name__ = 'tuple';
-_tuple.prototype.__class__ = _tuple;
-_tuple.prototype.MARK = "tuple";
-
-_tuple.prototype.__init__ = function(seq) {
-    if (!defined(seq)) {
+    } else if (!defined(seq)) {
         this._items = [];
         this._len = 0;
     } else {
@@ -26,7 +19,7 @@ _tuple.prototype.__init__ = function(seq) {
     }
 };
 
-_tuple.prototype.__str__ = function () {
+tuple.prototype.__str__ = function () {
     if (this.__len__() == 1) {
         return str.__call__("(" + this._items[0] + ",)");
     } else {
@@ -34,7 +27,7 @@ _tuple.prototype.__str__ = function () {
     }
 };
 
-_tuple.prototype.__eq__ = function (other) {
+tuple.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
             return false;
@@ -50,11 +43,11 @@ _tuple.prototype.__eq__ = function (other) {
         return false;
 };
 
-_tuple.prototype.toString = function () {
+tuple.prototype.toString = function () {
     return js(this.__str__());
 };
 
-_tuple.prototype._js_ = function () {
+tuple.prototype._js_ = function () {
     var items = [];
 
     iterate(iter.__call__(this), function(item) {
@@ -64,7 +57,7 @@ _tuple.prototype._js_ = function () {
     return items;
 };
 
-_tuple.prototype.__hash__ = function () {
+tuple.prototype.__hash__ = function () {
     var value = 0x345678;
     var length = this.__len__();
 
@@ -80,7 +73,7 @@ _tuple.prototype.__hash__ = function () {
     return value;
 };
 
-_tuple.prototype.__len__ = function() {
+tuple.prototype.__len__ = function() {
     if (this._len == -1) {
         var count = 0;
 
@@ -94,11 +87,11 @@ _tuple.prototype.__len__ = function() {
         return this._len;
 };
 
-_tuple.prototype.__iter__ = function() {
+tuple.prototype.__iter__ = function() {
     return iter.__call__(this._items);
 };
 
-_tuple.prototype.__contains__ = function(item) {
+tuple.prototype.__contains__ = function(item) {
     for (var index in this._items) {
         if (py_builtins.eq(item, this._items[index])) {
             return true;
@@ -108,9 +101,9 @@ _tuple.prototype.__contains__ = function(item) {
     return false;
 };
 
-_tuple.prototype.__getitem__ = function(index) {
+tuple.prototype.__getitem__ = function(index) {
     var seq;
-    if (isinstance(index, _slice)) {
+    if (isinstance(index, slice)) {
         var s = index;
         var inds = s.indices(len(this));
         var start = inds.__getitem__(0);
@@ -120,7 +113,7 @@ _tuple.prototype.__getitem__ = function(index) {
         for (var i = start; i < stop; i += step) {
             seq.push(this.__getitem__(i));
         }
-        return new this.__class__(seq);
+        return this.__class__.__call__(seq);
     } else if ((index >= 0) && (index < len(this)))
         return this._items[index];
     else if ((index < 0) && (index >= -len(this)))
@@ -129,15 +122,15 @@ _tuple.prototype.__getitem__ = function(index) {
         throw new py_builtins.IndexError("list assignment index out of range");
 };
 
-_tuple.prototype.__setitem__ = function(index, value) {
+tuple.prototype.__setitem__ = function(index, value) {
     throw new py_builtins.TypeError("'tuple' object doesn't support item assignment");
 };
 
-_tuple.prototype.__delitem__ = function(index) {
+tuple.prototype.__delitem__ = function(index) {
     throw new py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
-_tuple.prototype.count = function(value) {
+tuple.prototype.count = function(value) {
     var count = 0;
 
     for (var index in this._items) {
@@ -149,7 +142,7 @@ _tuple.prototype.count = function(value) {
     return count;
 };
 
-_tuple.prototype.index = function(value, start, end) {
+tuple.prototype.index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
