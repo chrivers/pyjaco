@@ -1,18 +1,10 @@
 /* Python 'dict' type */
 
-function dict(args) {
-    return new _dict(args);
-}
+var dict = __inherit(object);
 
-function _dict(args) {
-    this.__init__(args);
-}
+dict.prototype.MARK = "dict";
 
-_dict.__name__ = 'dict';
-_dict.prototype.__class__ = _dict;
-_dict.prototype.MARK = "iter";
-
-_dict.prototype.__init__ = function(args) {
+dict.prototype.__init__ = function(args) {
     var items;
     var key;
     var value;
@@ -34,7 +26,10 @@ _dict.prototype.__init__ = function(args) {
     }
 };
 
-_dict.prototype.__str__ = function () {
+dict.__name__ = 'dict';
+dict.prototype.__class__ = dict;
+
+dict.prototype.__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
@@ -44,11 +39,11 @@ _dict.prototype.__str__ = function () {
     return str.__call__("{" + strings.join(", ") + "}");
 };
 
-_dict.prototype.toString = function () {
+dict.prototype.toString = function () {
     return js(this.__str__());
 };
 
-_dict.prototype._js_ = function () {
+dict.prototype._js_ = function () {
     var items = {};
 
     var _this_dict = this; // so that we can access it from within the closure:
@@ -59,11 +54,11 @@ _dict.prototype._js_ = function () {
     return items;
 };
 
-_dict.prototype.__hash__ = function () {
+dict.prototype.__hash__ = function () {
     throw new py_builtins.TypeError("unhashable type: 'dict'");
 };
 
-_dict.prototype.__len__ = function() {
+dict.prototype.__len__ = function() {
     var count = 0;
 
     for (var key in this._items) {
@@ -73,15 +68,15 @@ _dict.prototype.__len__ = function() {
     return count;
 };
 
-_dict.prototype.__iter__ = function() {
+dict.prototype.__iter__ = function() {
     return iter.__call__(this.keys());
 };
 
-_dict.prototype.__contains__ = function(key) {
+dict.prototype.__contains__ = function(key) {
     return defined(this._items[key]);
 };
 
-_dict.prototype.__getitem__ = function(key) {
+dict.prototype.__getitem__ = function(key) {
     var value = this._items[key];
 
     if (defined(value)) {
@@ -91,11 +86,11 @@ _dict.prototype.__getitem__ = function(key) {
     }
 };
 
-_dict.prototype.__setitem__ = function(key, value) {
+dict.prototype.__setitem__ = function(key, value) {
     this._items[key] = value;
 };
 
-_dict.prototype.__delitem__ = function(key) {
+dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
         delete this._items[key];
     } else {
@@ -103,7 +98,7 @@ _dict.prototype.__delitem__ = function(key) {
     }
 };
 
-_dict.prototype.get = function(key, value) {
+dict.prototype.get = function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -117,7 +112,7 @@ _dict.prototype.get = function(key, value) {
     }
 };
 
-_dict.prototype.items = function() {
+dict.prototype.items = function() {
     var items = [];
 
     for (var key in this._items) {
@@ -127,17 +122,17 @@ _dict.prototype.items = function() {
     return items;
 };
 
-_dict.prototype.keys = function() {
-    var keys = [];
+dict.prototype.keys = function() {
+    var keys = list.__call__();
 
     for (var key in this._items) {
-        keys.push(key);
+        keys.append(key);
     }
 
     return keys;
 };
 
-_dict.prototype.values = function() {
+dict.prototype.values = function() {
     var values = [];
 
     for (var key in this._items) {
@@ -147,19 +142,19 @@ _dict.prototype.values = function() {
     return values;
 };
 
-_dict.prototype.update = function(other) {
+dict.prototype.update = function(other) {
     for (var key in other) {
         this._items[key] = other[key];
     }
 };
 
-_dict.prototype.clear = function() {
+dict.prototype.clear = function() {
     for (var key in this._items) {
         delete this._items[key];
     }
 };
 
-_dict.prototype.pop = function(key, value) {
+dict.prototype.pop = function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -175,7 +170,7 @@ _dict.prototype.pop = function(key, value) {
     return _value;
 };
 
-_dict.prototype.popitem = function() {
+dict.prototype.popitem = function() {
     var _key;
 
     for (var key in this._items) {
