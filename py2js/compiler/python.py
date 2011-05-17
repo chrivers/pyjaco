@@ -151,9 +151,7 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Delete(self, node):
         return node
 
-    def visit_AssignSimple(self, left, right):
-        target = left
-        value  = right
+    def visit_AssignSimple(self, target, value):
         if isinstance(target, (ast.Tuple, ast.List)):
             dummy = self.new_dummy()
             js = ["var %s = %s;" % (dummy, value)]
