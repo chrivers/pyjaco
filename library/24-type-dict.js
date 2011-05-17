@@ -98,7 +98,7 @@ dict.prototype.__delitem__ = function(key) {
     }
 };
 
-dict.prototype.get = function(key, value) {
+dict.prototype.get = Function(function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -110,9 +110,9 @@ dict.prototype.get = function(key, value) {
             return null;
         }
     }
-};
+});
 
-dict.prototype.items = function() {
+dict.prototype.items = Function(function() {
     var items = [];
 
     for (var key in this._items) {
@@ -120,9 +120,9 @@ dict.prototype.items = function() {
     }
 
     return items;
-};
+});
 
-dict.prototype.keys = function() {
+dict.prototype.keys = Function(function() {
     var keys = list.__call__();
 
     for (var key in this._items) {
@@ -130,9 +130,9 @@ dict.prototype.keys = function() {
     }
 
     return keys;
-};
+});
 
-dict.prototype.values = function() {
+dict.prototype.values = Function(function() {
     var values = [];
 
     for (var key in this._items) {
@@ -140,21 +140,21 @@ dict.prototype.values = function() {
     }
 
     return values;
-};
+});
 
-dict.prototype.update = function(other) {
+dict.prototype.update = Function(function(other) {
     for (var key in other) {
         this._items[key] = other[key];
     }
-};
+});
 
-dict.prototype.clear = function() {
+dict.prototype.clear = Function(function() {
     for (var key in this._items) {
         delete this._items[key];
     }
-};
+});
 
-dict.prototype.pop = function(key, value) {
+dict.prototype.pop = Function(function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -168,9 +168,9 @@ dict.prototype.pop = function(key, value) {
     }
 
     return _value;
-};
+});
 
-dict.prototype.popitem = function() {
+dict.prototype.popitem = Function(function() {
     var _key;
 
     for (var key in this._items) {
@@ -183,5 +183,4 @@ dict.prototype.popitem = function() {
     } else {
         throw new py_builtins.KeyError("popitem(): dictionary is empty");
     }
-};
-
+});
