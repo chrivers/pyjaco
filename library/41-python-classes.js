@@ -32,7 +32,7 @@ var to_array = function to_array(a){return Array.prototype.slice.call(a,0);};
 function instancemethod(cls, fn) {
     var meta = function $_instancemethod() {
         /*
-        if (!__builtins__.isinstance(arguments[0], cls))
+        if (!__builtins__.isinstance.__call__(arguments[0], cls))
             throw new Error('TypeError: unbound method '+fn.__name__+'() must be called with '+cls.__name__+' instance as the first argument');
         */
         return fn.apply(null, arguments);
@@ -50,7 +50,7 @@ function instancemethod(cls, fn) {
     meta.__get__ = function $_get(self, cls) {
         cls = cls||self.__class__;
         /*
-        if (!__builtins__.isinstance(self, cls))
+        if (!__builtins__.isinstance.__call__(self, cls))
             throw new Error('idk what just happened... invalid self while binding instancemethod');
         */
         var m2 = function() {
