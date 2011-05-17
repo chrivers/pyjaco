@@ -53,7 +53,7 @@ str.prototype.__hash__ = function () {
     var length = this.__len__();
 
     for (var index in this._obj) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ hash(this._obj[index]);
+        value = ((1000003*value) & 0xFFFFFFFF) ^ this._obj[index];
         value = value ^ length;
     }
 
