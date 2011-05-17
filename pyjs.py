@@ -14,7 +14,7 @@ def main():
                       dest="output",
                       help="write output to OUTPUT")
 
-    parser.add_option("--include-builtins",
+    parser.add_option("-i", "--include-builtins",
                       action="store_true",
                       dest="include_builtins",
                       default=False,
