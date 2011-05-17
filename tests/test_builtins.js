@@ -23,7 +23,7 @@ function raises(exc, code) {
 }
 
 function test_dict() {
-    var d = dict();
+    var d = dict.__call__();
 
     test(function() { return str.__call__(d) == '{}' });
     test(function() { return len(d) == 0 });
@@ -53,27 +53,27 @@ function test_dict() {
     test(function() { return d.pop(0) == 2 });
     test(function() { return len(d) == 0 });
 
-    d = dict({1: 6, 2: 8});
+    d = dict.__call__({1: 6, 2: 8});
     test(function() { return str.__call__(d) == '{1: 6, 2: 8}' });
-    d = dict(tuple([tuple([1, 6]), tuple([2, 8])]));
+    d = dict.__call__(tuple.__call__([tuple.__call__([1, 6]), tuple.__call__([2, 8])]));
     test(function() { return str.__call__(d) == '{1: 6, 2: 8}' });
-    d = dict(tuple([tuple([1, "x"]), tuple([2, "y"])]));
+    d = dict.__call__(tuple.__call__([tuple.__call__([1, "x"]), tuple.__call__([2, "y"])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{1: x, 2: y}' });
 
-    d = dict(tuple([tuple([1, str.__call__("x")]), tuple([2, str.__call__("y")])]));
+    d = dict.__call__(tuple.__call__([tuple.__call__([1, str.__call__("x")]), tuple.__call__([2, str.__call__("y")])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{1: x, 2: y}' });
 
-    d = dict(tuple([tuple(["a", str.__call__("x")]), tuple(["b", str.__call__("y")])]));
+    d = dict.__call__(tuple.__call__([tuple.__call__(["a", str.__call__("x")]), tuple.__call__(["b", str.__call__("y")])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{a: x, b: y}' });
 
-    d = dict(tuple([tuple([str.__call__("a"), str.__call__("x")]), tuple([str.__call__("b"), str.__call__("y")])]));
+    d = dict.__call__(tuple.__call__([tuple.__call__([str.__call__("a"), str.__call__("x")]), tuple.__call__([str.__call__("b"), str.__call__("y")])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{a: x, b: y}' });
 
-    d = dict(list.__call__([list.__call__([str.__call__("a"), str.__call__("x")]), list.__call__([str.__call__("b"), str.__call__("y")])]));
+    d = dict.__call__(list.__call__([list.__call__([str.__call__("a"), str.__call__("x")]), list.__call__([str.__call__("b"), str.__call__("y")])]));
     // This will change when repr() is implemented:
     test(function() { return str.__call__(d) == '{a: x, b: y}' });
 }
@@ -86,7 +86,7 @@ function test_iter() {
     test(function() { return i.next() == 1 });
     test(function() { return i.next() == 2 });
 
-    var d = dict({0: 1, 1: 2, 2: 3});
+    var d = dict.__call__({0: 1, 1: 2, 2: 3});
     var i = iter.__call__(d);
 
     test(function() { return i.next() == 0 });
@@ -95,7 +95,7 @@ function test_iter() {
 
     raises(py_builtins.StopIteration, function() { i.next() });
 
-    var t = tuple([7, 3, 5]);
+    var t = tuple.__call__([7, 3, 5]);
     var i = iter.__call__(t);
 
     test(function() { return i.next() == 7 });
@@ -125,9 +125,9 @@ function test_iter() {
 }
 
 function test_tuple() {
-    raises(py_builtins.TypeError, function() { tuple(1, 2, 3) });
+    raises(py_builtins.TypeError, function() { tuple.__call__(1, 2, 3) });
 
-    var t = tuple();
+    var t = tuple.__call__();
 
     test(function() { return str.__call__(t) == '()' });
     test(function() { return len(t) == 0 });
@@ -143,12 +143,12 @@ function test_tuple() {
 
     test(function() { return hash(t) == 3430008 });
 
-    var t = tuple([1]);
+    var t = tuple.__call__([1]);
 
     test(function() { return str.__call__(t) == '(1,)' });
     test(function() { return len(t) == 1 });
 
-    var t = tuple([3, 4, 5, 5, 4, 4, 1]);
+    var t = tuple.__call__([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str.__call__(t) == '(3, 4, 5, 5, 4, 4, 1)' });
     test(function() { return len(t) == 7 });
@@ -181,19 +181,19 @@ function test_tuple() {
 
     test(function() { return hash(t) == -2017591611 });
 
-    t = tuple([1, 2, 3, 4]);
+    t = tuple.__call__([1, 2, 3, 4]);
     test(function() { return str.__call__(t) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(tuple.__call__(t)) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list.__call__(t)) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(t))) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list.__call__(iter.__call__(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list.__call__(tuple(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(list.__call__(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(tuple.__call__(tuple.__call__(t))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list.__call__(tuple.__call__(t))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple.__call__(list.__call__(t))) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list.__call__(list.__call__(t))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' })
-    test(function() { return str.__call__(list.__call__(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' })
-    test(function() { return str.__call__(tuple(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(tuple.__call__(t)))) == '(1, 2, 3, 4)' })
+    test(function() { return str.__call__(list.__call__(iter.__call__(tuple.__call__(t)))) == '[1, 2, 3, 4]' })
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list.__call__(iter.__call__(list.__call__(t)))) == '[1, 2, 3, 4]' })
 }
 
@@ -290,17 +290,17 @@ function test_list() {
 
     t = list.__call__([1, 2, 3, 4]);
     test(function() { return str.__call__(t) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(tuple.__call__(t)) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list.__call__(t)) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter.__call__(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(t))) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list.__call__(iter.__call__(t))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(tuple(t))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list.__call__(tuple(t))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(list.__call__(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(tuple.__call__(tuple.__call__(t))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list.__call__(tuple.__call__(t))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple.__call__(list.__call__(t))) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list.__call__(list.__call__(t))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter.__call__(tuple(t)))) == '(1, 2, 3, 4)' });
-    test(function() { return str.__call__(list.__call__(iter.__call__(tuple(t)))) == '[1, 2, 3, 4]' });
-    test(function() { return str.__call__(tuple(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(tuple.__call__(t)))) == '(1, 2, 3, 4)' });
+    test(function() { return str.__call__(list.__call__(iter.__call__(tuple.__call__(t)))) == '[1, 2, 3, 4]' });
+    test(function() { return str.__call__(tuple.__call__(iter.__call__(list.__call__(t)))) == '(1, 2, 3, 4)' });
     test(function() { return str.__call__(list.__call__(iter.__call__(list.__call__(t)))) == '[1, 2, 3, 4]' });
 
     t = list.__call__([]);
@@ -328,19 +328,19 @@ function test_list() {
     test(function() { return str.__call__(t) == '[]' });
     raises(py_builtins.ValueError, function() { t.remove(3) });
 
-    var t1 = tuple([1, 2]);
-    var t2 = tuple([1, 3]);
+    var t1 = tuple.__call__([1, 2]);
+    var t2 = tuple.__call__([1, 3]);
     t = list.__call__([t1, t2]);
     test(function() { return str.__call__(t) == '[(1, 2), (1, 3)]' });
     test(function() { return t.index(t1) == 0 });
     test(function() { return t.index(t2) == 1 });
-    test(function() { return t.index(tuple([1, 2])) == 0 });
-    test(function() { return t.index(tuple([1, 3])) == 1 });
+    test(function() { return t.index(tuple.__call__([1, 2])) == 0 });
+    test(function() { return t.index(tuple.__call__([1, 3])) == 1 });
 }
 
 function test_range() {
     // Test tuple/list conversion from range()
-    var t = tuple(range(5));
+    var t = tuple.__call__(range(5));
     test(function() { return str.__call__(t) == '(0, 1, 2, 3, 4)' });
     var t = list.__call__(range(5));
     test(function() { return str.__call__(t) == '[0, 1, 2, 3, 4]' });
@@ -404,34 +404,34 @@ function test_isinstance() {
     test(function() { return isinstance([], Number) == false });
     test(function() { return isinstance([], String) == false });
 
-    test(function() { return isinstance([], tuple()) == false });
+    test(function() { return isinstance([], tuple.__call__()) == false });
 
-    test(function() { return isinstance([], tuple([Number, Array])) == true });
-    test(function() { return isinstance([], tuple([Array, Number])) == true });
+    test(function() { return isinstance([], tuple.__call__([Number, Array])) == true });
+    test(function() { return isinstance([], tuple.__call__([Array, Number])) == true });
 
-    test(function() { return isinstance([], tuple([Number, String])) == false });
+    test(function() { return isinstance([], tuple.__call__([Number, String])) == false });
 
-    var t = tuple([1, 2, 3]);
+    var t = tuple.__call__([1, 2, 3]);
 
     test(function() { return isinstance(t, Array) == false });
     test(function() { return isinstance(t, Number) == false });
     test(function() { return isinstance(t, String) == false });
 
-    test(function() { return isinstance(t, tuple()) == false });
+    test(function() { return isinstance(t, tuple.__call__()) == false });
 
-    test(function() { return isinstance(t, tuple([Number, Array])) == false });
-    test(function() { return isinstance(t, tuple([Array, Number])) == false });
+    test(function() { return isinstance(t, tuple.__call__([Number, Array])) == false });
+    test(function() { return isinstance(t, tuple.__call__([Array, Number])) == false });
 
-    test(function() { return isinstance(t, tuple([Number, String])) == false });
+    test(function() { return isinstance(t, tuple.__call__([Number, String])) == false });
 
-    test(function() { return isinstance(t, _tuple) == true });
-    test(function() { return isinstance(t, _list) == false });
-    test(function() { return isinstance(t, _dict) == false });
+    test(function() { return isinstance(t, tuple) == true });
+    test(function() { return isinstance(t, list) == false });
+    test(function() { return isinstance(t, dict) == false });
 
-    test(function() { return isinstance(t, tuple([Number, _tuple])) == true });
-    test(function() { return isinstance(t, tuple([_tuple, Number])) == true });
+    test(function() { return isinstance(t, tuple.__call__([Number, tuple])) == true });
+    test(function() { return isinstance(t, tuple.__call__([tuple, Number])) == true });
 
-    test(function() { return isinstance(t, tuple([_list, _dict])) == false });
+    test(function() { return isinstance(t, tuple.__call__([list, dict])) == false });
 }
 
 function test_exceptions() {
@@ -497,22 +497,22 @@ function test_exceptions() {
 }
 
 function test_slice() {
-    var s = slice(3);
+    var s = slice.__call__(3);
     test(function() { return s.start == null });
     test(function() { return s.stop == 3 });
     test(function() { return s.step == null });
-    test(function() { return s.indices(10).__eq__(tuple([0, 3, 1])) });
-    test(function() { return s.indices(3).__eq__(tuple([0, 3, 1])) });
-    test(function() { return s.indices(2).__eq__(tuple([0, 2, 1])) });
-    test(function() { return s.indices(1).__eq__(tuple([0, 1, 1])) });
-    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+    test(function() { return s.indices(10).__eq__(tuple.__call__([0, 3, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple.__call__([0, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple.__call__([0, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple.__call__([0, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple.__call__([0, 0, 1])) });
 
-    var t = tuple([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9, 10])) });
-    t = tuple([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
-    t = tuple([8]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
+    var t = tuple.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8, 9, 10])) });
+    t = tuple.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8, 9])) });
+    t = tuple.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8])) });
     t = list.__call__([8, 9, 10, 11, 12]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9, 10])) });
     t = list.__call__([8, 9]);
@@ -520,22 +520,22 @@ function test_slice() {
     t = list.__call__([8]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([8])) });
 
-    s = slice(null);
+    s = slice.__call__(null);
     test(function() { return s.start == null });
     test(function() { return s.stop == null });
     test(function() { return s.step == null });
-    test(function() { return s.indices(10).__eq__(tuple([0, 10, 1])) });
-    test(function() { return s.indices(3).__eq__(tuple([0, 3, 1])) });
-    test(function() { return s.indices(2).__eq__(tuple([0, 2, 1])) });
-    test(function() { return s.indices(1).__eq__(tuple([0, 1, 1])) });
-    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+    test(function() { return s.indices(10).__eq__(tuple.__call__([0, 10, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple.__call__([0, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple.__call__([0, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple.__call__([0, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple.__call__([0, 0, 1])) });
 
-    var t = tuple([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9, 10, 11, 12])) });
-    t = tuple([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8, 9])) });
-    t = tuple([8]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([8])) });
+    var t = tuple.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8, 9, 10, 11, 12])) });
+    t = tuple.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8, 9])) });
+    t = tuple.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([8])) });
     t = list.__call__([8, 9, 10, 11, 12]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([8, 9, 10, 11, 12])) });
     t = list.__call__([8, 9]);
@@ -543,22 +543,22 @@ function test_slice() {
     t = list.__call__([8]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([8])) });
 
-    s = slice(1, 3);
+    s = slice.__call__(1, 3);
     test(function() { return s.start == 1 });
     test(function() { return s.stop == 3 });
     test(function() { return s.step == null });
-    test(function() { return s.indices(10).__eq__(tuple([1, 3, 1])) });
-    test(function() { return s.indices(3).__eq__(tuple([1, 3, 1])) });
-    test(function() { return s.indices(2).__eq__(tuple([1, 2, 1])) });
-    test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
-    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+    test(function() { return s.indices(10).__eq__(tuple.__call__([1, 3, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple.__call__([1, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple.__call__([1, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple.__call__([1, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple.__call__([0, 0, 1])) });
 
-    t = tuple([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([9, 10])) });
-    t = tuple([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
-    t = tuple([8]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = tuple.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([9, 10])) });
+    t = tuple.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([9])) });
+    t = tuple.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([])) });
     t = list.__call__([8, 9, 10, 11, 12]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([9, 10])) });
     t = list.__call__([8, 9]);
@@ -566,24 +566,24 @@ function test_slice() {
     t = list.__call__([8]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
-    s = slice(1, 10, 2);
+    s = slice.__call__(1, 10, 2);
     test(function() { return s.start == 1 });
     test(function() { return s.stop == 10 });
     test(function() { return s.step == 2 });
-    test(function() { return s.indices(10).__eq__(tuple([1, 10, 2])) });
-    test(function() { return s.indices(3).__eq__(tuple([1, 3, 2])) });
-    test(function() { return s.indices(2).__eq__(tuple([1, 2, 2])) });
-    test(function() { return s.indices(1).__eq__(tuple([1, 1, 2])) });
-    test(function() { return s.indices(0).__eq__(tuple([0, 0, 2])) });
+    test(function() { return s.indices(10).__eq__(tuple.__call__([1, 10, 2])) });
+    test(function() { return s.indices(3).__eq__(tuple.__call__([1, 3, 2])) });
+    test(function() { return s.indices(2).__eq__(tuple.__call__([1, 2, 2])) });
+    test(function() { return s.indices(1).__eq__(tuple.__call__([1, 1, 2])) });
+    test(function() { return s.indices(0).__eq__(tuple.__call__([0, 0, 2])) });
 
-    t = tuple([8, 9, 10, 11, 12, 13, 14]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([9, 11, 13])) });
-    t = tuple([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([9, 11])) });
-    t = tuple([8, 9, 10]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([9])) });
-    t = tuple([8]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = tuple.__call__([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([9, 11, 13])) });
+    t = tuple.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([9, 11])) });
+    t = tuple.__call__([8, 9, 10]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([9])) });
+    t = tuple.__call__([8]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([])) });
     t = list.__call__([8, 9, 10, 11, 12, 13, 14]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([9, 11, 13])) });
     t = list.__call__([8, 9, 10, 11, 12]);
@@ -593,27 +593,27 @@ function test_slice() {
     t = list.__call__([8]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
-    s = slice(4, 6, 1);
+    s = slice.__call__(4, 6, 1);
     test(function() { return s.start == 4 });
     test(function() { return s.stop == 6 });
     test(function() { return s.step == 1 });
-    test(function() { return s.indices(10).__eq__(tuple([4, 6, 1])) });
-    test(function() { return s.indices(6).__eq__(tuple([4, 6, 1])) });
-    test(function() { return s.indices(5).__eq__(tuple([4, 5, 1])) });
-    test(function() { return s.indices(4).__eq__(tuple([4, 4, 1])) });
-    test(function() { return s.indices(3).__eq__(tuple([3, 3, 1])) });
-    test(function() { return s.indices(2).__eq__(tuple([2, 2, 1])) });
-    test(function() { return s.indices(1).__eq__(tuple([1, 1, 1])) });
-    test(function() { return s.indices(0).__eq__(tuple([0, 0, 1])) });
+    test(function() { return s.indices(10).__eq__(tuple.__call__([4, 6, 1])) });
+    test(function() { return s.indices(6).__eq__(tuple.__call__([4, 6, 1])) });
+    test(function() { return s.indices(5).__eq__(tuple.__call__([4, 5, 1])) });
+    test(function() { return s.indices(4).__eq__(tuple.__call__([4, 4, 1])) });
+    test(function() { return s.indices(3).__eq__(tuple.__call__([3, 3, 1])) });
+    test(function() { return s.indices(2).__eq__(tuple.__call__([2, 2, 1])) });
+    test(function() { return s.indices(1).__eq__(tuple.__call__([1, 1, 1])) });
+    test(function() { return s.indices(0).__eq__(tuple.__call__([0, 0, 1])) });
 
-    t = tuple([8, 9, 10, 11, 12, 13, 14]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([12, 13])) });
-    t = tuple([8, 9, 10, 11, 12]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([12])) });
-    t = tuple([8, 9, 10, 11]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
-    t = tuple([8, 9]);
-    test(function() { return t.__getitem__(s).__eq__(tuple([])) });
+    t = tuple.__call__([8, 9, 10, 11, 12, 13, 14]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([12, 13])) });
+    t = tuple.__call__([8, 9, 10, 11, 12]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([12])) });
+    t = tuple.__call__([8, 9, 10, 11]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([])) });
+    t = tuple.__call__([8, 9]);
+    test(function() { return t.__getitem__(s).__eq__(tuple.__call__([])) });
     t = list.__call__([8, 9, 10, 11, 12, 13, 14]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([12, 13])) });
     t = list.__call__([8, 9, 10, 11, 12]);
@@ -623,27 +623,27 @@ function test_slice() {
     t = list.__call__([8, 9]);
     test(function() { return t.__getitem__(s).__eq__(list.__call__([])) });
 
-    s = slice(0, -20);
+    s = slice.__call__(0, -20);
     test(function() { return s.start == 0 });
     test(function() { return s.stop == -20 });
     test(function() { return s.step == null });
-    test(function() { return s.indices(50).__eq__(tuple([0, 30, 1])) });
-    test(function() { return s.indices(40).__eq__(tuple([0, 20, 1])) });
-    test(function() { return s.indices(21).__eq__(tuple([0, 1, 1])) });
-    test(function() { return s.indices(20).__eq__(tuple([0, 0, 1])) });
+    test(function() { return s.indices(50).__eq__(tuple.__call__([0, 30, 1])) });
+    test(function() { return s.indices(40).__eq__(tuple.__call__([0, 20, 1])) });
+    test(function() { return s.indices(21).__eq__(tuple.__call__([0, 1, 1])) });
+    test(function() { return s.indices(20).__eq__(tuple.__call__([0, 0, 1])) });
 
-    s = slice(-3, -20);
+    s = slice.__call__(-3, -20);
     test(function() { return s.start == -3 });
     test(function() { return s.stop == -20 });
     test(function() { return s.step == null });
-    test(function() { return s.indices(50).__eq__(tuple([47, 30, 1])) });
-    test(function() { return s.indices(40).__eq__(tuple([37, 20, 1])) });
-    test(function() { return s.indices(21).__eq__(tuple([18, 1, 1])) });
-    test(function() { return s.indices(20).__eq__(tuple([17, 0, 1])) });
+    test(function() { return s.indices(50).__eq__(tuple.__call__([47, 30, 1])) });
+    test(function() { return s.indices(40).__eq__(tuple.__call__([37, 20, 1])) });
+    test(function() { return s.indices(21).__eq__(tuple.__call__([18, 1, 1])) });
+    test(function() { return s.indices(20).__eq__(tuple.__call__([17, 0, 1])) });
 }
 
 function test_to_js() {
-    var t = js(tuple([1, "s"]));
+    var t = js(tuple.__call__([1, "s"]));
     test(function() { return t.length == 2 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
@@ -653,18 +653,18 @@ function test_to_js() {
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
 
-    t = js(dict({1: "s", 2: 3}));
+    t = js(dict.__call__({1: "s", 2: 3}));
     test(function() { return t[1] == "s" });
     test(function() { return t[2] == 3 });
 
-    var t = js(tuple([1, "s", dict({1: "s", 2: 3})]));
+    var t = js(tuple.__call__([1, "s", dict.__call__({1: "s", 2: 3})]));
     test(function() { return t.length == 3 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
     test(function() { return t[2][1] == "s" });
     test(function() { return t[2][2] == 3 });
 
-    var t = js(tuple([1, "s", dict({1: "s", 2: 3, "x": tuple([8, 9])})]));
+    var t = js(tuple.__call__([1, "s", dict.__call__({1: "s", 2: 3, "x": tuple.__call__([8, 9])})]));
     test(function() { return t.length == 3 });
     test(function() { return t[0] == 1 });
     test(function() { return t[1] == "s" });
@@ -686,12 +686,12 @@ function test_str() {
     raises(py_builtins.TypeError, function() { s.__setitem__(5, 3) });
     raises(py_builtins.TypeError, function() { s.__delitem__(5) });
 
-    test(function() { return s.__getitem__(slice(3, 6)) == "e t" });
-    test(function() { return s.__getitem__(slice(1, 3)) == "om" });
-    test(function() { return s.__getitem__(slice(1, null)) == "ome testing string" });
-    test(function() { return s.__getitem__(slice(null, 3)) == "som" });
-    test(function() { return s.__getitem__(slice(3)) == "som" });
-    test(function() { return s.__getitem__(slice(1, 8, 2)) == "oets" });
+    test(function() { return s.__getitem__(slice.__call__(3, 6)) == "e t" });
+    test(function() { return s.__getitem__(slice.__call__(1, 3)) == "om" });
+    test(function() { return s.__getitem__(slice.__call__(1, null)) == "ome testing string" });
+    test(function() { return s.__getitem__(slice.__call__(null, 3)) == "som" });
+    test(function() { return s.__getitem__(slice.__call__(3)) == "som" });
+    test(function() { return s.__getitem__(slice.__call__(1, 8, 2)) == "oets" });
 
     test(function() { return s.count("t") == 3 });
     test(function() { return s.count("e") == 2 });
@@ -712,14 +712,14 @@ function test_str() {
     test(function() { return s.find("testi") == 5 });
     test(function() { return s.find("testix") == -1 });
 
-    var t = tuple(["a", "b", "c"]);
+    var t = tuple.__call__(["a", "b", "c"]);
     test(function() { return t.__contains__("a") == true });
     test(function() { return t.__contains__("b") == true });
     test(function() { return t.__contains__("c") == true });
     test(function() { return t.__contains__("d") == false });
     test(function() { return t.__contains__(88) == false });
 
-    var t = tuple([str.__call__("a"), str.__call__("b"), str.__call__("c")]);
+    var t = tuple.__call__([str.__call__("a"), str.__call__("b"), str.__call__("c")]);
     test(function() { return t.__contains__("a") == true });
     test(function() { return t.__contains__("b") == true });
     test(function() { return t.__contains__("c") == true });
