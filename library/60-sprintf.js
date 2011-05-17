@@ -86,10 +86,10 @@ var sprintf = (function() {
 				if (match[2]) { // keyword argument
 					arg = argv[cursor];
 					for (k = 0; k < match[2].length; k++) {
-						if (!arg.hasOwnProperty(match[2][k])) {
+						if (!arg.__contains__(match[2][k])) {
 							throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
 						}
-						arg = arg[match[2][k]];
+						arg = arg.__getitem__(match[2][k]);
 					}
 				}
 				else if (match[1]) { // positional argument (explicit)
@@ -135,7 +135,7 @@ var sprintf = (function() {
 			else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
 				parse_tree.push('%');
 			}
-			else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
+			else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?([- #+0]+)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
 				if (match[2]) {
 					arg_names |= 1;
 					var field_list = [], replacement_field = match[2], field_match = [];
@@ -167,7 +167,7 @@ var sprintf = (function() {
 				parse_tree.push(match);
 			}
 			else {
-				throw('[sprintf] huh?');
+				throw('[sprintf] Could not parse string format');
 			}
 			_fmt = _fmt.substring(match[0].length);
 		}
