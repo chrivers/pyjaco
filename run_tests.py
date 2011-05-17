@@ -171,10 +171,10 @@ def main():
         else:
             target = files
 
-        for name in target:
+        for name in sorted(target):
             if options.run_all or options.only_failing:
                 test3(name, target[name], name in known_to_fail, stop_on_error = options.stop_on_errors)
-            elif file not in known_to_fail:
+            elif name not in known_to_fail:
                 test3(name, target[name], stop_on_error = options.stop_on_errors)
 
 class Writer(object):
