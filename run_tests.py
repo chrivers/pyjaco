@@ -103,10 +103,12 @@ def main():
     if len(args) == 1:
         test3(args[0])
     else:
-        test1("tests/test_builtins.js")
-        files = glob("tests/test_*.py")
-        for file in files:
-            test2(file)
+        if not options.only_failing:
+            test1("tests/test_builtins.js")
+            files = glob("tests/test_*.py")
+            for file in files:
+                test2(file)
+
         dirs = [
             "tests/basic/*.py",
             "tests/errors/*.py",
@@ -115,6 +117,7 @@ def main():
             "tests/strings/*.py",
             "tests/algorithms/*.py",
                 ]
+
         known_to_fail = [
                 "tests/basic/super.py",
                 "tests/basic/kwargs.py",
