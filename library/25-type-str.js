@@ -2,6 +2,8 @@
 
 var str = __inherit(object);
 
+var __py2js_str = str;
+
 str.__name__ = 'str';
 str.prototype.__class__ = str;
 str.prototype.MARK = "str";
@@ -165,9 +167,9 @@ str.prototype.find = Function(function(s) {
 
 str.prototype.rfind = Function(function(s) {
     rev = function(s) {
-        var a = list.__call__(str.__call__(s));
+        var a = list.__call__(__py2js_str.__call__(s));
         a.reverse();
-        a = str.__call__("").join(a);
+        a = __py2js_str.__call__("").join(a);
         return a;
     }
     var a = rev(this);
@@ -179,7 +181,7 @@ str.prototype.rfind = Function(function(s) {
 });
 
 str.prototype.join = Function(function(s) {
-    return str.__call__(js(s).join(js(this)));
+    return __py2js_str.__call__(js(s).join(js(this)));
 });
 
 str.prototype.replace = Function(function(old, _new, count) {
@@ -199,7 +201,7 @@ str.prototype.replace = Function(function(old, _new, count) {
         new_s = new_s.replace(old, _new);
         count -= 1;
     }
-    return str.__call__(new_s);
+    return __py2js_str.__call__(new_s);
 });
 
 str.prototype.lstrip = Function(function(chars) {
@@ -258,10 +260,10 @@ str.prototype.splitlines = Function(function() {
 });
 
 str.prototype.lower = Function(function() {
-    return str.__call__(this._obj.toLowerCase());
+    return __py2js_str.__call__(this._obj.toLowerCase());
 });
 
 str.prototype.upper = Function(function() {
-    return str.__call__(this._obj.toUpperCase());
+    return __py2js_str.__call__(this._obj.toUpperCase());
 });
 
