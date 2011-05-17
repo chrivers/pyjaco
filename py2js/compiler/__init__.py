@@ -81,13 +81,11 @@ class BaseCompiler(object):
 
     def __init__(self):
         self.dummy_index = 0
-        # This is the name of the class that we are currently in:
-        self._class_name = None
+        # This is the name of the classes that we are currently in:
+        self._class_name = []
 
         # This lists all variables in the local scope:
         self._scope = []
-        # All calls to names within _class_names will be preceded by 'new'
-        self._class_names = set()
         self._classes = {}
 
     def new_dummy(self):
@@ -98,7 +96,7 @@ class BaseCompiler(object):
         try:
             visitor = getattr(self, 'visit_' + self.name(node))
         except AttributeError:
-            raise JSError("syntax not supported (%s)" % node)
+            raise JSError("syntax not supported (%s: %s)" % (node.__class__.__name__, node))
 
         return visitor(node)
 
