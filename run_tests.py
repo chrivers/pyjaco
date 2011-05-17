@@ -91,6 +91,10 @@ def main():
             action="store_true", dest="run_all",
             default=False, help="run all tests (including the known-to-fail)")
 
+    parser.add_option("-f", "--only-failing",
+            action="store_true", dest="only_failing",
+            default=False, help="run only failing tests (to quickly check for improvements)")
+
     parser.add_option("-c", "--continue",
             action="store_false", dest="stop_on_errors",
             default=True, help="continue, even if a test fails")
@@ -111,9 +115,6 @@ def main():
             "tests/strings/*.py",
             "tests/algorithms/*.py",
                 ]
-        files = []
-        for dir in dirs:
-            files.extend((path,os.path.abspath(path)) for path in glob(dir))
         known_to_fail = [
                 "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
@@ -156,13 +157,25 @@ def main():
                 "tests/strings/string_format_x.py",
                 "tests/strings/ulcase.py",
                 ]
-        known_to_fail = [os.path.abspath(path) for path in known_to_fail]
-        files.sort()
-        for name,file in files:
-            if options.run_all:
-                test3(name, file, file in known_to_fail, stop_on_error = options.stop_on_errors)
+        failing = {}
+        for f in known_to_fail:
+            failing[f] = os.path.abspath(f)
+
+        files = {}
+        for dir in dirs:
+            for path in glob(dir):
+                files[path] = os.path.abspath(path)
+
+        if options.only_failing:
+            target = failing
+        else:
+            target = files
+
+        for name in target:
+            if options.run_all or options.only_failing:
+                test3(name, target[name], name in known_to_fail, stop_on_error = options.stop_on_errors)
             elif file not in known_to_fail:
-                test3(name, file, stop_on_error = options.stop_on_errors)
+                test3(name, target[name], stop_on_error = options.stop_on_errors)
 
 class Writer(object):
 
