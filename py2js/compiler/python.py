@@ -116,7 +116,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
-        self._class_names.add(class_name)
 
         js.append("var %s = __inherit(%s);" % (class_name, bases[0]));
 
@@ -156,7 +155,8 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = left
         value  = right
         if isinstance(target, (ast.Tuple, ast.List)):
-            js = ["var __dummy%d__ = %s;" % (self.dummy_index, value)]
+            dummy = self.new_dummy()
+            js = ["var %s = %s;" % (dummy, value)]
 
             for i, target in enumerate(target.elts):
                 var = self.visit(target)
@@ -165,10 +165,8 @@ class Compiler(py2js.compiler.BaseCompiler):
                     if not (var in self._scope):
                         self._scope.append(var)
                         declare = "var "
-                js.append("%s%s = __dummy%d__.__getitem__(%d);" % (declare,
-                    var, self.dummy_index, i))
-
-            self.dummy_index += 1
+                js.append("%s%s = %s.__getitem__(%d);" % (declare,
+                    var, dummy, i))
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
             js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value), self.visit(target.slice), value)]
@@ -423,8 +421,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Call(self, node):
         func = self.visit(node.func)
-        #~ if func in self._class_names:
-            #~ func = 'new '+func
         if node.keywords:
             keywords = []
             for kw in node.keywords:
