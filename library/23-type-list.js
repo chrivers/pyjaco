@@ -87,48 +87,47 @@ list.prototype.index = function(value, start, end) {
     throw new py_builtins.ValueError("list.index(x): x not in list");
 };
 
-list.prototype.remove = function(value) {
+list.prototype.remove = Function(function(value) {
     this.__delitem__(this.index(value));
-};
+});
 
-list.prototype.append = function(value) {
+list.prototype.append = Function(function(value) {
     this._items.push(value);
     this._len = -1;
-};
+});
 
-list.prototype.extend = function(l) {
+list.prototype.extend = Function(function(l) {
     var items;
     items = this._items;
     iterate(iter.__call__(l), function(item) {
         items.push(item);
     });
     this._len = -1;
-};
+});
 
-list.prototype.pop = function() {
+list.prototype.pop = Function(function() {
     if (len(this) > 0) {
         this._len = -1;
         return this._items.pop();
     } else
         throw new py_builtins.IndexError("pop from empty list");
-};
+});
 
-list.prototype.sort = function() {
+list.prototype.sort = Function(function() {
     this._items.sort();
-};
+});
 
-list.prototype.insert = function(index, x) {
+list.prototype.insert = Function(function(index, x) {
     var a = this._items.slice(0, index);
     var b = this._items.slice(index, len(this));
     this._items = a.concat([x], b);
     this._len = -1;
-}
+});
 
-list.prototype.reverse = function() {
+list.prototype.reverse = Function(function() {
     var new_list = list.__call__([]);
     iterate(iter.__call__(this), function(item) {
             new_list.insert(0, item);
     });
     this._items = new_list._items;
-}
-
+});
