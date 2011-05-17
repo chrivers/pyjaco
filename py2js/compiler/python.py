@@ -215,7 +215,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         orelse_dummy = self.new_dummy()
         exc_dummy = self.new_dummy()
 
-        js.append("var %s = iter(%s);" % (iter_dummy, for_iter))
+        js.append("var %s = iter.__call__(%s);" % (iter_dummy, for_iter))
         js.append("var %s = false;" % orelse_dummy)
         js.append("while (1) {")
         js.append("    var %s;" % for_target)
@@ -419,7 +419,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         # Uses the Python builtin repr() of a string and the strip string type
         # from it. This is to ensure Javascriptness, even when they use things
         # like b"\\x00" or u"\\u0000".
-        return "str(%s)" % repr(node.s).lstrip("urb")
+        return "str.__call__(%s)" % repr(node.s).lstrip("urb")
 
     def visit_Call(self, node):
         func = self.visit(node.func)
@@ -442,7 +442,13 @@ class Compiler(py2js.compiler.BaseCompiler):
 
             js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
-            return "%s.__call__(%s)" % (func, js_args)
+            if isinstance(node.func, ast.Attribute):
+                root = self.visit(node.func.value)
+            else:
+                root = func
+            if js_args:
+                js_args = ", " + js_args
+            return "%s.__call__.call(%s%s)" % (func, root, js_args)
 
     def visit_Raise(self, node):
         assert node.inst is None
@@ -461,34 +467,34 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
-        return "tuple([%s])" % (", ".join(els))
+        return "tuple.__call__([%s])" % (", ".join(els))
 
     def visit_Dict(self, node):
         els = []
         for k, v in zip(node.keys, node.values):
             if isinstance(k, ast.Name):
-                els.append('tuple(["%s", %s])' % (self.visit(k), self.visit(v)))
+                els.append('tuple.__call__(["%s", %s])' % (self.visit(k), self.visit(v)))
             else:
-                els.append("tuple([%s, %s])" % (self.visit(k), self.visit(v)))
-        return "dict(tuple([%s]))" % (",\n".join(els))
+                els.append("tuple.__call__([%s, %s])" % (self.visit(k), self.visit(v)))
+        return "dict.__call__(tuple.__call__([%s]))" % (",\n".join(els))
 
     def visit_List(self, node):
         els = [self.visit(e) for e in node.elts]
-        return "list([%s])" % (", ".join(els))
+        return "list.__call__([%s])" % (", ".join(els))
 
     def visit_Slice(self, node):
         if node.lower and node.upper and node.step:
-            return "slice(%s, %s, %s)" % (self.visit(node.lower),
+            return "slice.__call__(%s, %s, %s)" % (self.visit(node.lower),
                     self.visit(node.upper), self.visit(node.step))
         if node.lower and node.upper:
-            return "slice(%s, %s)" % (self.visit(node.lower),
+            return "slice.__call__(%s, %s)" % (self.visit(node.lower),
                     self.visit(node.upper))
         if node.upper and not node.step:
-            return "slice(%s)" % (self.visit(node.upper))
+            return "slice.__call__(%s)" % (self.visit(node.upper))
         if node.lower and not node.step:
-            return "slice(%s, null)" % (self.visit(node.lower))
+            return "slice.__call__(%s, null)" % (self.visit(node.lower))
         if not node.lower and not node.upper and not node.step:
-            return "slice(null)"
+            return "slice.__call__(null)"
         raise NotImplementedError("Slice")
 
     def visit_Subscript(self, node):
