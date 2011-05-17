@@ -57,16 +57,12 @@ class Compiler(py2js.compiler.BaseCompiler):
                 if default is not None:
                     js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
-            if self._class_name:
-                prep = "%s.prototype.%s = Function(function(" % (self._class_name, node.name)
-                if not is_static:
-                    if not (js_args[0] == "self"):
-                        raise NotImplementedError("The first argument must be 'self'.")
-                    del js_args[0]
-            else:
-                prep = "Function(function %s(" % node.name
+            if not is_static:
+                if not (js_args[0] == "self"):
+                    raise NotImplementedError("The first argument must be 'self'.")
+                del js_args[0]
 
-            js = [prep + ", ".join(js_args) + ") {"]
+            js = ["Function(function %s(%s) {" % (node.name, ", ".join(js_args))]
 
             js.extend(self.indent(js_defaults))
 
@@ -117,19 +113,32 @@ class Compiler(py2js.compiler.BaseCompiler):
         #self._classes remembers all classes defined
         self._classes[class_name] = node
 
-        js.append("var %s = __inherit(%s);" % (class_name, bases[0]));
+        if len(self._class_name) > 0:
+            js.append("__inherit(%s);" % bases[0]);
+        else:
+            js.append("var %s = __inherit(%s);" % (class_name, bases[0]));
 
         #~ methods = []
-        self._class_name = class_name
+        self._class_name.append(class_name)
+        heirar = ".prototype.".join(self._class_name + [])
         for stmt in node.body:
             if isinstance(stmt, ast.Assign):
                 value = self.visit(stmt.value)
                 for t in stmt.targets:
                     var = self.visit(t)
-                    js.append("%s.%s = %s;" % (class_name, var, value))
+                    js.append("%s.prototype.%s = %s;" % (heirar, var, value))
+            elif isinstance(stmt, ast.FunctionDef):
+                js.append("%s.prototype.%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
+            elif isinstance(stmt, ast.ClassDef):
+                js.append("%s.prototype.%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
+            elif isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Str):
+                js.append("\n".join(["/* %s */" % s for s in stmt.value.s.split("\n")]))
+            elif isinstance(stmt, ast.Pass):
+                # Not required for js
+                pass
             else:
-                js.extend(self.visit(stmt))
-        self._class_name = None
+                raise JSError("Unsupported class data: %s" % stmt)
+        self._class_name.pop()
 
         #The following is unnecessary: __init__ is inherited from
         #'object'
