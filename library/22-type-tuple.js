@@ -103,7 +103,7 @@ tuple.prototype.__contains__ = function(item) {
 
 tuple.prototype.__getitem__ = function(index) {
     var seq;
-    if (isinstance(index, slice)) {
+    if (isinstance.__call__(index, slice)) {
         var s = index;
         var inds = s.indices(len(this));
         var start = inds.__getitem__(0);
@@ -130,7 +130,7 @@ tuple.prototype.__delitem__ = function(index) {
     throw new py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
-tuple.prototype.count = function(value) {
+tuple.prototype.count = Function(function(value) {
     var count = 0;
 
     for (var index in this._items) {
@@ -140,9 +140,9 @@ tuple.prototype.count = function(value) {
     }
 
     return count;
-};
+});
 
-tuple.prototype.index = function(value, start, end) {
+tuple.prototype.index = Function(function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -160,5 +160,5 @@ tuple.prototype.index = function(value, start, end) {
     }
 
     throw new py_builtins.ValueError("tuple.index(x): x not in list");
-};
+});
 
