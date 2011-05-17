@@ -116,11 +116,12 @@ def main():
             "tests/algorithms/*.py",
                 ]
         known_to_fail = [
-                "tests/basic/nestedclass.py",
                 "tests/basic/super.py",
                 "tests/basic/kwargs.py",
-                "tests/basic/float2int.py",
+                "tests/basic/kwargs2.py",
+                "tests/basic/oo_diamond.py",
                 "tests/basic/oo_inherit.py",
+                "tests/basic/oo_super.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_dict.py",
                 "tests/basic/del_local.py",
@@ -136,26 +137,15 @@ def main():
                 "tests/basic/generator.py",
                 "tests/basic/raise.py",
 
-                "tests/functions/sort_cmp.py",
                 "tests/functions/ne.py",
                 "tests/functions/aug.py",
                 "tests/functions/floatdiv.py",
-                "tests/functions/sort23.py",
 
                 "tests/errors/decorator.py",
 
                 "tests/lists/filter.py",
                 "tests/lists/reduce.py",
                 "tests/lists/sum.py",
-                "tests/lists/subclass.py",
-
-                "tests/strings/string_format_d.py",
-                "tests/strings/string_format_efg.py",
-                "tests/strings/string_format_i.py",
-                "tests/strings/string_format_o.py",
-                "tests/strings/string_format_u.py",
-                "tests/strings/string_format_x.py",
-                "tests/strings/ulcase.py",
                 ]
         failing = {}
         for f in known_to_fail:
