@@ -776,18 +776,32 @@ function test_func() {
 
 function tests() {
     try {
+        print("");
+        print("Testing dictionaries");
         test_dict();
+        print("Testing iterators");
         test_iter();
+        print("Testing tuples");
         test_tuple();
+        print("Testing lists");
         test_list();
+        print("Testing range()");
         test_range();
+        print("Testing map()");
         test_map();
+        print("Testing zip()");
         test_zip();
+        print("Testing isinstance()");
         test_isinstance();
+        print("Testing exceptions");
         test_exceptions();
+        print("Testing slices");
         test_slice();
+        print("Testing javascript conversion");
         test_to_js();
+        print("Testing strings");
         test_str();
+        print("Testing functions");
         test_func();
     } catch(e) {
         if (defined(e.__class__)) {
