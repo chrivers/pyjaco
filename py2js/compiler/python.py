@@ -191,12 +191,16 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = self.visit(node.target)
         value = self.visit(node.value)
 
+        js = []
+        base = self.new_dummy()
+        dummy = self.new_dummy()
         if isinstance(node.op, ast.Pow):
-            return ["%s = Math.pow(%s, %s);" % (target, target, value)]
-        if isinstance(node.op, ast.FloorDiv):
-            return ["%s = Math.floor((%s)/(%s));" % (target, target, value)]
-
-        return ["%s %s= %s;" % (target, self.get_binary_op(node), value)]
+            js.append("%s = Math.pow(%s, %s);" % (dummy, target, value))
+        elif isinstance(node.op, ast.FloorDiv):
+            js.append("%s = Math.floor((%s)/(%s));" % (dummy, target, value))
+        else:
+            js.append("%s = %s %s %s" % (dummy, self.visit(node.target), self.get_binary_op(node), value))
+        return js + self.visit_AssignSimple(node.target, dummy)
 
     def visit_For(self, node):
         if not isinstance(node.target, ast.Name):
