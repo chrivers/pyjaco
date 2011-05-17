@@ -38,11 +38,11 @@ for (var i in py_builtins.__exceptions__) {
 
 /* Python built-in functions */
 
-function hasattr(obj, name) {
+hasattr = Function(function(obj, name) {
     return defined(obj[name]);
-}
+});
 
-function getattr(obj, name, value) {
+getattr = Function(function(obj, name, value) {
     var _value = obj[name];
 
     if (defined(_value)) {
@@ -54,13 +54,13 @@ function getattr(obj, name, value) {
             throw new py_builtins.AttributeError(obj, name);
         }
     }
-}
+});
 
-function setattr(obj, name, value) {
+setattr = Function(function(obj, name, value) {
     obj[name] = value;
-}
+});
 
-function hash(obj) {
+hash = Function(function(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.__hash__();
     } else if (typeof(obj) == 'number') {
@@ -68,17 +68,17 @@ function hash(obj) {
     } else {
         throw new py_builtins.AttributeError(obj, '__hash__');
     }
-}
+});
 
-function len(obj) {
+len = Function(function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
         throw new py_builtins.AttributeError(obj, '__name__');
     }
-}
+});
 
-function range(start, end, step) {
+range = Function(function(start, end, step) {
     if (!defined(end)) {
         end = start;
         start = 0;
@@ -98,13 +98,13 @@ function range(start, end, step) {
         return iter.__call__(seq);
     else
         return list.__call__(seq);
-}
+});
 
-function xrange(start, end, step) {
+xrange = Function(function(start, end, step) {
     return iter.__call__(range(start, end, step));
-}
+});
 
-function map() {
+map = Function(function() {
     if (arguments.length < 2) {
         throw new py_builtins.TypeError("map() requires at least two args");
     }
@@ -126,9 +126,9 @@ function map() {
         return iter.__call__(items);
     else
         return items;
-}
+});
 
-function zip() {
+zip = Function(function() {
     if (!arguments.length) {
         return list.__call__();
     }
@@ -149,7 +149,7 @@ function zip() {
             try {
                 var value = iters.__getitem__(i).next();
             } catch (exc) {
-                if (isinstance(exc, py_builtins.StopIteration)) {
+                if (isinstance.__call__(exc, py_builtins.StopIteration)) {
                     return items;
                 } else {
                     throw exc;
@@ -161,9 +161,9 @@ function zip() {
 
         items.append(tuple.__call__(item));
     }
-}
+});
 
-function isinstance(obj, cls) {
+isinstance = Function(function(obj, cls) {
     if (cls.__class__ == tuple) {
         var length = cls.__len__();
 
@@ -174,7 +174,7 @@ function isinstance(obj, cls) {
         for (var i = 0; i < length; i++) {
             var _cls = cls.__getitem__(i);
 
-            if (isinstance(obj, _cls)) {
+            if (isinstance.__call__(obj, _cls)) {
                 return true;
             }
         }
@@ -191,7 +191,7 @@ function isinstance(obj, cls) {
             }
         }
     }
-}
+});
 
 py_builtins.bool = function(a) {
     if ((a != null) && defined(a.__bool__))
@@ -221,7 +221,7 @@ py_builtins._float = Function(function(value) {
     return value;
 });
 
-py_builtins.max = function(list) {
+py_builtins.max = Function(function(list) {
     if (len(list) == 0)
         throw new py_builtins.ValueError("max() arg is an empty sequence");
     else {
@@ -234,9 +234,9 @@ py_builtins.max = function(list) {
 
         return result;
     }
-};
+});
 
-py_builtins.min = function(list) {
+py_builtins.min = Function(function(list) {
     if (len(list) == 0)
         throw new py_builtins.ValueError("min() arg is an empty sequence");
     else {
@@ -249,9 +249,9 @@ py_builtins.min = function(list) {
 
         return result;
     }
-};
+});
 
-py_builtins.sum = function(list) {
+py_builtins.sum = Function(function(list) {
     var result = 0;
 
     iterate(iter.__call__(list), function(item) {
@@ -259,7 +259,7 @@ py_builtins.sum = function(list) {
     });
 
     return result;
-};
+});
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log))
