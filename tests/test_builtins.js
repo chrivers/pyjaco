@@ -163,25 +163,25 @@ function test_tuple() {
     test(function() { return t.__getitem__(6) == 1 });
     raises(py_builtins.IndexError, function() { t.__getitem__(7) });
     raises(py_builtins.IndexError, function() { t.__getitem__(8) });
-    test(function() { return t.__getitem__(-1) == 1 });
-    test(function() { return t.__getitem__(-2) == 4 });
-    test(function() { return t.__getitem__(-3) == 4 });
-    test(function() { return t.__getitem__(-4) == 5 });
-    test(function() { return t.__getitem__(-5) == 5 });
-    test(function() { return t.__getitem__(-6) == 4 });
-    test(function() { return t.__getitem__(-7) == 3 });
-    raises(py_builtins.IndexError, function() { t.__getitem__(-8) });
-    raises(py_builtins.IndexError, function() { t.__getitem__(-9) });
+    test(function() { return t.__getitem__(-1) == 1; });
+    test(function() { return t.__getitem__(-2) == 4; });
+    test(function() { return t.__getitem__(-3) == 4; });
+    test(function() { return t.__getitem__(-4) == 5; });
+    test(function() { return t.__getitem__(-5) == 5; });
+    test(function() { return t.__getitem__(-6) == 4; });
+    test(function() { return t.__getitem__(-7) == 3; });
+    raises(py_builtins.IndexError, function() { t.__getitem__(-8); });
+    raises(py_builtins.IndexError, function() { t.__getitem__(-9); });
 
-    raises(py_builtins.TypeError, function() { t.__setitem__(7, 0) });
-    raises(py_builtins.TypeError, function() { t.__delitem__(7) });
+    raises(py_builtins.TypeError, function() { t.__setitem__(7, 0); });
+    raises(py_builtins.TypeError, function() { t.__delitem__(7); });
 
     test(function() { return t.index(5) == 2 });
     test(function() { return t.count(5) == 2 });
 
     test(function() { return hash(t) == -2017591611 });
 
-    t = tuple([1, 2, 3, 4])
+    t = tuple([1, 2, 3, 4]);
     test(function() { return str.__call__(t) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(tuple(t)) == '(1, 2, 3, 4)' })
     test(function() { return str.__call__(list.__call__(t)) == '[1, 2, 3, 4]' })
