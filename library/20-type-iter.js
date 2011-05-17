@@ -6,8 +6,9 @@ iter.prototype.MARK = "iter";
 
 iter.prototype.__init__ = function(obj) {
     this._index = 0;
-
-    if (obj instanceof Array) {
+    if (!defined(obj)) {
+        throw new py_builtins.TypeError("iter() expects at least 1 argument");
+    } else if (obj instanceof Array) {
         this._seq = obj;
     } else if (typeof(obj) === "string") {
         this._seq = obj.split("");
