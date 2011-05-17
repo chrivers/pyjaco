@@ -159,12 +159,12 @@ function zip() {
             item.append(value);
         }
 
-        items.append(tuple(item));
+        items.append(tuple.__call__(item));
     }
 }
 
 function isinstance(obj, cls) {
-    if (cls instanceof _tuple) {
+    if (cls.__class__ == tuple) {
         var length = cls.__len__();
 
         if (length == 0) {
@@ -181,7 +181,7 @@ function isinstance(obj, cls) {
 
         return false;
     } else {
-        if (defined(obj.__class__) && defined(cls.__name__)) {
+        if (defined(obj.__class__)) {
             return obj.__class__ == cls;
         } else {
             if (defined(cls.__call__)) {
@@ -271,7 +271,7 @@ py_builtins.print = function(s) {
             else
                 print("");
         } else {
-            var args = tuple(to_array(arguments));
+            var args = tuple.__call__(to_array(arguments));
             print(str.__call__(" ").join(args));
         }
     }
