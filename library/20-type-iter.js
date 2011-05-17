@@ -32,7 +32,7 @@ iter.prototype.toString = function () {
     return js(this.__str__());
 };
 
-iter.prototype.next = function() {
+iter.prototype.next = Function(function() {
     var value = this._seq[this._index++];
 
     if (defined(value)) {
@@ -40,5 +40,4 @@ iter.prototype.next = function() {
     } else {
         throw new py_builtins.StopIteration('no more items');
     }
-};
-
+});
