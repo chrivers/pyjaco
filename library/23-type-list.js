@@ -20,19 +20,19 @@ list.prototype.__str__ = function () {
     return str.__call__("[" + this._items.join(", ") + "]");
 };
 
-list.prototype.__eq__ = _tuple.prototype.__eq__;
+list.prototype.__eq__ = tuple.prototype.__eq__;
 
-list.prototype.toString = _tuple.prototype.toString;
+list.prototype.toString = tuple.prototype.toString;
 
-list.prototype._js_ = _tuple.prototype._js_;
+list.prototype._js_ = tuple.prototype._js_;
 
-list.prototype.__len__ = _tuple.prototype.__len__;
+list.prototype.__len__ = tuple.prototype.__len__;
 
-list.prototype.__iter__ = _tuple.prototype.__iter__;
+list.prototype.__iter__ = tuple.prototype.__iter__;
 
-list.prototype.__contains__ = _tuple.prototype.__contains__;
+list.prototype.__contains__ = tuple.prototype.__contains__;
 
-list.prototype.__getitem__ = _tuple.prototype.__getitem__;
+list.prototype.__getitem__ = tuple.prototype.__getitem__;
 
 list.prototype.__setitem__ = function(index, value) {
     if ((index >= 0) && (index < len(this)))
@@ -60,7 +60,7 @@ list.prototype.__delitem__ = function(index) {
         throw new py_builtins.IndexError("list assignment index out of range");
 };
 
-list.prototype.count = _tuple.prototype.count;
+list.prototype.count = tuple.prototype.count;
 
 list.prototype.index = function(value, start, end) {
     if (!defined(start)) {
