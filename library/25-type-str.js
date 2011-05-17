@@ -96,7 +96,7 @@ str.prototype.__contains__ = function(item) {
 str.prototype.__getitem__ = function(index) {
 
     var seq;
-    if (isinstance(index, _slice)) {
+    if (isinstance(index, slice)) {
         var s = index;
         var inds = s.indices(len(this));
         var start = inds.__getitem__(0);
@@ -129,11 +129,11 @@ str.prototype.count = function(str, start, end) {
     if (!defined(end))
         end = null;
     var count = 0;
-    s = this.__getitem__(slice(start, end));
+    s = this.__getitem__(slice.__call__(start, end));
     idx = s.find(str);
     while (idx != -1) {
         count += 1;
-        s = s.__getitem__(slice(idx+1, null));
+        s = s.__getitem__(slice.__call__(idx+1, null));
         idx = s.find(str);
     }
     return count;
@@ -206,28 +206,28 @@ str.prototype.lstrip = function(chars) {
     if (len(this) == 0)
         return this;
     if (defined(chars))
-        chars = tuple(chars);
+        chars = tuple.__call__(chars);
     else
-        chars = tuple(["\n", "\t", " "]);
+        chars = tuple.__call__(["\n", "\t", " "]);
     var i = 0;
     while ((i < len(this)) && (chars.__contains__(this.__getitem__(i)))) {
         i += 1;
     }
-    return this.__getitem__(slice(i, null));
+    return this.__getitem__(slice.__call__(i, null));
 };
 
 str.prototype.rstrip = function(chars) {
     if (len(this) == 0)
         return this
     if (defined(chars))
-        chars = tuple(chars);
+        chars = tuple.__call__(chars);
     else
-        chars = tuple(["\n", "\t", " "]);
+        chars = tuple.__call__(["\n", "\t", " "]);
     var i = len(this)-1;
     while ((i >= 0) && (chars.__contains__(this.__getitem__(i)))) {
         i -= 1;
     }
-    return this.__getitem__(slice(i+1));
+    return this.__getitem__(slice.__call__(i+1));
 };
 
 str.prototype.strip = function(chars) {
