@@ -31,7 +31,7 @@ function iterate(seq, func) {
         try {
             func(seq.next());
         } catch (exc) {
-            if (isinstance(exc, py_builtins.StopIteration)) {
+            if (isinstance.__call__(exc, py_builtins.StopIteration)) {
                 break;
             } else {
                 throw exc;
@@ -48,10 +48,6 @@ function copy(iterator) {
     });
 
     return items;
-}
-
-function _new(cls, arg) {
-    return new cls(arg);
 }
 
 function js(obj) {
