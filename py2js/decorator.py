@@ -78,14 +78,16 @@ class JavaScript(object):
 
     """
 
-    def __init__(self, obj):
-        self._obj = obj
-        obj_source = inspect.getsource(obj)
-        self._js = py2js.compile(obj_source)
+    def __init__(self, *args):
+        self.jsvars = list(args)
 
     def __str__(self):
         return self._js
 
-    def __call__(self, *args, **kwargs):
-        return self._obj(*args, **kwargs)
+    def __call__(self, obj):
+        lines = inspect.getsource(obj).split("\n")
+        if lines[0].startswith("@"):
+            lines.pop(0)
+        self._js = py2js.compile("\n".join(lines), self.jsvars)
+        return self._js
 
