@@ -10,10 +10,6 @@ var py_builtins = {};
 
 py_builtins.__python3__ = false;
 
-/* A reference to the global object */
-
-var _global_this = this;
-
 /* JavaScript helper functions */
 
 function defined(obj) {
@@ -50,6 +46,11 @@ function copy(iterator) {
     return items;
 }
 
+var Function = function(func) {
+    func.__call__ = func;
+    return func;
+};
+
 js = Function(function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
@@ -69,8 +70,3 @@ js = Function(function(obj) {
     else
         return obj;
 });
-
-var Function = function(func) {
-    func.__call__ = func;
-    return func;
-};
