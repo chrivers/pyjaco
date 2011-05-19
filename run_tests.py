@@ -62,22 +62,21 @@ def test3(name, in_file = None, known_to_fail = False, stop_on_error = True):
     w = Writer()
     w.write("%s: " % name)
 
-    r, stdout, stderr = proc_capture(["python", in_file])
+    r, stdout1, stderr = proc_capture(["python", in_file])
     w.write(".")
     if r == 0:
-        r, stdout, stderr = proc_capture(["python", "pyjs.py", "--include-builtin", in_file])
+        r, stdout2, stderr = proc_capture(["python", "pyjs.py", "--include-builtin", in_file])
         w.write(".")
         if r == 0:
-            r, stdout, stderr = proc_capture(["js"], stdin = stdout)
+            r, stdout3, stderr = proc_capture(["js"], stdin = stdout2)
             w.write(".")
             if r == 0:
                 f = file(JS_DIFF_FILE_NAME, "w")
-                f.write(stdout)
+                f.write(stdout3)
                 f.close()
-
-                r, stdout, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout)
+                r4, stdout4, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout1)
                 w.write(".")
-    w.check(r, known_to_fail, stop_on_error, stderr = stderr)
+    w.check(r, known_to_fail, stop_on_error, stderr)
 
 def main():
     if not os.path.exists("py-builtins.js"):
