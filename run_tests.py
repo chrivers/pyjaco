@@ -127,8 +127,6 @@ def main():
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_local.py",
                 "tests/basic/sumcomp.py",
-                "tests/basic/valueerror.py",
-                "tests/basic/try.py",
                 "tests/basic/vargs.py",
                 "tests/basic/del_global.py",
                 "tests/basic/generator.py",
@@ -139,8 +137,6 @@ def main():
 
                 "tests/errors/decorator.py",
 
-                "tests/lists/filter.py",
-                "tests/lists/reduce.py",
                 "tests/lists/sum.py",
                 ]
         failing = {}
