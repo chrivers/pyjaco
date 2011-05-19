@@ -7,8 +7,8 @@ import StringIO
 import ast
 import inspect
 
-def compile(script):
-    c = Compiler()
+def compile(script, jsvars = []):
+    c = Compiler(jsvars)
     c.append_string(script)
     return str(c)
 
@@ -35,8 +35,8 @@ class Compiler(object):
 
     re_comment = re.compile("^[ ]*#")
 
-    def __init__(self):
-        self.compiler = py2js.compiler.multiplexer.Compiler()
+    def __init__(self, jsvars = []):
+        self.compiler = py2js.compiler.multiplexer.Compiler(jsvars)
         self.reset()
 
     def reset(self):
