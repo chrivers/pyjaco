@@ -50,7 +50,7 @@ function copy(iterator) {
     return items;
 }
 
-function js(obj) {
+js = Function(function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
 
@@ -68,7 +68,7 @@ function js(obj) {
         return obj._js_();
     else
         return obj;
-}
+});
 
 var Function = function(func) {
     func.__call__ = func;
