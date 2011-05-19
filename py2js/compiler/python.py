@@ -339,22 +339,43 @@ class Compiler(py2js.compiler.BaseCompiler):
         err = self.new_dummy()
         self._exceptions.append(err)
         js.append("} catch (%s) {" % err)
-        for n in node.handlers:
+        for i, n in enumerate(node.handlers):
+            if i > 0:
+                pre = "else "
+            else:
+                pre = ""
             if n.type:
-                js.append("if (isinstance(%s, %s) {", err, n.Type)
+                if isinstance(n.type, ast.Name):
+                    js.append("%sif (isinstance(%s, %s)) {" % (pre, err, self.visit(n.type)))
+                else:
+                    raise JSError("Catching non-simple exceptions not supported")
+            else:
+                js.append("%sif (true) {" % (pre))
+
+            if n.name:
+                if isinstance(n.name, ast.Name):
+                    js.append(self.indent(["var %s = %s;" % (self.visit(n.name), err)])[0])
+                else:
+                    raise JSError("Catching non-simple exceptions not supported")
 
             for b in n.body:
                 js.extend(self.indent(self.visit(b)))
 
-            if n.type:
-                js.append("}")
+            js.append("}")
 
         js.append("};")
         self._exceptions.pop()
         return js
 
-    def _visit_TryFinally(self, node):
-        pass
+    def visit_TryFinally(self, node):
+        js = []
+        js.append("try {")
+        for n in node.body:
+            js.append("\n".join(self.visit(n)))           
+        js.append("} catch (%s) { /* ignore */ }" % self.new_dummy())
+        for n in node.finalbody:
+            js.append("\n".join(self.visit(n)))
+        return js
 
     def visit_Assert(self, node):
         test = self.visit(node.test)
