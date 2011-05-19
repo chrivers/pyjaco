@@ -41,6 +41,8 @@ class BaseCompiler(object):
         'max',
         'min',
         'sum',
+        'filter',
+        'reduce'
     ])
 
     bool_op = {
