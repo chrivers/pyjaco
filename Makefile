@@ -4,7 +4,7 @@ all:
 	$(MAKE) -C examples generate
 
 clean:
-	@rm -fv py-builtins.js library/*~ *.pyc
+	@rm -fv py-builtins.js *~ library/*~ *.pyc
 	$(MAKE) -C examples clean
 
 examples:
