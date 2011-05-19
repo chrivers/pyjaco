@@ -326,8 +326,30 @@ class Compiler(py2js.compiler.BaseCompiler):
     def _visit_Raise(self, node):
         pass
 
-    def _visit_TryExcept(self, node):
-        pass
+    def visit_TryExcept(self, node):
+        if node.orelse:
+            raise JSError("Try-Except with else-clause not supported")
+
+        js = []
+        js.append("try {")
+        for n in node.body:
+            js.append("\n".join(self.visit(n)))
+        err = self.new_dummy()
+        self._exceptions.append(err)
+        js.append("} catch (%s) {" % err)
+        for n in node.handlers:
+            if n.type:
+                js.append("if (isinstance(%s, %s) {", err, n.Type)
+
+            for b in n.body:
+                js.extend(self.indent(self.visit(b)))
+
+            if n.type:
+                js.append("}")
+
+        js.append("};")
+        self._exceptions.pop()
+        return js
 
     def _visit_TryFinally(self, node):
         pass
@@ -482,7 +504,10 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Raise(self, node):
         assert node.inst is None
         assert node.tback is None
-        return ["throw %s;" % self.visit(node.type)]
+        if not node.type:
+            return ["throw %s;" % self._exceptions[-1]]
+        else:
+            return ["throw %s;" % self.visit(node.type)]
 
     def visit_Print(self, node):
         assert node.dest is None
