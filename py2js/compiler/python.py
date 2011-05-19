@@ -69,7 +69,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             for stmt in node.body:
                 js.extend(self.indent(self.visit(stmt)))
 
-            js.append('});')
+            js.append('})')
 
             # #If method is static, we also add it directly to the class
             # if is_static:
