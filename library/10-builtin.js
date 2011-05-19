@@ -176,7 +176,12 @@ py_builtins.eq = function(a, b) {
 };
 
 py_builtins._int = Function(function(value) {
-    return value;
+    var s = value.toString();
+    if (s.match(/^[-+0-9.]+$/)) {
+        return parseInt(value);
+    } else {
+        throw py_builtins.ValueError.__call__("Invalid integer: " + value);
+    }
 });
 
 py_builtins._float = Function(function(value) {
