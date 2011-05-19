@@ -29,7 +29,7 @@ def dump(node):
 
 class Compiler(py2js.compiler.BaseCompiler):
 
-    def __init__(self):
+    def __init__(self, jsvars = []):
         self.comp_py = py2js.compiler.python.Compiler()
         self.comp_js = py2js.compiler.javascript.Compiler()
 
@@ -42,7 +42,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.modestack = []
         self.modecache = {}
 
-        self.jsvars = []
+        self.jsvars = jsvars[:]
 
         self.enter("py")
 
