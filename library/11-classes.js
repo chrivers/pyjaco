@@ -43,7 +43,7 @@ var object = function() {
     return new ObjectMetaClass(x);
 }();
 
-var __inherit = function(cls) {
+var __inherit = function(cls, name) {
 
     var x = function() { /* Class constructor */ };
 
@@ -53,5 +53,8 @@ var __inherit = function(cls) {
     };
 
     /* Receive bacon */
-    return new ObjectMetaClass(x);
+    var res = new ObjectMetaClass(x);
+    res.__name__ = name;
+    res.prototype.__class__ = res;
+    return res;
 };

@@ -1,10 +1,6 @@
 /* Python 'slice' object */
 
-var slice = __inherit(object);
-
-slice.__name__ = 'slice';
-slice.prototype.__class__ = slice;
-slice.prototype.MARK = "slice";
+var slice = __inherit(object, "slice");
 
 slice.prototype.__init__ = function(start, stop, step) {
     if (!defined(stop) && !defined(step))

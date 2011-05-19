@@ -1,10 +1,6 @@
 /* Python 'list' type */
 
-var list = __inherit(object);
-
-list.__name__ = 'list';
-list.prototype.__class__ = list;
-list.prototype.MARK = "list";
+var list = __inherit(object, "list");
 
 list.prototype.__init__ = function(seq) {
     if (!defined(seq)) {
@@ -40,7 +36,7 @@ list.prototype.__setitem__ = function(index, value) {
     else if ((index < 0) && (index >= -len(this)))
         this._items[index+len(this)] = value;
     else
-        throw new py_builtins.IndexError("list assignment index out of range");
+        throw py_builtins.IndexError.__call__("list assignment index out of range");
 };
 list.prototype.__setslice__ = function(lower, upper, value) {
      var it = list.__call__(value)._items;
@@ -57,7 +53,7 @@ list.prototype.__delitem__ = function(index) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw new py_builtins.IndexError("list assignment index out of range");
+        throw py_builtins.IndexError.__call__("list assignment index out of range");
 };
 
 list.prototype.__delslice__ = function(x, y) {
@@ -67,7 +63,7 @@ list.prototype.__delslice__ = function(x, y) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw new py_builtins.IndexError("list assignment index out of range");
+        throw py_builtins.IndexError.__call__("list assignment index out of range");
 };
 
 list.prototype.count = tuple.prototype.count;
@@ -94,7 +90,7 @@ list.prototype.index = Function(function(value, start, end) {
         }
     }
 
-    throw new py_builtins.ValueError("list.index(x): x not in list");
+    throw py_builtins.ValueError.__call__("list.index(x): x not in list");
 });
 
 list.prototype.remove = Function(function(value) {
@@ -120,7 +116,7 @@ list.prototype.pop = Function(function() {
         this._len = -1;
         return this._items.pop();
     } else
-        throw new py_builtins.IndexError("pop from empty list");
+        throw py_builtins.IndexError.__call__("pop from empty list");
 });
 
 list.prototype.sort = Function(function() {

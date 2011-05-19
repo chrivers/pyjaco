@@ -1,15 +1,11 @@
 /* Python 'tuple' type */
 
-var tuple = __inherit(object);
-
-tuple.__name__ = 'tuple';
-tuple.prototype.__class__ = tuple;
-tuple.prototype.MARK = "tuple";
+var tuple = __inherit(object, "tuple");
 
 tuple.prototype.__init__ = function(seq) {
 
     if (arguments.length > 1) {
-        throw new py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
+        throw py_builtins.TypeError.__call__("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (!defined(seq)) {
         this._items = [];
         this._len = 0;
@@ -119,15 +115,15 @@ tuple.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._items[index+len(this)];
     else
-        throw new py_builtins.IndexError("list assignment index out of range");
+        throw py_builtins.IndexError.__call__("list assignment index out of range");
 };
 
 tuple.prototype.__setitem__ = function(index, value) {
-    throw new py_builtins.TypeError("'tuple' object doesn't support item assignment");
+    throw py_builtins.TypeError.__call__("'tuple' object doesn't support item assignment");
 };
 
 tuple.prototype.__delitem__ = function(index) {
-    throw new py_builtins.TypeError("'tuple' object doesn't support item deletion");
+    throw py_builtins.TypeError.__call__("'tuple' object doesn't support item deletion");
 };
 
 tuple.prototype.count = Function(function(value) {
@@ -159,6 +155,6 @@ tuple.prototype.index = Function(function(value, start, end) {
         }
     }
 
-    throw new py_builtins.ValueError("tuple.index(x): x not in list");
+    throw py_builtins.ValueError.__call__("tuple.index(x): x not in list");
 });
 

@@ -1,8 +1,6 @@
 /* Python 'dict' type */
 
-var dict = __inherit(object);
-
-dict.prototype.MARK = "dict";
+var dict = __inherit(object, "dict");
 
 dict.prototype.__init__ = function(args) {
     var items;
@@ -25,9 +23,6 @@ dict.prototype.__init__ = function(args) {
         this._items = {};
     }
 };
-
-dict.__name__ = 'dict';
-dict.prototype.__class__ = dict;
 
 dict.prototype.__str__ = function () {
     var strings = [];
@@ -55,7 +50,7 @@ dict.prototype._js_ = function () {
 };
 
 dict.prototype.__hash__ = function () {
-    throw new py_builtins.TypeError("unhashable type: 'dict'");
+    throw py_builtins.TypeError.__call__("unhashable type: 'dict'");
 };
 
 dict.prototype.__len__ = function() {
@@ -82,7 +77,7 @@ dict.prototype.__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw new py_builtins.KeyError(str.__call__(key));
+        throw py_builtins.KeyError.__call__(str.__call__(key));
     }
 };
 
@@ -94,7 +89,7 @@ dict.prototype.__delitem__ = function(key) {
     if (this.__contains__(key)) {
         delete this._items[key];
     } else {
-        throw new py_builtins.KeyError(str.__call__(key));
+        throw py_builtins.KeyError.__call__(str.__call__(key));
     }
 };
 
@@ -163,7 +158,7 @@ dict.prototype.pop = Function(function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw new py_builtins.KeyError(str.__call__(key));
+            throw py_builtins.KeyError.__call__(str.__call__(key));
         }
     }
 
@@ -181,6 +176,6 @@ dict.prototype.popitem = Function(function() {
     if (defined(key)) {
         return [_key, this._items[_key]];
     } else {
-        throw new py_builtins.KeyError("popitem(): dictionary is empty");
+        throw py_builtins.KeyError.__call__("popitem(): dictionary is empty");
     }
 });

@@ -1,41 +1,3 @@
-/* Python built-in exceptions */
-
-py_builtins.__exceptions__ = [
-    'NotImplementedError',
-    'ZeroDivisionError',
-    'AssertionError',
-    'AttributeError',
-    'RuntimeError',
-    'ImportError',
-    'TypeError',
-    'ValueError',
-    'NameError',
-    'IndexError',
-    'KeyError',
-    'StopIteration'
-];
-
-for (var i in py_builtins.__exceptions__) {
-    var name = py_builtins.__exceptions__[i];
-
-    py_builtins[name] = function() {
-        return function(message) {
-            this.message = defined(message) ? message : "";
-        };
-    }();
-
-    py_builtins[name].__name__ = name;
-    py_builtins[name].prototype.__class__ = py_builtins[name];
-
-    py_builtins[name].prototype.__str__ = function() {
-        return str.__call__(js(this.__class__.__name__) + ": " + js(this.message));
-    };
-
-    py_builtins[name].prototype.toString = function() {
-        return js(this.__str__());
-    };
-}
-
 /* Python built-in functions */
 
 hasattr = Function(function(obj, name) {
@@ -51,7 +13,7 @@ getattr = Function(function(obj, name, value) {
         if (defined(value)) {
             return value;
         } else {
-            throw new py_builtins.AttributeError(obj, name);
+            throw py_builtins.AttributeError.__call__(obj, name);
         }
     }
 });
@@ -66,7 +28,7 @@ hash = Function(function(obj) {
     } else if (typeof(obj) == 'number') {
         return obj == -1 ? -2 : obj;
     } else {
-        throw new py_builtins.AttributeError(obj, '__hash__');
+        throw py_builtins.AttributeError.__call__(obj, '__hash__');
     }
 });
 
@@ -74,7 +36,7 @@ len = Function(function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
-        throw new py_builtins.AttributeError(obj, '__name__');
+        throw py_builtins.AttributeError.__call__(obj, '__name__');
     }
 });
 
@@ -106,11 +68,11 @@ xrange = Function(function(start, end, step) {
 
 map = Function(function() {
     if (arguments.length < 2) {
-        throw new py_builtins.TypeError("map() requires at least two args");
+        throw py_builtins.TypeError.__call__("map() requires at least two args");
     }
 
     if (arguments.length > 2) {
-        throw new py_builtins.NotImplementedError("only one sequence allowed in map()");
+        throw py_builtins.NotImplementedError.__call__("only one sequence allowed in map()");
     }
 
     var func = arguments[0];
@@ -223,7 +185,7 @@ py_builtins._float = Function(function(value) {
 
 py_builtins.max = Function(function(list) {
     if (len(list) == 0)
-        throw new py_builtins.ValueError("max() arg is an empty sequence");
+        throw py_builtins.ValueError.__call__("max() arg is an empty sequence");
     else {
         var result = null;
 
@@ -238,7 +200,7 @@ py_builtins.max = Function(function(list) {
 
 py_builtins.min = Function(function(list) {
     if (len(list) == 0)
-        throw new py_builtins.ValueError("min() arg is an empty sequence");
+        throw py_builtins.ValueError.__call__("min() arg is an empty sequence");
     else {
         var result = null;
 

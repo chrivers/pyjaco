@@ -18,7 +18,7 @@ function defined(obj) {
 
 function assert(cond, msg) {
     if (!cond) {
-        throw new py_builtins.AssertionError(msg);
+        throw py_builtins.AssertionError.__call__(msg);
     }
 }
 

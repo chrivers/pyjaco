@@ -1,12 +1,8 @@
 /* Python 'str' type */
 
-var str = __inherit(object);
+var str = __inherit(object, "str");
 
 var __py2js_str = str;
-
-str.__name__ = 'str';
-str.prototype.__class__ = str;
-str.prototype.MARK = "str";
 
 str.prototype.__init__ = function(s) {
     if (!defined(s)) {
@@ -114,15 +110,15 @@ str.prototype.__getitem__ = function(index) {
     else if ((index < 0) && (index >= -len(this)))
         return this._obj[index+len(this)];
     else
-        throw new py_builtins.IndexError("string index out of range");
+        throw py_builtins.IndexError.__call__("string index out of range");
 };
 
 str.prototype.__setitem__ = function(index, value) {
-    throw new py_builtins.TypeError("'str' object doesn't support item assignment");
+    throw py_builtins.TypeError.__call__("'str' object doesn't support item assignment");
 };
 
 str.prototype.__delitem__ = function(index) {
-    throw new py_builtins.TypeError("'str' object doesn't support item deletion");
+    throw py_builtins.TypeError.__call__("'str' object doesn't support item deletion");
 };
 
 str.prototype.count = Function(function(str, start, end) {
@@ -158,7 +154,7 @@ str.prototype.index = Function(function(value, start, end) {
         }
     }
 
-    throw new py_builtins.ValueError("substring not found");
+    throw py_builtins.ValueError.__call__("substring not found");
 });
 
 str.prototype.find = Function(function(s) {

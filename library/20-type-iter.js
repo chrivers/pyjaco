@@ -1,13 +1,11 @@
 /* Python 'iter' type */
 
-var iter = __inherit(object);
-
-iter.prototype.MARK = "iter";
+var iter = __inherit(object, "iter");
 
 iter.prototype.__init__ = function(obj) {
     this._index = 0;
     if (!defined(obj)) {
-        throw new py_builtins.TypeError("iter() expects at least 1 argument");
+        throw py_builtins.TypeError.__call__("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
         this._seq = obj;
     } else if (typeof(obj) === "string") {
@@ -17,12 +15,9 @@ iter.prototype.__init__ = function(obj) {
     } else if (defined(obj.__iter__)) {
         this._seq = obj.__iter__()._seq;
     } else {
-        throw new py_builtins.TypeError("object is not iterable");
+        throw py_builtins.TypeError.__call__("object is not iterable");
     }
 }
-
-iter.__name__ = 'iter';
-iter.prototype.__class__ = iter;
 
 iter.prototype.__str__ = function () {
     return str.__call__("<iter of " + this._seq + " at " + this._index + ">");
@@ -38,6 +33,6 @@ iter.prototype.next = Function(function() {
     if (defined(value)) {
         return value;
     } else {
-        throw new py_builtins.StopIteration('no more items');
+        throw py_builtins.StopIteration.__call__('no more items');
     }
 });
