@@ -172,8 +172,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     if not (var in self._scope):
                         self._scope.append(var)
                         declare = "var "
-                js.append("%s%s = %s.__getitem__(%d);" % (declare,
-                    var, dummy, i))
+                js.append("%s%s = %s.__getitem__(%d);" % (declare, var, dummy, i))
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
             js = ["%s.__setitem__(%s, %s);" % (self.visit(target.value), self.visit(target.slice), value)]
@@ -200,16 +199,19 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = self.visit(node.target)
         value = self.visit(node.value)
 
-        js = []
-        base = self.new_dummy()
-        dummy = self.new_dummy()
-        if isinstance(node.op, ast.Pow):
-            js.append("%s = Math.pow(%s, %s);" % (dummy, target, value))
-        elif isinstance(node.op, ast.FloorDiv):
-            js.append("%s = Math.floor((%s)/(%s));" % (dummy, target, value))
+        if isinstance(node.target, ast.Name):
+            return ["%s %s= %s" % (self.visit(node.target), self.get_binary_op(node), value)]
         else:
-            js.append("%s = %s %s %s" % (dummy, self.visit(node.target), self.get_binary_op(node), value))
-        return js + self.visit_AssignSimple(node.target, dummy)
+            js = []
+            base = self.new_dummy()
+            dummy = self.new_dummy()
+            if isinstance(node.op, ast.Pow):
+                js.append("%s = Math.pow(%s, %s);" % (dummy, target, value))
+            elif isinstance(node.op, ast.FloorDiv):
+                js.append("%s = Math.floor((%s)/(%s));" % (dummy, target, value))
+            else:
+                js.append("%s = %s %s %s" % (dummy, self.visit(node.target), self.get_binary_op(node), value))
+            return js + self.visit_AssignSimple(node.target, dummy)
 
     def visit_For(self, node):
         if not isinstance(node.target, ast.Name):
