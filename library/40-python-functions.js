@@ -73,7 +73,6 @@ Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
     !! that looks like python !! well...almost. but it's lovely :)
 **/
 
-var to_array = function(a){return Array.prototype.slice.call(a,0);};
 var fnrx = /function(?:\s+\w*)?\s*\(([\w,\s]*)\)/;
 
 function defined(x){

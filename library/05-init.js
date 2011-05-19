@@ -46,6 +46,10 @@ function copy(iterator) {
     return items;
 }
 
+var to_array = function(a) {
+    return Array.prototype.slice.call(a,0);
+};
+
 var Function = function(func) {
     func.__call__ = func;
     return func;
