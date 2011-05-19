@@ -14,6 +14,10 @@ var ObjectMetaClass = function(cls) {
         return this.prototype[k];
     };
 
+    this.__delattr__ = function(k) {
+        delete this.prototype[k];
+    };
+
     this.prototype = cls.prototype;
 };
 
@@ -30,6 +34,10 @@ var object = function() {
 
     x.prototype.__getattr__ = function(k) {
         return this[k];
+    };
+
+    x.prototype.__delattr__ = function(k) {
+        delete this[k];
     };
 
     return new ObjectMetaClass(x);
