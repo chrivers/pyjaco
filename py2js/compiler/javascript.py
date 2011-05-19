@@ -48,8 +48,11 @@ class Compiler(py2js.compiler.BaseCompiler):
             self.dummy_index += 1
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
-            js = ["%s[\"%s\"] = %s;" % (self.visit(target.value),
-                self.visit(target.slice), value)]
+            if isinstance(target.slice, ast.Str):
+                i = self.visit(target.slice)
+            else:
+                i = '"%s"' % self.visit(target.slice)
+            js = ["%s[%s] = %s;" % (self.visit(target.value), self.visit(target.slice), value)]
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Slice):
             raise JSError("Javascript does not support slice assignments")
         else:
@@ -280,7 +283,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         # Uses the Python builtin repr() of a string and the strip string type
         # from it. This is to ensure Javascriptness, even when they use things
         # like b"\\x00" or u"\\u0000".
-        return "%s" % repr(node.s).lstrip("urb")
+        return '"%s"' % repr(node.s).lstrip("urb")[1:-1]
 
     def visit_Call(self, node):
         func = self.visit(node.func)
