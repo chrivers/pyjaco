@@ -175,6 +175,8 @@ class Compiler(py2js.compiler.BaseCompiler):
             js = "%s.__delslice__(%s, %s);" % (self.visit(node.value), self.visit(node.slice.lower), self.visit(node.slice.upper))
         elif isinstance(node, ast.Attribute):
             js = '%s.__delattr__("%s");' % (self.visit(node.value), node.attr)
+        elif isinstance(node, ast.Name):
+            raise JSError("Javascript does not support deleting variables. Cannot compile")
         else:
             raise JSError("Unsupported delete type: %s" % node)
 
