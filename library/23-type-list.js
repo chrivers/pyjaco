@@ -60,6 +60,16 @@ list.prototype.__delitem__ = function(index) {
         throw new py_builtins.IndexError("list assignment index out of range");
 };
 
+list.prototype.__delslice__ = function(x, y) {
+    if ((x >= 0) && (y < len(this))) {
+        var a = this._items.slice(0, x);
+        var b = this._items.slice(y+1, len(this));
+        this._items = a.concat(b);
+        this._len = -1;
+    } else
+        throw new py_builtins.IndexError("list assignment index out of range");
+};
+
 list.prototype.count = tuple.prototype.count;
 
 list.prototype.index = Function(function(value, start, end) {
