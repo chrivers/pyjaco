@@ -391,7 +391,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         return ", ".join([self.visit(arg) for arg in node.args])
 
     def visit_Lambda(self, node):
-        return "function(%s) {%s}" % (self.visit(node.args), self.visit(node.body))
+        return "Function(function(%s) {return %s;})" % (self.visit(node.args), self.visit(node.body))
 
     def visit_BoolOp(self, node):
         return self.get_bool_op(node).join([ "(%s)" % self.visit(val) for val in node.values ])
