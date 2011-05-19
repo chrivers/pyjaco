@@ -87,6 +87,7 @@ class BaseCompiler(object):
         # This lists all variables in the local scope:
         self._scope = []
         self._classes = {}
+        self._exceptions = []
 
     def new_dummy(self):
         self.dummy_index += 1
