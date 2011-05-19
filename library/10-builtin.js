@@ -262,9 +262,9 @@ py_builtins.sum = Function(function(list) {
 });
 
 py_builtins.print = function(s) {
-    if (typeof(console) != "undefined" && defined(console.log))
+    if (typeof(console) != "undefined" && defined(console.log)) {
         console.log(js(str.__call__(s)));
-    else {
+    } else {
         if (arguments.length <= 1) {
             if (defined(s))
                 print(s);
