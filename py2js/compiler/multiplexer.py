@@ -101,6 +101,10 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         elif isinstance(node, ast.Assign):
             return self.get_mode(node.targets[0])
+        elif isinstance(node, ast.AugAssign):
+            return self.get_mode(node.target)
+        elif isinstance(node, ast.Subscript):
+            return self.get_mode(node.value)
 
     def visit_Assign(self, node):
         return self.visit(node, False)
