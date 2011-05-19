@@ -166,7 +166,19 @@ class Compiler(py2js.compiler.BaseCompiler):
             return ["return;"]
 
     def visit_Delete(self, node):
-        return node
+        return [self.visit_DeleteSimple(part) for part in node.targets]
+
+    def visit_DeleteSimple(self, node):
+        if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Index):
+            js = "%s.__delitem__(%s);" % (self.visit(node.value), self.visit(node.slice))
+        elif isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Slice):
+            js = "%s.__delslice__(%s, %s);" % (self.visit(node.value), self.visit(node.slice.lower), self.visit(node.slice.upper))
+        elif isinstance(node, ast.Attribute):
+            js = '%s.__delattr__("%s");' % (self.visit(node.value), node.attr)
+        else:
+            raise JSError("Unsupported delete type: %s" % node)
+
+        return js
 
     def visit_AssignSimple(self, target, value):
         if isinstance(target, (ast.Tuple, ast.List)):
