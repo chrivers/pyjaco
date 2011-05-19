@@ -2,7 +2,7 @@
 
 function test(code) {
     if (!code()) {
-        throw new py_builtins.AssertionError("test failed: " + code);
+        throw py_builtins.AssertionError.__call__("test failed: " + code);
     }
 }
 
@@ -15,11 +15,11 @@ function raises(exc, code) {
         if (name == exc.__name__) {
             return;
         } else {
-            throw new py_builtins.AssertionError(name + " exception was thrown in " + code);
+            throw py_builtins.AssertionError.__call__(name + " exception was thrown in " + code);
         }
     }
 
-    throw new py_builtins.AssertionError("did not raise " + exc.__name__ + " in " + code);
+    throw py_builtins.AssertionError.__call__("did not raise " + exc.__name__ + " in " + code);
 }
 
 function test_dict() {
@@ -393,11 +393,11 @@ function test_zip() {
 
 function test_isinstance() {
     test(function() {
-        return isinstance(new py_builtins.StopIteration(), py_builtins.StopIteration) == true;
+        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.StopIteration) == true;
     });
 
     test(function() {
-        return isinstance(new py_builtins.StopIteration(), py_builtins.ValueError) == false;
+        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.ValueError) == false;
     });
 
     test(function() { return isinstance([], Array) == true });
@@ -435,62 +435,62 @@ function test_isinstance() {
 }
 
 function test_exceptions() {
-    var e = new py_builtins.NotImplementedError('not implemented');
+    var e = py_builtins.NotImplementedError.__call__('not implemented');
 
     test(function() { return e.__class__.__name__ == 'NotImplementedError' });
     test(function() { return e.message == 'not implemented' });
 
-    var e = new py_builtins.ZeroDivisionError('division by zero');
+    var e = py_builtins.ZeroDivisionError.__call__('division by zero');
 
     test(function() { return e.__class__.__name__ == 'ZeroDivisionError' });
     test(function() { return e.message == 'division by zero' });
 
-    var e = new py_builtins.AssertionError('assertion error');
+    var e = py_builtins.AssertionError.__call__('assertion error');
 
     test(function() { return e.__class__.__name__ == 'AssertionError' });
     test(function() { return e.message == 'assertion error' });
 
-    var e = new py_builtins.AttributeError('attribute error');
+    var e = py_builtins.AttributeError.__call__('attribute error');
 
     test(function() { return e.__class__.__name__ == 'AttributeError' });
     test(function() { return e.message == 'attribute error' });
 
-    var e = new py_builtins.RuntimeError('runtime error');
+    var e = py_builtins.RuntimeError.__call__('runtime error');
 
     test(function() { return e.__class__.__name__ == 'RuntimeError' });
     test(function() { return e.message == 'runtime error' });
 
-    var e = new py_builtins.ImportError('import error');
+    var e = py_builtins.ImportError.__call__('import error');
 
     test(function() { return e.__class__.__name__ == 'ImportError' });
     test(function() { return e.message == 'import error' });
 
-    var e = new py_builtins.TypeError('type error');
+    var e = py_builtins.TypeError.__call__('type error');
 
     test(function() { return e.__class__.__name__ == 'TypeError' });
     test(function() { return e.message == 'type error' });
 
-    var e = new py_builtins.ValueError('value error');
+    var e = py_builtins.ValueError.__call__('value error');
 
     test(function() { return e.__class__.__name__ == 'ValueError' });
     test(function() { return e.message == 'value error' });
 
-    var e = new py_builtins.NameError('name error');
+    var e = py_builtins.NameError.__call__('name error');
 
     test(function() { return e.__class__.__name__ == 'NameError' });
     test(function() { return e.message == 'name error' });
 
-    var e = new py_builtins.IndexError('index error');
+    var e = py_builtins.IndexError.__call__('index error');
 
     test(function() { return e.__class__.__name__ == 'IndexError' });
     test(function() { return e.message == 'index error' });
 
-    var e = new py_builtins.KeyError('key error');
+    var e = py_builtins.KeyError.__call__('key error');
 
     test(function() { return e.__class__.__name__ == 'KeyError' });
     test(function() { return e.message == 'key error' });
 
-    var e = new py_builtins.StopIteration('stop iteration');
+    var e = py_builtins.StopIteration.__call__('stop iteration');
 
     test(function() { return e.__class__.__name__ == 'StopIteration' });
     test(function() { return e.message == 'stop iteration' });
