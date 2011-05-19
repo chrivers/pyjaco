@@ -108,7 +108,11 @@ class Compiler(py2js.compiler.BaseCompiler):
         bases = [self.visit(n) for n in node.bases]
         if not bases:
             bases = ['object']
-        assert len(bases) == 1;
+        if len(bases) == 0:
+            raise JSError("Old-style classes not supported")
+        elif len(bases) > 1:
+            raise JSError("Multiple inheritance not supported")
+
         class_name = node.name
         #self._classes remembers all classes defined
         self._classes[class_name] = node
