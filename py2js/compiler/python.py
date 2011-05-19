@@ -87,16 +87,20 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
-            args = []
-            defaults2 = []
+            js_args = []
+            js_defaults = []
+            self._scope = [arg.id for arg in node.args.args]
+
             for arg, default in zip(node.args.args, defaults):
                 if not isinstance(arg, ast.Name):
                     raise JSError("tuples in argument list are not supported")
-                if default:
-                    defaults2.append("%s: %s" % (arg.id, self.visit(default)))
-                args.append(arg.id)
-            defaults = "{" + ", ".join(defaults2) + "}"
-            args = ", ".join(args)
+
+                js_args.append(arg.id)
+
+                if default is not None:
+                    js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;" % { 'id': arg.id, 'def': self.visit(default) })
+
+            args = ", ".join(js_args)
             js = ["var %s = Function(function(%s) {" % (node.name, args)]
             self._scope = [arg.id for arg in node.args.args]
             for stmt in node.body:
