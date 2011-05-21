@@ -16,10 +16,13 @@ tuple.prototype.__init__ = function(seq) {
 };
 
 tuple.prototype.__str__ = function () {
-    if (this.__len__() == 1) {
-        return str.__call__("(" + this._items[0] + ",)");
+    if (this.__len__() == 0) {
+        return str.__call__("()");
+    } else if (this.__len__() == 1) {
+        return str.__call__("(" + str.__call__(this._items[0]) + ",)");
     } else {
-        return str.__call__("(" + this._items.join(", ") + ")");
+        var items = map(function (i) {return str.__call__(i);}, this._items);
+        return str.__call__("(" + str.__call__(", ").join(items) + ")");
     }
 };
 
