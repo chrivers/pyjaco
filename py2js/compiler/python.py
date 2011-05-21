@@ -222,7 +222,12 @@ class Compiler(py2js.compiler.BaseCompiler):
         value = self.visit(node.value)
 
         if isinstance(node.target, ast.Name):
-            return ["%s %s= %s" % (self.visit(node.target), self.get_binary_op(node), value)]
+            if isinstance(node.op, ast.Pow):
+                return ["%s = Math.pow(%s, %s);" % (target, target, value)]
+            elif isinstance(node.op, ast.FloorDiv):
+                return ["%s = Math.floor((%s)/(%s));" % (target, target, value)]
+            else:
+                return ["%s %s= %s" % (self.visit(node.target), self.get_binary_op(node), value)]
         else:
             js = []
             base = self.new_dummy()
