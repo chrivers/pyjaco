@@ -122,9 +122,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         self._classes[class_name] = node
 
         if len(self._class_name) > 0:
-            js.append("__inherit(%s);" % bases[0]);
+            js.append("__inherit(%s, \"%s\");" % (bases[0], class_name));
         else:
-            js.append("var %s = __inherit(%s);" % (class_name, bases[0]));
+            js.append("var %s = __inherit(%s, \"%s\");" % (class_name, bases[0], class_name));
 
         #~ methods = []
         self._class_name.append(class_name)
