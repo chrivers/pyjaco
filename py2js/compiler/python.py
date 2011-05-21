@@ -44,9 +44,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             if default is not None:
                 js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
-        if node.args.vararg is not None:
-            raise JSError("star arguments are not supported")
-
         if node.args.kwarg is not None:
             raise JSError("keyword arguments are not supported")
 
@@ -65,6 +62,9 @@ class Compiler(py2js.compiler.BaseCompiler):
             js = ["var %s = Function(function(%s) {" % (node.name, ", ".join(js_args))]
 
         js.extend(self.indent(js_defaults))
+
+        if node.args.vararg:
+            js.append("var %s = tuple.__call__(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, len(node.args.args)))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
