@@ -28,7 +28,7 @@ hash = Function(function(obj) {
     } else if (typeof(obj) == 'number') {
         return obj == -1 ? -2 : obj;
     } else {
-        throw py_builtins.AttributeError.__call__(obj, '__hash__');
+        throw py_builtins.AttributeError.__call__('__hash__');
     }
 });
 
@@ -36,7 +36,7 @@ len = Function(function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
-        throw py_builtins.AttributeError.__call__(obj, '__name__');
+        throw py_builtins.AttributeError.__call__('__len__');
     }
 });
 
