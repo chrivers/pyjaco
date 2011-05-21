@@ -40,6 +40,26 @@ len = Function(function(obj) {
     }
 });
 
+dir = Function(function(obj) {
+    var res = list.__call__();
+    for (var i in obj) {
+        res.append.call(res, str.__call__(i));
+    }
+    return res;
+});
+
+repr = Function(function(obj) {
+    if (!defined(obj)) {
+        return "None";
+    } else if (hasattr(obj, '__repr__')) {
+        return obj.__repr__.call(obj);
+    } else if (hasattr(obj, '__str__')) {
+        return obj.__str__.call(obj);
+    } else {
+        throw py_builtins.AttributeError.__call__('__repr__ or __str__ not found');
+    }
+});
+
 range = Function(function(start, end, step) {
     if (!defined(end)) {
         end = start;
