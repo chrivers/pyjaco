@@ -53,15 +53,13 @@ class Compiler(py2js.compiler.BaseCompiler):
         if node.decorator_list and not is_static and not is_javascript:
             raise JSError("decorators are not supported")
 
-        if not is_static:
-            if not (js_args[0] == "self"):
-                raise NotImplementedError("The first argument must be 'self'.")
-            del js_args[0]
-
-
         self._scope = [arg.id for arg in node.args.args]
 
         if self._class_name:
+            if not is_static:
+                if not (js_args[0] == "self"):
+                    raise NotImplementedError("The first argument must be 'self'.")
+                del js_args[0]
             js = ["Function(function(%s) {" % (", ".join(js_args))]
         else:
             js = ["var %s = Function(function(%s) {" % (node.name, ", ".join(js_args))]
