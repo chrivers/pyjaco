@@ -236,12 +236,15 @@ class Compiler(py2js.compiler.BaseCompiler):
             return js + self.visit_AssignSimple(node.target, dummy)
 
     def visit_For(self, node):
-        if not isinstance(node.target, ast.Name):
-            raise JSError("argument decomposition in 'for' loop is not supported")
+        if isinstance(node.target, ast.Name):
+            for_target = self.visit(node.target)
+        elif isinstance(node.target, ast.Tuple):
+            for_target = self.new_dummy()
+        else:
+            raise JSError("Advanced for-loop decomposition not supported")
 
         js = []
 
-        for_target = self.visit(node.target)
         for_iter = self.visit(node.iter)
 
         iter_dummy = self.new_dummy()
@@ -251,9 +254,18 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("var %s = iter.__call__(%s);" % (iter_dummy, for_iter))
         js.append("var %s = false;" % orelse_dummy)
         js.append("while (1) {")
-        js.append("    var %s;" % for_target)
+        if isinstance(node.target, ast.Name):
+            js.append("    var %s;" % for_target)
+        elif isinstance(node.target, ast.Tuple):
+            js.append("    " + "; ".join(["var " + x.id for x in node.target.elts]))
+
         js.append("    try {")
-        js.append("        %s = %s.next();" % (for_target, iter_dummy))
+
+        if isinstance(node.target, ast.Name):
+            js.append("        %s = %s.next();" % (for_target, iter_dummy))
+        elif isinstance(node.target, ast.Tuple):
+            js.append("        %s = %s.next();" % (for_target, iter_dummy))
+            js.append("    %s;" % "; ".join(["%s = %s.__getitem__(%s)" % (x.id, for_target, i) for i, x in enumerate(node.target.elts)]))
         js.append("    } catch (%s) {" % exc_dummy)
         js.append("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
