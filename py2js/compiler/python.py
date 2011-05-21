@@ -400,8 +400,15 @@ class Compiler(py2js.compiler.BaseCompiler):
     def _visit_Import(self, node):
         pass
 
-    def _visit_ImportFrom(self, node):
-        pass
+    def visit_ImportFrom(self, node):
+        if node.module == "__future__":
+            if len(node.names) == 1 and node.names[0].name == "division":
+                pass
+            else:
+                raise JSError("Unknown import from __future__: %s" % node.names[0].name)
+        else:
+            raise JSError("Import only supports from __future__ import foo")
+        return []
 
     def _visit_Exec(self, node):
         pass
