@@ -44,9 +44,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             if default is not None:
                 js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
 
-        if node.args.kwarg is not None:
-            raise JSError("keyword arguments are not supported")
-
         if node.decorator_list and not is_static and not is_javascript:
             raise JSError("decorators are not supported")
 
@@ -65,6 +62,9 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if node.args.vararg:
             js.append("var %s = tuple.__call__(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, len(node.args.args)))
+
+        if node.args.kwarg:
+            js.append("var %s = dict.__call__(arguments.callee.__kw_args);" % node.args.kwarg)
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -498,31 +498,26 @@ class Compiler(py2js.compiler.BaseCompiler):
         return "str.__call__(%s)" % repr(node.s).lstrip("urb")
 
     def visit_Call(self, node):
+        js = []
         func = self.visit(node.func)
+
         if node.keywords:
             keywords = []
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
-            keywords = "{" + ", ".join(keywords) + "}"
-            js_args = ",".join([ self.visit(arg) for arg in node.args ])
-            return "%s.args([%s], %s)" % (func, js_args,
-                    keywords)
+            kwargs = "{" + ", ".join(keywords) + "}"
+            js.append("%s.__kw_args = %s;" % (func, kwargs))
+
+        js_args = ",".join([ self.visit(arg) for arg in node.args ])
+
+        if isinstance(node.func, ast.Attribute):
+            root = self.visit(node.func.value)
         else:
-            if node.starargs is not None:
-                raise JSError("star arguments are not supported")
-
-            if node.kwargs is not None:
-                raise JSError("keyword arguments are not supported")
-
-            js_args = ",".join([ self.visit(arg) for arg in node.args ])
-
-            if isinstance(node.func, ast.Attribute):
-                root = self.visit(node.func.value)
-            else:
-                root = func
-            if js_args:
-                js_args = ", " + js_args
-            return "%s.__call__.call(%s%s)" % (func, root, js_args)
+            root = func
+        if js_args:
+            js_args = ", " + js_args
+        js.append("%s.__call__.call(%s%s)" % (func, root, js_args))
+        return "\n".join(js)
 
     def visit_Raise(self, node):
         assert node.inst is None
