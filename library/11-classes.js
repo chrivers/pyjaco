@@ -18,6 +18,14 @@ var ObjectMetaClass = function(cls) {
         delete this.prototype[k];
     };
 
+    this.__repr__ = function() {
+        return str.__call__("<class " + this.__name__ + ">");
+    };
+
+    this.toString = function() {
+        return js(this.__repr__());
+    };
+
     this.prototype = cls.prototype;
 };
 
@@ -38,6 +46,14 @@ var object = function() {
 
     x.prototype.__delattr__ = function(k) {
         delete this[k];
+    };
+
+    x.prototype.__repr__ = function() {
+        return str.__call__("<instance of " + this.__class__.__name__ + ">");
+    };
+
+    x.prototype.toString = function() {
+        return js(this.__repr__());
     };
 
     return new ObjectMetaClass(x);
