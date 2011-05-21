@@ -61,6 +61,10 @@ var object = function() {
 
 var __inherit = function(cls, name) {
 
+    if (!defined(name)) {
+        throw py_builtins.TypeError("The function __inherit must get exactly 2 arguments");
+    }
+
     var x = function() { /* Class constructor */ };
 
     /* Inheritance from cls */
