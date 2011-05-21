@@ -13,7 +13,8 @@ list.prototype.__init__ = function(seq) {
 };
 
 list.prototype.__str__ = function () {
-    return str.__call__("[" + this._items.join(", ") + "]");
+    var items = map(function (i) {return str.__call__(i);}, this._items);
+    return str.__call__("[" + str.__call__(", ").join(items) + "]");
 };
 
 list.prototype.__eq__ = tuple.prototype.__eq__;
