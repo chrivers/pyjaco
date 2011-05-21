@@ -559,6 +559,16 @@ class Compiler(py2js.compiler.BaseCompiler):
         els = [self.visit(e) for e in node.elts]
         return "list.__call__([%s])" % (", ".join(els))
 
+    def visit_ListComp(self, node):
+        if not len(node.generators) == 1:
+            raise JSError("Compound list comprehension not supported")
+        if not isinstance(node.generators[0].target, ast.Name):
+            raise JSError("Non-simple targets in list comprehension not supported")
+        if not isinstance(node.generators[0].iter, ast.Name):
+            raise JSError("Non-simple iterators in list comprehension not supported")
+
+        return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), node.generators[0].iter.id)
+
     def visit_Slice(self, node):
         if node.lower and node.upper and node.step:
             return "slice.__call__(%s, %s, %s)" % (self.visit(node.lower),
