@@ -82,7 +82,7 @@ class BaseCompiler(object):
         }
 
     def __init__(self):
-        self.dummy_index = 0
+        self.tmp_index = 0
         # This is the name of the classes that we are currently in:
         self._class_name = []
 
@@ -92,8 +92,8 @@ class BaseCompiler(object):
         self._exceptions = []
 
     def new_dummy(self):
-        self.dummy_index += 1
-        return "__dummy%d__" % self.dummy_index
+        self.tmp_index += 1
+        return "__var%d__" % self.tmp_index
 
     def visit(self, node):
         try:
