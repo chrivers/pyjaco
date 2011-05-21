@@ -588,10 +588,8 @@ class Compiler(py2js.compiler.BaseCompiler):
             raise JSError("Compound list comprehension not supported")
         if not isinstance(node.generators[0].target, ast.Name):
             raise JSError("Non-simple targets in list comprehension not supported")
-        if not isinstance(node.generators[0].iter, ast.Name):
-            raise JSError("Non-simple iterators in list comprehension not supported")
 
-        return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), node.generators[0].iter.id)
+        return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
 
     def visit_GeneratorExp(self, node):
         if not len(node.generators) == 1:
