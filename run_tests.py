@@ -131,13 +131,7 @@ def main():
                 "tests/basic/del_global.py",
                 "tests/basic/generator.py",
 
-                "tests/functions/ne.py",
-                "tests/functions/aug.py",
-                "tests/functions/floatdiv.py",
-
                 "tests/errors/decorator.py",
-
-                "tests/lists/sum.py",
                 ]
         failing = {}
         for f in known_to_fail:
