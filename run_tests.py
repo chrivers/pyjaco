@@ -119,8 +119,6 @@ def main():
 
         known_to_fail = [
                 "tests/basic/super.py",
-                "tests/basic/kwargs.py",
-                "tests/basic/kwargs2.py",
                 "tests/basic/oo_diamond.py",
                 "tests/basic/oo_super.py",
                 "tests/basic/listcomp2.py",
