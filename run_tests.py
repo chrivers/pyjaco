@@ -122,11 +122,9 @@ def main():
                 "tests/basic/kwargs.py",
                 "tests/basic/kwargs2.py",
                 "tests/basic/oo_diamond.py",
-                "tests/basic/oo_inherit.py",
                 "tests/basic/oo_super.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_local.py",
-                "tests/basic/vargs.py",
                 "tests/basic/del_global.py",
                 "tests/basic/generator.py",
 
