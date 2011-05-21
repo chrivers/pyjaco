@@ -593,6 +593,14 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), node.generators[0].iter.id)
 
+    def visit_GeneratorExp(self, node):
+        if not len(node.generators) == 1:
+            raise JSError("Compound generator expressions not supported")
+        if not isinstance(node.generators[0].target, ast.Name):
+            raise JSError("Non-simple targets in generator expressions not supported")
+
+        return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
+
     def visit_Slice(self, node):
         if node.lower and node.upper and node.step:
             return "slice.__call__(%s, %s, %s)" % (self.visit(node.lower),
