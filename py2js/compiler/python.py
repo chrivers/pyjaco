@@ -30,46 +30,46 @@ class Compiler(py2js.compiler.BaseCompiler):
             else:
                 raise JSError("decorators are not supported")
 
-        # XXX: disable $def for now, because it doesn't work in IE:
+        js_args = []
+        js_defaults = []
+
+        defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
+
+        for arg, default in zip(node.args.args, defaults):
+            if not isinstance(arg, ast.Name):
+                raise JSError("tuples in argument list are not supported")
+
+            js_args.append(arg.id)
+
+            if default is not None:
+                js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
+
+        if node.args.vararg is not None:
+            raise JSError("star arguments are not supported")
+
+        if node.args.kwarg is not None:
+            raise JSError("keyword arguments are not supported")
+
+        if node.decorator_list and not is_static and not is_javascript:
+            raise JSError("decorators are not supported")
+
+        if not is_static:
+            if not (js_args[0] == "self"):
+                raise NotImplementedError("The first argument must be 'self'.")
+            del js_args[0]
+
+
+        self._scope = [arg.id for arg in node.args.args]
+
         if self._class_name:
-        #if 1:
-            if node.args.vararg is not None:
-                raise JSError("star arguments are not supported")
+            js = ["Function(function(%s) {" % (", ".join(js_args))]
+        else:
+            js = ["var %s = Function(function(%s) {" % (node.name, ", ".join(js_args))]
 
-            if node.args.kwarg is not None:
-                raise JSError("keyword arguments are not supported")
+        js.extend(self.indent(js_defaults))
 
-            if node.decorator_list and not is_static and not is_javascript:
-                raise JSError("decorators are not supported")
-
-            defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
-
-            js_args = []
-            js_defaults = []
-            self._scope = [arg.id for arg in node.args.args]
-
-            for arg, default in zip(node.args.args, defaults):
-                if not isinstance(arg, ast.Name):
-                    raise JSError("tuples in argument list are not supported")
-
-                js_args.append(arg.id)
-
-                if default is not None:
-                    js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;\n" % { 'id': arg.id, 'def': self.visit(default) })
-
-            if not is_static:
-                if not (js_args[0] == "self"):
-                    raise NotImplementedError("The first argument must be 'self'.")
-                del js_args[0]
-
-            js = ["Function(function %s(%s) {" % (node.name, ", ".join(js_args))]
-
-            js.extend(self.indent(js_defaults))
-
-            for stmt in node.body:
-                js.extend(self.indent(self.visit(stmt)))
-
-            js.append('})')
+        for stmt in node.body:
+            js.extend(self.indent(self.visit(stmt)))
 
             # #If method is static, we also add it directly to the class
             # if is_static:
@@ -82,30 +82,8 @@ class Compiler(py2js.compiler.BaseCompiler):
             #     js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
             #     js.append("}")
 
-            self._scope = []
-            return js
-        else:
-            defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
-
-            js_args = []
-            js_defaults = []
-            self._scope = [arg.id for arg in node.args.args]
-
-            for arg, default in zip(node.args.args, defaults):
-                if not isinstance(arg, ast.Name):
-                    raise JSError("tuples in argument list are not supported")
-
-                js_args.append(arg.id)
-
-                if default is not None:
-                    js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;" % { 'id': arg.id, 'def': self.visit(default) })
-
-            args = ", ".join(js_args)
-            js = ["var %s = Function(function(%s) {" % (node.name, args)]
-            self._scope = [arg.id for arg in node.args.args]
-            for stmt in node.body:
-                js.extend(self.indent(self.visit(stmt)))
-            return js + ["});"]
+        self._scope = []
+        return js + ["});"]
 
     def visit_ClassDef(self, node):
         js = []
