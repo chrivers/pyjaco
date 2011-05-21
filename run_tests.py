@@ -126,7 +126,6 @@ def main():
                 "tests/basic/oo_super.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_local.py",
-                "tests/basic/sumcomp.py",
                 "tests/basic/vargs.py",
                 "tests/basic/del_global.py",
                 "tests/basic/generator.py",
