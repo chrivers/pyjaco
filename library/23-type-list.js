@@ -19,8 +19,6 @@ list.prototype.__str__ = function () {
 
 list.prototype.__eq__ = tuple.prototype.__eq__;
 
-list.prototype.toString = tuple.prototype.toString;
-
 list.prototype._js_ = tuple.prototype._js_;
 
 list.prototype.__len__ = tuple.prototype.__len__;
