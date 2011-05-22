@@ -13,9 +13,17 @@ list.prototype.__init__ = function(seq) {
 };
 
 list.prototype.__str__ = function () {
-    var items = map(function (i) {return str.__call__(i);}, this._items);
+    var items = map(function (i) {return repr(i);}, this._items);
     return str.__call__("[" + str.__call__(", ").join(items) + "]");
 };
+
+list.prototype.__eq__ = tuple.prototype.__eq__;
+
+list.prototype.__repr__ = function () {
+    var items = map(function (i) {return repr(i);}, this._items);
+    return str.__call__("[" + str.__call__(", ").join(items) + "]");
+};
+
 
 list.prototype.__eq__ = tuple.prototype.__eq__;
 
