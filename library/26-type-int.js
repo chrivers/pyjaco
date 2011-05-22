@@ -194,6 +194,12 @@ _int.prototype.__div__ = function(x) {
     return _int.__call__(this._obj / x._obj);
 };
 
+_int.prototype.__floordiv__ = function(x) {
+    if (x.__class__ !== this.__class__)
+        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
+    return _int.__call__(Math.floor(this._obj / x._obj));
+};
+
 _int.prototype.__sub__ = function(x) {
     if (x.__class__ !== this.__class__)
         throw py_builtins.TypeError.__call__("Cannot subtract int and non-int");
