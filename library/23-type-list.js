@@ -24,9 +24,6 @@ list.prototype.__repr__ = function () {
     return str.__call__("[" + str.__call__(", ").join(items) + "]");
 };
 
-
-list.prototype.__eq__ = tuple.prototype.__eq__;
-
 list.prototype._js_ = tuple.prototype._js_;
 
 list.prototype.__len__ = tuple.prototype.__len__;
@@ -38,22 +35,27 @@ list.prototype.__contains__ = tuple.prototype.__contains__;
 list.prototype.__getitem__ = tuple.prototype.__getitem__;
 
 list.prototype.__setitem__ = function(index, value) {
-    if ((index >= 0) && (index < len(this)))
-        this._items[index] = value;
-    else if ((index < 0) && (index >= -len(this)))
-        this._items[index+len(this)] = value;
-    else
-        throw py_builtins.IndexError.__call__("list assignment index out of range");
+    if (typeof(index) === 'number') index = _int.__call__(index);
+
+    if (js(index.__ge__(_int.__call__(0)).__and__(index.__lt__(len(this))))) {
+        this._items[index.__int__()] = value;
+    } else if (js(index.__lt__(_int.__call__(0)).__and__(index.__ge__(len(this).__neg__())))) {
+        this._items[index.__add__(len(this)).__int__()] = value;
+    } else {
+        throw py_builtins.IndexError.__call__("list index out of range");
+    }
 };
 list.prototype.__setslice__ = function(lower, upper, value) {
      var it = list.__call__(value)._items;
-     if ( lower < len(this) && upper < len(this)){
+     if (lower < len(this) && upper < len(this)) {
        this._items = this._items.slice(0,lower).concat(it).concat(this._items.slice(upper,len(this)));
        this._len = -1;
      }
 };
 
 list.prototype.__delitem__ = function(index) {
+    if (typeof(index) !== 'number') index = js(index);
+
     if ((index >= 0) && (index < len(this))) {
         var a = this._items.slice(0, index);
         var b = this._items.slice(index+1, len(this));
@@ -66,7 +68,7 @@ list.prototype.__delitem__ = function(index) {
 list.prototype.__delslice__ = function(x, y) {
     if ((x >= 0) && (y < len(this))) {
         var a = this._items.slice(0, x);
-        var b = this._items.slice(y+1, len(this));
+        var b = this._items.slice(y);
         this._items = a.concat(b);
         this._len = -1;
     } else
@@ -92,7 +94,7 @@ list.prototype.index = Function(function(value, start, end) {
         }
 
         if (defined(_value.__eq__)) {
-            if (_value.__eq__(value))
+            if (js(_value.__eq__(value)))
                 return i;
         }
     }
@@ -105,7 +107,13 @@ list.prototype.remove = Function(function(value) {
 });
 
 list.prototype.append = Function(function(value) {
-    this._items.push(value);
+    if (typeof(value) === 'string') {
+        this._items.push(str.__call__(value));
+    } else if (typeof(value) === 'number') {
+        this._items.push(_int.__call__(value));
+    } else {
+        this._items.push(value);
+    }
     this._len = -1;
 });
 
