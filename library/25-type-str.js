@@ -48,7 +48,7 @@ str.prototype.__hash__ = function () {
 };
 
 str.prototype.__len__ = function() {
-    return this._obj.length;
+    return _int.__call__(this._obj.length);
 };
 
 str.prototype.__iter__ = function() {
@@ -65,11 +65,11 @@ str.prototype.__bool__ = function() {
 
 str.prototype.__eq__ = function(s) {
     if (typeof(s) === "string")
-        return this._obj == s;
+        return bool.__call__(this._obj == s);
     else if (isinstance.__call__(s, str))
-        return this._obj == s._obj;
+        return bool.__call__(this._obj == s._obj);
     else
-        return false;
+        return False;
 };
 
 str.prototype.__gt__ = function(s) {
@@ -93,31 +93,30 @@ str.prototype.__lt__ = function(s) {
 str.prototype.__contains__ = function(item) {
     for (var index in this._obj) {
         if (item == this._obj[index]) {
-            return true;
+            return True;
         }
     }
 
-    return false;
+    return False;
 };
 
 str.prototype.__getitem__ = function(index) {
-
     var seq;
     if (isinstance.__call__(index, slice)) {
         var s = index;
-        var inds = s.indices(len(this));
-        var start = inds.__getitem__(0);
-        var stop = inds.__getitem__(1);
-        var step = inds.__getitem__(2);
+        var inds = js(s.indices(len(this)));
+        var start = inds[0];
+        var stop = inds[1];
+        var step = inds[2];
         seq = "";
         for (var i = start; i < stop; i += step) {
             seq = seq + js(this.__getitem__(i));
         }
         return this.__class__.__call__(seq);
-    } else if ((index >= 0) && (index < len(this)))
+    } else if ((index >= 0) && (index < js(len(this))))
         return this._obj[index];
-    else if ((index < 0) && (index >= -len(this)))
-        return this._obj[index+len(this)];
+    else if ((index < 0) && (index >= -js(len(this))))
+        return this._obj[index+js(len(this))];
     else
         throw py_builtins.IndexError.__call__("string index out of range");
 };
@@ -145,8 +144,8 @@ str.prototype.count = Function(function(str, start, end) {
     if (!defined(end))
         end = null;
     var count = 0;
-    s = this.__getitem__(slice.__call__(start, end));
-    idx = s.find(str);
+    var s = this.__getitem__(slice.__call__(start, end));
+    var idx = s.find(str);
     while (idx != -1) {
         count += 1;
         s = s.__getitem__(slice.__call__(idx+1, null));
@@ -219,14 +218,14 @@ str.prototype.replace = Function(function(old, _new, count) {
 });
 
 str.prototype.lstrip = Function(function(chars) {
-    if (len(this) == 0)
+    if (js(len(this)) == 0)
         return this;
     if (defined(chars))
         chars = tuple.__call__(chars);
     else
         chars = tuple.__call__(["\n", "\t", " "]);
     var i = 0;
-    while ((i < len(this)) && (chars.__contains__(this.__getitem__(i)))) {
+    while ((i < js(len(this))) && (js(chars.__contains__(this.__getitem__(i))))) {
         i += 1;
     }
     return this.__getitem__(slice.__call__(i, null));
@@ -234,13 +233,13 @@ str.prototype.lstrip = Function(function(chars) {
 
 str.prototype.rstrip = Function(function(chars) {
     if (len(this) == 0)
-        return this
+        return this;
     if (defined(chars))
         chars = tuple.__call__(chars);
     else
         chars = tuple.__call__(["\n", "\t", " "]);
-    var i = len(this)-1;
-    while ((i >= 0) && (chars.__contains__(this.__getitem__(i)))) {
+    var i = js(len(this))-1;
+    while ((i >= 0) && (js(chars.__contains__(this.__getitem__(i))))) {
         i -= 1;
     }
     return this.__getitem__(slice.__call__(i+1));
