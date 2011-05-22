@@ -23,6 +23,10 @@ str.prototype.__str__ = function () {
     return this;
 };
 
+str.prototype.__repr__ = function () {
+    return "'" + this + "'";
+};
+
 str.prototype._js_ = function () {
     return this._obj;
 };
@@ -49,6 +53,10 @@ str.prototype.__len__ = function() {
 
 str.prototype.__iter__ = function() {
     return iter.__call__(this._obj);
+};
+
+str.prototype.__mod__ = function() {
+    return str.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], arguments)));
 };
 
 str.prototype.__bool__ = function() {
