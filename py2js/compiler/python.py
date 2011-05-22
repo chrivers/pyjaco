@@ -61,7 +61,11 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.extend(self.indent(js_defaults))
 
         if node.args.vararg:
-            js.append("var %s = tuple.__call__(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, len(node.args.args)))
+            if self._class_name:
+                l = len(node.args.args)-1
+            else:
+                l = len(node.args.args)
+            js.append("var %s = tuple.__call__(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, l))
 
         if node.args.kwarg:
             js.append("var %s = dict.__call__(arguments.callee.__kw_args);" % node.args.kwarg)
