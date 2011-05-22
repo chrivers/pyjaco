@@ -191,24 +191,19 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = self.visit(node.target)
         value = self.visit(node.value)
 
-        if isinstance(node.target, ast.Name):
-            if isinstance(node.op, ast.Pow):
-                return ["%s = Math.pow(%s, %s);" % (target, target, value)]
-            elif isinstance(node.op, ast.FloorDiv):
-                return ["%s = Math.floor((%s)/(%s));" % (target, target, value)]
-            else:
-                return ["%s %s= %s" % (self.visit(node.target), self.get_binary_op(node), value)]
+        if   isinstance(node.op, ast.Add     ): return ["%s.__iadd__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.Sub     ): return ["%s.__isub__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.Div     ): return ["%s.__idiv__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.Mult    ): return ["%s.__imul__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.LShift  ): return ["%s.__ilshift__(%s)"   % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.RShift  ): return ["%s.__irshift__(%s)"   % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.BitOr   ): return ["%s.__ior__(%s)"       % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.BitAnd  ): return ["%s.__iand__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.BitXor  ): return ["%s.__ixor__(%s)"      % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.FloorDiv): return ["%s.__ifloordiv__(%s)" % (self.visit(node.target), value)]
+        elif isinstance(node.op, ast.Pow     ): return ["%s.__ipow__(%s)"      % (self.visit(node.target), value)]
         else:
-            js = []
-            base = self.new_dummy()
-            dummy = self.new_dummy()
-            if isinstance(node.op, ast.Pow):
-                js.append("%s = Math.pow(%s, %s);" % (dummy, target, value))
-            elif isinstance(node.op, ast.FloorDiv):
-                js.append("%s = Math.floor((%s)/(%s));" % (dummy, target, value))
-            else:
-                js.append("%s = %s %s %s" % (dummy, self.visit(node.target), self.get_binary_op(node), value))
-            return js + self.visit_AssignSimple(node.target, dummy)
+            raise JSError("Unsupported AugAssign type %s" % node.op)
 
     def visit_For(self, node):
         if isinstance(node.target, ast.Name):
@@ -411,10 +406,21 @@ class Compiler(py2js.compiler.BaseCompiler):
         return "Function(function(%s) {return %s;})" % (self.visit(node.args), self.visit(node.body))
 
     def visit_BoolOp(self, node):
+        if isinstance(node.op, ast.And):
+           return "%s.%s" % (self.visit(node.values[0]), ".".join(["__and__(%s)" % self.visit(val) for val in node.values[1:]]))
+        if isinstance(node.op, ast.Or):
+           return "%s.%s" % (self.visit(node.values[0]), ".".join(["__or__(%s)" % self.visit(val) for val in node.values[1:]]))
+        else:
+            raise JSError("Unknown boolean operation %s" % node.op)
         return self.get_bool_op(node).join([ "(%s)" % self.visit(val) for val in node.values ])
 
     def visit_UnaryOp(self, node):
-        return "%s(%s)" % (self.get_unary_op(node), self.visit(node.operand))
+        if   isinstance(node.op, ast.USub  ): return "%s.__neg__()"            % (self.visit(node.operand))
+        elif isinstance(node.op, ast.UAdd  ): return "%s.__pos__()"            % (self.visit(node.operand))
+        elif isinstance(node.op, ast.Invert): return "%s.__invert__()"         % (self.visit(node.operand))
+        elif isinstance(node.op, ast.Not   ): return "py_builtins.__not__(%s)" % (self.visit(node.operand))
+        else:
+            raise JSError("Unsupported unary op %s" % node.op)
 
     def visit_BinOp(self, node):
         if isinstance(node.op, ast.Mod) and isinstance(node.left, ast.Str):
@@ -428,10 +434,20 @@ class Compiler(py2js.compiler.BaseCompiler):
         left = self.visit(node.left)
         right = self.visit(node.right)
 
-        if isinstance(node.op, ast.Pow):
-            return "Math.pow(%s, %s)" % (left, right)
-        if isinstance(node.op, ast.FloorDiv):
-            return "Math.floor((%s)/(%s))" % (left, right)
+        if   isinstance(node.op, ast.Add     ): return "%s.__add__(%s)"      % (left, right)
+        elif isinstance(node.op, ast.Sub     ): return "%s.__sub__(%s)"      % (left, right)
+        elif isinstance(node.op, ast.Div     ): return "%s.__div__(%s)"      % (left, right)
+        elif isinstance(node.op, ast.Mod     ): return "%s.__mod__(%s)"      % (left, right)
+        elif isinstance(node.op, ast.Pow     ): return "%s.__pow__(%s)"      % (left, right)
+        elif isinstance(node.op, ast.Mult    ): return "%s.__mult__(%s)"     % (left, right)
+        elif isinstance(node.op, ast.BitOr   ): return "%s.__bitor__(%s)"    % (left, right)
+        elif isinstance(node.op, ast.BitAnd  ): return "%s.__bitand__(%s)"   % (left, right)
+        elif isinstance(node.op, ast.BitXor  ): return "%s.__bitxor__(%s)"   % (left, right)
+        elif isinstance(node.op, ast.LShift  ): return "%s.__lshift__(%s)"   % (left, right)
+        elif isinstance(node.op, ast.RShift  ): return "%s.__rshift__(%s)"   % (left, right)
+        elif isinstance(node.op, ast.FloorDiv): return "%s.__floordiv__(%s)" % (left, right)
+        else:
+            raise JSError("Unknown binary operation type %s" % node.op)
 
         return "(%s)%s(%s)" % (left, self.get_binary_op(node), right)
 
@@ -440,32 +456,17 @@ class Compiler(py2js.compiler.BaseCompiler):
         assert len(node.comparators) == 1
         op = node.ops[0]
         comp = node.comparators[0]
-        if isinstance(op, ast.In):
-            return "%s.__contains__(%s)" % (
-                    self.visit(comp),
-                    self.visit(node.left),
-                    )
-        elif isinstance(op, ast.NotIn):
-            return "!(%s.__contains__(%s))" % (
-                    self.visit(comp),
-                    self.visit(node.left),
-                    )
-        elif isinstance(op, ast.Eq):
-            return "py_builtins.eq(%s, %s)" % (
-                    self.visit(node.left),
-                    self.visit(comp),
-                    )
-        elif isinstance(op, ast.NotEq):
-            #In fact, we'll have to override this too:
-            return "!(py_builtins.eq(%s, %s))" % (
-                    self.visit(node.left),
-                    self.visit(comp),
-                    )
+        if   isinstance(op, ast.Eq   ): return "%s.__eq__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.NotEq): return "%s.__ne__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.Gt):    return "%s.__gt__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.Lt):    return "%s.__lt__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.GtE):   return "%s.__ge__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.LtE):   return "%s.__le__(%s)"              % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.In):    return "%s.__contains__(%s)"        % (self.visit(comp), self.visit(node.left))
+        elif isinstance(op, ast.Is):    return "py_builtins.__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.NotIn): return "py_builtins.__not__(%s.__contains__(%s))" % (self.visit(comp), self.visit(node.left))
         else:
-            return "%s %s %s" % (self.visit(node.left),
-                    self.get_comparison_op(op),
-                    self.visit(comp)
-                    )
+            raise JSError("Unknown comparison type %s" % node.ops[0])
 
     def visit_Name(self, node):
         id = node.id
