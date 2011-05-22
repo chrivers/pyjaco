@@ -74,7 +74,7 @@ def test3(name, in_file = None, known_to_fail = False, stop_on_error = True):
                 f = file(JS_DIFF_FILE_NAME, "w")
                 f.write(stdout3)
                 f.close()
-                r4, stdout4, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout1)
+                r, stdout4, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout1)
                 w.write(".")
     w.check(r, known_to_fail, stop_on_error, stderr)
 
@@ -118,13 +118,17 @@ def main():
                 ]
 
         known_to_fail = [
+                "tests/basic/oo_inherit.py",
+                "tests/basic/kwargs2.py",
+                "tests/basic/oo_inherit_simple2.py",
+                "tests/strings/string_format_efg.py",
+
                 "tests/basic/super.py",
                 "tests/basic/oo_diamond.py",
                 "tests/basic/oo_super.py",
                 "tests/basic/listcomp2.py",
                 "tests/basic/del_local.py",
                 "tests/basic/del_global.py",
-                "tests/basic/generator.py",
 
                 "tests/errors/decorator.py",
                 ]
