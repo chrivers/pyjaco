@@ -10,6 +10,9 @@ iter.prototype.__init__ = function(obj) {
         this._seq = obj;
     } else if (typeof(obj) === "string") {
         this._seq = obj.split("");
+        for (var i = 0; i < this._seq.length; i++) {
+            this._seq[i] = str.__call__(this._seq[i]);
+        };
     } else if (obj.__class__ == iter) {
         this._seq = obj._seq;
     } else if (defined(obj.__iter__)) {
