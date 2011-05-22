@@ -1,6 +1,10 @@
 /* TESTS for the py-builtins.js module */
 
+var DEBUG = false;
+
 function test(code) {
+    if (DEBUG)
+        print(code.toString().split("\n").slice(1, 2));
     if (!code()) {
         throw py_builtins.AssertionError.__call__("test failed: " + code);
     }
