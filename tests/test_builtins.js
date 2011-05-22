@@ -35,7 +35,7 @@ function test_dict() {
     raises(py_builtins.KeyError, function() { d.popitem() });
 
     raises(py_builtins.KeyError, function() { d.pop(0) });
-    raises(py_builtins.KeyError, function() { d.__getitem__(0) });
+    raises(py_builtins.KeyError, function() { d.__getitem__(_int.__call__(0)) });
     raises(py_builtins.KeyError, function() { d.__delitem__(0) });
 
     raises(py_builtins.KeyError, function() { d.pop('a') });
@@ -46,13 +46,13 @@ function test_dict() {
 
     test(function() { return str.__call__(d) == '{0: 1}' });
     test(function() { return len(d) == 1 });
-    test(function() { return d.__getitem__(0) == 1 });
+    test(function() { return d.__getitem__(_int.__call__(0)) == 1 });
 
     d.__setitem__(0, 2);
 
     test(function() { return str.__call__(d) == '{0: 2}' });
     test(function() { return len(d) == 1 });
-    test(function() { return d.__getitem__(0) == 2 });
+    test(function() { return d.__getitem__(_int.__call__(0)) == 2 });
 
     test(function() { return d.pop(0) == 2 });
     test(function() { return len(d) == 0 });
@@ -136,7 +136,7 @@ function test_tuple() {
     test(function() { return str.__call__(t) == '()' });
     test(function() { return len(t) == 0 });
 
-    test(function() { return t.__contains__(5) == false });
+    test(function() { return t.__contains__(5) == False });
     raises(py_builtins.IndexError, function() { t.__getitem__(0) });
 
     raises(py_builtins.TypeError, function() { t.__setitem__(7, 0) });
@@ -157,23 +157,23 @@ function test_tuple() {
     test(function() { return str.__call__(t) == '(3, 4, 5, 5, 4, 4, 1)' });
     test(function() { return len(t) == 7 });
 
-    test(function() { return t.__contains__(5) == true });
-    test(function() { return t.__getitem__(0) == 3 });
-    test(function() { return t.__getitem__(1) == 4 });
-    test(function() { return t.__getitem__(2) == 5 });
-    test(function() { return t.__getitem__(3) == 5 });
-    test(function() { return t.__getitem__(4) == 4 });
-    test(function() { return t.__getitem__(5) == 4 });
-    test(function() { return t.__getitem__(6) == 1 });
+    test(function() { return t.__contains__(5) == True });
+    test(function() { return t.__getitem__(_int.__call__(0)) == 3 });
+    test(function() { return t.__getitem__(_int.__call__(1)) == 4 });
+    test(function() { return t.__getitem__(_int.__call__(2)) == 5 });
+    test(function() { return t.__getitem__(_int.__call__(3)) == 5 });
+    test(function() { return t.__getitem__(_int.__call__(4)) == 4 });
+    test(function() { return t.__getitem__(_int.__call__(5)) == 4 });
+    test(function() { return t.__getitem__(_int.__call__(6)) == 1 });
     raises(py_builtins.IndexError, function() { t.__getitem__(7) });
     raises(py_builtins.IndexError, function() { t.__getitem__(8) });
-    test(function() { return t.__getitem__(-1) == 1; });
-    test(function() { return t.__getitem__(-2) == 4; });
-    test(function() { return t.__getitem__(-3) == 4; });
-    test(function() { return t.__getitem__(-4) == 5; });
-    test(function() { return t.__getitem__(-5) == 5; });
-    test(function() { return t.__getitem__(-6) == 4; });
-    test(function() { return t.__getitem__(-7) == 3; });
+    test(function() { return t.__getitem__(_int.__call__(-1)) == 1; });
+    test(function() { return t.__getitem__(_int.__call__(-2)) == 4; });
+    test(function() { return t.__getitem__(_int.__call__(-3)) == 4; });
+    test(function() { return t.__getitem__(_int.__call__(-4)) == 5; });
+    test(function() { return t.__getitem__(_int.__call__(-5)) == 5; });
+    test(function() { return t.__getitem__(_int.__call__(-6)) == 4; });
+    test(function() { return t.__getitem__(_int.__call__(-7)) == 3; });
     raises(py_builtins.IndexError, function() { t.__getitem__(-8); });
     raises(py_builtins.IndexError, function() { t.__getitem__(-9); });
 
@@ -209,7 +209,7 @@ function test_list() {
     test(function() { return str.__call__(t) == '[]' });
     test(function() { return len(t) == 0 });
 
-    test(function() { return t.__contains__(5) == false });
+    test(function() { return t.__contains__(5) == False });
     raises(py_builtins.IndexError, function() { t.__getitem__(0) });
 
     raises(py_builtins.IndexError, function() { t.__setitem__(7, 0) });
@@ -225,7 +225,7 @@ function test_list() {
     test(function() { return str.__call__(t) == '[3, 4, 5, 5, 4, 4, 1]' });
     test(function() { return len(t) == 7 });
 
-    test(function() { return t.__contains__(5) == true });
+    test(function() { return t.__contains__(5) == True });
     test(function() { return t.__getitem__(0) == 3 });
     test(function() { return t.__getitem__(1) == 4 });
     test(function() { return t.__getitem__(2) == 5 });
@@ -397,45 +397,45 @@ function test_zip() {
 
 function test_isinstance() {
     test(function() {
-        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.StopIteration) == true;
+        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.StopIteration) == True;
     });
 
     test(function() {
-        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.ValueError) == false;
+        return isinstance(py_builtins.StopIteration.__call__(), py_builtins.ValueError) == False;
     });
 
-    test(function() { return isinstance([], Array) == true });
-    test(function() { return isinstance([], Number) == false });
-    test(function() { return isinstance([], String) == false });
+    test(function() { return isinstance([], Array) == True });
+    test(function() { return isinstance([], Number) == False });
+    test(function() { return isinstance([], String) == False });
 
-    test(function() { return isinstance([], tuple.__call__()) == false });
+    test(function() { return isinstance([], tuple.__call__()) == False });
 
-    test(function() { return isinstance([], tuple.__call__([Number, Array])) == true });
-    test(function() { return isinstance([], tuple.__call__([Array, Number])) == true });
+    test(function() { return isinstance([], tuple.__call__([Number, Array])) == True });
+    test(function() { return isinstance([], tuple.__call__([Array, Number])) == True });
 
-    test(function() { return isinstance([], tuple.__call__([Number, String])) == false });
+    test(function() { return isinstance([], tuple.__call__([Number, String])) == False });
 
     var t = tuple.__call__([1, 2, 3]);
 
-    test(function() { return isinstance(t, Array) == false });
-    test(function() { return isinstance(t, Number) == false });
-    test(function() { return isinstance(t, String) == false });
+    test(function() { return isinstance(t, Array) == False });
+    test(function() { return isinstance(t, Number) == False });
+    test(function() { return isinstance(t, String) == False });
 
-    test(function() { return isinstance(t, tuple.__call__()) == false });
+    test(function() { return isinstance(t, tuple.__call__()) == False });
 
-    test(function() { return isinstance(t, tuple.__call__([Number, Array])) == false });
-    test(function() { return isinstance(t, tuple.__call__([Array, Number])) == false });
+    test(function() { return isinstance(t, tuple.__call__([Number, Array])) == False });
+    test(function() { return isinstance(t, tuple.__call__([Array, Number])) == False });
 
-    test(function() { return isinstance(t, tuple.__call__([Number, String])) == false });
+    test(function() { return isinstance(t, tuple.__call__([Number, String])) == False });
 
-    test(function() { return isinstance(t, tuple) == true });
-    test(function() { return isinstance(t, list) == false });
-    test(function() { return isinstance(t, dict) == false });
+    test(function() { return isinstance(t, tuple) == True });
+    test(function() { return isinstance(t, list) == False });
+    test(function() { return isinstance(t, dict) == False });
 
-    test(function() { return isinstance(t, tuple.__call__([Number, tuple])) == true });
-    test(function() { return isinstance(t, tuple.__call__([tuple, Number])) == true });
+    test(function() { return isinstance(t, tuple.__call__([Number, tuple])) == True });
+    test(function() { return isinstance(t, tuple.__call__([tuple, Number])) == True });
 
-    test(function() { return isinstance(t, tuple.__call__([list, dict])) == false });
+    test(function() { return isinstance(t, tuple.__call__([list, dict])) == False });
 }
 
 function test_exceptions() {
@@ -717,22 +717,22 @@ function test_str() {
     test(function() { return s.find("testix") == -1 });
 
     var t = tuple.__call__(["a", "b", "c"]);
-    test(function() { return t.__contains__("a") == true });
-    test(function() { return t.__contains__("b") == true });
-    test(function() { return t.__contains__("c") == true });
-    test(function() { return t.__contains__("d") == false });
-    test(function() { return t.__contains__(88) == false });
+    test(function() { return t.__contains__("a") == True });
+    test(function() { return t.__contains__("b") == True });
+    test(function() { return t.__contains__("c") == True });
+    test(function() { return t.__contains__("d") == False });
+    test(function() { return t.__contains__(88) == False });
 
     var t = tuple.__call__([str.__call__("a"), str.__call__("b"), str.__call__("c")]);
-    test(function() { return t.__contains__("a") == true });
-    test(function() { return t.__contains__("b") == true });
-    test(function() { return t.__contains__("c") == true });
-    test(function() { return t.__contains__("d") == false });
-    test(function() { return t.__contains__(88) == false });
-    test(function() { return t.__contains__(str.__call__("a")) == true });
-    test(function() { return t.__contains__(str.__call__("b")) == true });
-    test(function() { return t.__contains__(str.__call__("c")) == true });
-    test(function() { return t.__contains__(str.__call__("d")) == false });
+    test(function() { return t.__contains__("a") == True });
+    test(function() { return t.__contains__("b") == True });
+    test(function() { return t.__contains__("c") == True });
+    test(function() { return t.__contains__("d") == False });
+    test(function() { return t.__contains__(88) == False });
+    test(function() { return t.__contains__(str.__call__("a")) == True });
+    test(function() { return t.__contains__(str.__call__("b")) == True });
+    test(function() { return t.__contains__(str.__call__("c")) == True });
+    test(function() { return t.__contains__(str.__call__("d")) == False });
 }
 
 function tests() {
