@@ -3,6 +3,7 @@ import py2js.compiler
 import ast
 import inspect
 from py2js.compiler import JSError
+from py2js.compiler.multiplexer import dump
 
 class Compiler(py2js.compiler.BaseCompiler):
 
