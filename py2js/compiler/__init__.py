@@ -9,9 +9,6 @@ class BaseCompiler(object):
 
     name_map = {
         'self'   : 'this',
-        'True'   : 'true',
-        'False'  : 'false',
-        'None'  : 'null',
 
         'int' : '_int',
         'float' : '_float',
