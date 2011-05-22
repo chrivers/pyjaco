@@ -15,10 +15,18 @@ iter.prototype.__init__ = function(obj) {
         };
     } else if (obj.__class__ == iter) {
         this._seq = obj._seq;
-    } else if (defined(obj.__iter__)) {
-        this._seq = obj.__iter__()._seq;
     } else {
         throw py_builtins.TypeError.__call__("object is not iterable");
+    }
+}
+
+var __iter_real__ = iter.__call__;
+
+iter.__call__ = function(obj) {
+    if (defined(obj.__iter__)) {
+        return obj.__iter__();
+    } else {
+        return __iter_real__(obj);
     }
 }
 
