@@ -102,7 +102,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             js.append("var %s = __inherit(%s, \"%s\");" % (class_name, bases[0], class_name));
 
-        #~ methods = []
         self._class_name.append(class_name)
         heirar = ".prototype.".join(self._class_name + [])
         for stmt in node.body:
@@ -123,15 +122,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             else:
                 raise JSError("Unsupported class data: %s" % stmt)
         self._class_name.pop()
-
-        #The following is unnecessary: __init__ is inherited from
-        #'object'
-        #~ methods_names = [m.name for m in methods]
-        #~ if not "__init__" in methods_names:
-            #~ # if the user didn't define __init__(), we have to add it ourselves
-            #~ # because we call it from the constructor above
-            #~ js.append("_%s.prototype.__init__ = function() {" % class_name)
-            #~ js.append("}")
 
         return js
 
@@ -193,7 +183,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         return js
 
     def visit_AugAssign(self, node):
-        # TODO: Make sure that all the logic in Assign also works in AugAssign
         target = self.visit(node.target)
         value = self.visit(node.value)
 
@@ -482,9 +471,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if id in self.builtin:
             id = "py_builtins." + id;
-
-        #~ if id in self._classes:
-            #~ id = '_' + id;
 
         return id
 
