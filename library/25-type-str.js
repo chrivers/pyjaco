@@ -23,23 +23,6 @@ str.prototype.__str__ = function () {
     return this;
 };
 
-str.prototype.__eq__ = function (other) {
-    if (other.__class__ == this.__class__) {
-        if (len(this) != len(other))
-            return false;
-        for (var i = 0; i < len(this); i++) {
-            if (this._obj[i] != other._obj[i])
-                return false;
-        }
-        return true;
-    } else
-        return false;
-};
-
-str.prototype.toString = function () {
-    return js(this.__str__());
-};
-
 str.prototype._js_ = function () {
     return this._obj;
 };
