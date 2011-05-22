@@ -46,9 +46,15 @@ function copy(iterator) {
     return items;
 }
 
-var to_array = function(a) {
-    return Array.prototype.slice.call(a,0);
-};
+function copysimple(obj) {
+    if (isinstance(obj, _int)) {
+        return _int.__call__(Number(obj._obj));
+    } else if (isinstance(obj, str)) {
+        return str.__call__(String(obj._obj));
+    } else {
+        return obj;
+    }
+}
 
 var Function = function(func) {
     func.__call__ = func;
