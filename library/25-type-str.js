@@ -121,6 +121,15 @@ str.prototype.__delitem__ = function(index) {
     throw py_builtins.TypeError.__call__("'str' object doesn't support item deletion");
 };
 
+str.prototype.__add__ = function(c) {
+    return str.__call__(this._obj + c._obj);
+};
+
+str.prototype.__iadd__ = function(c) {
+    this._obj += c._obj;
+    return this;
+};
+
 str.prototype.count = Function(function(str, start, end) {
     if (!defined(start))
         start = 0;
