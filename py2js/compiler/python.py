@@ -180,7 +180,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     declare = "var "
                 else:
                     declare = ""
-                js = ["%s%s = %s;" % (declare, var, value)]
+                js = ["%s%s = copysimple(%s);" % (declare, var, value)]
             elif isinstance(target, ast.Attribute):
                 js = ["%s.__setattr__(\"%s\", %s);" % (self.visit(target.value), str(target.attr), value)]
             else:
