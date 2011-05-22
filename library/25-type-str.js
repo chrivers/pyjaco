@@ -81,6 +81,24 @@ str.prototype.__eq__ = function(s) {
         return false;
 };
 
+str.prototype.__gt__ = function(s) {
+    if (typeof(s) === "string")
+        return bool.__call__(this._obj > s);
+    else if (isinstance.__call__(s, str))
+        return bool.__call__(this._obj > s._obj);
+    else
+        return False;
+};
+
+str.prototype.__lt__ = function(s) {
+    if (typeof(s) === "string")
+        return bool.__call__(this._obj < s);
+    else if (isinstance.__call__(s, str))
+        return bool.__call__(this._obj < s._obj);
+    else
+        return False;
+};
+
 str.prototype.__contains__ = function(item) {
     for (var index in this._obj) {
         if (item == this._obj[index]) {
