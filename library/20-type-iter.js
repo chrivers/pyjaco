@@ -26,10 +26,6 @@ iter.prototype.__str__ = function () {
     return str.__call__("<iterator of " + this._seq + " at " + this._index + ">");
 };
 
-iter.prototype.toString = function () {
-    return js(this.__str__());
-};
-
 iter.prototype.next = Function(function() {
     var value = this._seq[this._index++];
 
