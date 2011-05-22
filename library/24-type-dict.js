@@ -34,10 +34,6 @@ dict.prototype.__str__ = function () {
     return str.__call__("{" + strings.join(", ") + "}");
 };
 
-dict.prototype.toString = function () {
-    return js(this.__str__());
-};
-
 dict.prototype._js_ = function () {
     var items = {};
 
