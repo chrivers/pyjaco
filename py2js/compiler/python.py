@@ -469,7 +469,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         except KeyError:
             pass
 
-        if id in self.builtin:
+        if id in self.builtin and not id in self._scope:
             id = "py_builtins." + id;
 
         return id
