@@ -121,7 +121,25 @@ list.prototype.pop = Function(function() {
 });
 
 list.prototype.sort = Function(function() {
-    this._items.sort();
+    var cmp = function(a, b) { return js(a.__cmp__(b));};
+    if (arguments.length > 0)
+        cmp = js(arguments[0]);
+
+    var key = function(x) { return x; };
+    if (arguments.length > 1)
+        key = js(arguments[1]);
+
+    var reverse = False;
+    if (arguments.length > 2)
+        reverse = js(arguments[2]);
+
+    if (js(reverse)) {
+        var mcmp = function(a, b) { return cmp(b, a); };
+    } else {
+        var mcmp = function(a, b) { return cmp(a, b); };
+    }
+
+    this._items.sort(function (a, b) {return mcmp(key(a), key(b));});
 });
 
 list.prototype.insert = Function(function(index, x) {
