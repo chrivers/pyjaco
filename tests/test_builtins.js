@@ -735,49 +735,6 @@ function test_str() {
     test(function() { return t.__contains__(str.__call__("d")) == false });
 }
 
-function test_func() {
-    var foo = $def(function(a) {
-            return a+1;
-            });
-    test(function() { return foo(3) == 4 });
-    test(function() { return foo(4) == 5 });
-
-    foo = $def(function(a, b) {
-            return a-b;
-            });
-    test(function() { return foo(3, 1) == 2 });
-    test(function() { return foo(4, 1) == 3 });
-
-    foo = $def({'b': 1}, function(a, b) {
-            return a-b;
-            });
-    test(function() { return foo(3, -1) == 4 });
-    test(function() { return foo(4, -1) == 5 });
-    test(function() { return foo(3) == 2 });
-    test(function() { return foo(4) == 3 });
-
-    foo = $def({'a': 3, 'b': 1}, function(a, b) {
-            return a-b;
-            });
-    test(function() { return foo(3, -1) == 4 });
-    test(function() { return foo(4, -1) == 5 });
-    test(function() { return foo(3) == 2 });
-    test(function() { return foo(4) == 3 });
-    test(function() { return foo() == 2 });
-
-    foo = $def({'a': 3, 'b': 1}, true, true, function(a, b, args, kwargs) {
-            return a-b;
-            });
-    test(function() { return foo(3, -1) == 4 });
-    test(function() { return foo(4, -1) == 5 });
-    test(function() { return foo(3) == 2 });
-    test(function() { return foo(4) == 3 });
-    test(function() { return foo() == 2 });
-    test(function() { return foo(3, -1, 5) == 4 });
-    test(function() { return foo(4, -1, 6, 7) == 5 });
-    test(function() { return foo.args([4, -1], {'x': 40}) == 5 });
-}
-
 function tests() {
     try {
         print("");
@@ -805,8 +762,6 @@ function tests() {
         test_to_js();
         print("Testing strings");
         test_str();
-        print("Testing functions");
-        test_func();
     } catch(e) {
         if (defined(e.__class__)) {
             if (defined(e.message)) {
