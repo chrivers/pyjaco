@@ -11,9 +11,9 @@ slice.prototype.__init__ = function(start, stop, step) {
     if (!start && start != 0) start = null;
     if (!defined(stop)) stop = null;
     if (!defined(step)) step = null;
-    this.start = start;
-    this.stop = stop;
-    this.step = step;
+    this.start = js(start);
+    this.stop = js(stop);
+    this.step = js(step);
 };
 
 slice.prototype.__str__ = function() {
@@ -21,6 +21,7 @@ slice.prototype.__str__ = function() {
 };
 
 slice.prototype.indices = Function(function(n) {
+    n = js(n);
     var start = this.start;
     if (start == null)
         start = 0;
