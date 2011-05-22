@@ -269,13 +269,13 @@ class Compiler(py2js.compiler.BaseCompiler):
         js = []
 
         if not node.orelse:
-            js.append("while (%s) {" % self.visit(node.test))
+            js.append("while (js(%s)) {" % self.visit(node.test))
         else:
             orelse_dummy = self.new_dummy()
 
             js.append("var %s = false;" % orelse_dummy)
             js.append("while (1) {");
-            js.append("    if (!(%s)) {" % self.visit(node.test))
+            js.append("    if (js(py_builtins.__not__(%s))) {" % self.visit(node.test))
             js.append("        %s = true;" % orelse_dummy)
             js.append("        break;")
             js.append("    }")
@@ -296,7 +296,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         return js
 
     def visit_If(self, node):
-        js = ["if (py_builtins.bool(%s)) {" % self.visit(node.test)]
+        js = ["if (js(%s)) {" % self.visit(node.test)]
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
