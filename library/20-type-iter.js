@@ -20,7 +20,7 @@ iter.prototype.__init__ = function(obj) {
 }
 
 iter.prototype.__str__ = function () {
-    return str.__call__("<iter of " + this._seq + " at " + this._index + ">");
+    return str.__call__("<iterator of " + this._seq + " at " + this._index + ">");
 };
 
 iter.prototype.toString = function () {
