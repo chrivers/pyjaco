@@ -475,7 +475,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         return id
 
     def visit_Num(self, node):
-        return str(node.n)
+        return "_int.__call__(%s)" % str(node.n)
 
     def visit_Str(self, node):
         # Uses the Python builtin repr() of a string and the strip string type
