@@ -10,10 +10,10 @@ str.prototype.__init__ = function(s) {
     } else {
         if (typeof(s) === "string") {
             this._obj = s;
-        } else if (defined(s.toString)) {
-            this._obj = s.toString();
         } else if (defined(s.__str__)) {
             this._obj = js(s.__str__());
+        } else if (defined(s.toString)) {
+            this._obj = s.toString();
         } else
             this._obj = js(s);
     }
