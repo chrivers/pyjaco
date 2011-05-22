@@ -2,15 +2,7 @@
 
 var list = __inherit(object, "list");
 
-list.prototype.__init__ = function(seq) {
-    if (!defined(seq)) {
-        this._items = [];
-        this._len = 0;
-    } else {
-        this._items = copy(iter.__call__(seq));
-        this._len = -1;
-    }
-};
+list.prototype.__init__ = tuple.prototype.__init__;
 
 list.prototype.__str__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
