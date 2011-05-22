@@ -515,7 +515,12 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not node.type:
             return ["throw %s;" % self._exceptions[-1]]
         else:
-            return ["throw %s;" % self.visit(node.type)]
+            if isinstance(node.type, ast.Name):
+                return ["throw %s.__call__();" % self.visit(node.type)]
+            elif isinstance(node.type, ast.Call):
+                return ["throw %s;" % self.visit(node.type)]
+            else:
+                raise JSError("Unknown exception type")
 
     def visit_Print(self, node):
         assert node.dest is None
