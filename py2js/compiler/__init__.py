@@ -93,7 +93,7 @@ class BaseCompiler(object):
 
     def new_dummy(self):
         self.tmp_index += 1
-        return "__var%d__" % self.tmp_index
+        return "$v%d" % self.tmp_index
 
     def visit(self, node):
         try:
