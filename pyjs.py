@@ -20,6 +20,12 @@ def main():
                       default=False,
                       help="include py-builtins.js library in the output")
 
+    parser.add_option("-I", "--import-builtins",
+                      action="store_true",
+                      dest="import_builtins",
+                      default=False,
+                      help="call load('py-builtins.js') to source the standard library")
+
     options, args = parser.parse_args()
     if len(args) == 1:
         filename = args[0]
@@ -35,6 +41,8 @@ def main():
             else:
                 builtins = open("py-builtins.js").read()
             output.write(builtins)
+        elif options.import_builtins:
+            output.write('load("py-builtins.js");\n')
 
         c = Compiler()
         c.append_string(open(filename).read())
