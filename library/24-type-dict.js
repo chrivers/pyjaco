@@ -56,7 +56,7 @@ dict.prototype.__len__ = function() {
         count += 1;
     }
 
-    return count;
+    return _int.__call__(count);
 };
 
 dict.prototype.__iter__ = function() {
@@ -64,7 +64,7 @@ dict.prototype.__iter__ = function() {
 };
 
 dict.prototype.__contains__ = function(key) {
-    return defined(this._items[key]);
+    return bool.__call__(defined(this._items[key]));
 };
 
 dict.prototype.__getitem__ = function(key) {
@@ -82,7 +82,7 @@ dict.prototype.__setitem__ = function(key, value) {
 };
 
 dict.prototype.__delitem__ = function(key) {
-    if (this.__contains__(key)) {
+    if (js(this.__contains__(key))) {
         delete this._items[key];
     } else {
         throw py_builtins.KeyError.__call__(str.__call__(key));
@@ -104,10 +104,10 @@ dict.prototype.get = Function(function(key, value) {
 });
 
 dict.prototype.items = Function(function() {
-    var items = [];
+    var items = list.__call__();
 
     for (var key in this._items) {
-        items.push([key, this._items[key]]);
+        items.append(tuple.__call__([key, this._items[key]]));
     }
 
     return items;
@@ -124,10 +124,10 @@ dict.prototype.keys = Function(function() {
 });
 
 dict.prototype.values = Function(function() {
-    var values = [];
+    var values = list.__call__();
 
     for (var key in this._items) {
-        values.push(this._items[key]);
+        values.append(this._items[key]);
     }
 
     return values;
