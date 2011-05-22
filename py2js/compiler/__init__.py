@@ -16,7 +16,7 @@ class BaseCompiler(object):
         'int' : '_int',
         'float' : '_float',
 
-        'super' : '_super',
+        'super' : '__super',
 
         # ideally we should check, that this name is available:
         'py_builtins' : '___py_hard_to_collide',
