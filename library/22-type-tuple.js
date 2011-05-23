@@ -26,6 +26,8 @@ tuple.prototype.__str__ = function () {
     }
 };
 
+tuple.prototype.__repr__ = tuple.prototype.__str__;
+
 tuple.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
         if (len(this) != len(other))
