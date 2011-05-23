@@ -43,7 +43,7 @@ len = Function(function(obj) {
 dir = Function(function(obj) {
     var res = list.__call__();
     for (var i in obj) {
-        res.append.call(res, str.__call__(i));
+        res.append.call(res, __py2js_str.__call__(i));
     }
     return res;
 });
@@ -250,7 +250,7 @@ py_builtins.sum = Function(function(list) {
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log)) {
-        console.log(js(str.__call__(s)));
+        console.log(js(__py2js_str.__call__(s)));
     } else {
         if (arguments.length <= 1) {
             if (defined(s))
@@ -259,7 +259,7 @@ py_builtins.print = function(s) {
                 print("");
         } else {
             var args = tuple.__call__(to_array(arguments));
-            print(str.__call__(" ").join(args));
+            print(__py2js_str.__call__(" ").join(args));
         }
     }
 };
