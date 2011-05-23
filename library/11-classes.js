@@ -46,8 +46,13 @@ var __inherit = function(cls, name) {
     var res = new ObjectMetaClass(x);
     res.__name__ = name;
     res.prototype.__class__ = res;
+    res.prototype.__super__ = cls;
     return res;
 };
+
+var __super = Function(function(scls, obj) {
+    return obj.__super__;
+});
 
 var object = __inherit(function() {}, "object");
 
