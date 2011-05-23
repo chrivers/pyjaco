@@ -99,7 +99,13 @@ var sprintf = (function() {
 					arg = argv[cursor++];
 				}
 
-				if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
+                                /* TODO: Figure out exactly why this is required */
+                                arg = js(arg);
+                                if (typeof(arg) === "object") {
+                                   arg = js(arg[0]);
+                                }
+
+				if (/[^s]/.test(match[8]) && (get_type(js(arg)) != 'number')) {
 					throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
 				}
 				switch (match[8]) {
@@ -111,15 +117,46 @@ var sprintf = (function() {
 					case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
 					case 'o': arg = arg.toString(8); break;
 					case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
-					case 'u': arg = Math.abs(arg); break;
+					case 'u': arg = parseInt(arg, 10); break;
 					case 'x': arg = arg.toString(16); break;
 					case 'X': arg = arg.toString(16).toUpperCase(); break;
 				}
-				arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
 				pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
 				pad_length = match[6] - String(arg).length;
 				pad = match[6] ? str_repeat(pad_character, pad_length) : '';
-				output.push(match[5] ? arg + pad : pad + arg);
+
+                                var flag_flip = defined(match[5]) && match[5].indexOf('-') !== -1;
+                                var flag_prefixzero = defined(match[5]) && match[5].indexOf(' ') !== -1;
+                                var flag_alternate = defined(match[5]) && match[5].indexOf('#') !== -1;
+
+                                if ((/[diefouxX]/.test(match[8]))) {
+                                    if (match[3] && arg >= 0) {
+				        arg = '+' + arg;
+                                    }
+                                    if (String(arg)[0] === "-" && !flag_flip) {
+                                        arg = String(arg).substring(1);
+                                        pad = "-" + pad;
+                                    }
+                                    if (match[8] === 'e') {
+                                        var q = Math.max(arg.lastIndexOf('+'), arg.lastIndexOf('-'));
+                                        if (q === arg.length-2) {
+                                            arg = arg.substring(0, q+1) + "0" + arg.substring(q+1);
+                                        }
+                                    }
+                                }
+
+                                if (flag_alternate) {
+                                    switch (match[8]) {
+                                    case 'o': if (arg !== "0") arg = "0" + arg; break;
+                                    case 'x': arg = "0x" + arg; break;
+                                    }
+                                }
+                                if (flag_prefixzero) {
+                                    arg = " " + arg;
+                                    pad = pad.substring(1);
+                                }
+
+			        output.push(flag_flip ? arg + pad : pad + arg);
 			}
 		}
 		return output.join('');
