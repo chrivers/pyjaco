@@ -206,6 +206,20 @@ py_builtins._int = Function(function(value) {
     }
 });
 
+py_builtins.__not__ = Function(function(obj) {
+   if (hasattr(obj, '__nonzero__')) {
+       return py_builtins.bool(!js(obj.__nonzero__()));
+   } else if (hasattr(obj, '__len__')) {
+       return py_builtins.bool(js(obj.__len__()) > 0);
+   } else {
+       throw py_builtins.TypeError.__call__("Cannot \"not\" value that does not have __nonzero__ or __len__");
+   }
+});
+
+py_builtins.__is__ = Function(function(a, b) {
+    return py_builtins.bool(a === b);
+});
+
 py_builtins._float = Function(function(value) {
     return value;
 });
