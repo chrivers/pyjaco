@@ -11,6 +11,12 @@ tuple.prototype.__init__ = function(seq) {
         this._len = 0;
     } else {
         this._items = copy(iter.__call__(seq));
+        for (var i = 0; i < this._items.length; i++) {
+            if (typeof(this._items[i]) == 'number')
+                this._items[i] = _int.__call__(this._items[i]);
+            if (typeof(this._items[i]) == 'string')
+                this._items[i] = str.__call__(this._items[i]);
+        }
         this._len = -1;
     }
 };
