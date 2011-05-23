@@ -55,8 +55,10 @@ repr = Function(function(obj) {
         return obj.__repr__.call(obj);
     } else if (hasattr(obj, '__str__')) {
         return obj.__str__.call(obj);
+    } else if (hasattr(obj, 'toString')) {
+        return obj.toString();
     } else {
-        throw py_builtins.AttributeError.__call__('__repr__ or __str__ not found');
+        throw py_builtins.AttributeError.__call__('__repr__, __str__ or toString not found on ' + typeof(obj));
     }
 });
 
