@@ -22,9 +22,9 @@ tuple.prototype.__init__ = function(seq) {
 };
 
 tuple.prototype.__str__ = function () {
-    if (this.__len__() == 0) {
+    if (js(this.__len__()) == 0) {
         return str.__call__("()");
-    } else if (this.__len__() == 1) {
+    } else if (js(this.__len__()) == 1) {
         return str.__call__("(" + str.__call__(this._items[0]) + ",)");
     } else {
         var items = map(function (i) {return str.__call__(i);}, this._items);
@@ -36,18 +36,20 @@ tuple.prototype.__repr__ = tuple.prototype.__str__;
 
 tuple.prototype.__eq__ = function (other) {
     if (other.__class__ == this.__class__) {
-        if (len(this) != len(other))
-            return false;
-        for (var i = 0; i < len(this); i++) {
-            // TODO: use __eq__ here as well:
-            if (this._items[i] != other._items[i])
-                return false;
+        if (js(len(this)) != js(len(other))) {
+            return False;
         }
-        return true;
+        for (var i = 0; i < js(len(this)); i++) {
+            if (js(this._items[i].__ne__(other._items[i]))) {
+                return False;
+            }
+        }
+        return True;
         // This doesn't take into account hash collisions:
         //return hash(this) == hash(other)
-    } else
-        return false;
+    } else {
+        return False;
+    }
 };
 
 tuple.prototype._js_ = function () {
@@ -62,7 +64,7 @@ tuple.prototype._js_ = function () {
 
 tuple.prototype.__hash__ = function () {
     var value = 0x345678;
-    var length = this.__len__();
+    var length = js(this.__len__());
 
     for (var index in this._items) {
         value = ((1000003*value) & 0xFFFFFFFF) ^ hash(this._items[index]);
@@ -85,9 +87,9 @@ tuple.prototype.__len__ = function() {
         }
 
         this._len = count;
-        return count;
+        return _int.__call__(count);
     } else
-        return this._len;
+        return _int.__call__(this._len);
 };
 
 tuple.prototype.__iter__ = function() {
@@ -96,33 +98,35 @@ tuple.prototype.__iter__ = function() {
 
 tuple.prototype.__contains__ = function(item) {
     for (var index in this._items) {
-        if (py_builtins.eq(item, this._items[index])) {
-            return true;
+        if (js(py_builtins.eq(item, this._items[index]))) {
+            return True;
         }
     }
 
-    return false;
+    return False;
 };
 
 tuple.prototype.__getitem__ = function(index) {
+    if (typeof(index) === 'number') index = _int.__call__(index);
     var seq;
     if (isinstance.__call__(index, slice)) {
         var s = index;
-        var inds = s.indices(len(this));
-        var start = inds.__getitem__(0);
-        var stop = inds.__getitem__(1);
-        var step = inds.__getitem__(2);
+        var inds = js(s.indices(len(this)));
+        var start = inds[0];
+        var stop = inds[1];
+        var step = inds[2];
         seq = [];
-        for (var i = start; i < stop; i += step) {
+        for (var i = js(start); i < js(stop); i += js(step)) {
             seq.push(this.__getitem__(i));
         }
         return this.__class__.__call__(seq);
-    } else if ((index >= 0) && (index < len(this)))
-        return this._items[index];
-    else if ((index < 0) && (index >= -len(this)))
-        return this._items[index+len(this)];
-    else
-        throw py_builtins.IndexError.__call__("list assignment index out of range");
+    } else if (js(index.__ge__(_int.__call__(0)).__and__(index.__lt__(len(this))))) {
+        return this._items[index.__int__()];
+    } else if (js(index.__lt__(_int.__call__(0)).__and__(index.__ge__(len(this).__neg__())))) {
+        return this._items[index.__add__(len(this)).__int__()];
+    } else {
+        throw py_builtins.IndexError.__call__("list index out of range");
+    }
 };
 
 tuple.prototype.__setitem__ = function(index, value) {
@@ -137,7 +141,7 @@ tuple.prototype.count = Function(function(value) {
     var count = 0;
 
     for (var index in this._items) {
-        if (value == this._items[index]) {
+        if (js(this._items[index].__eq__(value))) {
             count += 1;
         }
     }
@@ -157,7 +161,7 @@ tuple.prototype.index = Function(function(value, start, end) {
             break;
         }
 
-        if (_value == value) {
+        if (js(_value.__eq__(value))) {
             return i;
         }
     }
