@@ -44,10 +44,6 @@ tuple.prototype.__eq__ = function (other) {
         return false;
 };
 
-tuple.prototype.toString = function () {
-    return js(this.__str__());
-};
-
 tuple.prototype._js_ = function () {
     var items = [];
 
