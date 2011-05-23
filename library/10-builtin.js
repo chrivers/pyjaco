@@ -63,13 +63,19 @@ repr = Function(function(obj) {
 });
 
 range = Function(function(start, end, step) {
+    start = js(start);
+
     if (!defined(end)) {
         end = start;
         start = 0;
+    } else {
+        end = js(end);
     }
 
     if (!defined(step)) {
         step = 1;
+    } else {
+        step = js(step);
     }
 
     var seq = [];
@@ -178,13 +184,14 @@ isinstance = Function(function(obj, cls) {
 });
 
 py_builtins.bool = function(a) {
-    if ((a != null) && defined(a.__bool__))
+    if ((a != null) && defined(a.__bool__)) {
         return a.__bool__();
-    else {
-        if (a)
-            return true;
-        else
-            return false;
+    } else {
+        if (a) {
+            return True;
+        } else {
+            return False;
+        }
     }
 };
 
@@ -194,15 +201,21 @@ py_builtins.eq = function(a, b) {
     else if ((b != null) && defined(b.__eq__))
         return b.__eq__(a);
     else
-        return a == b;
+        return bool.__call__(a == b);
 };
 
 py_builtins._int = Function(function(value) {
-    var s = value.toString();
-    if (s.match(/^[-+0-9.]+$/)) {
-        return parseInt(value);
+    if (typeof(value) === "number") {
+        return _int.__call__(parseInt(value));
+    } else if (isinstance(value, _int)) {
+        return _int.__call__(parseInt(value._obj));
     } else {
-        throw py_builtins.ValueError.__call__("Invalid integer: " + value);
+        var s = value.toString();
+        if (s.match(/^[-+0-9]+$/)) {
+            return _int.__call__(parseInt(value));
+        } else {
+            throw py_builtins.ValueError.__call__("Invalid integer: " + value);
+        }
     }
 });
 
@@ -258,7 +271,7 @@ py_builtins.sum = Function(function(list) {
     var result = 0;
 
     iterate(iter.__call__(list), function(item) {
-        result += item;
+        result += js(item);
     });
 
     return result;
@@ -269,12 +282,13 @@ py_builtins.print = function(s) {
         console.log(js(__py2js_str.__call__(s)));
     } else {
         if (arguments.length <= 1) {
-            if (defined(s))
-                print(s);
-            else
+            if (defined(s)) {
+                print(__py2js_str.__call__(s));
+            } else {
                 print("");
+            }
         } else {
-            var args = tuple.__call__(to_array(arguments));
+            var args = tuple.__call__(Array.prototype.slice.call(arguments, 0));
             print(__py2js_str.__call__(" ").join(args));
         }
     }
