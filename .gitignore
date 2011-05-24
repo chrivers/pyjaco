@@ -7,4 +7,4 @@ tests/*/*.err
 tests/*/*.py.js
 tests/*.err
 tests/*.out
-.d8-history
+.d8_history
