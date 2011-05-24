@@ -68,14 +68,21 @@ def test3(name, in_file = None, known_to_fail = False, stop_on_error = True):
         r, stdout2, stderr = proc_capture(["python", "pyjs.py", "--include-builtin", in_file])
         w.write(".")
         if r == 0:
-            r, stdout3, stderr = proc_capture(["js"], stdin = stdout2)
-            w.write(".")
-            if r == 0:
-                f = file(JS_DIFF_FILE_NAME, "w")
-                f.write(stdout3)
-                f.close()
-                r, stdout4, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout1)
+            try:
+                q = file("tmp", "w")
+                q.write(stdout2)
+                q.close()
+                r, stdout3, stderr = proc_capture(["js", "-f", "tmp"])
                 w.write(".")
+                if r == 0:
+                    f = file(JS_DIFF_FILE_NAME, "w")
+                    f.write(stdout3)
+                    f.close()
+                    r, stdout4, stderr = proc_capture(["diff", JS_DIFF_FILE_NAME, "-"], stdin = stdout1)
+                    w.write(".")
+            finally:
+                os.unlink("tmp")
+
     w.check(r, known_to_fail, stop_on_error, stderr)
 
 def main():
