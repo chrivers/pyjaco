@@ -81,9 +81,6 @@ class JavaScript(object):
     def __init__(self, *args):
         self.jsvars = list(args)
 
-    def __str__(self):
-        return self._js
-
     def __call__(self, obj):
         lines = inspect.getsource(obj).split("\n")
         if lines[0].startswith("@"):
