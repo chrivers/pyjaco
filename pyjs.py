@@ -3,7 +3,7 @@
 import sys
 import os.path
 from optparse import OptionParser
-from py2js import convert_py2js
+from py2js import Compiler
 
 def main():
     parser = OptionParser(usage="%prog [options] filename",
@@ -14,11 +14,17 @@ def main():
                       dest="output",
                       help="write output to OUTPUT")
 
-    parser.add_option("--include-builtins",
+    parser.add_option("-i", "--include-builtins",
                       action="store_true",
                       dest="include_builtins",
                       default=False,
                       help="include py-builtins.js library in the output")
+
+    parser.add_option("-I", "--import-builtins",
+                      action="store_true",
+                      dest="import_builtins",
+                      default=False,
+                      help="call load('py-builtins.js') to source the standard library")
 
     options, args = parser.parse_args()
     if len(args) == 1:
@@ -31,13 +37,16 @@ def main():
 
         if options.include_builtins:
             if os.path.dirname(__file__):
-                builtins = open(os.path.join(os.path.dirname(__file__)), "py-builtins.js").read()
+                builtins = open(os.path.join(os.path.dirname(__file__), "py-builtins.js")).read()
             else:
                 builtins = open("py-builtins.js").read()
             output.write(builtins)
+        elif options.import_builtins:
+            output.write('load("py-builtins.js");\n')
 
-        s = open(filename).read() #unsafe for large files!
-        output.write(convert_py2js(s))
+        c = Compiler()
+        c.append_string(open(filename).read())
+        output.write(str(c))
     else:
         parser.print_help()
 

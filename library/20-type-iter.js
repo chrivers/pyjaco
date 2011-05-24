@@ -1,46 +1,45 @@
 /* Python 'iter' type */
 
-function iter(obj) {
-    if (obj instanceof Array) {
-        return new _iter(obj);
+var iter = __inherit(object, "iter");
+
+iter.prototype.__init__ = function(obj) {
+    this._index = 0;
+    if (!defined(obj)) {
+        throw py_builtins.TypeError.__call__("iter() expects at least 1 argument");
+    } else if (obj instanceof Array) {
+        this._seq = obj;
     } else if (typeof(obj) === "string") {
-        return iter(obj.split(""));
-    } else if (obj.__class__ == _iter) {
-        return obj;
-    } else if (defined(obj.__iter__)) {
-        return obj.__iter__();
+        this._seq = obj.split("");
+        for (var i = 0; i < this._seq.length; i++) {
+            this._seq[i] = str.__call__(this._seq[i]);
+        };
+    } else if (obj.__class__ == iter) {
+        this._seq = obj._seq;
     } else {
-        throw new py_builtins.TypeError("object is not iterable");
+        throw py_builtins.TypeError.__call__("object is not iterable");
     }
 }
 
-function _iter(seq) {
-    this.__init__(seq);
+var __iter_real__ = iter.__call__;
+
+iter.__call__ = function(obj) {
+    if (defined(obj.__iter__)) {
+        return obj.__iter__();
+    } else {
+        return __iter_real__(obj);
+    }
 }
 
-_iter.__name__ = 'iter';
-_iter.prototype.__class__ = _iter;
-
-_iter.prototype.__init__ = function(seq) {
-    this._seq = seq;
-    this._index = 0;
+iter.prototype.__str__ = function () {
+    return str.__call__("<iterator of " + this._seq + " at " + this._index + ">");
 };
 
-_iter.prototype.__str__ = function () {
-    return str("<iter of " + this._seq + " at " + this._index + ">");
-};
-
-_iter.prototype.toString = function () {
-    return js(this.__str__());
-};
-
-_iter.prototype.next = function() {
+iter.prototype.next = Function(function() {
     var value = this._seq[this._index++];
 
     if (defined(value)) {
         return value;
     } else {
-        throw new py_builtins.StopIteration('no more items');
+        throw py_builtins.StopIteration.__call__('no more items');
     }
-};
-
+});

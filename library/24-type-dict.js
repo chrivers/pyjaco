@@ -1,17 +1,8 @@
 /* Python 'dict' type */
 
-function dict(args) {
-    return new _dict(args);
-}
+var dict = __inherit(object, "dict");
 
-function _dict(args) {
-    this.__init__(args);
-}
-
-_dict.__name__ = 'dict';
-_dict.prototype.__class__ = _dict;
-
-_dict.prototype.__init__ = function(args) {
+dict.prototype.__init__ = function(args) {
     var items;
     var key;
     var value;
@@ -19,7 +10,7 @@ _dict.prototype.__init__ = function(args) {
     if (defined(args)) {
         if (defined(args.__iter__)) {
             items = {};
-            iterate(iter(args), function(item) {
+            iterate(iter.__call__(args), function(item) {
                     key = js(item.__getitem__(0));
                     value = item.__getitem__(1);
                     items[key] = value;
@@ -33,76 +24,72 @@ _dict.prototype.__init__ = function(args) {
     }
 };
 
-_dict.prototype.__str__ = function () {
+dict.prototype.__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
-        strings.push(js(str(key)) + ": " + js(str(this._items[key])));
+        strings.push(js(str.__call__(key)) + ": " + js(str.__call__(this._items[key])));
     }
 
-    return str("{" + strings.join(", ") + "}");
+    return str.__call__("{" + strings.join(", ") + "}");
 };
 
-_dict.prototype.toString = function () {
-    return js(this.__str__());
-};
-
-_dict.prototype._js_ = function () {
+dict.prototype._js_ = function () {
     var items = {};
 
     var _this_dict = this; // so that we can access it from within the closure:
-    iterate(iter(this), function(key) {
-        items[key] = js(_this_dict.__getitem__(key));
+    iterate(iter.__call__(this), function(key) {
+        items[js(key)] = js(_this_dict.__getitem__(key));
     });
 
     return items;
 };
 
-_dict.prototype.__hash__ = function () {
-    throw new py_builtins.TypeError("unhashable type: 'dict'");
+dict.prototype.__hash__ = function () {
+    throw py_builtins.TypeError.__call__("unhashable type: 'dict'");
 };
 
-_dict.prototype.__len__ = function() {
+dict.prototype.__len__ = function() {
     var count = 0;
 
     for (var key in this._items) {
         count += 1;
     }
 
-    return count;
+    return _int.__call__(count);
 };
 
-_dict.prototype.__iter__ = function() {
-    return new _iter(this.keys());
+dict.prototype.__iter__ = function() {
+    return iter.__call__(this.keys());
 };
 
-_dict.prototype.__contains__ = function(key) {
-    return defined(this._items[key]);
+dict.prototype.__contains__ = function(key) {
+    return bool.__call__(defined(this._items[key]));
 };
 
-_dict.prototype.__getitem__ = function(key) {
+dict.prototype.__getitem__ = function(key) {
     var value = this._items[key];
 
     if (defined(value)) {
         return value;
     } else {
-        throw new py_builtins.KeyError(str(key));
+        throw py_builtins.KeyError.__call__(str.__call__(key));
     }
 };
 
-_dict.prototype.__setitem__ = function(key, value) {
+dict.prototype.__setitem__ = function(key, value) {
     this._items[key] = value;
 };
 
-_dict.prototype.__delitem__ = function(key) {
-    if (this.__contains__(key)) {
+dict.prototype.__delitem__ = function(key) {
+    if (js(this.__contains__(key))) {
         delete this._items[key];
     } else {
-        throw new py_builtins.KeyError(str(key));
+        throw py_builtins.KeyError.__call__(str.__call__(key));
     }
 };
 
-_dict.prototype.get = function(key, value) {
+dict.prototype.get = Function(function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -114,51 +101,51 @@ _dict.prototype.get = function(key, value) {
             return null;
         }
     }
-};
+});
 
-_dict.prototype.items = function() {
-    var items = [];
+dict.prototype.items = Function(function() {
+    var items = list.__call__();
 
     for (var key in this._items) {
-        items.push([key, this._items[key]]);
+        items.append(tuple.__call__([key, this._items[key]]));
     }
 
     return items;
-};
+});
 
-_dict.prototype.keys = function() {
-    var keys = [];
+dict.prototype.keys = Function(function() {
+    var keys = list.__call__();
 
     for (var key in this._items) {
-        keys.push(key);
+        keys.append(key);
     }
 
     return keys;
-};
+});
 
-_dict.prototype.values = function() {
-    var values = [];
+dict.prototype.values = Function(function() {
+    var values = list.__call__();
 
     for (var key in this._items) {
-        values.push(this._items[key]);
+        values.append(this._items[key]);
     }
 
     return values;
-};
+});
 
-_dict.prototype.update = function(other) {
+dict.prototype.update = Function(function(other) {
     for (var key in other) {
         this._items[key] = other[key];
     }
-};
+});
 
-_dict.prototype.clear = function() {
+dict.prototype.clear = Function(function() {
     for (var key in this._items) {
         delete this._items[key];
     }
-};
+});
 
-_dict.prototype.pop = function(key, value) {
+dict.prototype.pop = Function(function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -167,14 +154,14 @@ _dict.prototype.pop = function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw new py_builtins.KeyError(str(key));
+            throw py_builtins.KeyError.__call__(str.__call__(key));
         }
     }
 
     return _value;
-};
+});
 
-_dict.prototype.popitem = function() {
+dict.prototype.popitem = Function(function() {
     var _key;
 
     for (var key in this._items) {
@@ -185,7 +172,6 @@ _dict.prototype.popitem = function() {
     if (defined(key)) {
         return [_key, this._items[_key]];
     } else {
-        throw new py_builtins.KeyError("popitem(): dictionary is empty");
+        throw py_builtins.KeyError.__call__("popitem(): dictionary is empty");
     }
-};
-
+});

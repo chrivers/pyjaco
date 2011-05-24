@@ -1,8 +1,8 @@
-from py2js.decorator import JavaScript
+import py2js
+from py2js.decorator import JavaScript, JSVar
 
 from math import sqrt
 
-@JavaScript
 def is_on_the_left(c, a, b, pts_list):
    ax, ay = pts_list[a]
    bx, by = pts_list[b]
@@ -13,7 +13,6 @@ def is_on_the_left(c, a, b, pts_list):
    vy = float(cy - ay)
    return (ux*vy - uy*vx > 0)
 
-@JavaScript
 def criterion(a, b, c, pts_list):
    ax, ay = pts_list[a]
    bx, by = pts_list[b]
@@ -26,7 +25,6 @@ def criterion(a, b, c, pts_list):
    len_v = sqrt(vx*vx + vy*vy)
    return (ux*vx + uy*vy)/(len_u*len_v)
 
-@JavaScript
 def find_third_point(a, b, pts_list, edges):
     """
     Take a boundary edge (a,b), and in the list of points
@@ -53,14 +51,12 @@ def find_third_point(a, b, pts_list, edges):
         raise TriangulationError("ERROR: Optimal point not found in find_third_point().")
     return pt_index
 
-@JavaScript
 def lies_inside(c, bdy_edges):
    for edge in bdy_edges:
        a,b = edge
        if c == a or c == b: return False
    return True
 
-@JavaScript
 def is_boundary_edge(a, b, bdy_edges):
     """
     Checks whether edge (a, b) is in the list of boundary edges
@@ -71,7 +67,6 @@ def is_boundary_edge(a, b, bdy_edges):
             return True
     return False
 
-@JavaScript
 def triangulate_af(pts_list, bdy_edges):
     """
     Create a triangulation using the advancing front method.
@@ -95,15 +90,12 @@ def triangulate_af(pts_list, bdy_edges):
             bdy_edges.append((c,b))
     return elems
 
-@JavaScript
 def ccw(A, B, C):
     return (C[1]-A[1])*(B[0]-A[0]) > (B[1]-A[1])*(C[0]-A[0])
 
-@JavaScript
 def intersect(A, B, C, D):
     return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
 
-@JavaScript
 def two_edges_intersect(nodes, e1, e2):
     """
     Checks whether the two edges intersect.
@@ -116,7 +108,6 @@ def two_edges_intersect(nodes, e1, e2):
     D = nodes[e2[1]]
     return intersect(A, B, C, D)
 
-@JavaScript
 def edge_intersects_edges(e1, nodes, edges):
     """
     Returns True if 'e1' intersects any edge from 'edges'.
@@ -129,18 +120,18 @@ def edge_intersects_edges(e1, nodes, edges):
             return True
     return False
 
-@JavaScript
+@JSVar("document", "canvas", "scale", "x0")
 def start_triag():
-    js_pre = document.getElementById(js('js_pre'))
-    setattr(js_pre, 'textContent', js("start"))
-    canvas = document.getElementById(js('canvas')).getContext(js('2d'))
-    canvas.fillText(js("Mesh"), 100, 10)
-    setattr(js_pre, 'textContent', js("triag"))
+    js_pre = document.getElementById('js_pre')
+    setattr(js_pre, 'textContent', "start")
+    canvas = document.getElementById('canvas').getContext('2d')
+    setattr(js_pre, 'textContent', "triag")
     setattr(js_pre, 'textContent', example1())
     nodes, edges, elems = example2()
     scale = 50
     x0 = 3
-    setattr(canvas, 'strokeStyle',  js('rgb(0, 0, 255)'))
+    canvas.strokeStyle = 'rgb(0, 0, 255)'
+
     for el in elems:
         canvas.beginPath()
         x, y = nodes[el[0]]
@@ -152,7 +143,8 @@ def start_triag():
         x, y = nodes[el[0]]
         canvas.lineTo(x*scale+x0, 200-y*scale)
         canvas.stroke()
-    setattr(canvas, 'strokeStyle', js('rgb(0, 255, 0)'))
+
+    canvas.strokeStyle = 'rgb(0, 255, 0)'
     canvas.beginPath()
     x, y = nodes[0]
     canvas.moveTo(x*scale+x0, 200-y*scale)
@@ -163,13 +155,11 @@ def start_triag():
     canvas.lineTo(x*scale+x0, 200-y*scale)
     canvas.stroke()
 
-@JavaScript
 def example1():
     nodes, edges, elems = example2()
     result = str(nodes) + "\n" + str(edges) + "\n" + str(elems)
     return result
 
-@JavaScript
 def example2():
     nodes = [
             (0, 0),
@@ -201,19 +191,17 @@ def main():
             example2,
             start_triag,
             ]
-    js = ""
+    js = py2js.Compiler()
     for f in funcs:
-        js += str(f) + "\n"
+       js.append_method(f, f.func_name)
     py_result = example1()
 
     print """<html>
 <head>
-<script language="JavaScript">
-  function sqrt(value) {
-    return Math.sqrt(value);
-  }
-</script>
 <script language="JavaScript" src="../py-builtins.js"></script>
+<script language="JavaScript">
+  sqrt = Function(function(value) { return _int.__call__(Math.sqrt(value)); });
+</script>
 <script language="JavaScript">
 %s
 </script>

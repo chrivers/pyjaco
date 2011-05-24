@@ -1,23 +1,28 @@
-from py2js.decorator import JavaScript
+from py2js.decorator import JavaScript, JSVar
 
-@JavaScript
+@JavaScript()
+@JSVar("window", "alert")
 def StartGoL():
-    setattr(window, 'gol', GoL())
+    window.gol = GoL()
 
-@JavaScript
+@JavaScript()
 class GoL(object):
+
+    @JSVar("document", "Math", "setInterval", "self.canvas")
     def __init__(self):
         self.width = 75
         self.height = 75
-        self.canvas = document.getElementById(js('canvas')).getContext(js('2d'))
-        setattr(self.canvas, 'fillStyle', js('rgb(0, 0, 0)'))
+        self.canvas = document.getElementById('canvas').getContext('2d')
+        self.canvas.fillStyle = 'rgb(0, 0, 0)'
         self.grid = list(range(self.width*self.height))
         for i in range(self.width*self.height):
-            self.grid[i] = Math.random() > 0.5
-        setInterval(js('window.gol.iter()'), 250)
+            self.grid[i] = Random() > 0.5
+        setInterval('window.gol.iter()', 25)
         self.draw()
+
     def get(self, x, y):
         return self.grid[((x + self.width) % self.width) + ((y + self.height) % self.height) * self.width]
+
     def iter(self):
         toDie = []
         toLive = []
@@ -56,6 +61,8 @@ class GoL(object):
             self.grid[toLive[i]] = True
 
         self.draw()
+
+    @JSVar("self.canvas")
     def draw(self):
         i = 0
         for x in range(0, self.width*10, 10):
@@ -73,6 +80,7 @@ def main():
 <!--[if IE]><script type="text/javascript" src="http://explorercanvas.googlecode.com/svn/trunk/excanvas.js"></script><![endif]-->
 <script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
+var Random = Function(function() { return _int.__call__(Math.random()); });
 %s
 </script>
 </head>
@@ -80,7 +88,6 @@ def main():
     <canvas id="canvas" width="750" height="750"></canvas>
 </body>
 </html>""" % (str(StartGoL)+"\n"+str(GoL))
-
 
 if __name__ == "__main__":
     main()

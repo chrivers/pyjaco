@@ -1,7 +1,8 @@
 import inspect
+import py2js
+from py2js.decorator import JSVar
 
-from py2js import convert_py2js
-
+@JSVar("items")
 def get_toolbar():
     items = [
             {"text":'File', "menu": [
@@ -76,14 +77,16 @@ def get_toolbar():
             ]
     Toolbar({"renderTo": 'mesh-editor', "items": items})
 
+@JSVar("items")
 def get_panel():
-    p = Panel({
+    items = {
             "renderTo": 'mesh-editor',
             "width": '200px',
             "title": 'Mesh',
             "html": "<canvas id='canvas' width='200' height='200'></canvas>",
             "collapsible": true
-            })
+            }
+    p = Panel(items)
     return p
 
 def toolbar_mesh1(b, e):
@@ -134,8 +137,9 @@ def toolbar_mesh3(b, e):
 def menu_about(e, t):
     info_box("About", "FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")
 
+@JSVar("items")
 def menu_help(e, t):
-    tabs2 = TabPanel({
+    items = {
         "activeTab": 2,
         "width": 600,
         "height": 250,
@@ -154,15 +158,18 @@ def menu_help(e, t):
                 "title": 'About',
                 "html": "Developed by the <a href='http://hpfem.org/'>hp-FEM group</a> at UNR."
             }]
-    })
-    w = Window({
-                "renderTo": 'mesh-editor-help',
-                "layout": 'fit',
-                "width": 500,
-                "height": 300,
-                "title": "Help",
-                "items": tabs2
-                })
+    }
+    tabs2 = TabPanel(items)
+
+    items = {
+        "renderTo": 'mesh-editor-help',
+        "layout": 'fit',
+        "width": 500,
+        "height": 300,
+        "title": "Help",
+        "items": tabs2
+        }
+    w = Window(items)
     w.show()
 
 def initialize():
@@ -199,23 +206,26 @@ class TabPanel(ExtObject):
 class Toolbar(ExtObject):
     pass
 
+@JSVar("Ext")
 def info_box(title, msg):
-    Ext.MessageBox.show(js({
+    Ext.MessageBox.show({
            "title": title,
            "msg": msg,
            "buttons": Ext.MessageBox.OK,
            "animEl": 'mb9',
            "icon": Ext.MessageBox.INFO,
-        }))
+        })
 
+@JSVar("self._obj", "G_vmlCanvasManager")
 class Canvas(object):
 
+    @JSVar("dom")
     def __init__(self, id):
-        dom = Ext.getDom(js(id))
+        dom = Ext.getDom(id)
         if Ext.isIE:
             # This is needed for IE to emulate the canvas element:
             G_vmlCanvasManager.initElement(dom)
-        self._obj = dom.getContext(js('2d'))
+        self._obj = dom.getContext('2d')
 
     def fillRect(self, x1, y1, w, h):
         self._obj.fillStyle = js(self.fillStyle)
@@ -263,7 +273,7 @@ def main():
     source = ""
     for f in funcs:
         source += inspect.getsource(f) + "\n"
-    js = convert_py2js(source)
+    js = py2js.compile(source)
 
     print """\
 <html>

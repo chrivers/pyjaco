@@ -10,10 +10,6 @@ var py_builtins = {};
 
 py_builtins.__python3__ = false;
 
-/* A reference to the global object */
-
-var _global_this = this;
-
 /* JavaScript helper functions */
 
 function defined(obj) {
@@ -22,7 +18,7 @@ function defined(obj) {
 
 function assert(cond, msg) {
     if (!cond) {
-        throw new py_builtins.AssertionError(msg);
+        throw py_builtins.AssertionError.__call__(msg);
     }
 }
 
@@ -31,7 +27,7 @@ function iterate(seq, func) {
         try {
             func(seq.next());
         } catch (exc) {
-            if (isinstance(exc, py_builtins.StopIteration)) {
+            if (isinstance.__call__(exc, py_builtins.StopIteration)) {
                 break;
             } else {
                 throw exc;
@@ -50,11 +46,22 @@ function copy(iterator) {
     return items;
 }
 
-function _new(cls, arg) {
-    return new cls(arg);
+function copysimple(obj) {
+    if (isinstance(obj, _int)) {
+        return _int.__call__(Number(obj._obj));
+    } else if (isinstance(obj, str)) {
+        return str.__call__(String(obj._obj));
+    } else {
+        return obj;
+    }
 }
 
-function js(obj) {
+var Function = function(func) {
+    func.__call__ = func;
+    return func;
+};
+
+var js = Function(function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
 
@@ -72,5 +79,4 @@ function js(obj) {
         return obj._js_();
     else
         return obj;
-}
-
+});
