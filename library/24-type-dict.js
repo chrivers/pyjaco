@@ -39,7 +39,7 @@ dict.prototype._js_ = function () {
 
     var _this_dict = this; // so that we can access it from within the closure:
     iterate(iter.__call__(this), function(key) {
-        items[key] = js(_this_dict.__getitem__(key));
+        items[js(key)] = js(_this_dict.__getitem__(key));
     });
 
     return items;
