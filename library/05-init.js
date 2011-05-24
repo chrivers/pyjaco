@@ -61,7 +61,7 @@ var Function = function(func) {
     return func;
 };
 
-js = Function(function(obj) {
+var js = Function(function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
 
