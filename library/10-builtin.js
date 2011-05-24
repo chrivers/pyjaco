@@ -1,10 +1,10 @@
 /* Python built-in functions */
 
-hasattr = Function(function(obj, name) {
+var hasattr = Function(function(obj, name) {
     return defined(obj[name]);
 });
 
-getattr = Function(function(obj, name, value) {
+var getattr = Function(function(obj, name, value) {
     var _value = obj[name];
 
     if (defined(_value)) {
@@ -18,11 +18,11 @@ getattr = Function(function(obj, name, value) {
     }
 });
 
-setattr = Function(function(obj, name, value) {
+var setattr = Function(function(obj, name, value) {
     obj[name] = value;
 });
 
-hash = Function(function(obj) {
+var hash = Function(function(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.__hash__();
     } else if (typeof(obj) == 'number') {
@@ -32,7 +32,7 @@ hash = Function(function(obj) {
     }
 });
 
-len = Function(function(obj) {
+var len = Function(function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.__len__();
     } else {
@@ -40,7 +40,7 @@ len = Function(function(obj) {
     }
 });
 
-dir = Function(function(obj) {
+var dir = Function(function(obj) {
     var res = list.__call__();
     for (var i in obj) {
         res.append.call(res, __py2js_str.__call__(i));
@@ -48,7 +48,7 @@ dir = Function(function(obj) {
     return res;
 });
 
-repr = Function(function(obj) {
+var repr = Function(function(obj) {
     if (!defined(obj)) {
         return "None";
     } else if (hasattr(obj, '__repr__')) {
@@ -62,7 +62,7 @@ repr = Function(function(obj) {
     }
 });
 
-range = Function(function(start, end, step) {
+var range = Function(function(start, end, step) {
     start = js(start);
 
     if (!defined(end)) {
@@ -90,11 +90,11 @@ range = Function(function(start, end, step) {
         return list.__call__(seq);
 });
 
-xrange = Function(function(start, end, step) {
+var xrange = Function(function(start, end, step) {
     return iter.__call__(range(start, end, step));
 });
 
-map = Function(function() {
+var map = Function(function() {
     if (arguments.length < 2) {
         throw py_builtins.TypeError.__call__("map() requires at least two args");
     }
@@ -118,7 +118,7 @@ map = Function(function() {
         return items;
 });
 
-zip = Function(function() {
+var zip = Function(function() {
     if (!arguments.length) {
         return list.__call__();
     }
@@ -153,7 +153,7 @@ zip = Function(function() {
     }
 });
 
-isinstance = Function(function(obj, cls) {
+var isinstance = Function(function(obj, cls) {
     if (cls.__class__ == tuple) {
         var length = cls.__len__();
 
