@@ -279,7 +279,7 @@ py_builtins.sum = Function(function(list) {
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log)) {
-        console.log(js(__py2js_str.__call__(s)));
+        console.log(s);
     } else {
         if (arguments.length <= 1) {
             if (defined(s)) {
