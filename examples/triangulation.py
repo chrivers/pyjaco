@@ -1,5 +1,5 @@
 import py2js
-from py2js.decorator import JavaScript
+from py2js.decorator import JavaScript, JSVar
 
 from math import sqrt
 
@@ -120,17 +120,19 @@ def edge_intersects_edges(e1, nodes, edges):
             return True
     return False
 
+@JSVar("document", "canvas", "scale", "x0")
 def start_triag():
-    js_pre = document.getElementById(js('js_pre'))
-    setattr(js_pre, 'textContent', js("start"))
-    canvas = document.getElementById(js('canvas')).getContext(js('2d'))
-    canvas.fillText(js("Mesh"), 100, 10)
-    setattr(js_pre, 'textContent', js("triag"))
+    js_pre = document.getElementById('js_pre')
+    setattr(js_pre, 'textContent', "start")
+    canvas = document.getElementById('canvas').getContext('2d')
+    canvas.fillText("Mesh", 100, 10)
+    setattr(js_pre, 'textContent', "triag")
     setattr(js_pre, 'textContent', example1())
     nodes, edges, elems = example2()
     scale = 50
     x0 = 3
-    setattr(canvas, 'strokeStyle',  js('rgb(0, 0, 255)'))
+    canvas.strokeStyle = 'rgb(0, 0, 255)'
+
     for el in elems:
         canvas.beginPath()
         x, y = nodes[el[0]]
@@ -142,7 +144,8 @@ def start_triag():
         x, y = nodes[el[0]]
         canvas.lineTo(x*scale+x0, 200-y*scale)
         canvas.stroke()
-    setattr(canvas, 'strokeStyle', js('rgb(0, 255, 0)'))
+
+    canvas.strokeStyle = 'rgb(0, 255, 0)'
     canvas.beginPath()
     x, y = nodes[0]
     canvas.moveTo(x*scale+x0, 200-y*scale)
@@ -196,12 +199,10 @@ def main():
 
     print """<html>
 <head>
-<script language="JavaScript">
-  function sqrt(value) {
-    return Math.sqrt(value);
-  }
-</script>
 <script language="JavaScript" src="../py-builtins.js"></script>
+<script language="JavaScript">
+  sqrt = Function(function(value) { return _int.__call__(Math.sqrt(value)); });
+</script>
 <script language="JavaScript">
 %s
 </script>
