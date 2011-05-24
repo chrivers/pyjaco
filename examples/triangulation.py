@@ -125,7 +125,6 @@ def start_triag():
     js_pre = document.getElementById('js_pre')
     setattr(js_pre, 'textContent', "start")
     canvas = document.getElementById('canvas').getContext('2d')
-    canvas.fillText("Mesh", 100, 10)
     setattr(js_pre, 'textContent', "triag")
     setattr(js_pre, 'textContent', example1())
     nodes, edges, elems = example2()
