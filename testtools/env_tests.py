@@ -20,7 +20,7 @@ class EnviromentTest(unittest.TestCase):
     def runTest(self):
         """The actual test goes here."""
         if os.system(
-            "js --help > %s" %
+            "echo | js > %s" %
             os.path.join(
                 tempfile.gettempdir(),
                 tempfile.gettempprefix()
