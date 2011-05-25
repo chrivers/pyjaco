@@ -218,6 +218,26 @@ _int.prototype.__pow__ = function(x) {
     return _int.__call__(Math.pow(this._obj, x._obj));
 };
 
+_int.prototype.__and__ = function(x) {
+    if (x.__class__ !== this.__class__)
+        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
+    if (this._obj === 0) {
+        return this;
+    } else {
+        return x;
+    }
+};
+
+_int.prototype.__or__ = function(x) {
+    if (x.__class__ !== this.__class__)
+        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
+    if (this._obj === 0) {
+        return x;
+    } else {
+        return this;
+    }
+};
+
 _int.prototype.__bitand__ = function(x) {
     if (x.__class__ !== this.__class__)
         throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
