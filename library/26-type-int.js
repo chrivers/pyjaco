@@ -13,7 +13,7 @@ _int.prototype.__init__ = function(i) {
 };
 
 _int.prototype.__int__ = function () {
-    return this._obj;
+    return this;
 };
 
 _int.prototype.__str__ = function () {
