@@ -133,10 +133,7 @@ str.prototype.__add__ = function(c) {
     return str.__call__(this._obj + c._obj);
 };
 
-str.prototype.__iadd__ = function(c) {
-    this._obj += c._obj;
-    return this;
-};
+str.prototype.__iadd__ = str.prototype.__add__;
 
 str.prototype.count = Function(function(str, start, end) {
     if (!defined(start))
