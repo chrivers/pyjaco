@@ -4,8 +4,10 @@ import optparse
 import testtools.runner
 import testtools.util
 import testtools.tests
+from unittest import installHandler
 
 def main():
+    installHandler()
     option_parser = optparse.OptionParser(
         usage="%prog [options] [filenames]",
         description="py2js unittests script."
