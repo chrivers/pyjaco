@@ -34,7 +34,8 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = left
         value  = right
         if isinstance(target, (ast.Tuple, ast.List)):
-            js = ["var __dummy%d__ = %s;" % (self.dummy_index, value)]
+            part = self.new_dummy()
+            js = ["var %s = %s;" % (part, value)]
 
             for i, target in enumerate(target.elts):
                 var = self.visit(target)
@@ -43,9 +44,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     if not (var in self._scope):
                         self._scope.append(var)
                         declare = "var "
-                js.append("%s%s = __dummy%d__[%d];" % (declare, var, self.dummy_index, i))
-
-            self.dummy_index += 1
+                js.append("%s%s = %s[%d];" % (declare, var, part, i))
         elif isinstance(target, ast.Subscript) and isinstance(target.slice, ast.Index):
             # found index assignment
             if isinstance(target.slice, ast.Str):
