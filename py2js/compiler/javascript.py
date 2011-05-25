@@ -333,8 +333,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Call(self, node):
         func = self.visit(node.func)
-        #~ if func in self._class_names:
-            #~ func = 'new '+func
+
         if node.keywords:
             keywords = []
             for kw in node.keywords:
