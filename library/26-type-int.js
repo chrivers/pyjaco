@@ -176,7 +176,7 @@ _int.prototype.__le__ = function(x) {
     return py_builtins.bool(this._obj <= x._obj);
 };
 
-_int.prototype.__mult__ = function(x) {
+_int.prototype.__mul__ = function(x) {
     if (x.__class__ !== this.__class__)
         throw py_builtins.TypeError.__call__("Cannot multiply int and non-int");
     return _int.__call__(this._obj * x._obj);
