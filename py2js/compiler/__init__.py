@@ -12,6 +12,7 @@ class BaseCompiler(object):
         'int'   : '_int',
         'float' : '_float',
         'super' : '__super',
+        'py_builtins' : '__py_builtins'
     }
 
     builtin = set([
