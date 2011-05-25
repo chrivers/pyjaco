@@ -69,89 +69,6 @@ _int.prototype.__nonzero__ = function() {
     return py_builtins.bool(this._obj != 0);
 };
 
-_int.prototype.__iadd__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot add int and non-int");
-    this._obj += x._obj;
-    return this;
-};
-
-_int.prototype.__isub__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot subtract int and non-int");
-    this._obj -= x._obj;
-    return this;
-};
-
-_int.prototype.__idiv__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot divide int and non-int");
-    this._obj /= x._obj;
-    return this;
-};
-
-_int.prototype.__imul__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot multiply int and non-int");
-    this._obj *= x._obj;
-    return this;
-};
-
-_int.prototype.__ilshift__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj <<= x._obj;
-    return this;
-};
-
-_int.prototype.__irshift__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj >>= x._obj;
-    return this;
-};
-
-_int.prototype.__ior__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj |= x._obj;
-    return this;
-};
-
-_int.prototype.__iand__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj &= x._obj;
-    return this;
-};
-
-_int.prototype.__ixor__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj ^= x._obj;
-    return this;
-};
-
-_int.prototype.__ifloordiv__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj = Math.floor(this._obj / x._obj);
-    return this;
-};
-
-_int.prototype.__ipow__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
-    this._obj = Math.pow(this._obj, x._obj);
-};
-
-_int.prototype.__imul__ = function(x) {
-    if (x.__class__ !== this.__class__)
-        throw py_builtins.TypeError.__call__("Cannot multiply int and non-int");
-    this._obj *= x._obj;
-    return this;
-};
-
 _int.prototype.__gt__ = function(x) {
     if (x.__class__ !== this.__class__)
         throw py_builtins.TypeError.__call__("Cannot compare int and non-int");
@@ -267,3 +184,15 @@ _int.prototype.__rshift__ = function(x) {
         throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
     return _int.__call__(this._obj >> x._obj);
 };
+
+_int.prototype.__iadd__      = _int.prototype.__add__;
+_int.prototype.__isub__      = _int.prototype.__sub__;
+_int.prototype.__idiv__      = _int.prototype.__div__;
+_int.prototype.__imul__      = _int.prototype.__mul__;
+_int.prototype.__ilshift__   = _int.prototype.__lshift__;
+_int.prototype.__irshift__   = _int.prototype.__rshift__;
+_int.prototype.__ior__       = _int.prototype.__or__;
+_int.prototype.__iand__      = _int.prototype.__and__;
+_int.prototype.__ixor__      = _int.prototype.__xor__;
+_int.prototype.__ifloordiv__ = _int.prototype.__floordiv__;
+_int.prototype.__ipow__      = _int.prototype.__pow__;
