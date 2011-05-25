@@ -412,7 +412,6 @@ class Compiler(py2js.compiler.BaseCompiler):
            return "%s.%s" % (self.visit(node.values[0]), ".".join(["__or__(%s)" % self.visit(val) for val in node.values[1:]]))
         else:
             raise JSError("Unknown boolean operation %s" % node.op)
-        return self.get_bool_op(node).join([ "(%s)" % self.visit(val) for val in node.values ])
 
     def visit_UnaryOp(self, node):
         if   isinstance(node.op, ast.USub  ): return "%s.__neg__()"            % (self.visit(node.operand))
@@ -448,8 +447,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         elif isinstance(node.op, ast.FloorDiv): return "%s.__floordiv__(%s)" % (left, right)
         else:
             raise JSError("Unknown binary operation type %s" % node.op)
-
-        return "(%s)%s(%s)" % (left, self.get_binary_op(node), right)
 
     def visit_Compare(self, node):
         assert len(node.ops) == 1
