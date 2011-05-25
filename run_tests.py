@@ -24,18 +24,21 @@ def main():
         action="store_true",
         dest="no_error",
         default=False,
-        help="ignores error( don't display them after tests)"
+        help="ignores error (don't display them after tests)"
         )
     options, args = option_parser.parse_args()
     runner = testtools.runner.Py2JsTestRunner(verbosity=2)
     results = None
-    if options.run_all:
-        results = runner.run(testtools.tests.ALL)
-    elif args:
-        results = runner.run(testtools.tests.get_tests(args))
-    else:
-        results = runner.run(testtools.tests.NOT_KNOWN_TO_FAIL)
-    if not options.no_error and results.errors:
+    try:
+        if options.run_all:
+            results = runner.run(testtools.tests.ALL)
+        elif args:
+            results = runner.run(testtools.tests.get_tests(args))
+        else:
+            results = runner.run(testtools.tests.NOT_KNOWN_TO_FAIL)
+    except KeyboardInterrupt:
+        print "Exited by ctrl-c"
+    if not options.no_error and results and results.errors:
         print
         print "errors:"
         print "  (use -x to skip this part)"
@@ -45,4 +48,4 @@ def main():
             print error
 
 if __name__ == "__main__":
-  main()
+    main()
