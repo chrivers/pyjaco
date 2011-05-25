@@ -122,6 +122,9 @@ class BaseCompiler(object):
 
     ## Shared visit functions
 
+    def visit_AssignSimple(self, target, value):
+        raise NotImplementedError()
+
     def visit_Assign(self, node):
         if len(node.targets) > 1:
             tmp = self.new_dummy()
