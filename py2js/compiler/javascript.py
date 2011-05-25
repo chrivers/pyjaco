@@ -6,6 +6,56 @@ from py2js.compiler import JSError
 
 class Compiler(py2js.compiler.BaseCompiler):
 
+    unary_op = {
+        'Invert' : '~',
+        'Not'    : '!',
+        'UAdd'   : '+',
+        'USub'   : '-',
+    }
+
+    bool_op = {
+        'And'    : '&&',
+        'Or'     : '||',
+    }
+
+    binary_op = {
+        'Add'    : '+',
+        'Sub'    : '-',
+        'Mult'   : '*',
+        'Div'    : '/',
+        'Mod'    : '%',
+        'LShift' : '<<',
+        'RShift' : '>>',
+        'BitOr'  : '|',
+        'BitXor' : '^',
+        'BitAnd' : '&',
+    }
+
+    comparison_op = {
+            'Eq'    : "==",
+            'NotEq' : "!=",
+            'Lt'    : "<",
+            'LtE'   : "<=",
+            'Gt'    : ">",
+            'GtE'   : ">=",
+            'Is'    : "===",
+            'IsNot' : "is not", # Not implemented yet
+    }
+
+    def get_bool_op(self, node):
+        return self.bool_op[node.op.__class__.__name__]
+
+    def get_unary_op(self, node):
+        return self.unary_op[node.op.__class__.__name__]
+
+    def get_binary_op(self, node):
+        return self.binary_op[node.op.__class__.__name__]
+
+    def get_comparison_op(self, node):
+        return self.comparison_op[node.__class__.__name__]
+
+
+
     def visit_Module(self, node):
         module = []
 
@@ -269,9 +319,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if id in self.builtin:
             id = "py_builtins." + id;
-
-        #~ if id in self._classes:
-            #~ id = '_' + id;
 
         return id
 

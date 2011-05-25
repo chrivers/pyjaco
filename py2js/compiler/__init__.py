@@ -8,15 +8,10 @@ class JSError(Exception):
 class BaseCompiler(object):
 
     name_map = {
-        'self'   : 'this',
-
-        'int' : '_int',
+        'self'  : 'this',
+        'int'   : '_int',
         'float' : '_float',
-
         'super' : '__super',
-
-        # ideally we should check, that this name is available:
-        'py_builtins' : '___py_hard_to_collide',
     }
 
     builtin = set([
@@ -41,42 +36,6 @@ class BaseCompiler(object):
         'filter',
         'reduce'
     ])
-
-    bool_op = {
-        'And'    : '&&',
-        'Or'     : '||',
-    }
-
-    unary_op = {
-        'Invert' : '~',
-        'Not'    : '!',
-        'UAdd'   : '+',
-        'USub'   : '-',
-    }
-
-    binary_op = {
-        'Add'    : '+',
-        'Sub'    : '-',
-        'Mult'   : '*',
-        'Div'    : '/',
-        'Mod'    : '%',
-        'LShift' : '<<',
-        'RShift' : '>>',
-        'BitOr'  : '|',
-        'BitXor' : '^',
-        'BitAnd' : '&',
-    }
-
-    comparison_op = {
-            'Eq'    : "==",
-            'NotEq' : "!=",
-            'Lt'    : "<",
-            'LtE'   : "<=",
-            'Gt'    : ">",
-            'GtE'   : ">=",
-            'Is'    : "===",
-            'IsNot' : "is not", # Not implemented yet
-        }
 
     def __init__(self):
         self.index_var = 0
@@ -107,18 +66,6 @@ class BaseCompiler(object):
 
     def name(self, node):
         return node.__class__.__name__
-
-    def get_bool_op(self, node):
-        return self.bool_op[node.op.__class__.__name__]
-
-    def get_unary_op(self, node):
-        return self.unary_op[node.op.__class__.__name__]
-
-    def get_binary_op(self, node):
-        return self.binary_op[node.op.__class__.__name__]
-
-    def get_comparison_op(self, node):
-        return self.comparison_op[node.__class__.__name__]
 
     ## Shared visit functions
 
