@@ -196,3 +196,14 @@ _int.prototype.__iand__      = _int.prototype.__and__;
 _int.prototype.__ixor__      = _int.prototype.__xor__;
 _int.prototype.__ifloordiv__ = _int.prototype.__floordiv__;
 _int.prototype.__ipow__      = _int.prototype.__pow__;
+
+var $c0 = _int.__call__(0);
+var $c1 = _int.__call__(1);
+var $c2 = _int.__call__(2);
+var $c3 = _int.__call__(3);
+var $c4 = _int.__call__(4);
+var $c5 = _int.__call__(5);
+var $c6 = _int.__call__(6);
+var $c7 = _int.__call__(7);
+var $c8 = _int.__call__(8);
+var $c9 = _int.__call__(9);
