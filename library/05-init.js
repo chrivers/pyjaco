@@ -46,16 +46,6 @@ function copy(iterator) {
     return items;
 }
 
-function copysimple(obj) {
-    if (isinstance(obj, _int)) {
-        return _int.__call__(Number(obj._obj));
-    } else if (isinstance(obj, str)) {
-        return str.__call__(String(obj._obj));
-    } else {
-        return obj;
-    }
-}
-
 var Function = function(func) {
     func.__call__ = func;
     return func;
