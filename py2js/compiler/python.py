@@ -155,7 +155,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_AssignSimple(self, target, value):
         if isinstance(target, (ast.Tuple, ast.List)):
-            dummy = self.new_dummy()
+            dummy = self.alloc_var()
             js = ["var %s = %s;" % (dummy, value)]
 
             for i, target in enumerate(target.elts):
@@ -209,7 +209,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         if isinstance(node.target, ast.Name):
             for_target = self.visit(node.target)
         elif isinstance(node.target, ast.Tuple):
-            for_target = self.new_dummy()
+            for_target = self.alloc_var()
         else:
             raise JSError("Advanced for-loop decomposition not supported")
 
@@ -217,9 +217,9 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         for_iter = self.visit(node.iter)
 
-        iter_dummy = self.new_dummy()
-        orelse_dummy = self.new_dummy()
-        exc_dummy = self.new_dummy()
+        iter_dummy = self.alloc_var()
+        orelse_dummy = self.alloc_var()
+        exc_dummy = self.alloc_var()
 
         js.append("var %s = iter.__call__(%s);" % (iter_dummy, for_iter))
         js.append("var %s = false;" % orelse_dummy)
@@ -266,7 +266,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not node.orelse:
             js.append("while (js(%s)) {" % self.visit(node.test))
         else:
-            orelse_dummy = self.new_dummy()
+            orelse_dummy = self.alloc_var()
 
             js.append("var %s = false;" % orelse_dummy)
             js.append("while (1) {");
@@ -318,7 +318,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("try {")
         for n in node.body:
             js.append("\n".join(self.visit(n)))
-        err = self.new_dummy()
+        err = self.alloc_var()
         self._exceptions.append(err)
         js.append("} catch (%s) {" % err)
         for i, n in enumerate(node.handlers):
@@ -354,7 +354,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("try {")
         for n in node.body:
             js.append("\n".join(self.visit(n)))           
-        js.append("} catch (%s) { /* ignore */ }" % self.new_dummy())
+        js.append("} catch (%s) { /* ignore */ }" % self.alloc_var())
         for n in node.finalbody:
             js.append("\n".join(self.visit(n)))
         return js

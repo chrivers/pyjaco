@@ -34,7 +34,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = left
         value  = right
         if isinstance(target, (ast.Tuple, ast.List)):
-            part = self.new_dummy()
+            part = self.alloc_var()
             js = ["var %s = %s;" % (part, value)]
 
             for i, target in enumerate(target.elts):
@@ -90,9 +90,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         for_target = self.visit(node.target)
         for_iter = self.visit(node.iter)
 
-        iter_dummy = self.new_dummy()
-        orelse_dummy = self.new_dummy()
-        exc_dummy = self.new_dummy()
+        iter_dummy = self.alloc_var()
+        orelse_dummy = self.alloc_var()
+        exc_dummy = self.alloc_var()
 
         js.append("var %s = iter(%s);" % (iter_dummy, for_iter))
         js.append("var %s = false;" % orelse_dummy)
@@ -130,7 +130,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not node.orelse:
             js.append("while (%s) {" % self.visit(node.test))
         else:
-            orelse_dummy = self.new_dummy()
+            orelse_dummy = self.alloc_var()
 
             js.append("var %s = false;" % orelse_dummy)
             js.append("while (1) {");

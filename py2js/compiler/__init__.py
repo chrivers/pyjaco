@@ -79,7 +79,7 @@ class BaseCompiler(object):
         }
 
     def __init__(self):
-        self.tmp_index = 0
+        self.index_var = 0
         # This is the name of the classes that we are currently in:
         self._class_name = []
 
@@ -88,9 +88,9 @@ class BaseCompiler(object):
         self._classes = {}
         self._exceptions = []
 
-    def new_dummy(self):
-        self.tmp_index += 1
-        return "$v%d" % self.tmp_index
+    def alloc_var(self):
+        self.index_var += 1
+        return "$v%d" % self.index_var
 
     def visit(self, node):
         try:
@@ -127,7 +127,7 @@ class BaseCompiler(object):
 
     def visit_Assign(self, node):
         if len(node.targets) > 1:
-            tmp = self.new_dummy()
+            tmp = self.alloc_var()
             q = ["var %s = %s" % (tmp, self.visit(node.value))]
             for t in node.targets:
                 q.extend(self.visit_AssignSimple(t, tmp))
