@@ -478,7 +478,15 @@ class Compiler(py2js.compiler.BaseCompiler):
         return id
 
     def visit_Num(self, node):
-        return "_int.__call__(%s)" % str(node.n)
+        if isinstance(node.n, int):
+            if (0 <= node.n <= 9):
+                return "$c%s" % str(node.n)
+            else:
+                return "_int.__call__(%s)" % str(node.n)
+        elif isinstance(node.n, float):
+            return "_float.__call__(%s)" % node.n
+        else:
+            raise JSError("Unknown numeric type")
 
     def visit_Str(self, node):
         # Uses the Python builtin repr() of a string and the strip string type
