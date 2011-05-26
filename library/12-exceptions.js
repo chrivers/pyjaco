@@ -11,7 +11,7 @@ Exception.prototype.__init__ = function() {
 }
 
 Exception.prototype.__str__ = function() {
-    return str.__call__(js(this.__class__.__name__) + ": " + js(this.message));
+    return str.__call__(this.message);
 };
 
 Exception.prototype.toString = function() {
