@@ -2,8 +2,6 @@ import py2js.compiler
 import py2js.compiler.javascript
 import py2js.compiler.python
 import ast
-import inspect
-import operator
 from py2js.compiler import JSError
 
 def dump(node):

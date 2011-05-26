@@ -119,7 +119,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         return js
 
     def visit_AugAssign(self, node):
-        # TODO: Make sure that all the logic in Assign also works in AugAssign
         target = self.visit(node.target)
         value = self.visit(node.value)
 
