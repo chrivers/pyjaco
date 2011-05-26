@@ -284,18 +284,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             return "%s %s %s" % (self.visit(node.left), self.get_comparison_op(op), self.visit(comp))
 
-    def visit_Name(self, node):
-        name = node.id
-        try:
-            name = self.name_map[name]
-        except KeyError:
-            pass
-
-        if name in self.builtin:
-            name = "py_builtins." + name
-
-        return name
-
     def visit_Num(self, node):
         return str(node.n)
 

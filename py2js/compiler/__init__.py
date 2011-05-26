@@ -87,6 +87,14 @@ class BaseCompiler(object):
     def _visit_Exec(self, node):
         pass
 
+    def visit_Name(self, node):
+        name = self.name_map.get(node.id, node.id)
+
+        if name in self.builtin:
+            name = "py_builtins." + name
+
+        return name
+
     def visit_Global(self, node):
         self._scope.extend(node.names)
         return []
