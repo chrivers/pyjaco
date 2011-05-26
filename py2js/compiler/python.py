@@ -412,9 +412,9 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_BoolOp(self, node):
         if isinstance(node.op, ast.And):
-           return "%s.%s" % (self.visit(node.values[0]), ".".join(["__and__(%s)" % self.visit(val) for val in node.values[1:]]))
+            return "%s.%s" % (self.visit(node.values[0]), ".".join(["__and__(%s)" % self.visit(val) for val in node.values[1:]]))
         if isinstance(node.op, ast.Or):
-           return "%s.%s" % (self.visit(node.values[0]), ".".join(["__or__(%s)" % self.visit(val) for val in node.values[1:]]))
+            return "%s.%s" % (self.visit(node.values[0]), ".".join(["__or__(%s)" % self.visit(val) for val in node.values[1:]]))
         else:
             raise JSError("Unknown boolean operation %s" % node.op)
 
