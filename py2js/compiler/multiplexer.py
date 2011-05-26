@@ -33,6 +33,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         self.visit_py = self.comp_py.visit
         self.visit_js = self.comp_js.visit
+        self.visit_current = None
 
         self.comp_py.visit = self.visit
         self.comp_js.visit = self.visit
