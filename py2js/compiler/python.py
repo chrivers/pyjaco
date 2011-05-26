@@ -7,6 +7,10 @@ from py2js.compiler.multiplexer import dump
 
 class Compiler(py2js.compiler.BaseCompiler):
 
+    def __init__(self):
+        super(Compiler, self).__init__()
+        self.future_division = False
+
     def visit_Module(self, node):
         module = []
 
@@ -191,6 +195,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         target = self.visit(node.target)
         value = self.visit(node.value)
 
+        if not self.future_division and isinstance(node.op, ast.Div):
+            node.op = ast.FloorDiv()
+
         if   isinstance(node.op, ast.Add     ): return ["%s.__iadd__(%s)"      % (self.visit(node.target), value)]
         elif isinstance(node.op, ast.Sub     ): return ["%s.__isub__(%s)"      % (self.visit(node.target), value)]
         elif isinstance(node.op, ast.Div     ): return ["%s.__idiv__(%s)"      % (self.visit(node.target), value)]
@@ -373,7 +380,7 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_ImportFrom(self, node):
         if node.module == "__future__":
             if len(node.names) == 1 and node.names[0].name == "division":
-                pass
+                self.future_division = True
             else:
                 raise JSError("Unknown import from __future__: %s" % node.names[0].name)
         else:
@@ -432,6 +439,9 @@ class Compiler(py2js.compiler.BaseCompiler):
                 return "sprintf(js(%s), %s)" % (left, right)
         left = self.visit(node.left)
         right = self.visit(node.right)
+
+        if not self.future_division and isinstance(node.op, ast.Div):
+            node.op = ast.FloorDiv()
 
         if   isinstance(node.op, ast.Add     ): return "%s.__add__(%s)"      % (left, right)
         elif isinstance(node.op, ast.Sub     ): return "%s.__sub__(%s)"      % (left, right)
