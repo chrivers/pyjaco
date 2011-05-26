@@ -84,7 +84,11 @@ class Compiler(object):
         self.append_string(inspect.getsource(code), name)
 
     def compile_string(self, code, name = None):
-        return "\n".join(self.compiler.visit(ast.parse(code)))
+        if name:
+            name = self.format_name(name)
+        else:
+            name = ""
+        return name + "\n".join(self.compiler.visit(ast.parse(code)))
 
     def compile_method(self, code, name = None, body = False):
         return self.compile_string(self.dedent(inspect.getsource(code), body), name)
