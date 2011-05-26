@@ -6,7 +6,7 @@ import StringIO
 import ast
 import inspect
 
-def compile(script, jsvars = []):
+def compile(script, jsvars = None):
     c = Compiler(jsvars)
     c.append_string(script)
     return str(c)
@@ -34,7 +34,7 @@ class Compiler(object):
 
     re_comment = re.compile("^[ ]*#")
 
-    def __init__(self, jsvars = []):
+    def __init__(self, jsvars = None):
         self.compiler = py2js.compiler.multiplexer.Compiler(jsvars)
         self.reset()
 
@@ -45,7 +45,7 @@ class Compiler(object):
         return self.buffer.getvalue()
 
     def dedent(self, code, body):
-        code = filter(lambda x: x <> "" and not re.match(self.re_comment, x), code.split("\n"))
+        code = filter(lambda x: x != "" and not re.match(self.re_comment, x), code.split("\n"))
         if len(code) < 1:
             return code.lstrip()
 
