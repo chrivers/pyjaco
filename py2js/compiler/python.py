@@ -385,28 +385,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             raise JSError("Import only supports from __future__ import foo")
         return []
 
-    def _visit_Exec(self, node):
-        pass
-
-    def visit_Global(self, node):
-        self._scope.extend(node.names)
-        return []
-
-    def visit_Expr(self, node):
-        return [self.visit(node.value) + ";"]
-
-    def visit_Pass(self, node):
-        return ["/* pass */"]
-
-    def visit_Break(self, node):
-        return ["break;"]
-
-    def visit_Continue(self, node):
-        return ["continue;"]
-
-    def visit_arguments(self, node):
-        return ", ".join([self.visit(arg) for arg in node.args])
-
     def visit_Lambda(self, node):
         return "Function(function(%s) {return %s;})" % (self.visit(node.args), self.visit(node.body))
 

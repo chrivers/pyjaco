@@ -240,28 +240,6 @@ class Compiler(py2js.compiler.BaseCompiler):
     def _visit_ImportFrom(self, node):
         pass
 
-    def _visit_Exec(self, node):
-        pass
-
-    def visit_Global(self, node):
-        self._scope.extend(node.names)
-        return []
-
-    def visit_Expr(self, node):
-        return [self.visit(node.value) + ";"]
-
-    def visit_Pass(self, node):
-        return ["/* pass */"]
-
-    def visit_Break(self, node):
-        return ["break;"]
-
-    def visit_Continue(self, node):
-        return ["continue;"]
-
-    def visit_arguments(self, node):
-        return ", ".join([self.visit(arg) for arg in node.args])
-
     def visit_Lambda(self, node):
         return "function(%s) {%s}" % (self.visit(node.args), self.visit(node.body))
 

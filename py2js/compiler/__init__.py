@@ -81,3 +81,25 @@ class BaseCompiler(object):
             return q
         else:
             return self.visit_AssignSimple(node.targets[0], self.visit(node.value))
+
+    def _visit_Exec(self, node):
+        pass
+
+    def visit_Global(self, node):
+        self._scope.extend(node.names)
+        return []
+
+    def visit_Expr(self, node):
+        return [self.visit(node.value) + ";"]
+
+    def visit_Pass(self, node):
+        return ["/* pass */"]
+
+    def visit_Break(self, node):
+        return ["break;"]
+
+    def visit_Continue(self, node):
+        return ["continue;"]
+
+    def visit_arguments(self, node):
+        return ", ".join([self.visit(arg) for arg in node.args])
