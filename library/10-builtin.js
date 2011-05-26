@@ -171,16 +171,14 @@ var isinstance = Function(function(obj, cls) {
 
         return false;
     } else {
-        if (defined(obj.__class__)) {
-            return obj.__class__ == cls;
-        } else {
-            if (defined(cls.__call__)) {
-                return obj instanceof cls.__call__;
-            } else {
-                return obj instanceof cls;
-            }
-        }
-    }
+        var c = obj.__class__;
+        while (c) {
+            if (c == cls)
+                return true;
+            c = c.__super__;
+        };
+        return false;
+    };
 });
 
 py_builtins.bool = function(a) {
