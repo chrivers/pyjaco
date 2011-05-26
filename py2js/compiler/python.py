@@ -474,16 +474,16 @@ class Compiler(py2js.compiler.BaseCompiler):
             raise JSError("Unknown comparison type %s" % node.ops[0])
 
     def visit_Name(self, node):
-        id = node.id
+        name = node.id
         try:
-            id = self.name_map[id]
+            name = self.name_map[name]
         except KeyError:
             pass
 
-        if id in self.builtin and not id in self._scope:
-            id = "py_builtins." + id
+        if name in self.builtin and not name in self._scope:
+            name = "py_builtins." + name
 
-        return id
+        return name
 
     def visit_Num(self, node):
         if isinstance(node.n, int):
