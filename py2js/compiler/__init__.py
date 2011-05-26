@@ -87,24 +87,12 @@ class BaseCompiler(object):
     def _visit_Exec(self, node):
         pass
 
-    def visit_Name(self, node):
-        name = self.name_map.get(node.id, node.id)
-
-        if (name in self.builtin) and not (name in self._scope):
-            name = "py_builtins." + name
-
-        return name
-
     def visit_Print(self, node):
         assert node.dest is None
         assert node.nl
         values = [self.visit(v) for v in node.values]
         values = ", ".join(values)
         return ["py_builtins.print(%s);" % values]
-
-    def visit_Global(self, node):
-        self._scope.extend(node.names)
-        return []
 
     def visit_Expr(self, node):
         return [self.visit(node.value) + ";"]

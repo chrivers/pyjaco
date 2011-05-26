@@ -52,7 +52,17 @@ class Compiler(py2js.compiler.BaseCompiler):
     def get_comparison_op(self, node):
         return self.comparison_op[node.__class__.__name__]
 
+    def visit_Name(self, node):
+        name = self.name_map.get(node.id, node.id)
 
+        if (name in self.builtin) and not (name in self._scope):
+            name = "py_builtins." + name
+
+        return name
+
+    def visit_Global(self, node):
+        self._scope.extend(node.names)
+        return []
 
     def visit_Module(self, node):
         module = []
