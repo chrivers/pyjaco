@@ -1,4 +1,3 @@
-import py2js
 import py2js.compiler
 import ast
 import inspect
@@ -183,7 +182,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             orelse_dummy = self.alloc_var()
 
             js.append("var %s = false;" % orelse_dummy)
-            js.append("while (1) {");
+            js.append("while (1) {")
             js.append("    if (!(%s)) {" % self.visit(node.test))
             js.append("        %s = true;" % orelse_dummy)
             js.append("        break;")
@@ -318,7 +317,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             pass
 
         if id in self.builtin:
-            id = "py_builtins." + id;
+            id = "py_builtins." + id
 
         return id
 

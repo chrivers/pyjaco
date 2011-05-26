@@ -1,4 +1,3 @@
-import py2js.compiler
 import py2js.compiler.python
 import py2js.compiler.javascript
 import py2js.compiler.multiplexer

@@ -1,4 +1,3 @@
-import py2js
 import ast
 import inspect
 

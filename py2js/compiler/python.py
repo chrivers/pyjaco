@@ -1,7 +1,5 @@
-import py2js
-import py2js.compiler
 import ast
-import inspect
+import py2js.compiler
 from py2js.compiler import JSError
 from py2js.compiler.multiplexer import dump
 
@@ -107,9 +105,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         self._classes[class_name] = node
 
         if len(self._class_name) > 0:
-            js.append("__inherit(%s, \"%s\");" % (bases[0], class_name));
+            js.append("__inherit(%s, \"%s\");" % (bases[0], class_name))
         else:
-            js.append("var %s = __inherit(%s, \"%s\");" % (class_name, bases[0], class_name));
+            js.append("var %s = __inherit(%s, \"%s\");" % (class_name, bases[0], class_name))
 
         self._class_name.append(class_name)
         heirar = ".prototype.".join(self._class_name + [])
@@ -276,7 +274,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             orelse_dummy = self.alloc_var()
 
             js.append("var %s = false;" % orelse_dummy)
-            js.append("while (1) {");
+            js.append("while (1) {")
             js.append("    if (js(py_builtins.__not__(%s))) {" % self.visit(node.test))
             js.append("        %s = true;" % orelse_dummy)
             js.append("        break;")
@@ -483,7 +481,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             pass
 
         if id in self.builtin and not id in self._scope:
-            id = "py_builtins." + id;
+            id = "py_builtins." + id
 
         return id
 
