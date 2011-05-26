@@ -234,9 +234,8 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         name = node.op.__class__.__name__
         if name in self.ops_augassign:
-            return self.visit_AssignSimple(
-                node.target, "%s.__%s__(%s)"      % (target, self.ops_augassign[name], value)
-            )
+            return self.visit_AssignSimple(node.target,
+                "%s.__%s__(%s)" % (target, self.ops_augassign[name], value))
         else:
             raise JSError("Unsupported AugAssign type %s" % node.op)
 
