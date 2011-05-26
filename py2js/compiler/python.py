@@ -364,12 +364,16 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_TryFinally(self, node):
         js = []
+        exc_var = self.alloc_var()
+        exc_store = self.alloc_var()
+        js.append("var %s;" % exc_store)
         js.append("try {")
         for n in node.body:
             js.append("\n".join(self.visit(n)))
-        js.append("} catch (%s) { /* ignore */ }" % self.alloc_var())
+        js.append("} catch (%s) { %s = %s; }" % (exc_var, exc_store, exc_var))
         for n in node.finalbody:
             js.append("\n".join(self.visit(n)))
+        js.append("if (%s) { throw %s; }" % (exc_store, exc_store))
         return js
 
     def _visit_Import(self, node):
