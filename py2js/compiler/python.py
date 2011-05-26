@@ -221,45 +221,31 @@ class Compiler(py2js.compiler.BaseCompiler):
         for_iter = self.visit(node.iter)
 
         iter_dummy = self.alloc_var()
-        orelse_dummy = self.alloc_var()
         exc_dummy = self.alloc_var()
 
-        js.append("var %s = iter.__call__(%s);" % (iter_dummy, for_iter))
-        js.append("var %s = false;" % orelse_dummy)
-        js.append("while (1) {")
-        if isinstance(node.target, ast.Name):
-            js.append("    var %s;" % for_target)
-        elif isinstance(node.target, ast.Tuple):
-            js.append("    " + "; ".join(["var " + x.id for x in node.target.elts]))
-
-        js.append("    try {")
-
-        if isinstance(node.target, ast.Name):
-            js.append("        %s = %s.next();" % (for_target, iter_dummy))
-        elif isinstance(node.target, ast.Tuple):
-            js.append("        %s = %s.next();" % (for_target, iter_dummy))
+        js.append("try {")
+        js.append("  var %s;" % for_target)
+        for_init = "var %s = iter.__call__(%s)" % (iter_dummy, for_iter)
+        for_iter = "%s = %s.next()" % (for_target, iter_dummy)
+        for_cond = ""
+        js.append("  for (%s; %s; %s) {" % (for_init, for_iter, for_cond))
+        if isinstance(node.target, ast.Tuple):
             js.append("    %s;" % "; ".join(["%s = %s.__getitem__(%s)" % (x.id, for_target, i) for i, x in enumerate(node.target.elts)]))
-        js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
-        js.append("            %s = true;" % orelse_dummy)
-        js.append("            break;")
-        js.append("        } else {")
-        js.append("            throw %s;" % exc_dummy)
-        js.append("        }")
-        js.append("    }")
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
 
-        js.append("}")
+        js.append("  }")
 
+        js.append("} catch (%s) {" % exc_dummy)
+        js.append("  if (!js(isinstance(%s, py_builtins.StopIteration)))" % exc_dummy)
+        js.append("    throw %s;" % exc_dummy)
         if node.orelse:
-            js.append("if (%s) {" % orelse_dummy)
-
+            js.append("  else {")
             for stmt in node.orelse:
                 js.extend(self.indent(self.visit(stmt)))
-
-            js.append("}")
+            js.append("  }")
+        js.append("}")
 
         return js
 
