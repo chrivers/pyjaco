@@ -6,7 +6,7 @@ import StringIO
 import ast
 import inspect
 
-def compile(script, jsvars = None):
+def compile_string(script, jsvars = None):
     c = Compiler(jsvars)
     c.append_string(script)
     return str(c)

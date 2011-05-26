@@ -273,7 +273,7 @@ def main():
     source = ""
     for f in funcs:
         source += inspect.getsource(f) + "\n"
-    js = py2js.compile(source)
+    js = py2js.compile_string(source)
 
     print """\
 <html>
