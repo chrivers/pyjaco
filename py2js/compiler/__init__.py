@@ -90,7 +90,7 @@ class BaseCompiler(object):
     def visit_Name(self, node):
         name = self.name_map.get(node.id, node.id)
 
-        if name in self.builtin:
+        if (name in self.builtin) and not (name in self._scope):
             name = "py_builtins." + name
 
         return name
