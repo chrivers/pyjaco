@@ -26,12 +26,22 @@ def main():
         default=False,
         help="ignores error (don't display them after tests)"
         )
+    option_parser.add_option(
+        "-f",
+        "--only-failing",
+        action="store_true",
+        dest="only_failing",
+        default=False,
+        help="run only failing tests (to check for improvements)"
+        )
     options, args = option_parser.parse_args()
     runner = testtools.runner.Py2JsTestRunner(verbosity=2)
     results = None
     try:
         if options.run_all:
             results = runner.run(testtools.tests.ALL)
+        elif options.only_failing:
+            results = runner.run(testtools.tests.KNOWN_TO_FAIL)
         elif args:
             results = runner.run(testtools.tests.get_tests(args))
         else:
