@@ -19,6 +19,21 @@ class Compiler(py2js.compiler.BaseCompiler):
         "Pow"     : "ipow",
     }
 
+    ops_binop = {
+        "Add": "add",
+        "Sub": "sub",
+        "Div": "div",
+        "Mod": "mod",
+        "Pow": "pow",
+        "Mult": "mul",
+        "BitOr": "bitor",
+        "BitAnd": "bitand",
+        "BitXor": "bitxor",
+        "LShift": "lshift",
+        "RShift": "rshift",
+        "FloorDiv": "floordiv",
+    }
+
     def __init__(self):
         super(Compiler, self).__init__()
         self.future_division = False
@@ -396,18 +411,10 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not self.future_division and isinstance(node.op, ast.Div):
             node.op = ast.FloorDiv()
 
-        if   isinstance(node.op, ast.Add     ): return "%s.__add__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Sub     ): return "%s.__sub__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Div     ): return "%s.__div__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Mod     ): return "%s.__mod__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Pow     ): return "%s.__pow__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Mult    ): return "%s.__mul__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.BitOr   ): return "%s.__bitor__(%s)"    % (left, right)
-        elif isinstance(node.op, ast.BitAnd  ): return "%s.__bitand__(%s)"   % (left, right)
-        elif isinstance(node.op, ast.BitXor  ): return "%s.__bitxor__(%s)"   % (left, right)
-        elif isinstance(node.op, ast.LShift  ): return "%s.__lshift__(%s)"   % (left, right)
-        elif isinstance(node.op, ast.RShift  ): return "%s.__rshift__(%s)"   % (left, right)
-        elif isinstance(node.op, ast.FloorDiv): return "%s.__floordiv__(%s)" % (left, right)
+        name = node.op.__class__.__name__
+
+        if name in self.ops_binop:
+            return "%s.__%s__(%s)" % (left, self.ops_binop[name], right)
         else:
             raise JSError("Unknown binary operation type %s" % node.op)
 
