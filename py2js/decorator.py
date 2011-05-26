@@ -5,7 +5,7 @@ import inspect
 class JSVar(object):
 
     def __init__(self, *names):
-        self.names = map(lambda x: x.split("."), names)
+        self.names = [x.split(".") for x in names]
 
     def __call__(self, obj):
         return obj
