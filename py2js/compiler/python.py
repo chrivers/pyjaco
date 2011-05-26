@@ -266,17 +266,13 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_While(self, node):
         js = []
 
-        if not node.orelse:
-            js.append("while (js(%s)) {" % self.visit(node.test))
-        else:
-            orelse_dummy = self.alloc_var()
+        if node.orelse:
+            orelse_var = self.alloc_var()
+            js.append("var %s = true;" % orelse_var)
 
-            js.append("var %s = false;" % orelse_dummy)
-            js.append("while (1) {")
-            js.append("    if (js(py_builtins.__not__(%s))) {" % self.visit(node.test))
-            js.append("        %s = true;" % orelse_dummy)
-            js.append("        break;")
-            js.append("    }")
+        js.append("while (js(%s)) {" % self.visit(node.test))
+        if node.orelse:
+            js.extend(self.indent(["var %s = true;" % orelse_var]))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -284,7 +280,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("}")
 
         if node.orelse:
-            js.append("if (%s) {" % orelse_dummy)
+            js.append("if (%s) {" % orelse_var)
 
             for stmt in node.orelse:
                 js.extend(self.indent(self.visit(stmt)))
