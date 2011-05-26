@@ -35,12 +35,16 @@ _int.prototype.__invert__ = function() {
 _int.prototype.__div__ = function(x) {
     if (!x._isnumeric_)
         throw py_builtins.TypeError.__call__("Cannot divide int and non-int");
+    if (x._obj === 0)
+        throw py_builtins.ZeroDivisionError.__call__("integer division or modulo by zero");
     return _float.__call__(this._obj / x._obj);
 };
 
 _int.prototype.__floordiv__ = function(x) {
     if (!x._isnumeric_)
         throw py_builtins.TypeError.__call__("Cannot operate on int and non-int");
+    if (x._obj === 0)
+        throw py_builtins.ZeroDivisionError.__call__("integer division or modulo by zero");
     return _int.__call__(Math.floor(this._obj / x._obj));
 };
 

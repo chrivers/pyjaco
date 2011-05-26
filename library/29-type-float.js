@@ -31,6 +31,8 @@ _float.prototype.__hash__ = function () {
 _float.prototype.__div__ = function(x) {
     if (!x._isnumeric_)
         throw py_builtins.TypeError.__call__("Cannot divide number and non-number");
+    if (x._obj === 0)
+        throw py_builtins.ZeroDivisionError.__call__("float division by zero");
     return _float.__call__((0.0 + this._obj) / (0.0 + x._obj));
 };
 
