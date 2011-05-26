@@ -61,7 +61,8 @@ class Compiler(object):
 
         return "\n".join(res)
 
-    def format_name(self, name):
+    @staticmethod
+    def format_name(name):
         return "/*%s*/\n" % ("| %s |" % name).center(80, "*")
 
     def comment_section(self, name):

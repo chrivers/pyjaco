@@ -59,12 +59,14 @@ class BaseCompiler(object):
 
         return visitor(node)
 
-    def indent(self, stmts):
+    @staticmethod
+    def indent(stmts):
         return [ "    " + stmt for stmt in stmts ]
 
     ## Shared code
 
-    def name(self, node):
+    @staticmethod
+    def name(node):
         return node.__class__.__name__
 
     ## Shared visit functions
