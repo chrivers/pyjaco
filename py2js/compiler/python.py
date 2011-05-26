@@ -5,6 +5,20 @@ from py2js.compiler.multiplexer import dump
 
 class Compiler(py2js.compiler.BaseCompiler):
 
+    ops_augassign = {
+        "Add"     : "iadd",
+        "Sub"     : "isub",
+        "Div"     : "idiv",
+        "Mult"    : "imul",
+        "LShift"  : "ilshift",
+        "RShift"  : "irshift",
+        "BitOr"   : "ibitor",
+        "BitAnd"  : "ibitand",
+        "BitXor"  : "ibitxor",
+        "FloorDiv": "ifloordiv",
+        "Pow"     : "ipow",
+    }
+
     def __init__(self):
         super(Compiler, self).__init__()
         self.future_division = False
@@ -194,17 +208,11 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not self.future_division and isinstance(node.op, ast.Div):
             node.op = ast.FloorDiv()
 
-        if   isinstance(node.op, ast.Add     ): return self.visit_AssignSimple(node.target, "%s.__iadd__(%s)"      % (target, value))
-        elif isinstance(node.op, ast.Sub     ): return self.visit_AssignSimple(node.target, "%s.__isub__(%s)"      % (target, value))
-        elif isinstance(node.op, ast.Div     ): return self.visit_AssignSimple(node.target, "%s.__idiv__(%s)"      % (target, value))
-        elif isinstance(node.op, ast.Mult    ): return self.visit_AssignSimple(node.target, "%s.__imul__(%s)"      % (target, value))
-        elif isinstance(node.op, ast.LShift  ): return self.visit_AssignSimple(node.target, "%s.__ilshift__(%s)"   % (target, value))
-        elif isinstance(node.op, ast.RShift  ): return self.visit_AssignSimple(node.target, "%s.__irshift__(%s)"   % (target, value))
-        elif isinstance(node.op, ast.BitOr   ): return self.visit_AssignSimple(node.target, "%s.__ibitor__(%s)"    % (target, value))
-        elif isinstance(node.op, ast.BitAnd  ): return self.visit_AssignSimple(node.target, "%s.__ibitand__(%s)"   % (target, value))
-        elif isinstance(node.op, ast.BitXor  ): return self.visit_AssignSimple(node.target, "%s.__ibitxor__(%s)"   % (target, value))
-        elif isinstance(node.op, ast.FloorDiv): return self.visit_AssignSimple(node.target, "%s.__ifloordiv__(%s)" % (target, value))
-        elif isinstance(node.op, ast.Pow     ): return self.visit_AssignSimple(node.target, "%s.__ipow__(%s)"      % (target, value))
+        name = node.op.__class__.__name__
+        if name in self.ops_augassign:
+            return self.visit_AssignSimple(
+                node.target, "%s.__%s__(%s)"      % (target, self.ops_augassign[name], value)
+            )
         else:
             raise JSError("Unsupported AugAssign type %s" % node.op)
 
@@ -335,7 +343,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js = []
         js.append("try {")
         for n in node.body:
-            js.append("\n".join(self.visit(n)))           
+            js.append("\n".join(self.visit(n)))
         js.append("} catch (%s) { /* ignore */ }" % self.alloc_var())
         for n in node.finalbody:
             js.append("\n".join(self.visit(n)))
@@ -528,4 +536,3 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Index(self, node):
         return self.visit(node.value)
-
