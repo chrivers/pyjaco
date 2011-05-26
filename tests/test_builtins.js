@@ -3,8 +3,10 @@
 var DEBUG = false;
 
 function test(code) {
-    if (DEBUG)
-        print(code.toString().split("\n").slice(1, 2));
+    if (DEBUG) {
+        var x = code.toString().replace(/\n\s*/g, " ");
+        print("  ", x);
+    }
     if (!code()) {
         throw py_builtins.AssertionError.__call__("test failed: " + code);
     }
