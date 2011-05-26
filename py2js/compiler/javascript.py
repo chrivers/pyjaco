@@ -1,6 +1,5 @@
 import py2js.compiler
 import ast
-import inspect
 from py2js.compiler import JSError
 
 class Compiler(py2js.compiler.BaseCompiler):
@@ -76,8 +75,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             return ["return;"]
 
     def visit_Delete(self, node):
-
-        return ["delete %s;" % ", ".join(map(self.visit, node.targets))]
+        return ["delete %s;" % ", ".join([self.visit(x) for x in node.targets])]
 
     def visit_AssignSimple(self, left, right):
         target = left
