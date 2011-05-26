@@ -29,6 +29,7 @@ def dump(node):
 class Compiler(py2js.compiler.BaseCompiler):
 
     def __init__(self, jsvars = None):
+        super(Compiler, self).__init__()
         self.comp_py = py2js.compiler.python.Compiler()
         self.comp_js = py2js.compiler.javascript.Compiler()
 
@@ -96,7 +97,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 return self.get_mode(node.value)
 
         elif isinstance(node, ast.Name):
-            if node.id in map(operator.itemgetter(0), self.jsvars):
+            if node.id in [x[0] for x in self.jsvars]:
                 return "js"
             else:
                 return "py"
