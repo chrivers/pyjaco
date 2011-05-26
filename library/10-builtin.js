@@ -208,6 +208,8 @@ py_builtins._int = Function(function(value) {
     if (typeof(value) === "number") {
         return _int.__call__(parseInt(value));
     } else if (isinstance(value, _int)) {
+        return value;
+    } else if (isinstance(value, _float)) {
         return _int.__call__(parseInt(value._obj));
     } else {
         var s = value.toString();
@@ -234,7 +236,20 @@ py_builtins.__is__ = Function(function(a, b) {
 });
 
 py_builtins._float = Function(function(value) {
-    return value;
+    if (typeof(value) === "number") {
+        return _float.__call__(parseFloat(value));
+    } else if (isinstance(value, _int)) {
+        return _float.__call__(parseFloat(value._obj));
+    } else if (isinstance(value, _float)) {
+        return value;
+    } else {
+        var s = value.toString();
+        if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?$/)) {
+            return _float.__call__(parseFloat(value));
+        } else {
+            throw py_builtins.ValueError.__call__("Invalid float: " + value);
+        }
+    }
 });
 
 py_builtins.max = Function(function(list) {
