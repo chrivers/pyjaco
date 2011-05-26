@@ -80,6 +80,7 @@ class JavaScript(object):
 
     def __init__(self, *args):
         self.jsvars = list(args)
+        self._js = None
 
     def __call__(self, obj):
         lines = inspect.getsource(obj).split("\n")

@@ -36,6 +36,7 @@ class Compiler(object):
 
     def __init__(self, jsvars = None):
         self.compiler = py2js.compiler.multiplexer.Compiler(jsvars)
+        self.buffer = None
         self.reset()
 
     def reset(self):
