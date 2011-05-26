@@ -503,13 +503,6 @@ class Compiler(py2js.compiler.BaseCompiler):
             else:
                 raise JSError("Unknown exception type")
 
-    def visit_Print(self, node):
-        assert node.dest is None
-        assert node.nl
-        values = [self.visit(v) for v in node.values]
-        values = ", ".join(values)
-        return ["py_builtins.print(%s);" % values]
-
     def visit_Attribute(self, node):
         return """%s.__getattr__("%s")""" % (self.visit(node.value), node.attr)
 
