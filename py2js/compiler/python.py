@@ -21,14 +21,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         self._scope.extend(node.names)
         return []
 
-    def visit_Module(self, node):
-        module = []
-
-        for stmt in node.body:
-            module.extend(self.visit(stmt))
-
-        return module
-
     def visit_FunctionDef(self, node):
         is_static = False
         is_javascript = False
@@ -375,14 +367,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         for n in node.finalbody:
             js.append("\n".join(self.visit(n)))
         return js
-
-    def visit_Assert(self, node):
-        test = self.visit(node.test)
-
-        if node.msg is not None:
-            return ["assert(%s, %s);" % (test, self.visit(node.msg))]
-        else:
-            return ["assert(%s);" % test]
 
     def _visit_Import(self, node):
         pass

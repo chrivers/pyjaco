@@ -64,14 +64,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         self._scope.extend(node.names)
         return []
 
-    def visit_Module(self, node):
-        module = []
-
-        for stmt in node.body:
-            module.extend(self.visit(stmt))
-
-        return module
-
     def visit_FunctionDef(self, node):
         raise JSError("Javascript compiler does not support function definitions")
 
@@ -235,14 +227,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def _visit_TryFinally(self, node):
         pass
-
-    def visit_Assert(self, node):
-        test = self.visit(node.test)
-
-        if node.msg is not None:
-            return ["assert(%s, %s);" % (test, self.visit(node.msg))]
-        else:
-            return ["assert(%s);" % test]
 
     def _visit_Import(self, node):
         pass

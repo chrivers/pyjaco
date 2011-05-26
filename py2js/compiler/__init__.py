@@ -94,6 +94,22 @@ class BaseCompiler(object):
         values = ", ".join(values)
         return ["py_builtins.print(%s);" % values]
 
+    def visit_Module(self, node):
+        module = []
+
+        for stmt in node.body:
+            module.extend(self.visit(stmt))
+
+        return module
+
+    def visit_Assert(self, node):
+        test = self.visit(node.test)
+
+        if node.msg is not None:
+            return ["assert(%s, %s);" % (test, self.visit(node.msg))]
+        else:
+            return ["assert(%s);" % test]
+
     def visit_Expr(self, node):
         return [self.visit(node.value) + ";"]
 
