@@ -45,6 +45,7 @@ var __inherit = function(cls, name) {
     /* Receive bacon */
     var res = new ObjectMetaClass(x);
     res.__name__ = name;
+    res.__super__ = cls;
     res.prototype.__class__ = res;
     res.prototype.__super__ = cls;
     return res;
