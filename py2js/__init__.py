@@ -45,7 +45,7 @@ class Compiler(object):
         return self.buffer.getvalue()
 
     def dedent(self, code, body):
-        code = filter(lambda x: x != "" and not re.match(self.re_comment, x), code.split("\n"))
+        code = [x for x in code.split("\n") if x != "" and not re.match(self.re_comment, x)]
         if len(code) < 1:
             return code.lstrip()
 
