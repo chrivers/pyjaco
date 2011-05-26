@@ -404,16 +404,7 @@ function test_isinstance() {
         return isinstance(py_builtins.StopIteration.__call__(), py_builtins.ValueError) == False;
     });
 
-    test(function() { return isinstance([], Array) == True });
-    test(function() { return isinstance([], Number) == False });
-    test(function() { return isinstance([], String) == False });
-
     test(function() { return isinstance([], tuple.__call__()) == False });
-
-    test(function() { return isinstance([], tuple.__call__([Number, Array])) == True });
-    test(function() { return isinstance([], tuple.__call__([Array, Number])) == True });
-
-    test(function() { return isinstance([], tuple.__call__([Number, String])) == False });
 
     var t = tuple.__call__([1, 2, 3]);
 
