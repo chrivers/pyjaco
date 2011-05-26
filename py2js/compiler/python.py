@@ -34,6 +34,15 @@ class Compiler(py2js.compiler.BaseCompiler):
         "FloorDiv": "floordiv",
     }
 
+    ops_compare = {
+        "Eq": "eq",
+        "NotEq": "ne",
+        "Gt": "gt",
+        "Lt": "lt",
+        "GtE": "ge",
+        "LtE": "le",
+    }
+
     def __init__(self):
         super(Compiler, self).__init__()
         self.future_division = False
@@ -423,15 +432,17 @@ class Compiler(py2js.compiler.BaseCompiler):
         assert len(node.comparators) == 1
         op = node.ops[0]
         comp = node.comparators[0]
-        if   isinstance(op, ast.Eq   ): return "%s.__eq__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.NotEq): return "%s.__ne__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.Gt):    return "%s.__gt__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.Lt):    return "%s.__lt__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.GtE):   return "%s.__ge__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.LtE):   return "%s.__le__(%s)"              % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.In):    return "%s.__contains__(%s)"        % (self.visit(comp), self.visit(node.left))
-        elif isinstance(op, ast.Is):    return "py_builtins.__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
-        elif isinstance(op, ast.NotIn): return "py_builtins.__not__(%s.__contains__(%s))" % (self.visit(comp), self.visit(node.left))
+
+        name = op.__class__.__name__
+
+        if name in self.ops_compare:
+            return "%s.__%s__(%s)" % (self.visit(node.left), self.ops_compare[name], self.visit(comp))
+        elif isinstance(op, ast.In):
+            return "%s.__contains__(%s)" % (self.visit(comp), self.visit(node.left))
+        elif isinstance(op, ast.Is):
+            return "py_builtins.__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
+        elif isinstance(op, ast.NotIn):
+            return "py_builtins.__not__(%s.__contains__(%s))" % (self.visit(comp), self.visit(node.left))
         else:
             raise JSError("Unknown comparison type %s" % node.ops[0])
 
