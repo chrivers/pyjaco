@@ -134,3 +134,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Return(self, node):
         return self.visit_current(node)
+
+    def visit_AssignSimple(self, node):
+        raise NotImplementedError()
