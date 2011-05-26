@@ -438,7 +438,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         elif isinstance(node.op, ast.Div     ): return "%s.__div__(%s)"      % (left, right)
         elif isinstance(node.op, ast.Mod     ): return "%s.__mod__(%s)"      % (left, right)
         elif isinstance(node.op, ast.Pow     ): return "%s.__pow__(%s)"      % (left, right)
-        elif isinstance(node.op, ast.Mult    ): return "%s.__mult__(%s)"     % (left, right)
+        elif isinstance(node.op, ast.Mult    ): return "%s.__mul__(%s)"      % (left, right)
         elif isinstance(node.op, ast.BitOr   ): return "%s.__bitor__(%s)"    % (left, right)
         elif isinstance(node.op, ast.BitAnd  ): return "%s.__bitand__(%s)"   % (left, right)
         elif isinstance(node.op, ast.BitXor  ): return "%s.__bitxor__(%s)"   % (left, right)
