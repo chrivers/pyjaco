@@ -70,12 +70,6 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_ClassDef(self, node):
         raise JSError("Javascript compiler does not support class definitions")
 
-    def visit_Return(self, node):
-        if node.value is not None:
-            return ["return %s;" % self.visit(node.value)]
-        else:
-            return ["return;"]
-
     def visit_Delete(self, node):
         return ["delete %s;" % ", ".join([self.visit(x) for x in node.targets])]
 

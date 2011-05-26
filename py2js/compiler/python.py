@@ -136,12 +136,6 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         return js
 
-    def visit_Return(self, node):
-        if node.value is not None:
-            return ["return %s;" % self.visit(node.value)]
-        else:
-            return ["return;"]
-
     def visit_Delete(self, node):
         return [self.visit_DeleteSimple(part) for part in node.targets]
 
@@ -314,9 +308,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         return js + ["}"]
 
     def _visit_With(self, node):
-        pass
-
-    def _visit_Raise(self, node):
         pass
 
     def visit_TryExcept(self, node):

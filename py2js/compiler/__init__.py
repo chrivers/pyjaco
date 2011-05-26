@@ -110,6 +110,12 @@ class BaseCompiler(object):
         else:
             return ["assert(%s);" % test]
 
+    def visit_Return(self, node):
+        if node.value is not None:
+            return ["return %s;" % self.visit(node.value)]
+        else:
+            return ["return;"]
+
     def visit_Expr(self, node):
         return [self.visit(node.value) + ";"]
 
