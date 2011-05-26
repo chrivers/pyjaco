@@ -88,7 +88,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         elif isinstance(node, ast.Attribute):
             if isinstance(node.value, ast.Name):
-                for i, x in enumerate(self.jsvars):
+                for x in self.jsvars:
                     if len(x) == 1 and node.value.id == x[0]:
                         return "js"
                     elif len(x) == 2 and node.value.id == x[0] and node.attr == x[1]:
