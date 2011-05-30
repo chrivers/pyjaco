@@ -63,7 +63,9 @@ var sprintf = (function() {
                 return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
         }
         function str_repeat(input, multiplier) {
-                for (var output = []; multiplier > 0; output[--multiplier] = input) {/* do nothing */}
+                for (var output = []; multiplier > 0; multiplier--) {
+                    output[multiplier] = input;
+                }
                 return output.join('');
         }
 
@@ -120,6 +122,7 @@ var sprintf = (function() {
                                         case 'u': arg = parseInt(arg, 10); break;
                                         case 'x': arg = arg.toString(16); break;
                                         case 'X': arg = arg.toString(16).toUpperCase(); break;
+                                        default: throw("Unknown formatting flag " + match[8]);
                                 }
                                 pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
                                 pad_length = match[6] - String(arg).length;
@@ -147,8 +150,9 @@ var sprintf = (function() {
 
                                 if (flag_alternate) {
                                     switch (match[8]) {
-                                    case 'o': if (arg !== "0") arg = "0" + arg; break;
-                                    case 'x': arg = "0x" + arg; break;
+                                        case 'o': if (arg !== "0") arg = "0" + arg; break;
+                                        case 'x': arg = "0x" + arg; break;
+                                        default: break;
                                     }
                                 }
                                 if (flag_prefixzero) {
