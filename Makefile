@@ -14,3 +14,6 @@ examples:
 
 lint:
 	pylint --rcfile=pylint.conf py2js
+
+jslint:
+	jsl py-builtins.js
