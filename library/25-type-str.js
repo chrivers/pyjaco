@@ -156,7 +156,7 @@ str.prototype.index = Function(function(value, start, end) {
         start = 0;
     }
 
-    for (var i = start; !defined(end) || (start < end); i++) {
+    for (var i = js(start); !defined(end) || (start < end); i++) {
         var _value = this._obj[i];
 
         if (!defined(_value)) {
@@ -164,7 +164,7 @@ str.prototype.index = Function(function(value, start, end) {
         }
 
         if (_value == value) {
-            return i;
+            return _int.__call__(i);
         }
     }
 
@@ -176,18 +176,18 @@ str.prototype.find = Function(function(s) {
 });
 
 str.prototype.rfind = Function(function(s) {
-    rev = function(s) {
+    var rev = function(s) {
         var a = list.__call__(__py2js_str.__call__(s));
         a.reverse();
         a = __py2js_str.__call__("").join(a);
         return a;
-    }
+    };
     var a = rev(this);
     var b = rev(s);
     var r = a.find(b);
     if (r == -1)
         return r;
-    return len(this)-len(b)-r
+    return len(this) - len(b) - r;
 });
 
 str.prototype.join = Function(function(s) {
@@ -215,7 +215,7 @@ str.prototype.replace = Function(function(old, _new, count) {
 });
 
 str.prototype.lstrip = Function(function(chars) {
-    if (js(len(this)) == 0)
+    if (js(len(this)) === 0)
         return this;
     if (defined(chars))
         chars = tuple.__call__(chars);
@@ -229,7 +229,7 @@ str.prototype.lstrip = Function(function(chars) {
 });
 
 str.prototype.rstrip = Function(function(chars) {
-    if (len(this) == 0)
+    if (js(len(this)) === 0)
         return this;
     if (defined(chars))
         chars = tuple.__call__(chars);
@@ -247,16 +247,17 @@ str.prototype.strip = Function(function(chars) {
 });
 
 str.prototype.split = Function(function(sep) {
+    var r_new;
     if (defined(sep)) {
         var r = list.__call__(this._obj.split(sep));
-        var r_new = list.__call__([]);
+        r_new = list.__call__([]);
         iterate(iter.__call__(r), function(item) {
                 r_new.append(str.__call__(item));
         });
         return r_new;
     }
     else {
-        var r_new = list.__call__([]);
+        r_new = list.__call__([]);
         iterate(iter.__call__(this.split(" ")), function(item) {
                 if (len(item) > 0)
                     r_new.append(item);
