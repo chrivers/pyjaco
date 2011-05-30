@@ -12,13 +12,13 @@ iter.prototype.__init__ = function(obj) {
         this._seq = obj.split("");
         for (var i = 0; i < this._seq.length; i++) {
             this._seq[i] = str.__call__(this._seq[i]);
-        };
+        }
     } else if (obj.__class__ == iter) {
         this._seq = obj._seq;
     } else {
         throw py_builtins.TypeError.__call__("object is not iterable");
     }
-}
+};
 
 var __iter_real__ = iter.__call__;
 
@@ -28,7 +28,7 @@ iter.__call__ = function(obj) {
     } else {
         return __iter_real__(obj);
     }
-}
+};
 
 iter.prototype.__str__ = function () {
     return str.__call__("<iterator of " + this._seq + " at " + this._index + ">");
