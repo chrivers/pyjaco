@@ -309,7 +309,7 @@ py_builtins.print = function(s) {
 };
 
 py_builtins.filter = Function(function(f, l) {
-   res = list.__call__();
+   var res = list.__call__();
    iterate(iter.__call__(l), function(item) {
      if (py_builtins.bool(f(item))) {
        res.append(item);
