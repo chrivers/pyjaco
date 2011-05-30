@@ -425,9 +425,6 @@ function test_isinstance() {
     test(function() { return isinstance(t, list) == False });
     test(function() { return isinstance(t, dict) == False });
 
-    test(function() { return isinstance(t, tuple.__call__([Number, tuple])) == True });
-    test(function() { return isinstance(t, tuple.__call__([tuple, Number])) == True });
-
     test(function() { return isinstance(t, tuple.__call__([list, dict])) == False });
 }
 
