@@ -52,20 +52,19 @@ if (!Array.prototype.indexOf)
 if (!Array.slice)
 {
     Array.slice= function(){
-        array_like = arguments[0];
-        start = arguments[1];
-        end = arguments[2];
-        arr=[];
-        if(end === undefined){
-            for(var i = start; i < array_like.length; i++){
+        var array_like = arguments[0];
+        var start = arguments[1];
+        var end = arguments[2];
+        var arr = [];
+        var i;
+        if (end === undefined) {
+            for (i = start; i < array_like.length; i++)
                 arr[i-start] = array_like[i];
-            }
-        }else{
-            for(var i = start; i < end; i++){
+        } else {
+            for (i = start; i < end; i++)
                 arr[i-start] = array_like[i];
-            }
         }
         return arr;
-    }
+    };
 }
 
