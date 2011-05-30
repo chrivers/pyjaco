@@ -8,7 +8,7 @@ _int.prototype.__init__ = function(i) {
     if (arguments.length == 2) {
         this._obj = parseInt(i, arguments[1]);
     } else {
-        this._obj = parseInt(i);
+        this._obj = parseInt(i, 10);
     }
 };
 
