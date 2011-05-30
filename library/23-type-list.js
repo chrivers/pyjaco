@@ -139,10 +139,11 @@ list.prototype.sort = Function(function() {
     if (arguments.length > 2)
         reverse = js(arguments[2]);
 
+    var mcmp;
     if (js(reverse)) {
-        var mcmp = function(a, b) { return cmp(b, a); };
+        mcmp = function(a, b) { return cmp(b, a); };
     } else {
-        var mcmp = function(a, b) { return cmp(a, b); };
+        mcmp = function(a, b) { return cmp(a, b); };
     }
 
     this._items.sort(function (a, b) {return mcmp(key(a), key(b));});
