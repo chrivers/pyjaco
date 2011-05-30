@@ -36,4 +36,4 @@ py_builtins.__exceptions__ = [
 for (var i in py_builtins.__exceptions__) {
     var name = py_builtins.__exceptions__[i];
     py_builtins[name] = __inherit(Exception, name);
-};
+}
