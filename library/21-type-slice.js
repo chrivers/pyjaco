@@ -23,7 +23,7 @@ slice.prototype.__str__ = function() {
 slice.prototype.indices = Function(function(n) {
     n = js(n);
     var start = this.start;
-    if (start == null)
+    if (start === null)
         start = 0;
     if (start > n)
         start = n;
@@ -32,12 +32,12 @@ slice.prototype.indices = Function(function(n) {
     var stop = this.stop;
     if (stop > n)
         stop = n;
-    if (stop == null)
+    if (stop === null)
         stop = n;
     if (stop < 0)
         stop = n+stop;
     var step = this.step;
-    if (step == null)
+    if (step === null)
         step = 1;
     return tuple.__call__([start, stop, step]);
 });
