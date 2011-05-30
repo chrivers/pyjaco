@@ -151,21 +151,22 @@ var zip = Function(function() {
 
         items.append(tuple.__call__(item));
     }
+    return None;
 });
 
 var isinstance = Function(function(obj, cls) {
-    if (cls.__class__ == tuple) {
+    if (cls.__class__ === tuple) {
         var length = cls.__len__();
 
-        if (length == 0) {
-            return false;
+        if (length.__eq__($c0)) {
+            return False;
         }
 
         for (var i = 0; i < length; i++) {
             var _cls = cls.__getitem__(i);
 
             if (isinstance.__call__(obj, _cls)) {
-                return true;
+                return True;
             }
         }
 
@@ -173,12 +174,12 @@ var isinstance = Function(function(obj, cls) {
     } else {
         var c = obj.__class__;
         while (c) {
-            if (c == cls)
-                return true;
+            if (c === cls)
+                return True;
             c = c.__super__;
-        };
+        }
         return false;
-    };
+    }
 });
 
 py_builtins.bool = function(a) {
@@ -204,7 +205,7 @@ py_builtins.eq = function(a, b) {
 
 py_builtins._int = Function(function(value) {
     if (typeof(value) === "number") {
-        return _int.__call__(parseInt(value));
+        return _int.__call__(parseInt(value, 10));
     } else if (isinstance(value, _int)) {
         return value;
     } else if (isinstance(value, _float)) {
