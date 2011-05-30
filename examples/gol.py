@@ -17,7 +17,8 @@ class GoL(object):
         self.grid = list(range(self.width*self.height))
         for i in range(self.width*self.height):
             self.grid[i] = Random() > 0.5
-        setInterval('window.gol.iter()', 25)
+
+        setInterval('window.gol.iter.__call__.call(window.gol)', 250)
         self.draw()
 
     def get(self, x, y):
