@@ -22,7 +22,7 @@ tuple.prototype.__init__ = function(seq) {
 };
 
 tuple.prototype.__str__ = function () {
-    if (js(this.__len__()) == 0) {
+    if (js(this.__len__()) === 0) {
         return str.__call__("()");
     } else if (js(this.__len__()) == 1) {
         return str.__call__("(" + str.__call__(this._items[0]) + ",)");
@@ -79,17 +79,10 @@ tuple.prototype.__hash__ = function () {
 };
 
 tuple.prototype.__len__ = function() {
-    if (this._len == -1) {
-        var count = 0;
+    if (this._len == -1)
+        this._len = this._items.length;
 
-        for (var index in this._items) {
-            count += 1;
-        }
-
-        this._len = count;
-        return _int.__call__(count);
-    } else
-        return _int.__call__(this._len);
+    return _int.__call__(this._len);
 };
 
 tuple.prototype.__iter__ = function() {
