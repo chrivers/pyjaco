@@ -40,7 +40,7 @@ var __inherit = function(cls, name) {
     /* Inheritance from cls */
     for (var o in cls.prototype) {
         x.prototype[o] = cls.prototype[o];
-    };
+    }
 
     /* Receive bacon */
     var res = new ObjectMetaClass(x);

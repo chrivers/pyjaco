@@ -8,7 +8,7 @@ Exception.prototype.__init__ = function() {
     } else {
         this.message = "";
     }
-}
+};
 
 Exception.prototype.__str__ = function() {
     return str.__call__(this.message);

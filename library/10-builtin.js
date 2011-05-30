@@ -158,7 +158,7 @@ var isinstance = Function(function(obj, cls) {
     if (cls.__class__ === tuple) {
         var length = cls.__len__();
 
-        if (length.__eq__($c0)) {
+        if (js(length.__eq__($c0))) {
             return False;
         }
 
@@ -209,11 +209,11 @@ py_builtins._int = Function(function(value) {
     } else if (isinstance(value, _int)) {
         return value;
     } else if (isinstance(value, _float)) {
-        return _int.__call__(parseInt(value._obj));
+        return _int.__call__(parseInt(value._obj, 10));
     } else {
         var s = value.toString();
         if (s.match(/^[-+0-9]+$/)) {
-            return _int.__call__(parseInt(value));
+            return _int.__call__(parseInt(value, 10));
         } else {
             throw py_builtins.ValueError.__call__("Invalid integer: " + value);
         }
@@ -252,13 +252,13 @@ py_builtins._float = Function(function(value) {
 });
 
 py_builtins.max = Function(function(list) {
-    if (len(list) == 0)
+    if (js(len(list).__eq__($c0)))
         throw py_builtins.ValueError.__call__("max() arg is an empty sequence");
     else {
         var result = null;
 
         iterate(iter.__call__(list), function(item) {
-                if ((result == null) || (item > result))
+                if ((result === null) || js(item.__gt__(result)))
                     result = item;
         });
 
@@ -267,13 +267,13 @@ py_builtins.max = Function(function(list) {
 });
 
 py_builtins.min = Function(function(list) {
-    if (len(list) == 0)
+    if (js(len(list).__eq__($c0)))
         throw py_builtins.ValueError.__call__("min() arg is an empty sequence");
     else {
         var result = null;
 
         iterate(iter.__call__(list), function(item) {
-                if ((result == null) || (item < result))
+                if ((result === null) || js(item.__lt__(result)))
                     result = item;
         });
 
@@ -313,7 +313,7 @@ py_builtins.filter = Function(function(f, l) {
    iterate(iter.__call__(l), function(item) {
      if (py_builtins.bool(f(item))) {
        res.append(item);
-     };
+     }
    });
    return res;
 });
@@ -328,12 +328,13 @@ py_builtins.reduce = Function(function(func, seq) {
     if (len(seq) < 2) {
         return initial;
     }
+    var accum, start;
     if (arguments.length == 3) {
-        var accum = initial;
-        var start = 0;
+        accum = initial;
+        start = 0;
     } else {
-        var accum = func(seq.__getitem__(0), seq.__getitem__(1));
-        var start = 2;
+        accum = func(seq.__getitem__(0), seq.__getitem__(1));
+        start = 2;
     }
     for (var i = start; i < len(seq); i++) {
         accum = func(accum, seq.__getitem__(i));
