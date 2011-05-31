@@ -1,9 +1,13 @@
 /**
-sprintf() for JavaScript 0.7-beta1
-http://www.diveintojavascript.com/projects/javascript-sprintf
 
-Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
-All rights reserved.
+  Basic library file: "sprintf() for JavaScript 0.7-beta1"
+  http://www.diveintojavascript.com/projects/javascript-sprintf
+
+    Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
+    All rights reserved.
+
+  Python extensions to basic library file: 
+    Copyright (c) Christian Iversen <ci@sikkerhed.org>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
