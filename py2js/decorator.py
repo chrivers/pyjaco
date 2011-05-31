@@ -1,5 +1,7 @@
 ######################################################################
 ##
+## Copyright 2010-2011 Ondrej Certik <ondrej@certik.cz>
+## Copyright 2010-2011 Mateusz Paprocki <mattpap@gmail.com>
 ## Copyright 2011 Christian Iversen <ci@sikkerhed.org>
 ## Copyright 2011 Samuel Ytterbrink <neppord@gmail.com>
 ##
