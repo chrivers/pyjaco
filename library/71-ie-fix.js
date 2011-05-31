@@ -1,5 +1,5 @@
 /**
-Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
+ Copyright 2010 Jared Forsyth <jared@jareforsyth.com>
 
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation
