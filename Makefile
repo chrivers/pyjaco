@@ -3,7 +3,7 @@ all: stdlib
 	$(MAKE) -C examples generate
 
 stdlib:
-	@cat library/*.js > py-builtins.js
+	@./generate_library.py
 
 clean:
 	@rm -fv py-builtins.js *~ library/*~ *.pyc
