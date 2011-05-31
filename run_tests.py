@@ -49,7 +49,7 @@ def main():
         else:
             results = runner.run(testtools.tests.NOT_KNOWN_TO_FAIL)
     except KeyboardInterrupt:
-        print "Exited by ctrl-c"
+        pass
     if not options.no_error and results and results.errors:
         print
         print "errors:"
