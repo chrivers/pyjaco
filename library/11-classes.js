@@ -76,10 +76,6 @@ var __inherit = function(cls, name) {
     return res;
 };
 
-var __super = Function(function(scls, obj) {
-    return obj.__super__;
-});
-
 var object = __inherit(function() {}, "object");
 
 object.prototype.__init__ = function() {
