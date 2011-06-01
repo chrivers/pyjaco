@@ -207,7 +207,7 @@ var isinstance = Function(function(obj, cls) {
 });
 
 py_builtins.bool = function(a) {
-    if ((a != null) && defined(a.__bool__)) {
+    if ((a !== null) && defined(a.__bool__)) {
         return a.__bool__();
     } else {
         if (a) {
