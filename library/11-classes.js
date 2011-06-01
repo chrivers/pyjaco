@@ -85,16 +85,16 @@ var object = __inherit(function() {}, "object");
 object.prototype.__init__ = function() {
 };
 
-object.prototype.__setattr__ = function(k, v) {
-    this[k] = v;
+object.prototype.__setattr__ = function(k, v) { 
+    this[js(k)] = v;
 };
 
 object.prototype.__getattr__ = function(k) {
-    return this[k];
+    return this[js(k)];
 };
 
 object.prototype.__delattr__ = function(k) {
-    delete this[k];
+    delete this[js(k)];
 };
 
 object.prototype.__repr__ = function() {
