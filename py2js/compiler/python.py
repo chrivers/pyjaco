@@ -212,7 +212,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         elif isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Slice):
             js = "%s.__delslice__(%s, %s);" % (self.visit(node.value), self.visit(node.slice.lower), self.visit(node.slice.upper))
         elif isinstance(node, ast.Attribute):
-            js = '%s.__delattr__("%s");' % (self.visit(node.value), node.attr)
+            js = '%s.__delattr__(__py2js_str.__call__("%s"));' % (self.visit(node.value), node.attr)
         elif isinstance(node, ast.Name):
             raise JSError("Javascript does not support deleting variables. Cannot compile")
         else:
@@ -249,7 +249,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     declare = ""
                 js = ["%s%s = %s;" % (declare, var, value)]
             elif isinstance(target, ast.Attribute):
-                js = ["%s.__setattr__(\"%s\", %s);" % (self.visit(target.value), str(target.attr), value)]
+                js = ["%s.__setattr__(__py2js_str.__call__(\"%s\"), %s);" % (self.visit(target.value), str(target.attr), value)]
             else:
                 raise JSError("Unsupported assignment type")
         return js
@@ -493,7 +493,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         # Uses the Python builtin repr() of a string and the strip string type
         # from it. This is to ensure Javascriptness, even when they use things
         # like b"\\x00" or u"\\u0000".
-        return "str.__call__(%s)" % repr(node.s).lstrip("urb")
+        return "__py2js_str.__call__(%s)" % repr(node.s).lstrip("urb")
 
     def visit_Call(self, node):
         js = []
@@ -531,7 +531,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 raise JSError("Unknown exception type")
 
     def visit_Attribute(self, node):
-        return """%s.__getattr__("%s")""" % (self.visit(node.value), node.attr)
+        return """%s.__getattr__(__py2js_str.__call__("%s"))""" % (self.visit(node.value), node.attr)
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
