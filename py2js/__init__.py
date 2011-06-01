@@ -73,10 +73,6 @@ class Compiler(object):
         return self.buffer.getvalue()
 
     def dedent(self, code, body):
-        code = [x for x in code.split("\n") if x != "" and not re.match(self.re_comment, x)]
-        if len(code) < 1:
-            return code.lstrip()
-
         if body:
             if code[0].lstrip().startswith('def'):
                 code.pop(0)
@@ -87,6 +83,24 @@ class Compiler(object):
             res.append(c[dedent:])
 
         return "\n".join(res)
+
+    def find_js(self, names):
+        js = []
+        for x in names:
+            l = x.lstrip()
+            if l.startswith("@JSVar"):
+                names = l[7:-1].split(",")
+                for n in [n.strip()[1:-1] for n in names]:
+                    js.append(n.split("."))
+        return js
+
+    def split(self, code):
+        code = [x for x in code.split("\n") if x != "" and not re.match(self.re_comment, x)]
+
+        decos, lines = [], []
+        for i, x in enumerate(code):
+            if not x.lstrip().startswith("@"):
+                return self.find_js(code[:i]), code[i:]
 
     @staticmethod
     def format_name(name):
@@ -101,26 +115,35 @@ class Compiler(object):
         self.buffer.write(code)
         self.buffer.write("\n\n")
 
-    def append_string(self, code, name = None):
+    def append_string(self, code, name = None, jsvars = None):
         self.comment_section(name)
+        if jsvars:
+            self.compiler.jsvars = jsvars
         self.buffer.write("\n".join(self.compiler.visit(ast.parse(code))))
         self.buffer.write("\n\n")
+        self.compiler.jsvars = []
 
     def append_method(self, code, name = None, body = False):
-        self.append_string(self.dedent(inspect.getsource(code), body), name)
+        jsvars, code = self.split(inspect.getsource(code))
+        self.append_string(self.dedent(code, body), name, jsvars)
 
     def append_class(self, code, name = None):
         self.append_string(inspect.getsource(code), name)
 
-    def compile_string(self, code, name = None):
+    def compile_string(self, code, name = None, jsvars = None):
         if name:
             name = self.format_name(name)
         else:
             name = ""
-        return name + "\n".join(self.compiler.visit(ast.parse(code)))
+        if jsvars:
+            self.compiler.jsvars = jsvars
+        res = name + "\n".join(self.compiler.visit(ast.parse(code)))
+        self.compiler.jsvars = []
+        return res
 
     def compile_method(self, code, name = None, body = False):
-        return self.compile_string(self.dedent(inspect.getsource(code), body), name)
+        jsvars, code = self.split(inspect.getsource(code))
+        return self.compile_string(self.dedent(code, body), name, jsvars)
 
     def compile_class(self, code, name = None):
         return self.compile_string(inspect.getsource(code), name)
