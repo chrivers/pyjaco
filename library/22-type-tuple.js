@@ -33,7 +33,6 @@ tuple.prototype.__init__ = function(seq) {
         throw py_builtins.TypeError.__call__("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (!defined(seq)) {
         this._items = [];
-        this._len = 0;
     } else {
         this._items = copy(iter.__call__(seq));
         for (var i = 0; i < this._items.length; i++) {
@@ -42,7 +41,6 @@ tuple.prototype.__init__ = function(seq) {
             if (typeof(this._items[i]) == 'string')
                 this._items[i] = str.__call__(this._items[i]);
         }
-        this._len = -1;
     }
 };
 
@@ -104,10 +102,7 @@ tuple.prototype.__hash__ = function () {
 };
 
 tuple.prototype.__len__ = function() {
-    if (this._len == -1)
-        this._len = this._items.length;
-
-    return _int.__call__(this._len);
+    return _int.__call__(this._items.length);
 };
 
 tuple.prototype.__iter__ = function() {
