@@ -77,9 +77,8 @@ dict.prototype.__hash__ = function () {
 dict.prototype.__len__ = function() {
     var count = 0;
 
-    for (var key in this._items) {
+    for (var key in this._items)
         count += 1;
-    }
 
     return _int.__call__(count);
 };
