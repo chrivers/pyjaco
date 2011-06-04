@@ -49,8 +49,8 @@ var setattr = Function(function(obj, name, value) {
 var hash = Function(function(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.__hash__();
-    } else if (typeof(obj) == 'number') {
-        return obj == -1 ? -2 : obj;
+    } else if (typeof(obj) === 'number') {
+        return obj === -1 ? -2 : obj;
     } else {
         throw py_builtins.AttributeError.__call__('__hash__');
     }
@@ -224,7 +224,7 @@ py_builtins.eq = function(a, b) {
     else if ((b != null) && defined(b.__eq__))
         return b.__eq__(a);
     else
-        return bool.__call__(a == b);
+        return bool.__call__(a === b);
 };
 
 py_builtins._int = Function(function(value) {
@@ -248,7 +248,7 @@ py_builtins.__not__ = Function(function(obj) {
    if (hasattr(obj, '__nonzero__')) {
        return py_builtins.bool(!js(obj.__nonzero__()));
    } else if (hasattr(obj, '__len__')) {
-       return py_builtins.bool(js(obj.__len__()) == 0);
+       return py_builtins.bool(js(obj.__len__()) === 0);
    } else {
        throw py_builtins.TypeError.__call__("Cannot \"not\" value that does not have __nonzero__ or __len__");
    }
