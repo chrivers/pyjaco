@@ -160,18 +160,18 @@ str.prototype.__add__ = function(c) {
 
 str.prototype.__iadd__ = str.prototype.__add__;
 
-str.prototype.count = Function(function(str, start, end) {
+str.prototype.count = Function(function(needle, start, end) {
     if (!defined(start))
         start = 0;
     if (!defined(end))
         end = null;
     var count = 0;
     var s = this.__getitem__(slice.__call__(start, end));
-    var idx = s.find(str);
+    var idx = s.find(needle);
     while (idx != -1) {
         count += 1;
         s = s.__getitem__(slice.__call__(idx+1, null));
-        idx = s.find(str);
+        idx = s.find(needle);
     }
     return count;
 });
