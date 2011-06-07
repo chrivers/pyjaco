@@ -67,6 +67,10 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         self.modestack = []
         self.modecache = {}
+        self.stack = []
+
+        self.comp_py.stack = self.stack
+        self.comp_js.stack = self.stack
 
         if jsvars:
             self.jsvars = jsvars[:]
@@ -89,6 +93,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.enter(self.modestack.pop())
 
     def visit(self, node, multiplex = True):
+        self.stack.append(node.__class__.__name__)
         mode = self.get_mode(node)
         if mode:
             self.enter(mode)
@@ -101,6 +106,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if mode:
             self.leave()
+        self.stack.pop()
         return res
 
     def get_mode(self, node):
