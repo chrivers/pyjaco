@@ -498,13 +498,18 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Call(self, node):
         js = []
         func = self.visit(node.func)
+        compound = ("Assign" in self.stack) or ("AugAssign" in self.stack)
 
         if node.keywords:
             keywords = []
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
             kwargs = "{" + ", ".join(keywords) + "}"
-            js.append("%s.__kw_args = %s;" % (func, kwargs))
+            assign = "%s.__kw_args = %s;" % (func, kwargs)
+            if compound:
+                js.append("function() {%s return " % assign)
+            else:
+                js.append(assign)
 
         js_args = ",".join([ self.visit(arg) for arg in node.args ])
 
@@ -515,7 +520,12 @@ class Compiler(py2js.compiler.BaseCompiler):
         if js_args:
             js_args = ", " + js_args
         js.append("%s.__call__.call(%s%s)" % (func, root, js_args))
-        return "\n".join(js)
+
+        if node.keywords and compound:
+            js.append("}()")
+            return "".join(js)
+        else:
+            return "\n".join(js)
 
     def visit_Raise(self, node):
         assert node.inst is None
