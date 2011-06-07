@@ -200,7 +200,7 @@ def main():
 <head>
 <script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
-  sqrt = Function(function(value) { return _int.__call__(Math.sqrt(value)); });
+  sqrt = Function(function(value) { return _float.__call__(Math.sqrt(value)); });
 </script>
 <script language="JavaScript">
 %s
