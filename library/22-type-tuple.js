@@ -122,7 +122,7 @@ tuple.prototype.__contains__ = function(item) {
 tuple.prototype.__getitem__ = function(index) {
     if (typeof(index) === 'number') index = _int.__call__(index);
     var seq;
-    if (isinstance.__call__(index, slice)) {
+    if (js(isinstance.__call__(index, slice))) {
         var s = index;
         var inds = js(s.indices(len(this)));
         var start = inds[0];
@@ -133,12 +133,17 @@ tuple.prototype.__getitem__ = function(index) {
             seq.push(this.__getitem__(i));
         }
         return this.__class__.__call__(seq);
-    } else if (js(index.__ge__(_int.__call__(0)).__and__(index.__lt__(len(this))))) {
-        return this._items[index.__int__()];
-    } else if (js(index.__lt__(_int.__call__(0)).__and__(index.__ge__(len(this).__neg__())))) {
-        return this._items[index.__add__(len(this)).__int__()];
     } else {
-        throw py_builtins.IndexError.__call__("list index out of range");
+        if (!js(isinstance.__call__(index, _int)))
+            index = _int.__call__(index);
+
+        if (js(index.__ge__(_int.__call__(0)).__and__(index.__lt__(len(this))))) {
+            return this._items[index.__int__()];
+        } else if (js(index.__lt__(_int.__call__(0)).__and__(index.__ge__(len(this).__neg__())))) {
+            return this._items[index.__add__(len(this)).__int__()];
+        } else {
+            throw py_builtins.IndexError.__call__("list index out of range");
+        }
     }
 };
 
