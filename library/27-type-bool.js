@@ -102,3 +102,11 @@ bool.prototype.__or__ = function(x) {
         return x;
     }
 };
+
+bool.prototype.__int__ = function(x) {
+    if (this._obj) {
+        return $c1;
+    } else {
+        return $c0;
+    }
+}
