@@ -163,7 +163,7 @@ var zip = Function(function() {
             try {
                 var value = iters.__getitem__(i).next();
             } catch (exc) {
-                if (isinstance.__call__(exc, py_builtins.StopIteration)) {
+                if (js(isinstance.__call__(exc, py_builtins.StopIteration))) {
                     return items;
                 } else {
                     throw exc;
@@ -189,12 +189,12 @@ var isinstance = Function(function(obj, cls) {
         for (var i = 0; i < length; i++) {
             var _cls = cls.__getitem__(i);
 
-            if (isinstance.__call__(obj, _cls)) {
+            if (js(isinstance.__call__(obj, _cls))) {
                 return True;
             }
         }
 
-        return false;
+        return False;
     } else {
         var c = obj.__class__;
         while (c) {
@@ -202,7 +202,7 @@ var isinstance = Function(function(obj, cls) {
                 return True;
             c = c.__super__;
         }
-        return false;
+        return False;
     }
 });
 
@@ -230,9 +230,9 @@ py_builtins.eq = function(a, b) {
 py_builtins._int = Function(function(value) {
     if (typeof(value) === "number") {
         return _int.__call__(parseInt(value, 10));
-    } else if (isinstance(value, _int)) {
+    } else if (js(isinstance(value, _int))) {
         return value;
-    } else if (isinstance(value, _float)) {
+    } else if (js(isinstance(value, _float))) {
         return _int.__call__(parseInt(value._obj, 10));
     } else {
         var s = value.toString();
@@ -250,7 +250,7 @@ py_builtins.__not__ = Function(function(obj) {
    } else if (hasattr(obj, '__len__')) {
        return py_builtins.bool(js(obj.__len__()) === 0);
    } else {
-       throw py_builtins.TypeError.__call__("Cannot \"not\" value that does not have __nonzero__ or __len__");
+       return py_builtins.bool(!js(obj));
    }
 });
 
@@ -261,9 +261,9 @@ py_builtins.__is__ = Function(function(a, b) {
 py_builtins._float = Function(function(value) {
     if (typeof(value) === "number") {
         return _float.__call__(parseFloat(value));
-    } else if (isinstance(value, _int)) {
+    } else if (js(isinstance(value, _int))) {
         return _float.__call__(parseFloat(value._obj));
-    } else if (isinstance(value, _float)) {
+    } else if (js(isinstance(value, _float))) {
         return value;
     } else {
         var s = value.toString();
@@ -317,7 +317,7 @@ py_builtins.sum = Function(function(list) {
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log)) {
-        console.log(s);
+        console.log.apply(null, arguments);
     } else {
         if (arguments.length <= 1) {
             if (defined(s)) {
