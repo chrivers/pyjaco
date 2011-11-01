@@ -122,7 +122,7 @@ dict.prototype.get = Function(function(key, value) {
         if (defined(value)) {
             return value;
         } else {
-            return null;
+            return None;
         }
     }
 });
@@ -158,9 +158,12 @@ dict.prototype.values = Function(function() {
 });
 
 dict.prototype.update = Function(function(other) {
-    for (var key in other) {
-        this._items[key] = other[key];
-    }
+   var _this = this;
+   iterate(iter.__call__(other),
+     function(key) {
+        _this._items[js(key)] = other.__getitem__(key);
+     }
+   );
 });
 
 dict.prototype.clear = Function(function() {
