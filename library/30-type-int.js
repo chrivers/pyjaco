@@ -35,6 +35,16 @@ _int.prototype.__init__ = function(i) {
     }
 };
 
+var ___int_real__ = _int.__call__;
+
+_int.__call__ = function(obj) {
+    if (js(isinstance(obj, object))) {
+        return obj.__int__();
+    } else {
+        return ___int_real__(obj);
+    }
+}
+
 _int.prototype._isnumeric_float = false;
 
 _int.prototype.__int__ = function () {
