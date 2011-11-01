@@ -27,6 +27,7 @@ var ObjectMetaClass = function(cls) {
 
     this.__call__ = function() {
         var obj = new cls();
+        obj.__init__.__kw_args = this.__kw_args;
         obj.__init__.apply(obj, arguments);
         return obj;
     };
@@ -45,6 +46,10 @@ var ObjectMetaClass = function(cls) {
 
     this.__repr__ = function() {
         return str.__call__("<class " + this.__name__ + ">");
+    };
+
+    this.__eq__ = function(other) {
+        return py_builtins.bool(this === other);
     };
 
     this.toString = function() {
@@ -69,8 +74,9 @@ var __inherit = function(cls, name) {
 
     /* Receive bacon */
     var res = new ObjectMetaClass(x);
-    res.__name__ = name;
+    res.__name__  = name;
     res.__super__ = cls;
+    res.prototype.__name__  = name;
     res.prototype.__class__ = res;
     res.prototype.__super__ = cls;
     return res;
