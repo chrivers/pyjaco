@@ -370,7 +370,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 pre = ""
             if n.type:
                 if isinstance(n.type, ast.Name):
-                    js.append("%sif (isinstance(%s, %s)) {" % (pre, err, self.visit(n.type)))
+                    js.append("%sif (js(isinstance(%s, %s))) {" % (pre, err, self.visit(n.type)))
                 else:
                     raise JSError("Catching non-simple exceptions not supported")
             else:
@@ -438,16 +438,11 @@ class Compiler(py2js.compiler.BaseCompiler):
             raise JSError("Unsupported unary op %s" % node.op)
 
     def visit_BinOp(self, node):
-        if isinstance(node.op, ast.Mod) and isinstance(node.left, ast.Str):
-            left = self.visit(node.left)
-            if isinstance(node.right, (ast.Tuple, ast.List)):
-                right = self.visit(node.right)
-                return "vsprintf(js(%s), js(%s))" % (left, right)
-            else:
-                right = self.visit(node.right)
-                return "sprintf(js(%s), %s)" % (left, right)
         left = self.visit(node.left)
         right = self.visit(node.right)
+
+        if isinstance(node.op, ast.Mod) and isinstance(node.left, ast.Str):
+            return "%s.__mod__(%s)" % (left, right)
 
         if not self.future_division and isinstance(node.op, ast.Div):
             node.op = ast.FloorDiv()
