@@ -80,8 +80,8 @@ str.prototype.__iter__ = function() {
     return iter.__call__(this._obj);
 };
 
-str.prototype.__mod__ = function() {
-    return str.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], arguments)));
+str.prototype.__mod__ = function(args) {
+    return str.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], js(args))));
 };
 
 str.prototype.__bool__ = function() {
@@ -91,7 +91,7 @@ str.prototype.__bool__ = function() {
 str.prototype.__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj == s);
-    else if (isinstance.__call__(s, str))
+    else if (js(isinstance.__call__(s, str)))
         return bool.__call__(this._obj == s._obj);
     else
         return False;
@@ -100,7 +100,7 @@ str.prototype.__eq__ = function(s) {
 str.prototype.__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj > s);
-    else if (isinstance.__call__(s, str))
+    else if (js(isinstance.__call__(s, str)))
         return bool.__call__(this._obj > s._obj);
     else
         return False;
@@ -109,7 +109,7 @@ str.prototype.__gt__ = function(s) {
 str.prototype.__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj < s);
-    else if (isinstance.__call__(s, str))
+    else if (js(isinstance.__call__(s, str)))
         return bool.__call__(this._obj < s._obj);
     else
         return False;
@@ -127,7 +127,7 @@ str.prototype.__contains__ = function(item) {
 
 str.prototype.__getitem__ = function(index) {
     var seq;
-    if (isinstance.__call__(index, slice)) {
+    if (js(isinstance.__call__(index, slice))) {
         var s = index;
         var inds = js(s.indices(len(this)));
         var start = inds[0];
