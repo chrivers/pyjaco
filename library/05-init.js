@@ -43,7 +43,7 @@ function iterate(seq, func) {
         try {
             func(seq.next());
         } catch (exc) {
-            if (isinstance.__call__(exc, py_builtins.StopIteration)) {
+            if (js(isinstance.__call__(exc, py_builtins.StopIteration))) {
                 break;
             } else {
                 throw exc;
