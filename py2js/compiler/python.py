@@ -79,8 +79,10 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.replacethis = True
 
     def visit_Name(self, node):
-        if self.replacethis or name <> "self":
+        if self.replacethis or node.id <> "self":
             name = self.name_map.get(node.id, node.id)
+        else:
+            name = node.id
 
         if (name in self.builtin) and not (name in self._scope):
             name = "py_builtins." + name
@@ -575,7 +577,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         self.replacethis = False
         body = self.visit(node.elt)
         self.replacethis = replacethis
-        print node.generators[0].target.id
         iterexp = self.visit(node.generators[0].iter)
         self.references.remove(node.generators[0].target.id)
         names_decl = ", ".join(self.references)
