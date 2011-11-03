@@ -507,7 +507,7 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Call(self, node):
         js = []
         func = self.visit(node.func)
-        compound = ("Assign" in self.stack) or ("AugAssign" in self.stack)
+        compound = ("Assign" in self.stack) or ("AugAssign" in self.stack) or ("Call" in self.stack)
 
         if node.keywords:
             keywords = []
