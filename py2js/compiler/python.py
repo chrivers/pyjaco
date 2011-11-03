@@ -427,10 +427,13 @@ class Compiler(py2js.compiler.BaseCompiler):
 
     def visit_Lambda(self, node):
         self.references.clear()
+        replacethis = self.replacethis
+        self.replacethis = False
         node_args = self.visit(node.args)
         node_body = self.visit(node.body)
+        self.replacethis = replacethis
         escapes = self.references - set([x.id for x in node.args.args])
-        return "function (%s) {return Function(function(%s) {return %s;})} (%s)" % (", ".join(escapes), node_args, node_body, ", ".join(escapes))
+        return "function (%s) {return Function(function(%s) {return %s;})} (%s)" % (", ".join(escapes), node_args, node_body, ", ".join([dict(self = "this").get(x, x) for x in escapes]))
 
     def visit_BoolOp(self, node):
         if isinstance(node.op, ast.And):
