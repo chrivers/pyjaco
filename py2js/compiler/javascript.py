@@ -69,6 +69,11 @@ class Compiler(py2js.compiler.BaseCompiler):
             'IsNot' : "is not", # Not implemented yet
     }
 
+    def __init__(self):
+        super(Compiler, self).__init__()
+        self.name_map = self.name_map.copy()
+        self.name_map.update({"True": "true", "False": "false", "None": "null"})
+
     def get_bool_op(self, node):
         return self.bool_op[node.op.__class__.__name__]
 
@@ -258,7 +263,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         pass
 
     def visit_Lambda(self, node):
-        return "function(%s) {%s}" % (self.visit(node.args), self.visit(node.body))
+        return "\n    function(%s) {%s}" % (self.visit(node.args), self.visit(node.body))
 
     def visit_BoolOp(self, node):
         return self.get_bool_op(node).join([ "(%s)" % self.visit(val) for val in node.values ])
