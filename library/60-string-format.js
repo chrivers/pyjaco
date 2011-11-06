@@ -37,10 +37,20 @@ function sprintf(obj, args) {
             var flag_zero  = false;
             var flag_minus = false;
             var flag_hash  = false;
+            var flag_plus  = false;
+            var flag_space = false;
             var flag_len   = 0;
             var subres     = null;
             var prefix     = "";
-            var fix_minus  = false;
+            var has_sign  = false;
+            var flag_name  = null;
+            var get_argument = function() {
+                if (flag_name) {
+                    return args.__getitem__(flag_name);
+                } else {
+                    return args.__getitem__(argc++);
+                }
+            };
             while (i < s.length) {
                 if (s[i] == "0") {
                     flag_zero = true;
@@ -54,6 +64,19 @@ function sprintf(obj, args) {
                     flag_hash = true;
                     i++;
                     continue;
+                } else if (s[i] == "0") {
+                    flag_zero = true;
+                    i++;
+                    continue;
+                } else if (s[i] == " ") {
+                    flag_space = true;
+                    i++;
+                    continue;
+                } else if (s[i] == "+") {
+                    flag_space = false;
+                    flag_plus  = true;
+                    i++;
+                    continue;
                 } else if (s[i] > "0" && s[i] <= "9") {
                     flag_len = "";
                     while (s[i] >= "0" && s[i] <= "9") {
@@ -62,27 +85,47 @@ function sprintf(obj, args) {
                     }
                     flag_len = Number(flag_len);
                     continue;
-                } else if (s[i] == "d") {
-                    fix_minus = true;
-                    subres = js(args.__getitem__([argc++]).__int__());
+                } else if (s[i] == "(") {
+                    flag_name = "";
+                    while (i++ < s.length) {
+                        if (s[i] == ")") {
+                            break;
+                        }
+                        flag_name += s[i];
+                    }
+                    i++;
+                } else if (s[i] == "d" || s[i] == "i" || s[i] == "u") {
+                    has_sign = true;
+                    subres = js(get_argument().__int__()).toString();
                     i++;
                     break;
                 } else if (s[i] == "s") {
-                    subres = js(args.__getitem__([argc++]).__str__());
+                    subres = js(get_argument().__str__());
+                    i++;
+                    break;
+                } else if (s[i] == "f") {
+                    subres = js(get_argument().__str__());
+                    i++;
+                    break;
+                } else if (s[i] == "o") {
+                    has_sign = true;
+                    subres = js(get_argument().__int__()).toString(8);
+                    if (flag_hash && subres[0] !== "0")
+                        prefix = "0";
                     i++;
                     break;
                 } else if (s[i] == "x") {
-                    fix_minus = true;
+                    has_sign = true;
                     if (flag_hash)
                         prefix = "0x";
-                    subres = js(args.__getitem__([argc++]).__int__()).toString(16);
+                    subres = js(get_argument().__int__()).toString(16);
                     i++;
                     break;
                 } else if (s[i] == "X") {
-                    fix_minus = true;
+                    has_sign = true;
                     if (flag_hash)
                         prefix = "0X";
-                    subres = js(args.__getitem__([argc++]).__int__()).toString(16).toUpperCase();
+                    subres = js(get_argument().__int__()).toString(16).toUpperCase();
                     i++;
                     break;
                 } else {
@@ -92,21 +135,26 @@ function sprintf(obj, args) {
             var pad_char = " ";
             if (flag_zero)
                 pad_char = "0";
-            var minus = "";
-            if (fix_minus) {
-                if (subres[0] == "-") {
-                    minus = "-";
+            var sign = "";
+            if (has_sign) {
+                if (subres[0] == "-" || subres[0] == "+") {
+                    sign = subres[0];
                     subres = subres.substring(1);
+                } else if (flag_plus) {
+                    sign = "+";
                 }
             }
+            if (flag_space) {
+                prefix = " " + prefix;
+            }
             if (flag_minus) {
-                for (var c = subres.length + minus.length; c < flag_len; c++)
+                for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
                     subres = subres + pad_char;
             } else {
-                for (var c = subres.length + minus.length; c < flag_len; c++)
+                for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
                     subres = pad_char + subres;
             }
-            res += minus + prefix + subres;
+            res += sign + prefix + subres;
          } else {
             res += s[i++];
         }
