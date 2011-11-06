@@ -36,7 +36,6 @@ class JSError(Exception):
 class BaseCompiler(object):
 
     name_map = {
-        'self'  : 'this',
         'int'   : '_int',
         'float' : '_float',
         'super' : '__super',

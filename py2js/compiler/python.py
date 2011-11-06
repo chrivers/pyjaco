@@ -75,20 +75,13 @@ class Compiler(py2js.compiler.BaseCompiler):
     def __init__(self):
         super(Compiler, self).__init__()
         self.future_division = False
-        self.references = set()
-        self.replacethis = True
 
     def visit_Name(self, node):
-        if self.replacethis or node.id <> "self":
-            name = self.name_map.get(node.id, node.id)
-        else:
-            name = node.id
+        name = self.name_map.get(node.id, node.id)
 
         if (name in self.builtin) and not (name in self._scope):
             name = "py_builtins." + name
 
-        if name <> "this":
-            self.references.add(name)
         return name
 
     def visit_Global(self, node):
@@ -150,6 +143,8 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if node.args.kwarg:
             js.append("var %s = dict.__call__(arguments.callee.__kw_args);" % node.args.kwarg)
+
+        js.append("var self = this;");
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -426,14 +421,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         return []
 
     def visit_Lambda(self, node):
-        self.references.clear()
-        replacethis = self.replacethis
-        self.replacethis = False
         node_args = self.visit(node.args)
         node_body = self.visit(node.body)
-        self.replacethis = replacethis
-        escapes = self.references - set([x.id for x in node.args.args])
-        return "function (%s) {return Function(function(%s) {return %s;})} (%s)" % (", ".join(escapes), node_args, node_body, ", ".join([dict(self = "this").get(x, x) for x in escapes]))
+        return "Function(function(%s) {return %s;})" % (node_args, node_body)
 
     def visit_BoolOp(self, node):
         if isinstance(node.op, ast.And):
@@ -575,16 +565,9 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not isinstance(node.generators[0].target, ast.Name):
             raise JSError("Non-simple targets in list comprehension not supported")
 
-        self.references.clear()
-        replacethis = self.replacethis
-        self.replacethis = False
         body = self.visit(node.elt)
-        self.replacethis = replacethis
         iterexp = self.visit(node.generators[0].iter)
-        self.references.remove(node.generators[0].target.id)
-        names_decl = ", ".join(self.references)
-        names_call = ", ".join([dict(self = "this").get(x, x) for x in self.references])
-        return "map.__call__(function(%s) {return function(%s) {return %s;}} (%s), %s)" % (names_decl, node.generators[0].target.id, body, names_call, iterexp)
+        return "map.__call__(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, body, iterexp)
 
     def visit_GeneratorExp(self, node):
         if not len(node.generators) == 1:
