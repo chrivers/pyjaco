@@ -211,18 +211,22 @@ function sprintf(obj, args) {
             if (flag_space) {
                 prefix = " " + prefix;
             }
-            if (pad_char == " ") {
-                subres = sign + subres;
+            if (pad_char == " x") {
+                prefix = sign + prefix;
                 sign = "";
             }
+            var pad = "";
+            for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
+                pad = pad + pad_char;
             if (flag_minus) {
-                for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
-                    subres = subres + pad_char;
+                res += sign + prefix + subres + pad;
             } else {
-                for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
-                    subres = pad_char + subres;
+                if (flag_zero) {
+                    res += sign + pad + prefix + subres;
+                } else {
+                    res += pad + sign + prefix + subres;
+                }
             }
-            res += sign + prefix + subres;
          } else {
             res += s[i++];
         }
