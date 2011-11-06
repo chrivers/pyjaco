@@ -1,4 +1,5 @@
 /* TESTS for the py-builtins.js module */
+load("py-builtins.js");
 
 var DEBUG = false;
 
@@ -760,9 +761,9 @@ function tests() {
                 print(e.__class__.__name__ + ": ");
             }
         } else
-            print(e)
+            print(e);
 
-        throw "Tests failed"
+        throw "Tests failed";
     }
 }
 
