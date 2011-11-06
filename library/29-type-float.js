@@ -37,6 +37,10 @@ _float.prototype.__float__ = function () {
     return this;
 };
 
+_float.prototype.__int__ = function () {
+    return _int.__call__(parseInt(this._obj));
+};
+
 _float.prototype.__str__ = function () {
     if (this._obj.toString().indexOf(".") === -1) {
         return str.__call__(this._obj + ".0");
@@ -67,4 +71,3 @@ _float.prototype.__pow__ = function(x) {
 
 _float.prototype.__floordiv__ = _float.prototype.__div__;
 _float.prototype.__ifloordiv__ = _float.prototype.__div__;
-
