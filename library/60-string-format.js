@@ -52,6 +52,18 @@ function sprintf(obj, args) {
                     return args.__getitem__(argc++);
                 }
             };
+            var fixed_digits = function(num, digits) {
+                if (digits > 0 && digits < num.length) {
+                    if (num[digits] >= "5") {
+                        return num.substring(0, digits-1) + (parseInt(num[digits-1]) + 1).toString();
+                    } else {
+                        return num.substring(0, digits);
+                    }
+                } else {
+                    return num;
+                }
+            };
+
             while (i < s.length) {
                 if (s[i] == "0") {
                     flag_zero = true;
@@ -114,7 +126,9 @@ function sprintf(obj, args) {
                     break;
                 } else if (s[i] == "f" || s[i] == "F") {
                     has_sign = true;
-                    subres = js(get_argument().__str__());
+                    var parts = js(get_argument().__float__()).toFixed(6).split(".");
+                    parts[1] = fixed_digits(parts[1], flag_len2);
+                    subres = parts[0] + "." + parts[1];
                     i++;
                     break;
                 } else if (s[i] == "e" || s[i] == "E") {
@@ -126,15 +140,8 @@ function sprintf(obj, args) {
                     }
                     if (flag_len2) {
                         var decparts = parts[0].split(".");
-
-                        if (flag_len2 < decparts[1].length) {
-                            if (decparts[1][flag_len2] >= "5") {
-                                decparts[1] = decparts[1].substring(0, flag_len2-1) + (parseInt(decparts[1][flag_len2-1])+1).toString();
-                            } else {
-                                decparts[1] = decparts[1].substring(0, flag_len2);
-                            }
-                        }
-                        parts[0] = decparts[0] + "." + decparts[1].substring(0, flag_len2);
+                        decparts[1] = fixed_digits(decparts[1], flag_len2);
+                        parts[0] = decparts[0] + "." + decparts[1];
                     }
                     subres = parts[0] + expchar + parts[1];
                     i++;
@@ -182,6 +189,10 @@ function sprintf(obj, args) {
             }
             if (flag_space) {
                 prefix = " " + prefix;
+            }
+            if (pad_char == " ") {
+                subres = sign + subres;
+                sign = "";
             }
             if (flag_minus) {
                 for (var c = sign.length + prefix.length + subres.length; c < flag_len; c++)
