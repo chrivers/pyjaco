@@ -23,6 +23,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.
 **/
+"--use strict";
 
 var py_builtins = {};
 
@@ -30,12 +31,6 @@ py_builtins.__python3__ = false;
 
 function defined(obj) {
     return typeof(obj) != 'undefined';
-}
-
-function assert(cond, msg) {
-    if (!cond) {
-        throw py_builtins.AssertionError.__call__(msg);
-    }
 }
 
 function iterate(seq, func) {
@@ -50,16 +45,6 @@ function iterate(seq, func) {
             }
         }
     }
-}
-
-function copy(iterator) {
-    var items = [];
-
-    iterate(iterator, function(item) {
-        items.push(item);
-    });
-
-    return items;
 }
 
 var Function = function(func) {
@@ -81,7 +66,7 @@ var js = Function(function(obj) {
        same object. It is the responsibility of _js_() to convert recursively
        the object itself.
     */
-    if ((obj != null) && defined(obj._js_))
+    if ((obj != null) && typeof(obj._js_) != 'undefined')
         return obj._js_();
     else
         return obj;
