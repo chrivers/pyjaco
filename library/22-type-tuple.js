@@ -34,16 +34,15 @@ tuple.prototype.__init__ = function(seq) {
     } else if (!defined(seq)) {
         this._items = [];
     } else {
-        var count = 0;
         var that = this;
         this._items = [];
         iterate(iter.__call__(seq), function(elm) {
                     if (typeof(elm) == 'number')
-                        that._items[count++] = _int.__call__(elm);
+                        that._items.push(_int.__call__(elm));
                     else if (typeof(elm) == 'string')
-                        that._items[count++] = str.__call__(elm);
+                        that._items.push(str.__call__(elm));
                     else
-                        that._items[count++] = elm;
+                        that._items.push(elm);
                 });
     }
 };
