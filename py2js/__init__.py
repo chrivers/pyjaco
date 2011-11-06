@@ -130,6 +130,9 @@ class Compiler(object):
     def append_class(self, code, name = None):
         self.append_string(inspect.getsource(code), name)
 
+    def append_module(self, module, classes, name = None):
+        self.append_raw(self.compile_module(module, classes, name))
+
     def compile_string(self, code, name = None, jsvars = None):
         if name:
             name = self.format_name(name)
@@ -148,3 +151,13 @@ class Compiler(object):
     def compile_class(self, code, name = None):
         return self.compile_string(inspect.getsource(code), name)
 
+    def compile_module(self, module, classes, name = None):
+        self.comment_section(name)
+        res = ["var %s = object.__call__();" % module]
+        for cls in classes:
+            res.append(self.format_name("Class %s.%s" % (module, cls.__name__)))
+            res.append("%s.%s = function() {" % (module, cls.__name__))
+            res.append(self.compile_class(cls))
+            res.append("return %s}();" % (cls.__name__))
+            res.append("")
+        return "\n".join(res)
