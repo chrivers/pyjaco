@@ -25,11 +25,11 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var str = __inherit(object, "str");
+var basestring = __inherit(object, "basestring");
 
-var __py2js_str = str;
+var __py2js_str;
 
-str.prototype.__init__ = function(s) {
+basestring.prototype.__init__ = function(s) {
     if (!defined(s)) {
         this._obj = '';
     } else {
@@ -44,19 +44,29 @@ str.prototype.__init__ = function(s) {
     }
 };
 
-str.prototype.__str__ = function () {
+var __basestring_real__ = basestring.__call__;
+
+basestring.__call__ = function(obj) {
+    if (js(isinstance(obj, basestring))) {
+        return obj;
+    } else {
+        return __basestring_real__(obj);
+    }
+};
+
+basestring.prototype.__str__ = function () {
     return this;
 };
 
-str.prototype.__repr__ = function () {
+basestring.prototype.__repr__ = function () {
     return "'" + this + "'";
 };
 
-str.prototype._js_ = function () {
+basestring.prototype._js_ = function () {
     return this._obj;
 };
 
-str.prototype.__hash__ = function () {
+basestring.prototype.__hash__ = function () {
     var value = 0x345678;
     var length = this.__len__();
 
@@ -72,50 +82,50 @@ str.prototype.__hash__ = function () {
     return value;
 };
 
-str.prototype.__len__ = function() {
+basestring.prototype.__len__ = function() {
     return _int.__call__(this._obj.length);
 };
 
-str.prototype.__iter__ = function() {
+basestring.prototype.__iter__ = function() {
     return iter.__call__(this._obj);
 };
 
-str.prototype.__mod__ = function(args) {
-    return str.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], js(args))));
+basestring.prototype.__mod__ = function(args) {
+    return basestring.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], js(args))));
 };
 
-str.prototype.__bool__ = function() {
+basestring.prototype.__bool__ = function() {
     return py_builtins.bool(this._obj);
 };
 
-str.prototype.__eq__ = function(s) {
+basestring.prototype.__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj == s);
-    else if (js(isinstance.__call__(s, str)))
+    else if (js(isinstance.__call__(s, basestring)))
         return bool.__call__(this._obj == s._obj);
     else
         return False;
 };
 
-str.prototype.__gt__ = function(s) {
+basestring.prototype.__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj > s);
-    else if (js(isinstance.__call__(s, str)))
+    else if (js(isinstance.__call__(s, basestring)))
         return bool.__call__(this._obj > s._obj);
     else
         return False;
 };
 
-str.prototype.__lt__ = function(s) {
+basestring.prototype.__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool.__call__(this._obj < s);
-    else if (js(isinstance.__call__(s, str)))
+    else if (js(isinstance.__call__(s, basestring)))
         return bool.__call__(this._obj < s._obj);
     else
         return False;
 };
 
-str.prototype.__contains__ = function(item) {
+basestring.prototype.__contains__ = function(item) {
     for (var index in this._obj) {
         if (item == this._obj[index]) {
             return True;
@@ -125,7 +135,7 @@ str.prototype.__contains__ = function(item) {
     return False;
 };
 
-str.prototype.__getitem__ = function(index) {
+basestring.prototype.__getitem__ = function(index) {
     var seq;
     if (js(isinstance.__call__(index, slice))) {
         var s = index;
@@ -146,21 +156,21 @@ str.prototype.__getitem__ = function(index) {
         throw py_builtins.IndexError.__call__("string index out of range");
 };
 
-str.prototype.__setitem__ = function(index, value) {
+basestring.prototype.__setitem__ = function(index, value) {
     throw py_builtins.TypeError.__call__("'str' object doesn't support item assignment");
 };
 
-str.prototype.__delitem__ = function(index) {
+basestring.prototype.__delitem__ = function(index) {
     throw py_builtins.TypeError.__call__("'str' object doesn't support item deletion");
 };
 
-str.prototype.__add__ = function(c) {
-    return str.__call__(this._obj + c._obj);
+basestring.prototype.__add__ = function(c) {
+    return basestring.__call__(this._obj + c._obj);
 };
 
-str.prototype.__iadd__ = str.prototype.__add__;
+basestring.prototype.__iadd__ = basestring.prototype.__add__;
 
-str.prototype.count = Function(function(needle, start, end) {
+basestring.prototype.count = Function(function(needle, start, end) {
     if (!defined(start))
         start = 0;
     if (!defined(end))
@@ -176,7 +186,7 @@ str.prototype.count = Function(function(needle, start, end) {
     return count;
 });
 
-str.prototype.index = Function(function(value, start, end) {
+basestring.prototype.index = Function(function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -196,11 +206,11 @@ str.prototype.index = Function(function(value, start, end) {
     throw py_builtins.ValueError.__call__("substring not found");
 });
 
-str.prototype.find = Function(function(s) {
+basestring.prototype.find = Function(function(s) {
     return this._obj.search(s);
 });
 
-str.prototype.rfind = Function(function(s) {
+basestring.prototype.rfind = Function(function(s) {
     var rev = function(s) {
         var a = list.__call__(__py2js_str.__call__(s));
         a.reverse();
@@ -215,11 +225,11 @@ str.prototype.rfind = Function(function(s) {
     return len(this) - len(b) - r;
 });
 
-str.prototype.join = Function(function(s) {
+basestring.prototype.join = Function(function(s) {
     return __py2js_str.__call__(js(s).join(js(this)));
 });
 
-str.prototype.replace = Function(function(old, _new, count) {
+basestring.prototype.replace = Function(function(old, _new, count) {
     old = js(old);
     _new = js(_new);
     var old_s;
@@ -239,7 +249,7 @@ str.prototype.replace = Function(function(old, _new, count) {
     return __py2js_str.__call__(new_s);
 });
 
-str.prototype.lstrip = Function(function(chars) {
+basestring.prototype.lstrip = Function(function(chars) {
     if (js(len(this)) === 0)
         return this;
     if (defined(chars))
@@ -253,7 +263,7 @@ str.prototype.lstrip = Function(function(chars) {
     return this.__getitem__(slice.__call__(i, null));
 });
 
-str.prototype.rstrip = Function(function(chars) {
+basestring.prototype.rstrip = Function(function(chars) {
     if (js(len(this)) === 0)
         return this;
     if (defined(chars))
@@ -267,17 +277,17 @@ str.prototype.rstrip = Function(function(chars) {
     return this.__getitem__(slice.__call__(i+1));
 });
 
-str.prototype.strip = Function(function(chars) {
+basestring.prototype.strip = Function(function(chars) {
     return this.lstrip(chars).rstrip(chars);
 });
 
-str.prototype.split = Function(function(sep) {
+basestring.prototype.split = Function(function(sep) {
     var r_new;
     if (defined(sep)) {
         var r = list.__call__(this._obj.split(sep));
         r_new = list.__call__([]);
         iterate(iter.__call__(r), function(item) {
-                r_new.append(str.__call__(item));
+                r_new.append(basestring.__call__(item));
         });
         return r_new;
     }
@@ -291,15 +301,42 @@ str.prototype.split = Function(function(sep) {
     }
 });
 
-str.prototype.splitlines = Function(function() {
+basestring.prototype.splitlines = Function(function() {
     return this.split("\n");
 });
 
-str.prototype.lower = Function(function() {
+basestring.prototype.lower = Function(function() {
     return __py2js_str.__call__(this._obj.toLowerCase());
 });
 
-str.prototype.upper = Function(function() {
+basestring.prototype.upper = Function(function() {
     return __py2js_str.__call__(this._obj.toUpperCase());
 });
 
+basestring.prototype.encode = Function(function(encoding) {
+    return this;
+});
+
+basestring.prototype.decode = Function(function(encoding) {
+    return this;
+});
+
+var str = __inherit(basestring, "str");
+var unicode = __inherit(basestring, "unicode");
+
+unicode.prototype.__init__ = function(s) {
+    if (!defined(s)) {
+        this._obj = '';
+    } else {
+        if (typeof(s) === "string") {
+            this._obj = s;
+        } else if (defined(s.__unicode__)) {
+            this._obj = js(s.__unicode__());
+        } else if (defined(s.toString)) {
+            this._obj = s.toString();
+        } else
+            this._obj = js(s);
+    }
+};
+
+__py2js_str = str;
