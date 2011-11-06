@@ -40,6 +40,7 @@ function sprintf(obj, args) {
             var flag_plus  = false;
             var flag_space = false;
             var flag_len   = 0;
+            var flag_len2  = 0;
             var subres     = null;
             var prefix     = "";
             var has_sign  = false;
@@ -83,7 +84,15 @@ function sprintf(obj, args) {
                         flag_len += s[i];
                         i++;
                     }
+                    if (s[i] == ".") {
+                        i++;
+                        while (s[i] >= "0" && s[i] <= "9") {
+                            flag_len2 += s[i];
+                            i++;
+                        }
+                    }
                     flag_len = Number(flag_len);
+                    flag_len2 = Number(flag_len2);
                     continue;
                 } else if (s[i] == "(") {
                     flag_name = "";
@@ -103,8 +112,35 @@ function sprintf(obj, args) {
                     subres = js(get_argument().__str__());
                     i++;
                     break;
-                } else if (s[i] == "f") {
+                } else if (s[i] == "f" || s[i] == "F") {
+                    has_sign = true;
                     subres = js(get_argument().__str__());
+                    i++;
+                    break;
+                } else if (s[i] == "e" || s[i] == "E") {
+                    has_sign = true;
+                    var expchar = s[i];
+                    var parts = js(get_argument().__float__()).toExponential(6).split("e");
+                    if (parts[1].length < 3) {
+                        parts[1] = parts[1][0] + "0" + parts[1].substring(1);
+                    }
+                    if (flag_len2) {
+                        var decparts = parts[0].split(".");
+
+                        if (flag_len2 < decparts[1].length) {
+                            if (decparts[1][flag_len2] >= "5") {
+                                decparts[1] = decparts[1].substring(0, flag_len2-1) + (parseInt(decparts[1][flag_len2-1])+1).toString();
+                            } else {
+                                decparts[1] = decparts[1].substring(0, flag_len2);
+                            }
+                        }
+                        parts[0] = decparts[0] + "." + decparts[1].substring(0, flag_len2);
+                    }
+                    subres = parts[0] + expchar + parts[1];
+                    i++;
+                    break;
+                } else if (s[i] == "g" || s[i] == "G") {
+                    subres = "NOT IMPLEMENTED";
                     i++;
                     break;
                 } else if (s[i] == "o") {
