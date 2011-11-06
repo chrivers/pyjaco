@@ -34,13 +34,17 @@ tuple.prototype.__init__ = function(seq) {
     } else if (!defined(seq)) {
         this._items = [];
     } else {
-        this._items = copy(iter.__call__(seq));
-        for (var i = 0; i < this._items.length; i++) {
-            if (typeof(this._items[i]) == 'number')
-                this._items[i] = _int.__call__(this._items[i]);
-            if (typeof(this._items[i]) == 'string')
-                this._items[i] = str.__call__(this._items[i]);
-        }
+        var count = 0;
+        var that = this;
+        this._items = [];
+        iterate(iter.__call__(seq), function(elm) {
+                    if (typeof(elm) == 'number')
+                        that._items[count++] = _int.__call__(elm);
+                    else if (typeof(elm) == 'string')
+                        that._items[count++] = str.__call__(elm);
+                    else
+                        that._items[count++] = elm;
+                });
     }
 };
 
@@ -186,4 +190,3 @@ tuple.prototype.index = Function(function(value, start, end) {
 
     throw py_builtins.ValueError.__call__("tuple.index(x): x not in list");
 });
-
