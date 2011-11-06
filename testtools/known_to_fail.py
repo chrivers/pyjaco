@@ -1,6 +1,7 @@
 """lists all the tests that are known to fail"""
 KNOWN_TO_FAIL = [
     "tests/basic/kwargs2.py",
+    "tests/basic/kwargs3.py",
     "tests/basic/oo_diamond.py",
     "tests/basic/oo_inherit.py",
     "tests/basic/oo_inherit_simple2.py",
