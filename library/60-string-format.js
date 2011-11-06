@@ -63,6 +63,26 @@ function sprintf(obj, args) {
                     return num;
                 }
             };
+            var format_float = function(num, defprec, prec) {
+                var parts = num.toFixed(defprec).split(".");
+                return parts[0] + "." + fixed_digits(parts[1], prec);
+            };
+            var format_exp = function(num, expchar, defprec, prec, drop_empty_exp) {
+                var parts = num.toExponential(defprec).split("e");
+                if (parts[1].length < 3) {
+                    parts[1] = parts[1][0] + "0" + parts[1].substring(1);
+                }
+                if (prec) {
+                    var decparts = parts[0].split(".");
+                    decparts[1] = fixed_digits(decparts[1], prec);
+                    parts[0] = decparts[0] + "." + decparts[1];
+                }
+                if (drop_empty_exp && parts[1] == "+00") {
+                    return parts[0];
+                } else {
+                    return parts[0] + expchar + parts[1];
+                }
+            };
 
             while (i < s.length) {
                 if (s[i] == "0") {
@@ -126,28 +146,29 @@ function sprintf(obj, args) {
                     break;
                 } else if (s[i] == "f" || s[i] == "F") {
                     has_sign = true;
-                    var parts = js(get_argument().__float__()).toFixed(6).split(".");
-                    parts[1] = fixed_digits(parts[1], flag_len2);
-                    subres = parts[0] + "." + parts[1];
+                    subres = format_float(js(get_argument().__float__()), 6, flag_len2);
                     i++;
                     break;
                 } else if (s[i] == "e" || s[i] == "E") {
                     has_sign = true;
                     var expchar = s[i];
-                    var parts = js(get_argument().__float__()).toExponential(6).split("e");
-                    if (parts[1].length < 3) {
-                        parts[1] = parts[1][0] + "0" + parts[1].substring(1);
-                    }
-                    if (flag_len2) {
-                        var decparts = parts[0].split(".");
-                        decparts[1] = fixed_digits(decparts[1], flag_len2);
-                        parts[0] = decparts[0] + "." + decparts[1];
-                    }
-                    subres = parts[0] + expchar + parts[1];
+                    subres = format_exp(js(get_argument().__float__()), expchar, 6, flag_len2, false);
                     i++;
                     break;
                 } else if (s[i] == "g" || s[i] == "G") {
-                    subres = "NOT IMPLEMENTED";
+                    has_sign = true;
+                    var arg = js(get_argument().__float__());
+
+                    if (arg === 0 && !flag_hash) {
+                        subres = "0";
+                    } else if (arg < 0.0001 || parseInt(arg.toFixed().split(".")[0]) > flag_len) {
+                        var expchar = "e";
+                        if (s[i] == "G")
+                            expchar = "E";
+                        subres = format_exp(arg, expchar, 5, flag_len2-1, true);
+                    } else {
+                        subres = format_float(arg, 5, flag_len2-1);
+                    }
                     i++;
                     break;
                 } else if (s[i] == "o") {
