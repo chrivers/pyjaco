@@ -144,7 +144,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         if node.args.kwarg:
             js.append("var %s = dict.__call__(arguments.callee.__kw_args);" % node.args.kwarg)
 
-        js.append("var self = this;");
+        js.extend(self.indent(["var self = this;"]))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -497,7 +497,7 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Call(self, node):
         js = []
         func = self.visit(node.func)
-        compound = ("Assign" in self.stack) or ("AugAssign" in self.stack) or ("Call" in self.stack)
+        compound = ("Assign" in self.stack) or ("AugAssign" in self.stack) or (self.stack.count("Call") > 1)
 
         if node.keywords:
             keywords = []
