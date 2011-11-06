@@ -91,7 +91,7 @@ basestring.prototype.__iter__ = function() {
 };
 
 basestring.prototype.__mod__ = function(args) {
-    return basestring.__call__(sprintf.apply(null, Array.prototype.concat([this._obj], js(args))));
+    return basestring.__call__(sprintf(this, args));
 };
 
 basestring.prototype.__bool__ = function() {
