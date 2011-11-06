@@ -24,8 +24,6 @@ KNOWN_TO_FAIL = [
     "tests/modules/import_multi.py",
     "tests/modules/module_name.py",
     "tests/modules/rng.py",
-
-    "tests/strings/string_format_efg.py"
     ]
 
 
