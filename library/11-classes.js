@@ -23,84 +23,80 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var ObjectMetaClass = function(cls) {
-
-    this.__call__ = function() {
-        var obj = new cls();
-        obj.__init__.__kw_args = this.__kw_args;
-        obj.__init__.apply(obj, arguments);
-        return obj;
-    };
-
-    this.__setattr__ = function(k, v) {
-        this.prototype[k] = v;
-    };
-
-    this.__getattr__ = function(k) {
-        return this.prototype[k];
-    };
-
-    this.__delattr__ = function(k) {
-        delete this.prototype[k];
-    };
-
-    this.__repr__ = function() {
-        return str.__call__("<class " + this.__name__ + ">");
-    };
-
-    this.__eq__ = function(other) {
-        return py_builtins.bool(this === other);
-    };
-
-    this.toString = function() {
-        return js(this.__repr__());
-    };
-
-    this.prototype = cls.prototype;
-};
-
 var __inherit = function(cls, name) {
 
     if (!defined(name)) {
         throw py_builtins.TypeError.__call__("The function __inherit must get exactly 2 arguments");
     }
 
-    var x = function() { /* Class constructor */ };
+    var res = function() {
+        var x = res.__call__;
+        if (typeof x != 'undefined') {
+            return res.__call__.apply(res, arguments);
+        } else {
+            throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
+            print("Attributeerror");
+            return null;
+        };
+    };
 
-    /* Inheritance from cls */
-    for (var o in cls.prototype) {
-        x.prototype[o] = cls.prototype[o];
+    if (cls && typeof cls != 'undefined') {
+        for (var o in cls) {
+            res[o] = cls[o];
+        }
     }
 
-    /* Receive bacon */
-    var res = new ObjectMetaClass(x);
+    res.__call__ = function() {
+        var obj = function() {
+            print("Object __call__");
+        };
+
+        if (typeof res != 'undefined') {
+            for (var o in res) {
+                obj[o] = res[o];
+            }
+        }
+        obj.__init__.apply(obj, arguments);
+        return obj;
+    };
+
     res.__name__  = name;
+    res.__class__ = res;
     res.__super__ = cls;
-    res.prototype.__name__  = name;
-    res.prototype.__class__ = res;
-    res.prototype.__super__ = cls;
     return res;
 };
 
-var object = __inherit(function() {}, "object");
+var object = __inherit(null, "object");
 
 object.prototype.__init__ = function() {
 };
 
-object.prototype.__setattr__ = function(k, v) { 
-    this[js(k)] = v;
+object.prototype.__setattr__ = function(k, v) {
+    this[k] = v;
 };
 
 object.prototype.__getattr__ = function(k) {
-    return this[js(k)];
+    var q = this[k];
+    if ((typeof q == 'function') && (typeof q.__class__ == 'undefined')) {
+        var that = this;
+        var t = function() { return q.apply(that, arguments); };
+        t.__call__ = t;
+        return t;
+    } else {
+        return q;
+    }
 };
 
 object.prototype.__delattr__ = function(k) {
-    delete this[js(k)];
+    delete this[k];
 };
 
 object.prototype.__repr__ = function() {
     return str.__call__("<instance of " + this.__class__.__name__ + ">");
+};
+
+object.prototype.__eq__ = function(other) {
+    return py_builtins.bool(this === other);
 };
 
 object.prototype.__str__ = object.prototype.__repr__;
