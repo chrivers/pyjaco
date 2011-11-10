@@ -29,12 +29,6 @@ none.prototype.__init__ = function(b) {
     this._obj = null;
 };
 
-var None = none.__call__();
-
-none.__call__ = function() {
-    return None;
-};
-
 var __py2jsnone = none;
 
 none.prototype.__str__ = function () {
@@ -71,4 +65,10 @@ none.prototype.__and__ = function(x) {
 
 none.prototype.__or__ = function(x) {
     return x;
+};
+
+var None = none.__call__();
+
+none.__call__ = function() {
+    return None;
 };
