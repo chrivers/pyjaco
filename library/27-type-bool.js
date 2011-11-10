@@ -25,6 +25,8 @@
 
 var bool = __inherit(object, "bool");
 
+var __py2jsbool = bool;
+
 bool.prototype.__init__ = function(b) {
     if (b) {
         this._obj = true;
@@ -32,19 +34,6 @@ bool.prototype.__init__ = function(b) {
         this._obj = false;
     }
 };
-
-var True = bool.__call__(true);
-var False = bool.__call__(false);
-
-bool.__call__ = function(b) {
-    if (b) {
-        return True;
-    } else {
-        return False;
-    }
-};
-
-var __py2jsbool = bool;
 
 bool.prototype.__bool__ = function () {
     return this._obj;
@@ -109,4 +98,15 @@ bool.prototype.__int__ = function(x) {
     } else {
         return $c0;
     }
-}
+};
+
+var True = bool.__call__(true);
+var False = bool.__call__(false);
+
+bool.__call__ = function(b) {
+    if (b) {
+        return True;
+    } else {
+        return False;
+    }
+};
