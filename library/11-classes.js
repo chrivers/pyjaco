@@ -30,11 +30,11 @@ var __inherit = function(cls, name) {
     }
 
     var res = function() {
-        var x = res.PY$__call__;
+        var x = res.PY$__create__;
         if (typeof x != 'undefined') {
-            return res.PY$__call__.apply(res, arguments);
+            return res.PY$__create__.apply(res, arguments);
         } else {
-            throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
+            throw py_builtins.AttributeError("Class " + name + " does not have __create__ method");
             print("Attributeerror");
             return null;
         };
@@ -46,9 +46,16 @@ var __inherit = function(cls, name) {
         }
     }
 
-    res.PY$__call__ = function() {
+    res.PY$__create__ = function() {
         var obj = function() {
-            print("Object __call__");
+            var x = res.PY$__call__;
+            if (typeof x != 'undefined') {
+                return res.PY$__call__.apply(res, arguments);
+            } else {
+                throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
+                print("Attributeerror");
+                return null;
+            };
         };
 
         if (typeof res != 'undefined') {
