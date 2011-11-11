@@ -40,7 +40,7 @@ var __inherit = function(cls, name) {
         };
     };
 
-    if (cls && typeof cls != 'undefined') {
+    if (typeof cls != 'undefined') {
         for (var o in cls) {
             res[o] = cls[o];
         }
