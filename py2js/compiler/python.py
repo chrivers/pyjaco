@@ -423,7 +423,7 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_Lambda(self, node):
         node_args = self.visit(node.args)
         node_body = self.visit(node.body)
-        return "Function(function(%s) {return %s;})" % (node_args, node_body)
+        return "function(%s) {return %s;}" % (node_args, node_body)
 
     def visit_BoolOp(self, node):
         if isinstance(node.op, ast.And):
