@@ -47,12 +47,7 @@ function iterate(seq, func) {
     }
 }
 
-var Function = function(func) {
-    func.PY$__call__ = func;
-    return func;
-};
-
-var js = Function(function(obj) {
+var js = function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
 
@@ -70,4 +65,4 @@ var js = Function(function(obj) {
         return obj._js_();
     else
         return obj;
-});
+};

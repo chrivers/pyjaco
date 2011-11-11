@@ -45,7 +45,7 @@ slice.PY$__str__ = function() {
     return str("slice(" + this.start + ", " + this.stop + ", " + this.step + ")");
 };
 
-slice.PY$indices = Function(function(n) {
+slice.PY$indices = function(n) {
     n = js(n);
     var start = this.start;
     if (start === null)
@@ -65,4 +65,4 @@ slice.PY$indices = Function(function(n) {
     if (step === null)
         step = 1;
     return tuple([start, stop, step]);
-});
+};

@@ -94,7 +94,7 @@ list.PY$__delslice__ = function(x, y) {
 
 list.PY$count = tuple.PY$count;
 
-list.PY$index = Function(function(value, start, end) {
+list.PY$index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -117,13 +117,13 @@ list.PY$index = Function(function(value, start, end) {
     }
 
     throw py_builtins.ValueError("list.index(x): x not in list");
-});
+};
 
-list.PY$remove = Function(function(value) {
+list.PY$remove = function(value) {
     this.PY$__delitem__(this.PY$index(value));
-});
+};
 
-list.PY$append = Function(function(value) {
+list.PY$append = function(value) {
     if (typeof(value) === 'string') {
         this._items.push(str(value));
     } else if (typeof(value) === 'number') {
@@ -132,26 +132,26 @@ list.PY$append = Function(function(value) {
         this._items.push(value);
     }
     this._len = -1;
-});
+};
 
-list.PY$extend = Function(function(l) {
+list.PY$extend = function(l) {
     var items;
     items = this._items;
     iterate(iter(l), function(item) {
         items.push(item);
     });
     this._len = -1;
-});
+};
 
-list.PY$pop = Function(function() {
+list.PY$pop = function() {
     if (len(this) > 0) {
         this._len = -1;
         return this._items.pop();
     } else
         throw py_builtins.IndexError("pop from empty list");
-});
+};
 
-list.PY$sort = Function(function() {
+list.PY$sort = function() {
     var cmp = function(a, b) { return js(a.PY$__cmp__(b));};
     if (arguments.length > 0)
         cmp = js(arguments[0]);
@@ -172,19 +172,19 @@ list.PY$sort = Function(function() {
     }
 
     this._items.sort(function (a, b) {return mcmp(key(a), key(b));});
-});
+};
 
-list.PY$insert = Function(function(index, x) {
+list.PY$insert = function(index, x) {
     var a = this._items.slice(0, index);
     var b = this._items.slice(index, len(this));
     this._items = a.concat([x], b);
     this._len = -1;
-});
+};
 
-list.PY$reverse = Function(function() {
+list.PY$reverse = function() {
     var new_list = list([]);
     iterate(iter(this), function(item) {
             new_list.PY$insert(0, item);
     });
     this._items = new_list._items;
-});
+};

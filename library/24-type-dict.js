@@ -113,7 +113,7 @@ dict.PY$__delitem__ = function(key) {
     }
 };
 
-dict.PY$get = Function(function(key, value) {
+dict.PY$get = function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -125,9 +125,9 @@ dict.PY$get = Function(function(key, value) {
             return None;
         }
     }
-});
+};
 
-dict.PY$items = Function(function() {
+dict.PY$items = function() {
     var items = list();
 
     for (var key in this._items) {
@@ -135,9 +135,9 @@ dict.PY$items = Function(function() {
     }
 
     return items;
-});
+};
 
-dict.PY$keys = Function(function() {
+dict.PY$keys = function() {
     var keys = list();
 
     for (var key in this._items) {
@@ -145,9 +145,9 @@ dict.PY$keys = Function(function() {
     }
 
     return keys;
-});
+};
 
-dict.PY$values = Function(function() {
+dict.PY$values = function() {
     var values = list();
 
     for (var key in this._items) {
@@ -155,24 +155,24 @@ dict.PY$values = Function(function() {
     }
 
     return values;
-});
+};
 
-dict.PY$update = Function(function(other) {
+dict.PY$update = function(other) {
    var _this = this;
    iterate(iter(other),
      function(key) {
         _this._items[js(key)] = other.PY$__getitem__(key);
      }
    );
-});
+};
 
-dict.PY$clear = Function(function() {
+dict.PY$clear = function() {
     for (var key in this._items) {
         delete this._items[key];
     }
-});
+};
 
-dict.PY$pop = Function(function(key, value) {
+dict.PY$pop = function(key, value) {
     var _value = this._items[key];
 
     if (defined(_value)) {
@@ -186,9 +186,9 @@ dict.PY$pop = Function(function(key, value) {
     }
 
     return _value;
-});
+};
 
-dict.PY$popitem = Function(function() {
+dict.PY$popitem = function() {
     var _key;
 
     for (var key in this._items) {
@@ -201,4 +201,4 @@ dict.PY$popitem = Function(function() {
     } else {
         throw py_builtins.KeyError("popitem(): dictionary is empty");
     }
-});
+};

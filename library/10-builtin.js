@@ -24,11 +24,11 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var hasattr = Function(function(obj, name) {
+var hasattr = function(obj, name) {
     return (typeof obj["PY$" + name]) != 'undefined';
-});
+};
 
-var getattr = Function(function(obj, name, value) {
+var getattr = function(obj, name, value) {
     var _value = obj["PY$" + name];
 
     if ((typeof _value) != 'undefined') {
@@ -40,13 +40,13 @@ var getattr = Function(function(obj, name, value) {
             throw py_builtins.AttributeError(obj, name);
         }
     }
-});
+};
 
-var setattr = Function(function(obj, name, value) {
+var setattr = function(obj, name, value) {
     obj["PY$" + name] = value;
-});
+};
 
-var hash = Function(function(obj) {
+var hash = function(obj) {
     if (hasattr(obj, '__hash__')) {
         return obj.PY$__hash__();
     } else if (typeof(obj) === 'number') {
@@ -54,25 +54,25 @@ var hash = Function(function(obj) {
     } else {
         throw py_builtins.AttributeError('__hash__');
     }
-});
+};
 
-var len = Function(function(obj) {
+var len = function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.PY$__len__();
     } else {
         throw py_builtins.AttributeError('__len__');
     }
-});
+};
 
-var dir = Function(function(obj) {
+var dir = function(obj) {
     var res = list();
     for (var i in obj) {
         res.PY$append(__py2js_str(i));
     }
     return res;
-});
+};
 
-var repr = Function(function(obj) {
+var repr = function(obj) {
     if (!defined(obj)) {
         return "None";
     } else if (hasattr(obj, '__repr__')) {
@@ -84,9 +84,9 @@ var repr = Function(function(obj) {
     } else {
         throw py_builtins.AttributeError('__repr__, __str__ or toString not found on ' + typeof(obj));
     }
-});
+};
 
-var range = Function(function(start, end, step) {
+var range = function(start, end, step) {
     start = js(start);
 
     if (!defined(end)) {
@@ -112,13 +112,13 @@ var range = Function(function(start, end, step) {
         return iter(seq);
     else
         return list(seq);
-});
+};
 
-var xrange = Function(function(start, end, step) {
+var xrange = function(start, end, step) {
     return iter(range(start, end, step));
-});
+};
 
-var map = Function(function() {
+var map = function() {
     if (arguments.length < 2) {
         throw py_builtins.TypeError("map() requires at least two args");
     }
@@ -140,9 +140,9 @@ var map = Function(function() {
         return iter(items);
     else
         return items;
-});
+};
 
-var zip = Function(function() {
+var zip = function() {
     if (!arguments.length) {
         return list();
     }
@@ -176,9 +176,9 @@ var zip = Function(function() {
         items.PY$append(tuple(item));
     }
     return None;
-});
+};
 
-var isinstance = Function(function(obj, cls) {
+var isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
         var length = cls.PY$__len__();
 
@@ -204,7 +204,7 @@ var isinstance = Function(function(obj, cls) {
         }
         return False;
     }
-});
+};
 
 py_builtins.bool = function(a) {
     if ((a !== null) && defined(a.PY$__bool__)) {
@@ -227,7 +227,7 @@ py_builtins.eq = function(a, b) {
         return bool(a === b);
 };
 
-py_builtins._int = Function(function(value) {
+py_builtins._int = function(value) {
     if (typeof(value) === "number") {
         return _int(parseInt(value, 10));
     } else if (js(isinstance(value, _int))) {
@@ -242,9 +242,9 @@ py_builtins._int = Function(function(value) {
             throw py_builtins.ValueError("Invalid integer: " + value);
         }
     }
-});
+};
 
-py_builtins.__not__ = Function(function(obj) {
+py_builtins.__not__ = function(obj) {
    if (hasattr(obj, '__nonzero__')) {
        return py_builtins.bool(!js(obj.PY$__nonzero__()));
    } else if (hasattr(obj, '__len__')) {
@@ -252,13 +252,13 @@ py_builtins.__not__ = Function(function(obj) {
    } else {
        return py_builtins.bool(!js(obj));
    }
-});
+};
 
-py_builtins.__is__ = Function(function(a, b) {
+py_builtins.__is__ = function(a, b) {
     return py_builtins.bool(a === b);
-});
+};
 
-py_builtins._float = Function(function(value) {
+py_builtins._float = function(value) {
     if (typeof(value) === "number") {
         return _float(parseFloat(value));
     } else if (js(isinstance(value, _int))) {
@@ -273,9 +273,9 @@ py_builtins._float = Function(function(value) {
             throw py_builtins.ValueError("Invalid float: " + value);
         }
     }
-});
+};
 
-py_builtins.max = Function(function(list) {
+py_builtins.max = function(list) {
     if (js(len(list).PY$__eq__($c0)))
         throw py_builtins.ValueError("max() arg is an empty sequence");
     else {
@@ -288,9 +288,9 @@ py_builtins.max = Function(function(list) {
 
         return result;
     }
-});
+};
 
-py_builtins.min = Function(function(list) {
+py_builtins.min = function(list) {
     if (js(len(list).PY$__eq__($c0)))
         throw py_builtins.ValueError("min() arg is an empty sequence");
     else {
@@ -303,9 +303,9 @@ py_builtins.min = Function(function(list) {
 
         return result;
     }
-});
+};
 
-py_builtins.sum = Function(function(list) {
+py_builtins.sum = function(list) {
     var result = 0;
 
     iterate(iter(list), function(item) {
@@ -313,7 +313,7 @@ py_builtins.sum = Function(function(list) {
     });
 
     return result;
-});
+};
 
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log)) {
@@ -332,7 +332,7 @@ py_builtins.print = function(s) {
     }
 };
 
-py_builtins.filter = Function(function(f, l) {
+py_builtins.filter = function(f, l) {
    var res = list();
    iterate(iter(l), function(item) {
      if (py_builtins.bool(f(item))) {
@@ -340,9 +340,9 @@ py_builtins.filter = Function(function(f, l) {
      }
    });
    return res;
-});
+};
 
-py_builtins.reduce = Function(function(func, seq) {
+py_builtins.reduce = function(func, seq) {
     var initial;
     if (arguments.length == 3) {
         initial = arguments[2];
@@ -364,4 +364,4 @@ py_builtins.reduce = Function(function(func, seq) {
         accum = func(accum, seq.PY$__getitem__(i));
     }
     return accum;
-});
+};

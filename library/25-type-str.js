@@ -171,7 +171,7 @@ basestring.PY$__add__ = function(c) {
 
 basestring.PY$__iadd__ = basestring.PY$__add__;
 
-basestring.PY$count = Function(function(needle, start, end) {
+basestring.PY$count = function(needle, start, end) {
     if (!defined(start))
         start = 0;
     if (!defined(end))
@@ -185,9 +185,9 @@ basestring.PY$count = Function(function(needle, start, end) {
         idx = s.PY$find(needle);
     }
     return count;
-});
+};
 
-basestring.PY$index = Function(function(value, start, end) {
+basestring.PY$index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -205,13 +205,13 @@ basestring.PY$index = Function(function(value, start, end) {
     }
 
     throw py_builtins.ValueError("substring not found");
-});
+};
 
-basestring.PY$find = Function(function(s) {
+basestring.PY$find = function(s) {
     return this._obj.search(s);
-});
+};
 
-basestring.PY$rfind = Function(function(s) {
+basestring.PY$rfind = function(s) {
     var rev = function(s) {
         var a = list(__py2js_str(s));
         a.PY$reverse();
@@ -224,13 +224,13 @@ basestring.PY$rfind = Function(function(s) {
     if (r == -1)
         return r;
     return len(this) - len(b) - r;
-});
+};
 
-basestring.PY$join = Function(function(s) {
+basestring.PY$join = function(s) {
     return __py2js_str(js(s).join(js(this)));
-});
+};
 
-basestring.PY$replace = Function(function(old, _new, count) {
+basestring.PY$replace = function(old, _new, count) {
     old = js(old);
     _new = js(_new);
     var old_s;
@@ -248,9 +248,9 @@ basestring.PY$replace = Function(function(old, _new, count) {
         count -= 1;
     }
     return __py2js_str(new_s);
-});
+};
 
-basestring.PY$lstrip = Function(function(chars) {
+basestring.PY$lstrip = function(chars) {
     if (js(len(this)) === 0)
         return this;
     if (defined(chars))
@@ -262,9 +262,9 @@ basestring.PY$lstrip = Function(function(chars) {
         i += 1;
     }
     return this.PY$__getitem__(slice(i, null));
-});
+};
 
-basestring.PY$rstrip = Function(function(chars) {
+basestring.PY$rstrip = function(chars) {
     if (js(len(this)) === 0)
         return this;
     if (defined(chars))
@@ -276,13 +276,13 @@ basestring.PY$rstrip = Function(function(chars) {
         i -= 1;
     }
     return this.PY$__getitem__(slice(i+1));
-});
+};
 
-basestring.PY$strip = Function(function(chars) {
+basestring.PY$strip = function(chars) {
     return this.PY$lstrip(chars).PY$rstrip(chars);
-});
+};
 
-basestring.PY$split = Function(function(sep) {
+basestring.PY$split = function(sep) {
     var r_new;
     if (defined(sep)) {
         var r = list(this._obj.split(sep));
@@ -300,27 +300,27 @@ basestring.PY$split = Function(function(sep) {
         });
         return r_new;
     }
-});
+};
 
-basestring.PY$splitlines = Function(function() {
+basestring.PY$splitlines = function() {
     return this.PY$split("\n");
-});
+};
 
-basestring.PY$lower = Function(function() {
+basestring.PY$lower = function() {
     return __py2js_str(this._obj.toLowerCase());
-});
+};
 
-basestring.PY$upper = Function(function() {
+basestring.PY$upper = function() {
     return __py2js_str(this._obj.toUpperCase());
-});
+};
 
-basestring.PY$encode = Function(function(encoding) {
+basestring.PY$encode = function(encoding) {
     return this;
-});
+};
 
-basestring.PY$decode = Function(function(encoding) {
+basestring.PY$decode = function(encoding) {
     return this;
-});
+};
 
 var str = __inherit(basestring, "str");
 var unicode = __inherit(basestring, "unicode");

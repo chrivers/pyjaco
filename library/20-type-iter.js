@@ -59,7 +59,7 @@ iter.PY$__str__ = function () {
     return str("<iterator of " + this._seq + " at " + this._index + ">");
 };
 
-iter.PY$next = Function(function() {
+iter.PY$next = function() {
     var value = this._seq[this._index++];
 
     if (defined(value)) {
@@ -67,4 +67,4 @@ iter.PY$next = Function(function() {
     } else {
         throw py_builtins.StopIteration('no more items');
     }
-});
+};

@@ -158,7 +158,7 @@ tuple.PY$__delitem__ = function(index) {
     throw py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
-tuple.PY$count = Function(function(value) {
+tuple.PY$count = function(value) {
     var count = 0;
 
     for (var index in this._items) {
@@ -168,9 +168,9 @@ tuple.PY$count = Function(function(value) {
     }
 
     return count;
-});
+};
 
-tuple.PY$index = Function(function(value, start, end) {
+tuple.PY$index = function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -188,4 +188,4 @@ tuple.PY$index = Function(function(value, start, end) {
     }
 
     throw py_builtins.ValueError("tuple.index(x): x not in list");
-});
+};
