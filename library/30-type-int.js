@@ -35,9 +35,9 @@ _int.PY$__init__ = function(i) {
     }
 };
 
-var ___int_real__ = _int.PY$__call__;
+var ___int_real__ = _int.PY$__create__;
 
-_int.PY$__call__ = function(obj) {
+_int.PY$__create__ = function(obj) {
     if (js(isinstance(obj, object))) {
         return obj.PY$__int__();
     } else {
