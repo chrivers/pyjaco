@@ -153,7 +153,7 @@ class Compiler(object):
 
     def compile_module(self, module, classes, name = None):
         self.comment_section(name)
-        res = ["var %s = object.__call__();" % module]
+        res = ["var %s = object();" % module]
         for cls in classes:
             res.append(self.format_name("Class %s.%s" % (module, cls.__name__)))
             res.append("%s.%s = function() {" % (module, cls.__name__))
