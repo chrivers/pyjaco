@@ -44,9 +44,9 @@ basestring.PY$__init__ = function(s) {
     }
 };
 
-var __basestring_real__ = basestring.PY$__call__;
+var __basestring_real__ = basestring.PY$__create__;
 
-basestring.PY$__call__ = function(obj) {
+basestring.PY$__create__ = function(obj) {
     if (js(isinstance(obj, basestring))) {
         return obj;
     } else {

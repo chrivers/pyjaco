@@ -45,9 +45,9 @@ iter.PY$__init__ = function(obj) {
     }
 };
 
-var __iter_real__ = iter.PY$__call__;
+var __iter_real__ = iter.PY$__create__;
 
-iter.PY$__call__ = function(obj) {
+iter.PY$__create__ = function(obj) {
     if (defined(obj.PY$__iter__)) {
         return obj.PY$__iter__();
     } else {

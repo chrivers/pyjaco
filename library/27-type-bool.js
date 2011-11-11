@@ -103,7 +103,7 @@ bool.PY$__int__ = function(x) {
 var True = bool(true);
 var False = bool(false);
 
-bool.PY$__call__ = function(b) {
+bool.PY$__create__ = function(b) {
     if (b) {
         return True;
     } else {

@@ -69,6 +69,6 @@ none.PY$__or__ = function(x) {
 
 var None = none();
 
-none.PY$__call__ = function() {
+none.PY$__create__ = function() {
     return None;
 };
