@@ -25,20 +25,20 @@
 
 var Exception = __inherit(object, "Exception");
 
-Exception.prototype.__init__ = function() {
+Exception.PY$__init__ = function() {
     if (arguments.length > 0) {
-        this.message = arguments[0];
+        this.PY$message = arguments[0];
     } else {
-        this.message = "";
+        this.PY$message = "";
     }
 };
 
-Exception.prototype.__str__ = function() {
-    return str.__call__(this.message);
+Exception.PY$__str__ = function() {
+    return str(this.PY$message);
 };
 
-Exception.prototype.toString = function() {
-    return js(this.__str__());
+Exception.toString = function() {
+    return js(this.PY$__str__());
 };
 
 py_builtins.__exceptions__ = [

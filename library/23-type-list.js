@@ -27,50 +27,50 @@
 
 var list = __inherit(object, "list");
 
-list.prototype.__init__ = tuple.prototype.__init__;
+list.PY$__init__ = tuple.PY$__init__;
 
-list.prototype.__str__ = function () {
+list.PY$__str__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str.__call__("[" + str.__call__(", ").join(items) + "]");
+    return str.PY$__call__("[" + str.PY$__call__(", ").PY$join(items) + "]");
 };
 
-list.prototype.__eq__ = tuple.prototype.__eq__;
+list.PY$__eq__ = tuple.PY$__eq__;
 
-list.prototype.__repr__ = function () {
+list.PY$__repr__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str.__call__("[" + str.__call__(", ").join(items) + "]");
+    return str.PY$__call__("[" + str.PY$__call__(", ").PY$join(items) + "]");
 };
 
-list.prototype._js_ = tuple.prototype._js_;
+list._js_ = tuple._js_;
 
-list.prototype.__len__ = tuple.prototype.__len__;
+list.PY$__len__ = tuple.PY$__len__;
 
-list.prototype.__iter__ = tuple.prototype.__iter__;
+list.PY$__iter__ = tuple.PY$__iter__;
 
-list.prototype.__contains__ = tuple.prototype.__contains__;
+list.PY$__contains__ = tuple.PY$__contains__;
 
-list.prototype.__getitem__ = tuple.prototype.__getitem__;
+list.PY$__getitem__ = tuple.PY$__getitem__;
 
-list.prototype.__setitem__ = function(index, value) {
-    if (typeof(index) === 'number') index = _int.__call__(index);
+list.PY$__setitem__ = function(index, value) {
+    if (typeof(index) === 'number') index = _int.PY$__call__(index);
 
-    if (js(index.__ge__(_int.__call__(0)).__and__(index.__lt__(len(this))))) {
+    if (js(index.PY$__ge__(_int.PY$__call__(0)).__and__(index.PY$__lt__(len(this))))) {
         this._items[index.__int__()] = value;
-    } else if (js(index.__lt__(_int.__call__(0)).__and__(index.__ge__(len(this).__neg__())))) {
+    } else if (js(index.PY$__lt__(_int.PY$__call__(0)).__and__(index.PY$__ge__(len(this).__neg__())))) {
         this._items[index.__add__(len(this)).__int__()] = value;
     } else {
-        throw py_builtins.IndexError.__call__("list index out of range");
+        throw py_builtins.IndexError.PY$__call__("list index out of range");
     }
 };
-list.prototype.__setslice__ = function(lower, upper, value) {
-     var it = list.__call__(value)._items;
+list.PY$__setslice__ = function(lower, upper, value) {
+     var it = list.PY$__call__(value)._items;
      if (lower < len(this) && upper < len(this)) {
        this._items = this._items.slice(0,lower).concat(it).concat(this._items.slice(upper,len(this)));
        this._len = -1;
      }
 };
 
-list.prototype.__delitem__ = function(index) {
+list.PY$__delitem__ = function(index) {
     if (typeof(index) !== 'number') index = js(index);
 
     if ((index >= 0) && (index < len(this))) {
@@ -79,22 +79,22 @@ list.prototype.__delitem__ = function(index) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw py_builtins.IndexError.__call__("list assignment index out of range");
+        throw py_builtins.IndexError.PY$__call__("list assignment index out of range");
 };
 
-list.prototype.__delslice__ = function(x, y) {
+list.PY$__delslice__ = function(x, y) {
     if ((x >= 0) && (y < len(this))) {
         var a = this._items.slice(0, x);
         var b = this._items.slice(y);
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw py_builtins.IndexError.__call__("list assignment index out of range");
+        throw py_builtins.IndexError.PY$__call__("list assignment index out of range");
 };
 
-list.prototype.count = tuple.prototype.count;
+list.PY$count = tuple.PY$count;
 
-list.prototype.index = Function(function(value, start, end) {
+list.PY$index = Function(function(value, start, end) {
     if (!defined(start)) {
         start = 0;
     }
@@ -110,48 +110,48 @@ list.prototype.index = Function(function(value, start, end) {
             return i;
         }
 
-        if (defined(_value.__eq__)) {
-            if (js(_value.__eq__(value)))
+        if (defined(_value.PY$__eq__)) {
+            if (js(_value.PY$__eq__(value)))
                 return i;
         }
     }
 
-    throw py_builtins.ValueError.__call__("list.index(x): x not in list");
+    throw py_builtins.ValueError.PY$__call__("list.index(x): x not in list");
 });
 
-list.prototype.remove = Function(function(value) {
+list.PY$remove = Function(function(value) {
     this.__delitem__(this.index(value));
 });
 
-list.prototype.append = Function(function(value) {
+list.PY$append = Function(function(value) {
     if (typeof(value) === 'string') {
-        this._items.push(str.__call__(value));
+        this._items.push(str.PY$__call__(value));
     } else if (typeof(value) === 'number') {
-        this._items.push(_int.__call__(value));
+        this._items.push(_int.PY$__call__(value));
     } else {
         this._items.push(value);
     }
     this._len = -1;
 });
 
-list.prototype.extend = Function(function(l) {
+list.PY$extend = Function(function(l) {
     var items;
     items = this._items;
-    iterate(iter.__call__(l), function(item) {
+    iterate(iter.PY$__call__(l), function(item) {
         items.push(item);
     });
     this._len = -1;
 });
 
-list.prototype.pop = Function(function() {
+list.PY$pop = Function(function() {
     if (len(this) > 0) {
         this._len = -1;
         return this._items.pop();
     } else
-        throw py_builtins.IndexError.__call__("pop from empty list");
+        throw py_builtins.IndexError.PY$__call__("pop from empty list");
 });
 
-list.prototype.sort = Function(function() {
+list.PY$sort = Function(function() {
     var cmp = function(a, b) { return js(a.__cmp__(b));};
     if (arguments.length > 0)
         cmp = js(arguments[0]);
@@ -174,16 +174,16 @@ list.prototype.sort = Function(function() {
     this._items.sort(function (a, b) {return mcmp(key(a), key(b));});
 });
 
-list.prototype.insert = Function(function(index, x) {
+list.PY$insert = Function(function(index, x) {
     var a = this._items.slice(0, index);
     var b = this._items.slice(index, len(this));
     this._items = a.concat([x], b);
     this._len = -1;
 });
 
-list.prototype.reverse = Function(function() {
-    var new_list = list.__call__([]);
-    iterate(iter.__call__(this), function(item) {
+list.PY$reverse = Function(function() {
+    var new_list = list.PY$__call__([]);
+    iterate(iter.PY$__call__(this), function(item) {
             new_list.insert(0, item);
     });
     this._items = new_list._items;

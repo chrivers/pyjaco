@@ -36,9 +36,9 @@ function defined(obj) {
 function iterate(seq, func) {
     while (true) {
         try {
-            func(seq.next());
+            func(seq.PY$next());
         } catch (exc) {
-            if (js(isinstance.__call__(exc, py_builtins.StopIteration))) {
+            if (js(isinstance.PY$__call__(exc, py_builtins.StopIteration))) {
                 break;
             } else {
                 throw exc;
@@ -48,7 +48,7 @@ function iterate(seq, func) {
 }
 
 var Function = function(func) {
-    func.__call__ = func;
+    func.PY$__call__ = func;
     return func;
 };
 

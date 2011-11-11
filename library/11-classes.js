@@ -26,13 +26,13 @@
 var __inherit = function(cls, name) {
 
     if (!defined(name)) {
-        throw py_builtins.TypeError.__call__("The function __inherit must get exactly 2 arguments");
+        throw py_builtins.TypeError.PY$__call__("The function __inherit must get exactly 2 arguments");
     }
 
     var res = function() {
-        var x = res.__call__;
+        var x = res.PY$__call__;
         if (typeof x != 'undefined') {
-            return res.__call__.apply(res, arguments);
+            return res.PY$__call__.apply(res, arguments);
         } else {
             throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
             print("Attributeerror");
@@ -46,7 +46,7 @@ var __inherit = function(cls, name) {
         }
     }
 
-    res.__call__ = function() {
+    res.PY$__call__ = function() {
         var obj = function() {
             print("Object __call__");
         };
@@ -56,64 +56,68 @@ var __inherit = function(cls, name) {
                 obj[o] = res[o];
             }
         }
-        obj.__init__.apply(obj, arguments);
+        obj.PY$__class__ = res;
+        obj.PY$__super__ = cls;
+        obj.PY$__init__.apply(obj, arguments);
         return obj;
     };
 
-    res.__name__  = name;
-    res.__class__ = res;
-    res.__super__ = cls;
+    res.PY$__name__  = name;
     return res;
 };
 
 var object = __inherit(null, "object");
 
-object.prototype.__init__ = function() {
+object.PY$__init__ = function() {
 };
 
-object.prototype.__setattr__ = function(k, v) {
-    this[k] = v;
+object.PY$__setattr__ = function(k, v) {
+    this["PY$" + k] = v;
 };
 
-object.prototype.__getattr__ = function(k) {
-    var q = this[k];
-    if ((typeof q == 'function') && (typeof q.__class__ == 'undefined')) {
+object.PY$__getattr__ = function(k) {
+    var q = this["PY$" + k];
+    if ((typeof q == 'function') && (typeof q.PY$__class__ == 'undefined')) {
         var that = this;
         var t = function() { return q.apply(that, arguments); };
-        t.__call__ = t;
+        t.PY$__call__ = t;
         return t;
     } else {
         return q;
     }
 };
 
-object.prototype.__delattr__ = function(k) {
-    delete this[k];
+object.PY$__delattr__ = function(k) {
+    delete this["PY$" + k];
 };
 
-object.prototype.__repr__ = function() {
-    return str.__call__("<instance of " + this.__class__.__name__ + ">");
+object.PY$__repr__ = function() {
+    if (this.PY$__class__) {
+        return str.PY$__call__("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
+    } else {
+        return str.PY$__call__("<instance of class-or-type at 0xPYJACO>");
+    }
 };
 
-object.prototype.__eq__ = function(other) {
+object.PY$__eq__ = function(other) {
     return py_builtins.bool(this === other);
 };
 
-object.prototype.__str__ = object.prototype.__repr__;
+object.PY$__str__ = object.PY$__repr__;
 
-object.prototype.__ne__ = function (other) {
-    return py_builtins.__not__(this.__eq__(other));
+object.PY$__ne__ = function (other) {
+    return py_builtins.__not__(this.PY$__eq__(other));
 };
 
-object.prototype.__cmp__ = function (y) {
+object.PY$__cmp__ = function (y) {
     var g = this.__gt__(y);
     if (js(g)) {
         return 1;
     } else {
-        return -js(this.__lt__(y));
+        return -js(this.PY$__lt__(y));
     }
 };
 
-object.prototype.toString = function () {
-    return js(this.__str__());
+object.toString = function () {
+    return js(this.PY$__str__());
 };

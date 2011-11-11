@@ -25,21 +25,21 @@
 
 var Super = __inherit(object, "Super");
 
-Super.prototype.__init__ = function(cls, obj) {
+Super.PY$__init__ = function(cls, obj) {
     this.cls = cls;
     this.obj = obj;
 };
 
-Super.prototype.__getattr__ = function(k) {
-    return this.cls.__super__.prototype[k];
+Super.PY$__getattr__ = function(k) {
+    return this.cls.__super__[k];
 };
 
-Super.prototype.__repr__ = function() {
-    return str.__call__("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
+Super.PY$__repr__ = function() {
+    return str.PY$__call__("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
 };
 
-Super.prototype.__str__ = Super.prototype.__repr__;
+Super.PY$__str__ = Super.PY$__repr__;
 
 var __super = Function(function(scls, obj) {
-    return Super.__call__(scls, obj);
+    return Super.PY$__call__(scls, obj);
 });

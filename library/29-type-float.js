@@ -27,47 +27,47 @@ var _float = __inherit(number, "float");
 
 var __py2js_float = _float;
 
-_float.prototype.__init__ = function(i) {
+_float.PY$__init__ = function(i) {
     this._obj = parseFloat(i);
 };
 
-_float.prototype._isnumeric_float = true;
+_float.PY$_isnumeric_float = true;
 
-_float.prototype.__float__ = function () {
+_float.PY$__float__ = function () {
     return this;
 };
 
-_float.prototype.__int__ = function () {
-    return _int.__call__(parseInt(this._obj));
+_float.PY$__int__ = function () {
+    return _int.PY$__call__(parseInt(this._obj));
 };
 
-_float.prototype.__str__ = function () {
+_float.PY$__str__ = function () {
     if (this._obj.toString().indexOf(".") === -1) {
-        return str.__call__(this._obj + ".0");
+        return str.PY$__call__(this._obj + ".0");
     } else {
-        return str.__call__(this._obj);
+        return str.PY$__call__(this._obj);
     }
 };
 
-_float.prototype.__repr__ = _float.prototype.__str__;
+_float.PY$__repr__ = _float.PY$__str__;
 
-_float.prototype.__hash__ = function () {
+_float.PY$__hash__ = function () {
     return this._obj;
 };
 
-_float.prototype.__div__ = function(x) {
-    if (!x._isnumeric_)
-        throw py_builtins.TypeError.__call__("Cannot divide number and non-number");
+_float.PY$__div__ = function(x) {
+    if (!x.PY$_isnumeric_)
+        throw py_builtins.TypeError.PY$__call__("Cannot divide number and non-number");
     if (x._obj === 0)
-        throw py_builtins.ZeroDivisionError.__call__("float division by zero");
-    return _float.__call__((0.0 + this._obj) / (0.0 + x._obj));
+        throw py_builtins.ZeroDivisionError.PY$__call__("float division by zero");
+    return _float.PY$__call__((0.0 + this._obj) / (0.0 + x._obj));
 };
 
-_float.prototype.__pow__ = function(x) {
-    if (!x._isnumeric_)
-        throw py_builtins.TypeError.__call__("Cannot exponentiate number and non-number");
-    return _float.__call__(Math.pow(this._obj, x._obj));
+_float.PY$__pow__ = function(x) {
+    if (!x.PY$_isnumeric_)
+        throw py_builtins.TypeError.PY$__call__("Cannot exponentiate number and non-number");
+    return _float.PY$__call__(Math.pow(this._obj, x._obj));
 };
 
-_float.prototype.__floordiv__ = _float.prototype.__div__;
-_float.prototype.__ifloordiv__ = _float.prototype.__div__;
+_float.PY$__floordiv__ = _float.PY$__div__;
+_float.PY$__ifloordiv__ = _float.PY$__div__;

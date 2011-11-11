@@ -27,7 +27,7 @@ var bool = __inherit(object, "bool");
 
 var __py2jsbool = bool;
 
-bool.prototype.__init__ = function(b) {
+bool.PY$__init__ = function(b) {
     if (b) {
         this._obj = true;
     } else {
@@ -35,19 +35,19 @@ bool.prototype.__init__ = function(b) {
     }
 };
 
-bool.prototype.__bool__ = function () {
+bool.PY$__bool__ = function () {
     return this._obj;
 };
 
-bool.prototype.__str__ = function () {
+bool.PY$__str__ = function () {
     if (this._obj) {
-        return str.__call__("True");
+        return str.PY$__call__("True");
     } else {
-        return str.__call__("False");
+        return str.PY$__call__("False");
     }
 };
 
-bool.prototype.toString = function () {
+bool.toString = function () {
     if (this._obj) {
         return "1";
     } else {
@@ -55,28 +55,28 @@ bool.prototype.toString = function () {
     }
 };
 
-bool.prototype.__repr__ = bool.prototype.__str__;
+bool.PY$__repr__ = bool.PY$__str__;
 
-bool.prototype.__eq__ = function (other) {
-    if (other.__class__ !== this.__class__)
+bool.PY$__eq__ = function (other) {
+    if (other.PY$__class__ !== this.PY$__class__)
         return False;
 
-    return bool.__call__(this._obj === other._obj);
+    return bool.PY$__call__(this._obj === other._obj);
 };
 
-bool.prototype._js_ = function () {
+bool._js_ = function () {
     return this._obj;
 };
 
-bool.prototype.__neg__ = function() {
-    return bool.__call__(!this._obj);
+bool.PY$__neg__ = function() {
+    return bool.PY$__call__(!this._obj);
 };
 
-bool.prototype.__nonzero__ = function() {
-    return bool.__call__(this._obj);
+bool.PY$__nonzero__ = function() {
+    return bool.PY$__call__(this._obj);
 };
 
-bool.prototype.__and__ = function(x) {
+bool.PY$__and__ = function(x) {
     if (this._obj) {
         return x;
     } else {
@@ -84,7 +84,7 @@ bool.prototype.__and__ = function(x) {
     }
 };
 
-bool.prototype.__or__ = function(x) {
+bool.PY$__or__ = function(x) {
     if (this._obj) {
         return this;
     } else {
@@ -92,7 +92,7 @@ bool.prototype.__or__ = function(x) {
     }
 };
 
-bool.prototype.__int__ = function(x) {
+bool.PY$__int__ = function(x) {
     if (this._obj) {
         return $c1;
     } else {
@@ -100,10 +100,10 @@ bool.prototype.__int__ = function(x) {
     }
 };
 
-var True = bool.__call__(true);
-var False = bool.__call__(false);
+var True = bool(true);
+var False = bool(false);
 
-bool.__call__ = function(b) {
+bool.PY$__call__ = function(b) {
     if (b) {
         return True;
     } else {

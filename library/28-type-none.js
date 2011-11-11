@@ -25,50 +25,50 @@
 
 var none = __inherit(object, "none");
 
-none.prototype.__init__ = function(b) {
+none.PY$__init__ = function(b) {
     this._obj = null;
 };
 
 var __py2jsnone = none;
 
-none.prototype.__str__ = function () {
-    return str.__call__("None");       
+none.PY$__str__ = function () {
+    return str.PY$__call__("None");
 };
 
-none.prototype.toString = function () {
+none.toString = function () {
     return "";
 };
 
-none.prototype.__repr__ = none.prototype.__str__;
+none.PY$__repr__ = none.PY$__str__;
 
-none.prototype.__eq__ = function (other) {
-    if (other.__class__ !== this.__class__) {
+none.PY$__eq__ = function (other) {
+    if (other.PY$__class__ !== this.PY$__class__) {
         return False;
     } else if (other === null) {
         return True;
     } else {
-        return bool.__call__(this._obj === other._obj);
+        return bool.PY$__call__(this._obj === other._obj);
     }
 };
 
-none.prototype._js_ = function () {
+none._js_ = function () {
     return this._obj;
 };
 
-none.prototype.__nonzero__ = function() {
+none.PY$__nonzero__ = function() {
     return False;
 };
 
-none.prototype.__and__ = function(x) {
+none.PY$__and__ = function(x) {
     return None;
 };
 
-none.prototype.__or__ = function(x) {
+none.PY$__or__ = function(x) {
     return x;
 };
 
-var None = none.__call__();
+var None = none();
 
-none.__call__ = function() {
+none.PY$__call__ = function() {
     return None;
 };
