@@ -57,7 +57,6 @@ var __inherit = function(cls, name) {
             }
         }
         obj.PY$__class__ = res;
-        obj.PY$__super__ = cls;
         obj.PY$__init__.apply(obj, arguments);
         return obj;
     };
