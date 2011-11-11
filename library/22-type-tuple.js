@@ -30,17 +30,17 @@ var tuple = __inherit(object, "tuple");
 tuple.PY$__init__ = function(seq) {
 
     if (arguments.length > 1) {
-        throw py_builtins.TypeError.PY$__call__("tuple() takes at most 1 argument (" + arguments.length + " given)");
+        throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (!defined(seq)) {
         this._items = [];
     } else {
         var that = this;
         this._items = [];
-        iterate(iter.PY$__call__(seq), function(elm) {
+        iterate(iter(seq), function(elm) {
                     if (typeof(elm) == 'number')
-                        that._items.push(_int.PY$__call__(elm));
+                        that._items.push(_int(elm));
                     else if (typeof(elm) == 'string')
-                        that._items.push(str.PY$__call__(elm));
+                        that._items.push(str(elm));
                     else
                         that._items.push(elm);
                 });
@@ -49,12 +49,12 @@ tuple.PY$__init__ = function(seq) {
 
 tuple.PY$__str__ = function () {
     if (js(this.PY$__len__()) === 0) {
-        return str.PY$__call__("()");
+        return str("()");
     } else if (js(this.PY$__len__()) == 1) {
-        return str.PY$__call__("(" + str.PY$__call__(this._items[0]) + ",)");
+        return str("(" + str.PY$__call__(this._items[0]) + ",)");
     } else {
-        var items = map(function (i) {return str.PY$__call__(i);}, this._items);
-        return str.PY$__call__("(" + str.PY$__call__(", ").PY$join(items) + ")");
+        var items = map(function (i) {return str(i);}, this._items);
+        return str("(" + str.PY$__call__(", ").PY$join(items) + ")");
     }
 };
 
@@ -81,7 +81,7 @@ tuple.PY$__eq__ = function (other) {
 tuple._js_ = function () {
     var items = [];
 
-    iterate(iter.PY$__call__(this), function(item) {
+    iterate(iter(this), function(item) {
         items.push(js(item));
     });
 
@@ -105,11 +105,11 @@ tuple.PY$__hash__ = function () {
 };
 
 tuple.PY$__len__ = function() {
-    return _int.PY$__call__(this._items.length);
+    return _int(this._items.length);
 };
 
 tuple.PY$__iter__ = function() {
-    return iter.PY$__call__(this._items);
+    return iter(this._items);
 };
 
 tuple.PY$__contains__ = function(item) {
@@ -123,9 +123,9 @@ tuple.PY$__contains__ = function(item) {
 };
 
 tuple.PY$__getitem__ = function(index) {
-    if (typeof(index) === 'number') index = _int.PY$__call__(index);
+    if (typeof(index) === 'number') index = _int(index);
     var seq;
-    if (js(isinstance.PY$__call__(index, slice))) {
+    if (js(isinstance(index, slice))) {
         var s = index;
         var inds = js(s.PY$indices(len(this)));
         var start = inds[0];
@@ -135,27 +135,27 @@ tuple.PY$__getitem__ = function(index) {
         for (var i = js(start); i < js(stop); i += js(step)) {
             seq.push(this.PY$__getitem__(i));
         }
-        return this.PY$__class__.PY$__call__(seq);
+        return this.PY$__class__(seq);
     } else {
-        if (!js(isinstance.PY$__call__(index, _int)))
-            index = _int.PY$__call__(index);
+        if (!js(isinstance(index, _int)))
+            index = _int(index);
 
-        if (js(index.PY$__ge__(_int.PY$__call__(0)).PY$__and__(index.PY$__lt__(len(this))))) {
+        if (js(index.PY$__ge__(_int(0)).PY$__and__(index.PY$__lt__(len(this))))) {
             return this._items[index.PY$__int__()];
-        } else if (js(index.PY$__lt__(_int.PY$__call__(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
+        } else if (js(index.PY$__lt__(_int(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
             return this._items[index.PY$__add__(len(this)).PY$__int__()];
         } else {
-            throw py_builtins.IndexError.PY$__call__("list index out of range");
+            throw py_builtins.IndexError("list index out of range");
         }
     }
 };
 
 tuple.PY$__setitem__ = function(index, value) {
-    throw py_builtins.TypeError.PY$__call__("'tuple' object doesn't support item assignment");
+    throw py_builtins.TypeError("'tuple' object doesn't support item assignment");
 };
 
 tuple.PY$__delitem__ = function(index) {
-    throw py_builtins.TypeError.PY$__call__("'tuple' object doesn't support item deletion");
+    throw py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
 tuple.PY$count = Function(function(value) {
@@ -187,5 +187,5 @@ tuple.PY$index = Function(function(value, start, end) {
         }
     }
 
-    throw py_builtins.ValueError.PY$__call__("tuple.index(x): x not in list");
+    throw py_builtins.ValueError("tuple.index(x): x not in list");
 });

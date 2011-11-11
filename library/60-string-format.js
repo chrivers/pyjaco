@@ -28,8 +28,8 @@ function sprintf(obj, args) {
     var i = 0;
     var res = "";
     var argc = 0;
-    if (!js(isinstance(args, tuple.PY$__call__([dict, list, tuple])))) {
-        args = tuple.PY$__call__([args]);
+    if (!js(isinstance(args, tuple([dict, list, tuple])))) {
+        args = tuple([args]);
     }
     while (i < s.length) {
         if (s[i] == "%") {
@@ -193,7 +193,7 @@ function sprintf(obj, args) {
                     i++;
                     break;
                 } else {
-                    throw py_builtins.ValueError.PY$__call__("Unsupported format character '" + s[i] + "' at index " + String(i));
+                    throw py_builtins.ValueError("Unsupported format character '" + s[i] + "' at index " + String(i));
                 }
             }
             var pad_char = " ";

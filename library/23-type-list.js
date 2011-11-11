@@ -31,14 +31,14 @@ list.PY$__init__ = tuple.PY$__init__;
 
 list.PY$__str__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str.PY$__call__("[" + str.PY$__call__(", ").PY$join(items) + "]");
+    return str("[" + str.PY$__call__(", ").PY$join(items) + "]");
 };
 
 list.PY$__eq__ = tuple.PY$__eq__;
 
 list.PY$__repr__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str.PY$__call__("[" + str.PY$__call__(", ").PY$join(items) + "]");
+    return str("[" + str.PY$__call__(", ").PY$join(items) + "]");
 };
 
 list._js_ = tuple._js_;
@@ -52,18 +52,18 @@ list.PY$__contains__ = tuple.PY$__contains__;
 list.PY$__getitem__ = tuple.PY$__getitem__;
 
 list.PY$__setitem__ = function(index, value) {
-    if (typeof(index) === 'number') index = _int.PY$__call__(index);
+    if (typeof(index) === 'number') index = _int(index);
 
-    if (js(index.PY$__ge__(_int.PY$__call__(0)).PY$__and__(index.PY$__lt__(len(this))))) {
+    if (js(index.PY$__ge__(_int(0)).PY$__and__(index.PY$__lt__(len(this))))) {
         this._items[index.PY$__int__()] = value;
-    } else if (js(index.PY$__lt__(_int.PY$__call__(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
+    } else if (js(index.PY$__lt__(_int(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
         this._items[index.PY$__add__(len(this)).PY$__int__()] = value;
     } else {
-        throw py_builtins.IndexError.PY$__call__("list index out of range");
+        throw py_builtins.IndexError("list index out of range");
     }
 };
 list.PY$__setslice__ = function(lower, upper, value) {
-     var it = list.PY$__call__(value)._items;
+     var it = list(value)._items;
      if (lower < len(this) && upper < len(this)) {
        this._items = this._items.slice(0,lower).concat(it).concat(this._items.slice(upper,len(this)));
        this._len = -1;
@@ -79,7 +79,7 @@ list.PY$__delitem__ = function(index) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw py_builtins.IndexError.PY$__call__("list assignment index out of range");
+        throw py_builtins.IndexError("list assignment index out of range");
 };
 
 list.PY$__delslice__ = function(x, y) {
@@ -89,7 +89,7 @@ list.PY$__delslice__ = function(x, y) {
         this._items = a.concat(b);
         this._len = -1;
     } else
-        throw py_builtins.IndexError.PY$__call__("list assignment index out of range");
+        throw py_builtins.IndexError("list assignment index out of range");
 };
 
 list.PY$count = tuple.PY$count;
@@ -116,7 +116,7 @@ list.PY$index = Function(function(value, start, end) {
         }
     }
 
-    throw py_builtins.ValueError.PY$__call__("list.index(x): x not in list");
+    throw py_builtins.ValueError("list.index(x): x not in list");
 });
 
 list.PY$remove = Function(function(value) {
@@ -125,9 +125,9 @@ list.PY$remove = Function(function(value) {
 
 list.PY$append = Function(function(value) {
     if (typeof(value) === 'string') {
-        this._items.push(str.PY$__call__(value));
+        this._items.push(str(value));
     } else if (typeof(value) === 'number') {
-        this._items.push(_int.PY$__call__(value));
+        this._items.push(_int(value));
     } else {
         this._items.push(value);
     }
@@ -137,7 +137,7 @@ list.PY$append = Function(function(value) {
 list.PY$extend = Function(function(l) {
     var items;
     items = this._items;
-    iterate(iter.PY$__call__(l), function(item) {
+    iterate(iter(l), function(item) {
         items.push(item);
     });
     this._len = -1;
@@ -148,7 +148,7 @@ list.PY$pop = Function(function() {
         this._len = -1;
         return this._items.pop();
     } else
-        throw py_builtins.IndexError.PY$__call__("pop from empty list");
+        throw py_builtins.IndexError("pop from empty list");
 });
 
 list.PY$sort = Function(function() {
@@ -182,8 +182,8 @@ list.PY$insert = Function(function(index, x) {
 });
 
 list.PY$reverse = Function(function() {
-    var new_list = list.PY$__call__([]);
-    iterate(iter.PY$__call__(this), function(item) {
+    var new_list = list([]);
+    iterate(iter(this), function(item) {
             new_list.PY$insert(0, item);
     });
     this._items = new_list._items;

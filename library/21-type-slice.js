@@ -64,5 +64,5 @@ slice.PY$indices = Function(function(n) {
     var step = this.step;
     if (step === null)
         step = 1;
-    return tuple.PY$__call__([start, stop, step]);
+    return tuple([start, stop, step]);
 });

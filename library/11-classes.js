@@ -26,7 +26,7 @@
 var __inherit = function(cls, name) {
 
     if (!defined(name)) {
-        throw py_builtins.TypeError.PY$__call__("The function __inherit must get exactly 2 arguments");
+        throw py_builtins.TypeError("The function __inherit must get exactly 2 arguments");
     }
 
     var res = function() {
@@ -94,9 +94,9 @@ object.PY$__delattr__ = function(k) {
 
 object.PY$__repr__ = function() {
     if (this.PY$__class__) {
-        return str.PY$__call__("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
+        return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
     } else {
-        return str.PY$__call__("<instance of class-or-type at 0xPYJACO>");
+        return str("<instance of class-or-type at 0xPYJACO>");
     }
 };
 

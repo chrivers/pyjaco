@@ -35,11 +35,11 @@ Super.PY$__getattr__ = function(k) {
 };
 
 Super.PY$__repr__ = function() {
-    return str.PY$__call__("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
+    return str("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
 };
 
 Super.PY$__str__ = Super.PY$__repr__;
 
 var __super = Function(function(scls, obj) {
-    return Super.PY$__call__(scls, obj);
+    return Super(scls, obj);
 });

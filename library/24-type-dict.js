@@ -35,7 +35,7 @@ dict.PY$__init__ = function(args) {
     if (defined(args)) {
         if (defined(args.PY$__iter__)) {
             items = {};
-            iterate(iter.PY$__call__(args), function(item) {
+            iterate(iter(args), function(item) {
                     key = js(item.PY$__getitem__(0));
                     value = item.PY$__getitem__(1);
                     items[key] = value;
@@ -53,17 +53,17 @@ dict.PY$__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
-        strings.push(js(str.PY$__call__(key)) + ": " + js(str.PY$__call__(this._items[key])));
+        strings.push(js(str(key)) + ": " + js(str.PY$__call__(this._items[key])));
     }
 
-    return str.PY$__call__("{" + strings.join(", ") + "}");
+    return str("{" + strings.join(", ") + "}");
 };
 
 dict._js_ = function () {
     var items = {};
 
     var _this_dict = this; // so that we can access it from within the closure:
-    iterate(iter.PY$__call__(this), function(key) {
+    iterate(iter(this), function(key) {
         items[js(key)] = js(_this_dict.PY$__getitem__(key));
     });
 
@@ -71,7 +71,7 @@ dict._js_ = function () {
 };
 
 dict.PY$__hash__ = function () {
-    throw py_builtins.TypeError.PY$__call__("unhashable type: 'dict'");
+    throw py_builtins.TypeError("unhashable type: 'dict'");
 };
 
 dict.PY$__len__ = function() {
@@ -80,15 +80,15 @@ dict.PY$__len__ = function() {
     for (var key in this._items)
         count += 1;
 
-    return _int.PY$__call__(count);
+    return _int(count);
 };
 
 dict.PY$__iter__ = function() {
-    return iter.PY$__call__(this.PY$keys());
+    return iter(this.PY$keys());
 };
 
 dict.PY$__contains__ = function(key) {
-    return bool.PY$__call__(defined(this._items[key]));
+    return bool(defined(this._items[key]));
 };
 
 dict.PY$__getitem__ = function(key) {
@@ -97,7 +97,7 @@ dict.PY$__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw py_builtins.KeyError.PY$__call__(str.PY$__call__(key));
+        throw py_builtins.KeyError(str.PY$__call__(key));
     }
 };
 
@@ -109,7 +109,7 @@ dict.PY$__delitem__ = function(key) {
     if (js(this.PY$__contains__(key))) {
         delete this._items[key];
     } else {
-        throw py_builtins.KeyError.PY$__call__(str.PY$__call__(key));
+        throw py_builtins.KeyError(str.PY$__call__(key));
     }
 };
 
@@ -128,17 +128,17 @@ dict.PY$get = Function(function(key, value) {
 });
 
 dict.PY$items = Function(function() {
-    var items = list.PY$__call__();
+    var items = list();
 
     for (var key in this._items) {
-        items.PY$append(tuple.PY$__call__([key, this._items[key]]));
+        items.PY$append(tuple([key, this._items[key]]));
     }
 
     return items;
 });
 
 dict.PY$keys = Function(function() {
-    var keys = list.PY$__call__();
+    var keys = list();
 
     for (var key in this._items) {
         keys.PY$append(key);
@@ -148,7 +148,7 @@ dict.PY$keys = Function(function() {
 });
 
 dict.PY$values = Function(function() {
-    var values = list.PY$__call__();
+    var values = list();
 
     for (var key in this._items) {
         values.PY$append(this._items[key]);
@@ -159,7 +159,7 @@ dict.PY$values = Function(function() {
 
 dict.PY$update = Function(function(other) {
    var _this = this;
-   iterate(iter.PY$__call__(other),
+   iterate(iter(other),
      function(key) {
         _this._items[js(key)] = other.PY$__getitem__(key);
      }
@@ -181,7 +181,7 @@ dict.PY$pop = Function(function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw py_builtins.KeyError.PY$__call__(str.PY$__call__(key));
+            throw py_builtins.KeyError(str.PY$__call__(key));
         }
     }
 
@@ -199,6 +199,6 @@ dict.PY$popitem = Function(function() {
     if (defined(key)) {
         return [_key, this._items[_key]];
     } else {
-        throw py_builtins.KeyError.PY$__call__("popitem(): dictionary is empty");
+        throw py_builtins.KeyError("popitem(): dictionary is empty");
     }
 });

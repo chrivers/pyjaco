@@ -37,7 +37,7 @@ var getattr = Function(function(obj, name, value) {
         if ((typeof value) != 'undefined') {
             return value;
         } else {
-            throw py_builtins.AttributeError.PY$__call__(obj, name);
+            throw py_builtins.AttributeError(obj, name);
         }
     }
 });
@@ -52,7 +52,7 @@ var hash = Function(function(obj) {
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
     } else {
-        throw py_builtins.AttributeError.PY$__call__('__hash__');
+        throw py_builtins.AttributeError('__hash__');
     }
 });
 
@@ -60,7 +60,7 @@ var len = Function(function(obj) {
     if (hasattr(obj, '__len__')) {
         return obj.PY$__len__();
     } else {
-        throw py_builtins.AttributeError.PY$__call__('__len__');
+        throw py_builtins.AttributeError('__len__');
     }
 });
 
@@ -82,7 +82,7 @@ var repr = Function(function(obj) {
     } else if (typeof obj.toString != 'undefined') {
         return obj.toString();
     } else {
-        throw py_builtins.AttributeError.PY$__call__('__repr__, __str__ or toString not found on ' + typeof(obj));
+        throw py_builtins.AttributeError('__repr__, __str__ or toString not found on ' + typeof(obj));
     }
 });
 
@@ -109,45 +109,45 @@ var range = Function(function(start, end, step) {
     }
 
     if (py_builtins.PY$__python3__)
-        return iter.PY$__call__(seq);
+        return iter(seq);
     else
-        return list.PY$__call__(seq);
+        return list(seq);
 });
 
 var xrange = Function(function(start, end, step) {
-    return iter.PY$__call__(range(start, end, step));
+    return iter(range(start, end, step));
 });
 
 var map = Function(function() {
     if (arguments.length < 2) {
-        throw py_builtins.TypeError.PY$__call__("map() requires at least two args");
+        throw py_builtins.TypeError("map() requires at least two args");
     }
 
     if (arguments.length > 2) {
-        throw py_builtins.NotImplementedError.PY$__call__("only one sequence allowed in map()");
+        throw py_builtins.NotImplementedError("only one sequence allowed in map()");
     }
 
     var func = arguments[0];
-    var seq = iter.PY$__call__(arguments[1]);
+    var seq = iter(arguments[1]);
 
-    var items = list.PY$__call__();
+    var items = list();
 
     iterate(seq, function(item) {
         items.PY$append(func(item));
     });
 
     if (py_builtins.PY$__python3__)
-        return iter.PY$__call__(items);
+        return iter(items);
     else
         return items;
 });
 
 var zip = Function(function() {
     if (!arguments.length) {
-        return list.PY$__call__();
+        return list();
     }
 
-    var iters = list.PY$__call__();
+    var iters = list();
     var i;
 
     for (i = 0; i < arguments.length; i++) {
@@ -189,7 +189,7 @@ var isinstance = Function(function(obj, cls) {
         for (var i = 0; i < length; i++) {
             var _cls = cls.PY$__getitem__(i);
 
-            if (js(isinstance.PY$__call__(obj, _cls))) {
+            if (js(isinstance(obj, _cls))) {
                 return True;
             }
         }
@@ -224,22 +224,22 @@ py_builtins.eq = function(a, b) {
     else if ((b != null) && defined(b.PY$__eq__))
         return b.PY$__eq__(a);
     else
-        return bool.PY$__call__(a === b);
+        return bool(a === b);
 };
 
 py_builtins._int = Function(function(value) {
     if (typeof(value) === "number") {
-        return _int.PY$__call__(parseInt(value, 10));
+        return _int(parseInt(value, 10));
     } else if (js(isinstance(value, _int))) {
         return value;
     } else if (js(isinstance(value, _float))) {
-        return _int.PY$__call__(parseInt(value._obj, 10));
+        return _int(parseInt(value._obj, 10));
     } else {
         var s = value.toString();
         if (s.match(/^[-+0-9]+$/)) {
-            return _int.PY$__call__(parseInt(value, 10));
+            return _int(parseInt(value, 10));
         } else {
-            throw py_builtins.ValueError.PY$__call__("Invalid integer: " + value);
+            throw py_builtins.ValueError("Invalid integer: " + value);
         }
     }
 });
@@ -260,28 +260,28 @@ py_builtins.__is__ = Function(function(a, b) {
 
 py_builtins._float = Function(function(value) {
     if (typeof(value) === "number") {
-        return _float.PY$__call__(parseFloat(value));
+        return _float(parseFloat(value));
     } else if (js(isinstance(value, _int))) {
-        return _float.PY$__call__(parseFloat(value._obj));
+        return _float(parseFloat(value._obj));
     } else if (js(isinstance(value, _float))) {
         return value;
     } else {
         var s = value.toString();
         if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?$/)) {
-            return _float.PY$__call__(parseFloat(value));
+            return _float(parseFloat(value));
         } else {
-            throw py_builtins.ValueError.PY$__call__("Invalid float: " + value);
+            throw py_builtins.ValueError("Invalid float: " + value);
         }
     }
 });
 
 py_builtins.max = Function(function(list) {
     if (js(len(list).PY$__eq__($c0)))
-        throw py_builtins.ValueError.PY$__call__("max() arg is an empty sequence");
+        throw py_builtins.ValueError("max() arg is an empty sequence");
     else {
         var result = null;
 
-        iterate(iter.PY$__call__(list), function(item) {
+        iterate(iter(list), function(item) {
                 if ((result === null) || js(item.PY$__gt__(result)))
                     result = item;
         });
@@ -292,11 +292,11 @@ py_builtins.max = Function(function(list) {
 
 py_builtins.min = Function(function(list) {
     if (js(len(list).PY$__eq__($c0)))
-        throw py_builtins.ValueError.PY$__call__("min() arg is an empty sequence");
+        throw py_builtins.ValueError("min() arg is an empty sequence");
     else {
         var result = null;
 
-        iterate(iter.PY$__call__(list), function(item) {
+        iterate(iter(list), function(item) {
                 if ((result === null) || js(item.PY$__lt__(result)))
                     result = item;
         });
@@ -308,7 +308,7 @@ py_builtins.min = Function(function(list) {
 py_builtins.sum = Function(function(list) {
     var result = 0;
 
-    iterate(iter.PY$__call__(list), function(item) {
+    iterate(iter(list), function(item) {
         result += js(item);
     });
 
@@ -321,20 +321,20 @@ py_builtins.print = function(s) {
     } else {
         if (arguments.length <= 1) {
             if (defined(s)) {
-                print(__py2js_str.PY$__call__(s));
+                print(__py2js_str(s));
             } else {
                 print("");
             }
         } else {
-            var args = tuple.PY$__call__(Array.prototype.slice.call(arguments, 0));
-            print(__py2js_str.PY$__call__(" ").PY$join(args));
+            var args = tuple(Array.prototype.slice.call(arguments, 0));
+            print(__py2js_str(" ").PY$join(args));
         }
     }
 };
 
 py_builtins.filter = Function(function(f, l) {
-   var res = list.PY$__call__();
-   iterate(iter.PY$__call__(l), function(item) {
+   var res = list();
+   iterate(iter(l), function(item) {
      if (py_builtins.bool(f(item))) {
        res.PY$append(item);
      }

@@ -30,18 +30,18 @@ var iter = __inherit(object, "iter");
 iter.PY$__init__ = function(obj) {
     this._index = 0;
     if (!defined(obj)) {
-        throw py_builtins.TypeError.PY$__call__("iter() expects at least 1 argument");
+        throw py_builtins.TypeError("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
         this._seq = obj;
     } else if (typeof(obj) === "string") {
         this._seq = obj.split("");
         for (var i = 0; i < this._seq.length; i++) {
-            this._seq[i] = str.PY$__call__(this._seq[i]);
+            this._seq[i] = str(this._seq[i]);
         }
     } else if (obj.PY$__class__ == iter) {
         this._seq = obj._seq;
     } else {
-        throw py_builtins.TypeError.PY$__call__("object is not iterable");
+        throw py_builtins.TypeError("object is not iterable");
     }
 };
 
@@ -56,7 +56,7 @@ iter.PY$__call__ = function(obj) {
 };
 
 iter.PY$__str__ = function () {
-    return str.PY$__call__("<iterator of " + this._seq + " at " + this._index + ">");
+    return str("<iterator of " + this._seq + " at " + this._index + ">");
 };
 
 iter.PY$next = Function(function() {
@@ -65,6 +65,6 @@ iter.PY$next = Function(function() {
     if (defined(value)) {
         return value;
     } else {
-        throw py_builtins.StopIteration.PY$__call__('no more items');
+        throw py_builtins.StopIteration('no more items');
     }
 });

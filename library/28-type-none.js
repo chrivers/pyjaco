@@ -32,7 +32,7 @@ none.PY$__init__ = function(b) {
 var __py2jsnone = none;
 
 none.PY$__str__ = function () {
-    return str.PY$__call__("None");
+    return str("None");
 };
 
 none.toString = function () {
@@ -47,7 +47,7 @@ none.PY$__eq__ = function (other) {
     } else if (other === null) {
         return True;
     } else {
-        return bool.PY$__call__(this._obj === other._obj);
+        return bool(this._obj === other._obj);
     }
 };
 

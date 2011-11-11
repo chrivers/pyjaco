@@ -41,9 +41,9 @@ bool.PY$__bool__ = function () {
 
 bool.PY$__str__ = function () {
     if (this._obj) {
-        return str.PY$__call__("True");
+        return str("True");
     } else {
-        return str.PY$__call__("False");
+        return str("False");
     }
 };
 
@@ -61,7 +61,7 @@ bool.PY$__eq__ = function (other) {
     if (other.PY$__class__ !== this.PY$__class__)
         return False;
 
-    return bool.PY$__call__(this._obj === other._obj);
+    return bool(this._obj === other._obj);
 };
 
 bool._js_ = function () {
@@ -69,11 +69,11 @@ bool._js_ = function () {
 };
 
 bool.PY$__neg__ = function() {
-    return bool.PY$__call__(!this._obj);
+    return bool(!this._obj);
 };
 
 bool.PY$__nonzero__ = function() {
-    return bool.PY$__call__(this._obj);
+    return bool(this._obj);
 };
 
 bool.PY$__and__ = function(x) {
