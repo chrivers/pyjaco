@@ -51,10 +51,10 @@ tuple.PY$__str__ = function () {
     if (js(this.PY$__len__()) === 0) {
         return str("()");
     } else if (js(this.PY$__len__()) == 1) {
-        return str("(" + str.PY$__call__(this._items[0]) + ",)");
+        return str("(" + str(this._items[0]) + ",)");
     } else {
         var items = map(function (i) {return str(i);}, this._items);
-        return str("(" + str.PY$__call__(", ").PY$join(items) + ")");
+        return str("(" + str(", ").PY$join(items) + ")");
     }
 };
 

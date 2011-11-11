@@ -53,7 +53,7 @@ dict.PY$__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
-        strings.push(js(str(key)) + ": " + js(str.PY$__call__(this._items[key])));
+        strings.push(js(str(key)) + ": " + js(str(this._items[key])));
     }
 
     return str("{" + strings.join(", ") + "}");
@@ -97,7 +97,7 @@ dict.PY$__getitem__ = function(key) {
     if (defined(value)) {
         return value;
     } else {
-        throw py_builtins.KeyError(str.PY$__call__(key));
+        throw py_builtins.KeyError(str(key));
     }
 };
 
@@ -109,7 +109,7 @@ dict.PY$__delitem__ = function(key) {
     if (js(this.PY$__contains__(key))) {
         delete this._items[key];
     } else {
-        throw py_builtins.KeyError(str.PY$__call__(key));
+        throw py_builtins.KeyError(str(key));
     }
 };
 
@@ -181,7 +181,7 @@ dict.PY$pop = Function(function(key, value) {
         if (defined(value)) {
             _value = value;
         } else {
-            throw py_builtins.KeyError(str.PY$__call__(key));
+            throw py_builtins.KeyError(str(key));
         }
     }
 

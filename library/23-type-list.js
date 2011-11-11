@@ -31,14 +31,14 @@ list.PY$__init__ = tuple.PY$__init__;
 
 list.PY$__str__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str("[" + str.PY$__call__(", ").PY$join(items) + "]");
+    return str("[" + str(", ").PY$join(items) + "]");
 };
 
 list.PY$__eq__ = tuple.PY$__eq__;
 
 list.PY$__repr__ = function () {
     var items = map(function (i) {return repr(i);}, this._items);
-    return str("[" + str.PY$__call__(", ").PY$join(items) + "]");
+    return str("[" + str(", ").PY$join(items) + "]");
 };
 
 list._js_ = tuple._js_;

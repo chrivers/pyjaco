@@ -213,7 +213,7 @@ basestring.PY$find = Function(function(s) {
 
 basestring.PY$rfind = Function(function(s) {
     var rev = function(s) {
-        var a = list(__py2js_str.PY$__call__(s));
+        var a = list(__py2js_str(s));
         a.PY$reverse();
         a = __py2js_str("").PY$join(a);
         return a;
