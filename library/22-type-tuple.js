@@ -66,7 +66,7 @@ tuple.PY$__eq__ = function (other) {
             return False;
         }
         for (var i = 0; i < js(len(this)); i++) {
-            if (js(this._items[i].__ne__(other._items[i]))) {
+            if (js(this._items[i].PY$__ne__(other._items[i]))) {
                 return False;
             }
         }
@@ -127,23 +127,23 @@ tuple.PY$__getitem__ = function(index) {
     var seq;
     if (js(isinstance.PY$__call__(index, slice))) {
         var s = index;
-        var inds = js(s.indices(len(this)));
+        var inds = js(s.PY$indices(len(this)));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
         seq = [];
         for (var i = js(start); i < js(stop); i += js(step)) {
-            seq.push(this.__getitem__(i));
+            seq.push(this.PY$__getitem__(i));
         }
         return this.PY$__class__.PY$__call__(seq);
     } else {
         if (!js(isinstance.PY$__call__(index, _int)))
             index = _int.PY$__call__(index);
 
-        if (js(index.PY$__ge__(_int.PY$__call__(0)).__and__(index.PY$__lt__(len(this))))) {
-            return this._items[index.__int__()];
-        } else if (js(index.PY$__lt__(_int.PY$__call__(0)).__and__(index.PY$__ge__(len(this).__neg__())))) {
-            return this._items[index.__add__(len(this)).__int__()];
+        if (js(index.PY$__ge__(_int.PY$__call__(0)).PY$__and__(index.PY$__lt__(len(this))))) {
+            return this._items[index.PY$__int__()];
+        } else if (js(index.PY$__lt__(_int.PY$__call__(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
+            return this._items[index.PY$__add__(len(this)).PY$__int__()];
         } else {
             throw py_builtins.IndexError.PY$__call__("list index out of range");
         }

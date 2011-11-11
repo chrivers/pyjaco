@@ -47,9 +47,9 @@ function sprintf(obj, args) {
             var flag_name  = null;
             var get_argument = function() {
                 if (flag_name) {
-                    return args.__getitem__(flag_name);
+                    return args.PY$__getitem__(flag_name);
                 } else {
-                    return args.__getitem__(argc++);
+                    return args.PY$__getitem__(argc++);
                 }
             };
             var fixed_digits = function(num, digits) {
@@ -137,27 +137,27 @@ function sprintf(obj, args) {
                     i++;
                 } else if (s[i] == "d" || s[i] == "i" || s[i] == "u") {
                     has_sign = true;
-                    subres = js(get_argument().__int__()).toString();
+                    subres = js(get_argument().PY$__int__()).toString();
                     i++;
                     break;
                 } else if (s[i] == "s") {
-                    subres = js(get_argument().__str__());
+                    subres = js(get_argument().PY$__str__());
                     i++;
                     break;
                 } else if (s[i] == "f" || s[i] == "F") {
                     has_sign = true;
-                    subres = format_float(js(get_argument().__float__()), 6, flag_len2);
+                    subres = format_float(js(get_argument().PY$__float__()), 6, flag_len2);
                     i++;
                     break;
                 } else if (s[i] == "e" || s[i] == "E") {
                     has_sign = true;
                     var expchar = s[i];
-                    subres = format_exp(js(get_argument().__float__()), expchar, 6, flag_len2, false);
+                    subres = format_exp(js(get_argument().PY$__float__()), expchar, 6, flag_len2, false);
                     i++;
                     break;
                 } else if (s[i] == "g" || s[i] == "G") {
                     has_sign = true;
-                    var arg = js(get_argument().__float__());
+                    var arg = js(get_argument().PY$__float__());
 
                     if (arg === 0 && !flag_hash) {
                         subres = "0";
@@ -173,7 +173,7 @@ function sprintf(obj, args) {
                     break;
                 } else if (s[i] == "o") {
                     has_sign = true;
-                    subres = js(get_argument().__int__()).toString(8);
+                    subres = js(get_argument().PY$__int__()).toString(8);
                     if (flag_hash && subres[0] !== "0")
                         prefix = "0";
                     i++;
@@ -182,14 +182,14 @@ function sprintf(obj, args) {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0x";
-                    subres = js(get_argument().__int__()).toString(16);
+                    subres = js(get_argument().PY$__int__()).toString(16);
                     i++;
                     break;
                 } else if (s[i] == "X") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0X";
-                    subres = js(get_argument().__int__()).toString(16).toUpperCase();
+                    subres = js(get_argument().PY$__int__()).toString(16).toUpperCase();
                     i++;
                     break;
                 } else {

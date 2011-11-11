@@ -48,7 +48,7 @@ var setattr = Function(function(obj, name, value) {
 
 var hash = Function(function(obj) {
     if (hasattr(obj, '__hash__')) {
-        return obj.__hash__();
+        return obj.PY$__hash__();
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
     } else {
@@ -79,7 +79,7 @@ var repr = Function(function(obj) {
         return obj.PY$__repr__.call(obj);
     } else if (hasattr(obj, '__str__')) {
         return obj.PY$__str__.call(obj);
-    } else if (hasattr(obj, 'toString')) {
+    } else if (typeof obj.toString != 'undefined') {
         return obj.toString();
     } else {
         throw py_builtins.AttributeError.PY$__call__('__repr__, __str__ or toString not found on ' + typeof(obj));
@@ -108,7 +108,7 @@ var range = Function(function(start, end, step) {
         seq.push(i);
     }
 
-    if (py_builtins.__python3__)
+    if (py_builtins.PY$__python3__)
         return iter.PY$__call__(seq);
     else
         return list.PY$__call__(seq);
@@ -136,7 +136,7 @@ var map = Function(function() {
         items.PY$append(func(item));
     });
 
-    if (py_builtins.__python3__)
+    if (py_builtins.PY$__python3__)
         return iter.PY$__call__(items);
     else
         return items;
@@ -151,7 +151,7 @@ var zip = Function(function() {
     var i;
 
     for (i = 0; i < arguments.length; i++) {
-        iters.append(iter(arguments[i]));
+        iters.PY$append(iter(arguments[i]));
     }
 
     var items = list();
@@ -170,10 +170,10 @@ var zip = Function(function() {
                 }
             }
 
-            item.append(value);
+            item.PY$append(value);
         }
 
-        items.append(tuple(item));
+        items.PY$append(tuple(item));
     }
     return None;
 });
@@ -187,7 +187,7 @@ var isinstance = Function(function(obj, cls) {
         }
 
         for (var i = 0; i < length; i++) {
-            var _cls = cls.__getitem__(i);
+            var _cls = cls.PY$__getitem__(i);
 
             if (js(isinstance.PY$__call__(obj, _cls))) {
                 return True;
@@ -200,7 +200,7 @@ var isinstance = Function(function(obj, cls) {
         while (c) {
             if (c === cls)
                 return True;
-            c = c.__super__;
+            c = c.PY$__super__;
         }
         return False;
     }
@@ -246,7 +246,7 @@ py_builtins._int = Function(function(value) {
 
 py_builtins.__not__ = Function(function(obj) {
    if (hasattr(obj, '__nonzero__')) {
-       return py_builtins.bool(!js(obj.__nonzero__()));
+       return py_builtins.bool(!js(obj.PY$__nonzero__()));
    } else if (hasattr(obj, '__len__')) {
        return py_builtins.bool(js(obj.PY$__len__()) === 0);
    } else {
@@ -282,7 +282,7 @@ py_builtins.max = Function(function(list) {
         var result = null;
 
         iterate(iter.PY$__call__(list), function(item) {
-                if ((result === null) || js(item.__gt__(result)))
+                if ((result === null) || js(item.PY$__gt__(result)))
                     result = item;
         });
 
@@ -336,7 +336,7 @@ py_builtins.filter = Function(function(f, l) {
    var res = list.PY$__call__();
    iterate(iter.PY$__call__(l), function(item) {
      if (py_builtins.bool(f(item))) {
-       res.append(item);
+       res.PY$append(item);
      }
    });
    return res;
@@ -357,11 +357,11 @@ py_builtins.reduce = Function(function(func, seq) {
         accum = initial;
         start = 0;
     } else {
-        accum = func(seq.__getitem__(0), seq.__getitem__(1));
+        accum = func(seq.PY$__getitem__(0), seq.PY$__getitem__(1));
         start = 2;
     }
     for (var i = start; i < len(seq); i++) {
-        accum = func(accum, seq.__getitem__(i));
+        accum = func(accum, seq.PY$__getitem__(i));
     }
     return accum;
 });

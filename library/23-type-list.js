@@ -54,10 +54,10 @@ list.PY$__getitem__ = tuple.PY$__getitem__;
 list.PY$__setitem__ = function(index, value) {
     if (typeof(index) === 'number') index = _int.PY$__call__(index);
 
-    if (js(index.PY$__ge__(_int.PY$__call__(0)).__and__(index.PY$__lt__(len(this))))) {
-        this._items[index.__int__()] = value;
-    } else if (js(index.PY$__lt__(_int.PY$__call__(0)).__and__(index.PY$__ge__(len(this).__neg__())))) {
-        this._items[index.__add__(len(this)).__int__()] = value;
+    if (js(index.PY$__ge__(_int.PY$__call__(0)).PY$__and__(index.PY$__lt__(len(this))))) {
+        this._items[index.PY$__int__()] = value;
+    } else if (js(index.PY$__lt__(_int.PY$__call__(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
+        this._items[index.PY$__add__(len(this)).PY$__int__()] = value;
     } else {
         throw py_builtins.IndexError.PY$__call__("list index out of range");
     }
@@ -120,7 +120,7 @@ list.PY$index = Function(function(value, start, end) {
 });
 
 list.PY$remove = Function(function(value) {
-    this.__delitem__(this.index(value));
+    this.PY$__delitem__(this.PY$index(value));
 });
 
 list.PY$append = Function(function(value) {
@@ -152,7 +152,7 @@ list.PY$pop = Function(function() {
 });
 
 list.PY$sort = Function(function() {
-    var cmp = function(a, b) { return js(a.__cmp__(b));};
+    var cmp = function(a, b) { return js(a.PY$__cmp__(b));};
     if (arguments.length > 0)
         cmp = js(arguments[0]);
 
@@ -184,7 +184,7 @@ list.PY$insert = Function(function(index, x) {
 list.PY$reverse = Function(function() {
     var new_list = list.PY$__call__([]);
     iterate(iter.PY$__call__(this), function(item) {
-            new_list.insert(0, item);
+            new_list.PY$insert(0, item);
     });
     this._items = new_list._items;
 });

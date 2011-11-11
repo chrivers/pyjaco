@@ -35,8 +35,8 @@ basestring.PY$__init__ = function(s) {
     } else {
         if (typeof(s) === "string") {
             this._obj = s;
-        } else if (defined(s.__str__)) {
-            this._obj = js(s.__str__());
+        } else if (defined(s.PY$__str__)) {
+            this._obj = js(s.PY$__str__());
         } else if (defined(s.toString)) {
             this._obj = s.toString();
         } else
@@ -101,8 +101,9 @@ basestring.PY$__bool__ = function() {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool.PY$__call__(this._obj == s);
-    else if (js(isinstance.PY$__call__(s, basestring)))
+    else if (js(isinstance.PY$__call__(s, basestring))) {
         return bool.PY$__call__(this._obj == s._obj);
+    }
     else
         return False;
 };
@@ -139,13 +140,13 @@ basestring.PY$__getitem__ = function(index) {
     var seq;
     if (js(isinstance.PY$__call__(index, slice))) {
         var s = index;
-        var inds = js(s.indices(len(this)));
+        var inds = js(s.PY$indices(len(this)));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
         seq = "";
         for (var i = start; i < stop; i += step) {
-            seq = seq + js(this.__getitem__(i));
+            seq = seq + js(this.PY$__getitem__(i));
         }
         return this.PY$__class__.PY$__call__(seq);
     } else if ((index >= 0) && (index < js(len(this))))
@@ -176,12 +177,12 @@ basestring.PY$count = Function(function(needle, start, end) {
     if (!defined(end))
         end = null;
     var count = 0;
-    var s = this.__getitem__(slice.PY$__call__(start, end));
-    var idx = s.find(needle);
+    var s = this.PY$__getitem__(slice.PY$__call__(start, end));
+    var idx = s.PY$find(needle);
     while (idx != -1) {
         count += 1;
-        s = s.__getitem__(slice.PY$__call__(idx+1, null));
-        idx = s.find(needle);
+        s = s.PY$__getitem__(slice.PY$__call__(idx+1, null));
+        idx = s.PY$find(needle);
     }
     return count;
 });
@@ -213,13 +214,13 @@ basestring.PY$find = Function(function(s) {
 basestring.PY$rfind = Function(function(s) {
     var rev = function(s) {
         var a = list.PY$__call__(__py2js_str.PY$__call__(s));
-        a.reverse();
+        a.PY$reverse();
         a = __py2js_str.PY$__call__("").PY$join(a);
         return a;
     };
     var a = rev(this);
     var b = rev(s);
-    var r = a.find(b);
+    var r = a.PY$find(b);
     if (r == -1)
         return r;
     return len(this) - len(b) - r;
@@ -257,10 +258,10 @@ basestring.PY$lstrip = Function(function(chars) {
     else
         chars = tuple.PY$__call__(["\n", "\t", " "]);
     var i = 0;
-    while ((i < js(len(this))) && (js(chars.__contains__(this.__getitem__(i))))) {
+    while ((i < js(len(this))) && (js(chars.PY$__contains__(this.PY$__getitem__(i))))) {
         i += 1;
     }
-    return this.__getitem__(slice.PY$__call__(i, null));
+    return this.PY$__getitem__(slice.PY$__call__(i, null));
 });
 
 basestring.PY$rstrip = Function(function(chars) {
@@ -271,14 +272,14 @@ basestring.PY$rstrip = Function(function(chars) {
     else
         chars = tuple.PY$__call__(["\n", "\t", " "]);
     var i = js(len(this))-1;
-    while ((i >= 0) && (js(chars.__contains__(this.__getitem__(i))))) {
+    while ((i >= 0) && (js(chars.PY$__contains__(this.PY$__getitem__(i))))) {
         i -= 1;
     }
-    return this.__getitem__(slice.PY$__call__(i+1));
+    return this.PY$__getitem__(slice.PY$__call__(i+1));
 });
 
 basestring.PY$strip = Function(function(chars) {
-    return this.lstrip(chars).rstrip(chars);
+    return this.PY$lstrip(chars).PY$rstrip(chars);
 });
 
 basestring.PY$split = Function(function(sep) {
@@ -287,22 +288,22 @@ basestring.PY$split = Function(function(sep) {
         var r = list.PY$__call__(this._obj.split(sep));
         r_new = list.PY$__call__([]);
         iterate(iter.PY$__call__(r), function(item) {
-                r_new.append(basestring.PY$__call__(item));
+                r_new.PY$append(basestring.PY$__call__(item));
         });
         return r_new;
     }
     else {
         r_new = list.PY$__call__([]);
-        iterate(iter.PY$__call__(this.split(" ")), function(item) {
+        iterate(iter.PY$__call__(this.PY$split(" ")), function(item) {
                 if (len(item) > 0)
-                    r_new.append(item);
+                    r_new.PY$append(item);
         });
         return r_new;
     }
 });
 
 basestring.PY$splitlines = Function(function() {
-    return this.split("\n");
+    return this.PY$split("\n");
 });
 
 basestring.PY$lower = Function(function() {
@@ -330,8 +331,8 @@ unicode.PY$__init__ = function(s) {
     } else {
         if (typeof(s) === "string") {
             this._obj = s;
-        } else if (defined(s.__unicode__)) {
-            this._obj = js(s.__unicode__());
+        } else if (defined(s.PY$__unicode__)) {
+            this._obj = js(s.PY$__unicode__());
         } else if (defined(s.toString)) {
             this._obj = s.toString();
         } else

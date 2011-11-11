@@ -27,7 +27,7 @@
 
 var py_builtins = {};
 
-py_builtins.__python3__ = false;
+py_builtins.PY$__python3__ = false;
 
 function defined(obj) {
     return typeof(obj) != 'undefined';

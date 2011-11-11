@@ -63,6 +63,7 @@ var __inherit = function(cls, name) {
     };
 
     res.PY$__name__  = name;
+    res.PY$__super__ = cls;
     return res;
 };
 
@@ -110,7 +111,7 @@ object.PY$__ne__ = function (other) {
 };
 
 object.PY$__cmp__ = function (y) {
-    var g = this.__gt__(y);
+    var g = this.PY$__gt__(y);
     if (js(g)) {
         return 1;
     } else {

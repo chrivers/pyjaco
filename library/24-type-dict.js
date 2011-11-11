@@ -64,7 +64,7 @@ dict._js_ = function () {
 
     var _this_dict = this; // so that we can access it from within the closure:
     iterate(iter.PY$__call__(this), function(key) {
-        items[js(key)] = js(_this_dict.__getitem__(key));
+        items[js(key)] = js(_this_dict.PY$__getitem__(key));
     });
 
     return items;
@@ -131,7 +131,7 @@ dict.PY$items = Function(function() {
     var items = list.PY$__call__();
 
     for (var key in this._items) {
-        items.append(tuple.PY$__call__([key, this._items[key]]));
+        items.PY$append(tuple.PY$__call__([key, this._items[key]]));
     }
 
     return items;
@@ -151,7 +151,7 @@ dict.PY$values = Function(function() {
     var values = list.PY$__call__();
 
     for (var key in this._items) {
-        values.append(this._items[key]);
+        values.PY$append(this._items[key]);
     }
 
     return values;
@@ -161,7 +161,7 @@ dict.PY$update = Function(function(other) {
    var _this = this;
    iterate(iter.PY$__call__(other),
      function(key) {
-        _this._items[js(key)] = other.__getitem__(key);
+        _this._items[js(key)] = other.PY$__getitem__(key);
      }
    );
 });

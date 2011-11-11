@@ -31,7 +31,7 @@ Super.PY$__init__ = function(cls, obj) {
 };
 
 Super.PY$__getattr__ = function(k) {
-    return this.cls.__super__[k];
+    return this.cls.PY$__super__.PY$__getattr__(k);
 };
 
 Super.PY$__repr__ = function() {

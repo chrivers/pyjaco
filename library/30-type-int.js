@@ -39,7 +39,7 @@ var ___int_real__ = _int.PY$__call__;
 
 _int.PY$__call__ = function(obj) {
     if (js(isinstance(obj, object))) {
-        return obj.__int__();
+        return obj.PY$__int__();
     } else {
         return ___int_real__(obj);
     }

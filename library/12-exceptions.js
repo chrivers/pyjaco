@@ -41,7 +41,7 @@ Exception.toString = function() {
     return js(this.PY$__str__());
 };
 
-py_builtins.__exceptions__ = [
+py_builtins.PY$__exceptions__ = [
     'NotImplementedError',
     'ZeroDivisionError',
     'AssertionError',
@@ -56,7 +56,7 @@ py_builtins.__exceptions__ = [
     'StopIteration'
 ];
 
-for (var i in py_builtins.__exceptions__) {
-    var name = py_builtins.__exceptions__[i];
+for (var i in py_builtins.PY$__exceptions__) {
+    var name = py_builtins.PY$__exceptions__[i];
     py_builtins[name] = __inherit(Exception, name);
 }
