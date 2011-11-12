@@ -565,10 +565,10 @@ class Compiler(py2js.compiler.BaseCompiler):
         els = []
         for k, v in zip(node.keys, node.values):
             if isinstance(k, ast.Name):
-                els.append('tuple(["%s", %s])' % (self.visit(k), self.visit(v)))
+                els.append('"%s", %s' % (self.visit(k), self.visit(v)))
             else:
-                els.append("tuple([%s, %s])" % (self.visit(k), self.visit(v)))
-        return "dict(tuple([%s]))" % (",\n".join(els))
+                els.append("%s, %s" % (self.visit(k), self.visit(v)))
+        return "dict([%s])" % (", ".join(els))
 
     def visit_List(self, node):
         els = [self.visit(e) for e in node.elts]
