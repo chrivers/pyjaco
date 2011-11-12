@@ -371,7 +371,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js = []
         js.append("try {")
         for n in node.body:
-            js.append("\n".join(self.visit(n)))
+            js.extend(self.indent(self.visit(n)))
         err = self.alloc_var()
         self._exceptions.append(err)
         js.append("} catch (%s) {" % err)
@@ -382,7 +382,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 pre = ""
             if n.type:
                 if isinstance(n.type, ast.Name):
-                    js.append("%sif (js(isinstance(%s, %s))) {" % (pre, err, self.visit(n.type)))
+                    js.extend(self.indent(["%sif (js(isinstance(%s, %s))) {" % (pre, err, self.visit(n.type))]))
                 else:
                     raise JSError("Catching non-simple exceptions not supported")
             else:

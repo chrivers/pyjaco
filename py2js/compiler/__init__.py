@@ -55,8 +55,6 @@ class BaseCompiler(object):
         'KeyError',
         'StopIteration',
 
-        'int',
-        'float',
         'max',
         'min',
         'sum',

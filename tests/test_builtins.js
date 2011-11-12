@@ -38,7 +38,7 @@ function test_dict() {
     raises(py_builtins.KeyError, function() { d.PY$popitem() });
 
     raises(py_builtins.KeyError, function() { d.PY$pop(0) });
-    raises(py_builtins.KeyError, function() { d.PY$__getitem__(_int(0)) });
+    raises(py_builtins.KeyError, function() { d.PY$__getitem__(int(0)) });
     raises(py_builtins.KeyError, function() { d.PY$__delitem__(0) });
 
     raises(py_builtins.KeyError, function() { d.PY$pop('a') });
@@ -49,13 +49,13 @@ function test_dict() {
 
     test(function() { return str(d) == '{0: 1}' });
     test(function() { return len(d) == 1 });
-    test(function() { return d.PY$__getitem__(_int(0)) == 1 });
+    test(function() { return d.PY$__getitem__(int(0)) == 1 });
 
     d.PY$__setitem__(0, 2);
 
     test(function() { return str(d) == '{0: 2}' });
     test(function() { return len(d) == 1 });
-    test(function() { return d.PY$__getitem__(_int(0)) == 2 });
+    test(function() { return d.PY$__getitem__(int(0)) == 2 });
 
     test(function() { return d.PY$pop(0) == 2 });
     test(function() { return len(d) == 0 });
@@ -161,22 +161,22 @@ function test_tuple() {
     test(function() { return len(t) == 7 });
 
     test(function() { return t.PY$__contains__(5) == True });
-    test(function() { return t.PY$__getitem__(_int(0)) == 3 });
-    test(function() { return t.PY$__getitem__(_int(1)) == 4 });
-    test(function() { return t.PY$__getitem__(_int(2)) == 5 });
-    test(function() { return t.PY$__getitem__(_int(3)) == 5 });
-    test(function() { return t.PY$__getitem__(_int(4)) == 4 });
-    test(function() { return t.PY$__getitem__(_int(5)) == 4 });
-    test(function() { return t.PY$__getitem__(_int(6)) == 1 });
+    test(function() { return t.PY$__getitem__(int(0)) == 3 });
+    test(function() { return t.PY$__getitem__(int(1)) == 4 });
+    test(function() { return t.PY$__getitem__(int(2)) == 5 });
+    test(function() { return t.PY$__getitem__(int(3)) == 5 });
+    test(function() { return t.PY$__getitem__(int(4)) == 4 });
+    test(function() { return t.PY$__getitem__(int(5)) == 4 });
+    test(function() { return t.PY$__getitem__(int(6)) == 1 });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(7) });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(8) });
-    test(function() { return t.PY$__getitem__(_int(-1)) == 1; });
-    test(function() { return t.PY$__getitem__(_int(-2)) == 4; });
-    test(function() { return t.PY$__getitem__(_int(-3)) == 4; });
-    test(function() { return t.PY$__getitem__(_int(-4)) == 5; });
-    test(function() { return t.PY$__getitem__(_int(-5)) == 5; });
-    test(function() { return t.PY$__getitem__(_int(-6)) == 4; });
-    test(function() { return t.PY$__getitem__(_int(-7)) == 3; });
+    test(function() { return t.PY$__getitem__(int(-1)) == 1; });
+    test(function() { return t.PY$__getitem__(int(-2)) == 4; });
+    test(function() { return t.PY$__getitem__(int(-3)) == 4; });
+    test(function() { return t.PY$__getitem__(int(-4)) == 5; });
+    test(function() { return t.PY$__getitem__(int(-5)) == 5; });
+    test(function() { return t.PY$__getitem__(int(-6)) == 4; });
+    test(function() { return t.PY$__getitem__(int(-7)) == 3; });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(-8); });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(-9); });
 

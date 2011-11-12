@@ -27,8 +27,23 @@ var float = __inherit(number, "float");
 
 $PY.float = float;
 
-float.PY$__init__ = function(i) {
-    this._obj = parseFloat(i);
+float.PY$__init__ = function(value) {
+    var s = value.toString();
+    if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
+        this._obj = parseFloat(value);
+    } else {
+        throw py_builtins.ValueError("Invalid float: " + s);
+    }
+};
+
+var __float_real__ = float.PY$__create__;
+
+float.PY$__create__ = function(obj) {
+    if (js(isinstance(obj, object)) && (typeof obj.PY$__float__ != 'undefined')) {
+        return obj.PY$__float__();
+    } else {
+        return __float_real__(obj);
+    }
 };
 
 float.PY$_isnumericfloat = true;
