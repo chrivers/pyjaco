@@ -37,7 +37,7 @@ dict.PY$__init__ = function(args) {
     if (defined(args)) {
         if (defined(args.PY$__iter__)) {
             items = {};
-            iterate(iter(args), function(item) {
+            iterate(args, function(item) {
                     key = item.PY$__getitem__(0);
                     value = item.PY$__getitem__(1);
                     items[key] = value;
@@ -70,7 +70,7 @@ dict._js_ = function () {
     var items = {};
 
     var that = this; // so that we can access it from within the closure:
-    iterate(iter(this), function(key) {
+    iterate(this, function(key) {
         items[key] = js(that.PY$__getitem__(key));
     });
 
@@ -166,7 +166,7 @@ dict.PY$values = function() {
 
 dict.PY$update = function(other) {
    var that = this;
-   iterate(iter(other),
+   iterate(other,
      function(key) {
         that._items[key] = other.PY$__getitem__(key);
      }

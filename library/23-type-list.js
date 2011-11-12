@@ -139,7 +139,7 @@ list.PY$append = function(value) {
 list.PY$extend = function(l) {
     var items;
     items = this._items;
-    iterate(iter(l), function(item) {
+    iterate(l, function(item) {
         items.push(item);
     });
     this._len = -1;
@@ -185,7 +185,7 @@ list.PY$insert = function(index, x) {
 
 list.PY$reverse = function() {
     var new_list = list([]);
-    iterate(iter(this), function(item) {
+    iterate(this, function(item) {
             new_list.PY$insert(0, item);
     });
     this._items = new_list._items;

@@ -297,13 +297,13 @@ basestring.PY$split = function(sep) {
         var r = list(this._obj.split(sep));
         r_new = list([]);
         var that = this;
-        iterate(iter(r), function(item) {
+        iterate(r, function(item) {
                     r_new.PY$append(that.PY$__class__(item));
         });
         return r_new;
     } else {
         r_new = list([]);
-        iterate(iter(this.PY$split(" ")), function(item) {
+        iterate(this.PY$split(" "), function(item) {
                 if (py_builtins.len(item) > 0)
                     r_new.PY$append(item);
         });

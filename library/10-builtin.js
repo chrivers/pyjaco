@@ -136,11 +136,9 @@ py_builtins.map = function() {
     }
 
     var func = arguments[0];
-    var seq = iter(arguments[1]);
-
     var items = list();
 
-    iterate(seq, function(item) {
+    iterate(arguments[1], function(item) {
         items.PY$append(func(item));
     });
 
@@ -234,7 +232,7 @@ py_builtins.max = function(list) {
     else {
         var result = null;
 
-        iterate(iter(list), function(item) {
+        iterate(list, function(item) {
                 if ((result === null) || js(item.PY$__gt__(result)))
                     result = item;
         });
@@ -249,7 +247,7 @@ py_builtins.min = function(list) {
     else {
         var result = null;
 
-        iterate(iter(list), function(item) {
+        iterate(list, function(item) {
                 if ((result === null) || js(item.PY$__lt__(result)))
                     result = item;
         });
@@ -261,7 +259,7 @@ py_builtins.min = function(list) {
 py_builtins.sum = function(list) {
     var result = 0;
 
-    iterate(iter(list), function(item) {
+    iterate(list, function(item) {
         result += js(item);
     });
 
@@ -287,7 +285,7 @@ py_builtins.print = function(s) {
 
 py_builtins.filter = function(f, l) {
    var res = list();
-   iterate(iter(l), function(item) {
+   iterate(l, function(item) {
      if (bool(f(item)) == true) {
        res.PY$append(item);
      }

@@ -35,7 +35,8 @@ function defined(obj) {
     return typeof(obj) != 'undefined';
 }
 
-function iterate(seq, func) {
+function iterate(obj, func) {
+    var seq = iter(obj);
     while (true) {
         try {
             func(seq.PY$next());

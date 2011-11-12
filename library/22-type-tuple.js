@@ -37,7 +37,7 @@ tuple.PY$__init__ = function(seq) {
     } else {
         var that = this;
         this._items = [];
-        iterate(iter(seq), function(elm) {
+        iterate(seq, function(elm) {
                     if (typeof(elm) == 'number')
                         that._items.push(int(elm));
                     else if (typeof(elm) == 'string')
@@ -81,7 +81,7 @@ tuple.PY$__eq__ = function (other) {
 tuple._js_ = function () {
     var items = [];
 
-    iterate(iter(this), function(item) {
+    iterate(this, function(item) {
         items.push(js(item));
     });
 
