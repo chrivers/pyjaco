@@ -140,9 +140,9 @@ tuple.PY$__getitem__ = function(index) {
         if (!js(isinstance(index, _int)))
             index = _int(index);
 
-        if (js(index.PY$__ge__(_int(0)).PY$__and__(index.PY$__lt__(len(this))))) {
+        if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(len(this)))) {
             return this._items[index.PY$__int__()];
-        } else if (js(index.PY$__lt__(_int(0)).PY$__and__(index.PY$__ge__(len(this).PY$__neg__())))) {
+        } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(len(this).PY$__neg__()))) {
             return this._items[index.PY$__add__(len(this)).PY$__int__()];
         } else {
             throw py_builtins.IndexError("list index out of range");

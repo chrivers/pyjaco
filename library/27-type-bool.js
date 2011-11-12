@@ -76,22 +76,6 @@ bool.PY$__nonzero__ = function() {
     return bool(this._obj);
 };
 
-bool.PY$__and__ = function(x) {
-    if (this._obj) {
-        return x;
-    } else {
-        return this;
-    }
-};
-
-bool.PY$__or__ = function(x) {
-    if (this._obj) {
-        return this;
-    } else {
-        return x;
-    }
-};
-
 bool.PY$__int__ = function() {
     if (this._obj) {
         return $c1;

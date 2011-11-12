@@ -59,14 +59,6 @@ none.PY$__nonzero__ = function() {
     return False;
 };
 
-none.PY$__and__ = function() {
-    return None;
-};
-
-none.PY$__or__ = function(x) {
-    return x;
-};
-
 var None = none();
 
 none.PY$__create__ = function() {

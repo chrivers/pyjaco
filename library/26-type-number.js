@@ -133,30 +133,8 @@ number.PY$__pow__ = function(x) {
         return x.PY$__class__(Math.pow(this._obj, x._obj));
 };
 
-number.PY$__and__ = function(x) {
-    if (!x.PY$_isnumeric_)
-        throw py_builtins.TypeError("Cannot operate on number and non-number");
-    if (this._obj === 0) {
-        return this;
-    } else {
-        return x;
-    }
-};
-
-number.PY$__or__ = function(x) {
-    if (!x.PY$_isnumeric_)
-        throw py_builtins.TypeError("Cannot operate on number and non-number");
-    if (this._obj === 0) {
-        return x;
-    } else {
-        return this;
-    }
-};
-
 number.PY$__imul__      = number.PY$__mul__;
 number.PY$__iadd__      = number.PY$__add__;
 number.PY$__idiv__      = number.PY$__div__;
 number.PY$__isub__      = number.PY$__sub__;
 number.PY$__ipow__      = number.PY$__pow__;
-number.PY$__iand__      = number.PY$__and__;
-number.PY$__ior__       = number.PY$__or__;
