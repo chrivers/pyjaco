@@ -50,6 +50,22 @@ function iterate(obj, func) {
     }
 }
 
+var __kwargs_make = function(kw) {
+    kw.__kwargs = true;
+    return kw;
+};
+
+var __kwargs_get = function(args) {
+    if (args.length && args[args.length-1].__kwargs === true) {
+        delete args[args.length-1].__kwargs;
+        var res = dict(args[args.length-1]);
+        delete args[args.length-1];
+        return res;
+    } else {
+        return dict();
+    }
+};
+
 var js = function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
