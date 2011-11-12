@@ -1,7 +1,7 @@
 /* TESTS for the py-builtins.js module */
 load("py-builtins.js");
 
-var DEBUG = false;
+var DEBUG = true;
 
 function test(code) {
     if (DEBUG) {
@@ -33,7 +33,7 @@ function test_dict() {
     var d = dict();
 
     test(function() { return str(d) == '{}' });
-    test(function() { return len(d) == 0 });
+    test(function() { return py_builtins.len(d) == 0 });
 
     raises(py_builtins.KeyError, function() { d.PY$popitem() });
 
@@ -48,17 +48,17 @@ function test_dict() {
     d.PY$__setitem__(0, 1);
 
     test(function() { return str(d) == '{0: 1}' });
-    test(function() { return len(d) == 1 });
+    test(function() { return py_builtins.len(d) == 1 });
     test(function() { return d.PY$__getitem__(int(0)) == 1 });
 
     d.PY$__setitem__(0, 2);
 
     test(function() { return str(d) == '{0: 2}' });
-    test(function() { return len(d) == 1 });
+    test(function() { return py_builtins.len(d) == 1 });
     test(function() { return d.PY$__getitem__(int(0)) == 2 });
 
     test(function() { return d.PY$pop(0) == 2 });
-    test(function() { return len(d) == 0 });
+    test(function() { return py_builtins.len(d) == 0 });
 
     d = dict({1: 6, 2: 8});
     test(function() { return str(d) == '{1: 6, 2: 8}' });
@@ -120,7 +120,7 @@ function test_iter() {
 
     raises(py_builtins.StopIteration, function() { i.PY$next() });
 
-    var i = iter(range(5));
+    var i = iter(py_builtins.range(5));
 
     test(function() { return i.PY$next() == 0 });
     test(function() { return i.PY$next() == 1 });
@@ -137,7 +137,7 @@ function test_tuple() {
     var t = tuple();
 
     test(function() { return str(t) == '()' });
-    test(function() { return len(t) == 0 });
+    test(function() { return py_builtins.len(t) == 0 });
 
     test(function() { return t.PY$__contains__(5) == False });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(0) });
@@ -148,17 +148,17 @@ function test_tuple() {
     raises(py_builtins.ValueError, function() { t.PY$index(5) });
     test(function() { return t.PY$count(5) == 0 });
 
-    test(function() { return hash(t) == 3430008 });
+    test(function() { return py_builtins.hash(t) == 3430008 });
 
     var t = tuple([1]);
 
     test(function() { return str(t) == '(1,)' });
-    test(function() { return len(t) == 1 });
+    test(function() { return py_builtins.len(t) == 1 });
 
     var t = tuple([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str(t) == '(3, 4, 5, 5, 4, 4, 1)' });
-    test(function() { return len(t) == 7 });
+    test(function() { return py_builtins.len(t) == 7 });
 
     test(function() { return t.PY$__contains__(5) == True });
     test(function() { return t.PY$__getitem__(int(0)) == 3 });
@@ -186,7 +186,7 @@ function test_tuple() {
     test(function() { return t.PY$index(5) == 2 });
     test(function() { return t.PY$count(5) == 2 });
 
-    test(function() { return hash(t) == -2017591611 });
+    test(function() { return py_builtins.hash(t) == -2017591611 });
 
     t = tuple([1, 2, 3, 4]);
     test(function() { return str(t) == '(1, 2, 3, 4)' })
@@ -210,7 +210,7 @@ function test_list() {
     var t = list();
 
     test(function() { return str(t) == '[]' });
-    test(function() { return len(t) == 0 });
+    test(function() { return py_builtins.len(t) == 0 });
 
     test(function() { return t.PY$__contains__(5) == False });
     raises(py_builtins.IndexError, function() { t.PY$__getitem__(0) });
@@ -221,12 +221,12 @@ function test_list() {
     raises(py_builtins.ValueError, function() { t.PY$index(5) });
     test(function() { return t.PY$count(5) == 0 });
 
-    raises(py_builtins.AttributeError, function() { return hash(t) });
+    raises(py_builtins.AttributeError, function() { return py_builtins.hash(t) });
 
     var t = list([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1]' });
-    test(function() { return len(t) == 7 });
+    test(function() { return py_builtins.len(t) == 7 });
 
     test(function() { return t.PY$__contains__(5) == True });
     test(function() { return t.PY$__getitem__(0) == 3 });
@@ -254,7 +254,7 @@ function test_list() {
     test(function() { return t.PY$index(5) == 2 });
     test(function() { return t.PY$count(5) == 2 });
 
-    raises(py_builtins.AttributeError, function() { return hash(t) });
+    raises(py_builtins.AttributeError, function() { return py_builtins.hash(t) });
 
     t.PY$append(3);
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1, 3]' });
@@ -346,20 +346,20 @@ function test_list() {
 }
 
 function test_range() {
-    // Test tuple/list conversion from range()
-    var t = tuple(range(5));
+    // Test tuple/list conversion from py_builtins.range()
+    var t = tuple(py_builtins.range(5));
     test(function() { return str(t) == '(0, 1, 2, 3, 4)' });
-    var t = list(range(5));
+    var t = list(py_builtins.range(5));
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 
-    // test min/max/step in range():
-    t = list(range(1, 3));
+    // test min/max/step in py_builtins.range():
+    t = list(py_builtins.range(1, 3));
     test(function() { return str(t) == '[1, 2]' });
-    t = list(range(1, 5, 2));
+    t = list(py_builtins.range(1, 5, 2));
     test(function() { return str(t) == '[1, 3]' });
 
     // test iter:
-    var t = list(iter(range(5)));
+    var t = list(iter(py_builtins.range(5)));
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
@@ -367,66 +367,66 @@ function test_map() {
     var f = function(x) { return x*x };
     var a = list([1, 2, 3]);
 
-    test(function() { return str(map(f, list())) == '[]' });
-    test(function() { return str(map(f, a)) == '[1, 4, 9]' });
+    test(function() { return str(py_builtins.map(f, list())) == '[]' });
+    test(function() { return str(py_builtins.map(f, a)) == '[1, 4, 9]' });
 
-    raises(py_builtins.TypeError, function() { map(f) });
-    raises(py_builtins.NotImplementedError, function() { map(f, a, a) });
+    raises(py_builtins.TypeError, function() { py_builtins.map(f) });
+    raises(py_builtins.NotImplementedError, function() { py_builtins.map(f, a, a) });
 }
 
 function test_zip() {
-    test(function() { return str(zip()) == "[]" });
+    test(function() { return str(py_builtins.zip()) == "[]" });
 
     var a = list([1, 2, 3]);
     var b = list([4, 5, 6]);
     var c = list([7, 8, 9]);
 
-    test(function() { return str(zip(a)) == "[(1,), (2,), (3,)]" });
-    test(function() { return str(zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
-    test(function() { return str(zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
+    test(function() { return str(py_builtins.zip(a)) == "[(1,), (2,), (3,)]" });
+    test(function() { return str(py_builtins.zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
+    test(function() { return str(py_builtins.zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
 
     var d = list([7, 8, 9, 10]);
     var e = list([7, 8, 9, 10, 11]);
 
-    test(function() { return str(zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
-    test(function() { return str(zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
+    test(function() { return str(py_builtins.zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
+    test(function() { return str(py_builtins.zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
 
-    test(function() { return str(zip(e,d)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
-    test(function() { return str(zip(d,e)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+    test(function() { return str(py_builtins.zip(e,d)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+    test(function() { return str(py_builtins.zip(d,e)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
 
-    test(function() { return str(zip(e,a,d)) == "[(7, 1, 7), (8, 2, 8), (9, 3, 9)]" });
-    test(function() { return str(zip(e,d,a)) == "[(7, 7, 1), (8, 8, 2), (9, 9, 3)]" });
+    test(function() { return str(py_builtins.zip(e,a,d)) == "[(7, 1, 7), (8, 2, 8), (9, 3, 9)]" });
+    test(function() { return str(py_builtins.zip(e,d,a)) == "[(7, 7, 1), (8, 8, 2), (9, 9, 3)]" });
 }
 
 function test_isinstance() {
     test(function() {
-        return isinstance(py_builtins.StopIteration(), py_builtins.StopIteration) == True;
+        return py_builtins.isinstance(py_builtins.StopIteration(), py_builtins.StopIteration) == True;
     });
 
     test(function() {
-        return isinstance(py_builtins.StopIteration(), py_builtins.ValueError) == False;
+        return py_builtins.isinstance(py_builtins.StopIteration(), py_builtins.ValueError) == False;
     });
 
-    test(function() { return isinstance([], tuple()) == False });
+    test(function() { return py_builtins.isinstance([], tuple()) == False });
 
     var t = tuple([1, 2, 3]);
 
-    test(function() { return isinstance(t, Array) == False });
-    test(function() { return isinstance(t, Number) == False });
-    test(function() { return isinstance(t, String) == False });
+    test(function() { return py_builtins.isinstance(t, Array) == False });
+    test(function() { return py_builtins.isinstance(t, Number) == False });
+    test(function() { return py_builtins.isinstance(t, String) == False });
 
-    test(function() { return isinstance(t, tuple()) == False });
+    test(function() { return py_builtins.isinstance(t, tuple()) == False });
 
-    test(function() { return isinstance(t, tuple([Number, Array])) == False });
-    test(function() { return isinstance(t, tuple([Array, Number])) == False });
+    test(function() { return py_builtins.isinstance(t, tuple([Number, Array])) == False });
+    test(function() { return py_builtins.isinstance(t, tuple([Array, Number])) == False });
 
-    test(function() { return isinstance(t, tuple([Number, String])) == False });
+    test(function() { return py_builtins.isinstance(t, tuple([Number, String])) == False });
 
-    test(function() { return isinstance(t, tuple) == True });
-    test(function() { return isinstance(t, list) == False });
-    test(function() { return isinstance(t, dict) == False });
+    test(function() { return py_builtins.isinstance(t, tuple) == True });
+    test(function() { return py_builtins.isinstance(t, list) == False });
+    test(function() { return py_builtins.isinstance(t, dict) == False });
 
-    test(function() { return isinstance(t, tuple([list, dict])) == False });
+    test(function() { return py_builtins.isinstance(t, tuple([list, dict])) == False });
 }
 
 function test_exceptions() {
@@ -671,7 +671,7 @@ function test_to_js() {
 
 function test_str() {
     var s = str("some testing string");
-    test(function() { return len(s) == 19 });
+    test(function() { return py_builtins.len(s) == 19 });
     test(function() { return s.PY$__getitem__(0) == "s" });
     test(function() { return s.PY$__getitem__(1) == "o" });
     test(function() { return s.PY$__getitem__(2) == "m" });
