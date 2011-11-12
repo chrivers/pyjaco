@@ -76,6 +76,13 @@ class Compiler(py2js.compiler.BaseCompiler):
         super(Compiler, self).__init__()
         self.future_division = False
 
+    def stack_destiny(self, names, skip):
+        for name in reversed(self.stack[:-skip]):
+            if name in names:
+                return name
+        else:
+            return False
+
     def visit_Name(self, node):
         name = self.name_map.get(node.id, node.id)
 
@@ -429,12 +436,20 @@ class Compiler(py2js.compiler.BaseCompiler):
         return "function(%s) {return %s;}" % (node_args, node_body)
 
     def visit_BoolOp(self, node):
+        assign = self.stack_destiny(["Assign", "FunctionDef", "Print", "Call"], 1) in ["Assign", "Print", "Call"]
+
         if isinstance(node.op, ast.And):
-            return "%s.%s" % (self.visit(node.values[0]), ".".join(["PY$__and__(%s)" % self.visit(val) for val in node.values[1:]]))
-        if isinstance(node.op, ast.Or):
-            return "%s.%s" % (self.visit(node.values[0]), ".".join(["PY$__or__(%s)" % self.visit(val) for val in node.values[1:]]))
+            op = " && "
+        elif isinstance(node.op, ast.Or):
+            op = " || "
         else:
             raise JSError("Unknown boolean operation %s" % node.op)
+
+        if assign:
+            var = self.alloc_var()
+            return "function() { %s; return %s; }()" % (op.join(["js(%s = %s)" % (var, self.visit(val)) for val in node.values]), var)
+        else:
+            return op.join(["js(%s)" % self.visit(val) for val in node.values])
 
     def visit_UnaryOp(self, node):
         if   isinstance(node.op, ast.USub  ): return "%s.PY$__neg__()"            % (self.visit(node.operand))
