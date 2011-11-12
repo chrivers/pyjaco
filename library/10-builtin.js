@@ -227,23 +227,6 @@ py_builtins.eq = function(a, b) {
         return bool(a === b);
 };
 
-py_builtins._int = function(value) {
-    if (typeof(value) === "number") {
-        return _int(parseInt(value, 10));
-    } else if (js(isinstance(value, _int))) {
-        return value;
-    } else if (js(isinstance(value, _float))) {
-        return _int(parseInt(value._obj, 10));
-    } else {
-        var s = value.toString();
-        if (s.match(/^[-+0-9]+$/)) {
-            return _int(parseInt(value, 10));
-        } else {
-            throw py_builtins.ValueError("Invalid integer: " + value);
-        }
-    }
-};
-
 py_builtins.__not__ = function(obj) {
    if (hasattr(obj, '__nonzero__')) {
        return py_builtins.bool(!js(obj.PY$__nonzero__()));
@@ -256,23 +239,6 @@ py_builtins.__not__ = function(obj) {
 
 py_builtins.__is__ = function(a, b) {
     return py_builtins.bool(a === b);
-};
-
-py_builtins._float = function(value) {
-    if (typeof(value) === "number") {
-        return _float(parseFloat(value));
-    } else if (js(isinstance(value, _int))) {
-        return _float(parseFloat(value._obj));
-    } else if (js(isinstance(value, _float))) {
-        return value;
-    } else {
-        var s = value.toString();
-        if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?$/)) {
-            return _float(parseFloat(value));
-        } else {
-            throw py_builtins.ValueError("Invalid float: " + value);
-        }
-    }
 };
 
 py_builtins.max = function(list) {
