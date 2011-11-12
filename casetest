@@ -19,5 +19,7 @@ while true; do
         cat 2
     fi
     read "dummy?Press enter to continue>"
-    clear
+    echo
+    echo "################################################################################"
+    echo
 done
