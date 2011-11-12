@@ -36,7 +36,7 @@ dict.PY$__init__ = function(args) {
         if (defined(args.PY$__iter__)) {
             items = {};
             iterate(iter(args), function(item) {
-                    key = js(item.PY$__getitem__(0));
+                    key = item.PY$__getitem__(0);
                     value = item.PY$__getitem__(1);
                     items[key] = value;
             });
@@ -53,7 +53,7 @@ dict.PY$__str__ = function () {
     var strings = [];
 
     for (var key in this._items) {
-        strings.push(js(str(key)) + ": " + js(str(this._items[key])));
+        strings.push(str(key) + ": " + str(this._items[key]));
     }
 
     return str("{" + strings.join(", ") + "}");
@@ -62,9 +62,9 @@ dict.PY$__str__ = function () {
 dict._js_ = function () {
     var items = {};
 
-    var _this_dict = this; // so that we can access it from within the closure:
+    var that = this; // so that we can access it from within the closure:
     iterate(iter(this), function(key) {
-        items[js(key)] = js(_this_dict.PY$__getitem__(key));
+        items[key] = js(that.PY$__getitem__(key));
     });
 
     return items;
@@ -158,10 +158,10 @@ dict.PY$values = function() {
 };
 
 dict.PY$update = function(other) {
-   var _this = this;
+   var that = this;
    iterate(iter(other),
      function(key) {
-        _this._items[js(key)] = other.PY$__getitem__(key);
+        that._items[key] = other.PY$__getitem__(key);
      }
    );
 };

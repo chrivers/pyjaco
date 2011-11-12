@@ -132,7 +132,7 @@ tuple.PY$__getitem__ = function(index) {
         var stop = inds[1];
         var step = inds[2];
         seq = [];
-        for (var i = js(start); i < js(stop); i += js(step)) {
+        for (var i = start; i < stop; i += step) {
             seq.push(this.PY$__getitem__(i));
         }
         return this.PY$__class__(seq);
