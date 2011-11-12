@@ -27,7 +27,7 @@
 
 var basestring = __inherit(object, "basestring");
 
-var __py2js_str;
+$PY.basestring = basestring;
 
 basestring.PY$__init__ = function(s) {
     if (!defined(s)) {
@@ -101,7 +101,7 @@ basestring.PY$__bool__ = function() {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj == s);
-    else if (js(isinstance(s, basestring))) {
+    else if (js(isinstance(s, $PY.basestring))) {
         return bool(this._obj == s._obj);
     }
     else
@@ -111,7 +111,7 @@ basestring.PY$__eq__ = function(s) {
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj > s);
-    else if (js(isinstance(s, basestring)))
+    else if (js(isinstance(s, $PY.basestring)))
         return bool(this._obj > s._obj);
     else
         return False;
@@ -120,7 +120,7 @@ basestring.PY$__gt__ = function(s) {
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj < s);
-    else if (js(isinstance(s, basestring)))
+    else if (js(isinstance(s, $PY.basestring)))
         return bool(this._obj < s._obj);
     else
         return False;
@@ -175,7 +175,7 @@ basestring.PY$__mul__ = function(c) {
 };
 
 basestring.PY$__add__ = function(c) {
-    return basestring(this._obj + c._obj);
+    return this.PY$__class__(this._obj + c._obj);
 };
 
 basestring.PY$__iadd__ = basestring.PY$__add__;
@@ -222,9 +222,9 @@ basestring.PY$find = function(s) {
 
 basestring.PY$rfind = function(s) {
     var rev = function(s) {
-        var a = list(__py2js_str(s));
+        var a = list(s.PY$__class__(s));
         a.PY$reverse();
-        a = __py2js_str("").PY$join(a);
+        a = s.PY$__class__("").PY$join(a);
         return a;
     };
     var a = rev(this);
@@ -236,7 +236,7 @@ basestring.PY$rfind = function(s) {
 };
 
 basestring.PY$join = function(s) {
-    return __py2js_str(js(s).join(js(this)));
+    return this.PY$__class__(js(s).join(js(this)));
 };
 
 basestring.PY$replace = function(old, _new, count) {
@@ -256,7 +256,7 @@ basestring.PY$replace = function(old, _new, count) {
         new_s = new_s.replace(old, _new);
         count -= 1;
     }
-    return __py2js_str(new_s);
+    return this.PY$__class__(new_s);
 };
 
 basestring.PY$lstrip = function(chars) {
@@ -296,12 +296,12 @@ basestring.PY$split = function(sep) {
     if (defined(sep)) {
         var r = list(this._obj.split(sep));
         r_new = list([]);
+        var that = this;
         iterate(iter(r), function(item) {
-                r_new.PY$append(basestring(item));
+                    r_new.PY$append(that.PY$__class__(item));
         });
         return r_new;
-    }
-    else {
+    } else {
         r_new = list([]);
         iterate(iter(this.PY$split(" ")), function(item) {
                 if (len(item) > 0)
@@ -316,11 +316,11 @@ basestring.PY$splitlines = function() {
 };
 
 basestring.PY$lower = function() {
-    return __py2js_str(this._obj.toLowerCase());
+    return this.PY$__class__(this._obj.toLowerCase());
 };
 
 basestring.PY$upper = function() {
-    return __py2js_str(this._obj.toUpperCase());
+    return this.PY$__class__(this._obj.toUpperCase());
 };
 
 basestring.PY$encode = function() {
@@ -333,6 +333,9 @@ basestring.PY$decode = function() {
 
 var str = __inherit(basestring, "str");
 var unicode = __inherit(basestring, "unicode");
+
+$PY.str = str;
+$PY.unicode = unicode;
 
 unicode.PY$__init__ = function(s) {
     if (!defined(s)) {
@@ -348,5 +351,3 @@ unicode.PY$__init__ = function(s) {
             this._obj = js(s);
     }
 };
-
-__py2js_str = str;
