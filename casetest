@@ -5,13 +5,10 @@ if [[ $1 == "" ]]; then
     exit 1
 fi
 
-./generate_library.py
-
-python $1 > res
-./pyjs.py -I $1 > 1
-
 while true; do
     ./generate_library.py
+    python $1 > res
+    ./pyjs.py -I $1 > 1
     if js 1 > 2; then
         if diff -u res 2; then
             echo "Files now match!"
@@ -22,4 +19,5 @@ while true; do
         cat 2
     fi
     read "dummy?Press enter to continue>"
+    clear
 done
