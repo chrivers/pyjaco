@@ -25,7 +25,7 @@
 
 var _float = __inherit(number, "float");
 
-var __py2js_float = _float;
+$PY.float = _float;
 
 _float.PY$__init__ = function(i) {
     this._obj = parseFloat(i);
