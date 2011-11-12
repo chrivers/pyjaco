@@ -510,7 +510,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         # Uses the Python builtin repr() of a string and the strip string type
         # from it. This is to ensure Javascriptness, even when they use things
         # like b"\\x00" or u"\\u0000".
-        return "__py2js_str(%s)" % repr(node.s).lstrip("urb")
+        return "str(%s)" % repr(node.s).lstrip("urb")
 
     def visit_Call(self, node):
         js = []
