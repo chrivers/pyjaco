@@ -165,6 +165,15 @@ basestring.PY$__delitem__ = function(index) {
     throw py_builtins.TypeError("'str' object doesn't support item deletion");
 };
 
+basestring.PY$__mul__ = function(c) {
+    var max = js(c);
+    var res = "";
+    for (var i = 0; i < max; i++) {
+        res += this._obj;
+    }
+    return basestring(res);
+};
+
 basestring.PY$__add__ = function(c) {
     return basestring(this._obj + c._obj);
 };
