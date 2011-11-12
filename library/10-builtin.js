@@ -67,7 +67,7 @@ var len = function(obj) {
 var dir = function(obj) {
     var res = list();
     for (var i in obj) {
-        res.PY$append(__py2js_str(i));
+        res.PY$append($PY.str(i));
     }
     return res;
 };
@@ -321,13 +321,13 @@ py_builtins.print = function(s) {
     } else {
         if (arguments.length <= 1) {
             if (defined(s)) {
-                print(__py2js_str(s));
+                print($PY.str(s));
             } else {
                 print("");
             }
         } else {
             var args = tuple(Array.prototype.slice.call(arguments, 0));
-            print(__py2js_str(" ").PY$join(args));
+            print($PY.str(" ").PY$join(args));
         }
     }
 };
