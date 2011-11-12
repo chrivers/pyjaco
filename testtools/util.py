@@ -111,7 +111,7 @@ def compile_and_run_file_test(file_path, file_name=None):
                 '"%(py_error)s"'
                 ) % self.templ
             compile_command = (
-                'python pyjs.py --include-builtins '
+                'python pyjs.py --import-builtins '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
                 ) % self.templ 
