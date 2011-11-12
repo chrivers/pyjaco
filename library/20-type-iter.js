@@ -27,6 +27,8 @@
 
 var iter = __inherit(object, "iter");
 
+$PY.iter = iter;
+
 iter.PY$__init__ = function(obj) {
     this._index = 0;
     if (!defined(obj)) {
