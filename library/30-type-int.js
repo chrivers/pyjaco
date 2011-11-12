@@ -25,7 +25,7 @@
 
 var _int = __inherit(number, "int");
 
-var __py2js_int = _int;
+$PY.int = _int;
 
 _int.PY$__init__ = function(i) {
     if (arguments.length == 2) {
@@ -130,7 +130,6 @@ _int.PY$__div__ = function(x) {
 };
 
 _int.PY$__idiv__      = _int.PY$__div__;
-
 _int.PY$__ilshift__   = _int.PY$__lshift__;
 _int.PY$__irshift__   = _int.PY$__rshift__;
 _int.PY$__ibitand__   = _int.PY$__bitand__;
