@@ -116,14 +116,32 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
-        for arg, default in zip(node.args.args, defaults):
+        if node.args.kwarg:
+            kwarg_name = node.args.kwarg
+        else:
+            kwarg_name = "__kwargs"
+
+        for i, arg in enumerate(node.args.args):
+            default = defaults[i]
+
+            if self._class_name:
+                if not is_static:
+                    if i == 0:
+                        continue
+                    else:
+                        i -= 1
+
             if not isinstance(arg, ast.Name):
                 raise JSError("tuples in argument list are not supported")
 
             js_args.append(arg.id)
 
-            if default is not None:
-                js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(def)s; };" % { 'id': arg.id, 'def': self.visit(default) })
+            if default == None:
+                default = "undefined"
+            else:
+                default = self.visit(default)
+            js_defaults.append("var %(id)s = arguments[%(i)d];" % {"i": i, "id": arg.id })
+            js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(kwarg)s.PY$get('%(id)s', %(def)s); };" % { 'id': arg.id, 'def': default, 'kwarg': kwarg_name })
 
         if node.name == "__getattr__":
             js_defaults.append("if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id })
@@ -134,41 +152,26 @@ class Compiler(py2js.compiler.BaseCompiler):
         self._scope = [arg.id for arg in node.args.args]
 
         if self._class_name:
-            if not is_static:
-                if not (js_args[0] == "self"):
-                    raise NotImplementedError("The first argument must be 'self'.")
-                del js_args[0]
-            js = ["function(%s) {" % (", ".join(js_args))]
+            js = ["function() {"]
         else:
-            js = ["var %s = function(%s) {" % (node.name, ", ".join(js_args))]
+            js = ["var %s = function() {" % node.name]
 
+        js.extend(self.indent(["var self = this;"]))
+        js.extend(self.indent(["var %s = __kwargs_get(arguments);" % kwarg_name]))
         js.extend(self.indent(js_defaults))
 
         if node.args.vararg:
+            l = len(node.args.args)
             if self._class_name:
-                l = len(node.args.args)-1
+                l -= 1
+            if node.args.kwarg:
+                end = ", arguments.length-1"
             else:
-                l = len(node.args.args)
-            js.append("var %s = tuple(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, l))
-
-        if node.args.kwarg:
-            js.append("var %s = dict(arguments.callee.__kw_args);" % node.args.kwarg)
-
-        js.extend(self.indent(["var self = this;"]))
+                end = ""
+            js.append("var %s = tuple(Array.prototype.slice.call(arguments, %s%s));" % (node.args.vararg, l, end))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
-
-            # #If method is static, we also add it directly to the class
-            # if is_static:
-            #     js.append("%s.%s = %s.prototype.%s;" % \
-            #             (self._class_name, node.name, self._class_name, node.name))
-            # #Otherwise, we wrap it to take 'self' into account
-            # else:
-            #     func_name = node.name
-            #     js.append("%s.%s = function() {" % (self._class_name, func_name))
-            #     js.append("    %s.prototype.%s.apply(arguments[0],Array.slice(arguments,1));"% (self._class_name, func_name))
-            #     js.append("}")
 
         self._scope = []
         return js + ["};"]
@@ -521,22 +524,15 @@ class Compiler(py2js.compiler.BaseCompiler):
             keywords = []
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
-            kwargs = "{" + ", ".join(keywords) + "}"
-            assign = "%s.__kw_args = %s;" % (func, kwargs)
-            if compound:
-                js.append("function() {%s return " % assign)
-            else:
-                js.append(assign)
+            kwargs = ["__kwargs_make({%s})" % ", ".join(keywords)]
+        else:
+            kwargs = []
 
-        js_args = ",".join([ self.visit(arg) for arg in node.args ])
+        js_args = ", ".join([ self.visit(arg) for arg in node.args ] + kwargs)
 
         js.append("%s(%s)" % (func, js_args))
 
-        if node.keywords and compound:
-            js.append("}()")
-            return "".join(js)
-        else:
-            return "\n".join(js)
+        return "\n".join(js)
 
     def visit_Raise(self, node):
         assert node.inst is None
