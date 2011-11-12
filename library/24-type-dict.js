@@ -41,9 +41,14 @@ dict.PY$__init__ = function(args) {
                     items[key] = value;
             });
             this._items = items;
-        }
-        else
+        } else if (typeof args.length === 'undefined') {
             this._items = args;
+        } else {
+            this._items = {};
+            for (var i = 0; i < args.length / 2; i++) {
+                this._items[args[i*2]] = args[i*2+1];
+            }
+        }
     } else {
         this._items = {};
     }
