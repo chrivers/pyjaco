@@ -206,15 +206,6 @@ var isinstance = function(obj, cls) {
     }
 };
 
-py_builtins.eq = function(a, b) {
-    if ((a != null) && defined(a.PY$__eq__))
-        return a.PY$__eq__(b);
-    else if ((b != null) && defined(b.PY$__eq__))
-        return b.PY$__eq__(a);
-    else
-        return bool(a === b);
-};
-
 py_builtins.__not__ = function(obj) {
    if (hasattr(obj, '__nonzero__')) {
        return bool(!js(obj.PY$__nonzero__()));

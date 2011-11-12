@@ -115,7 +115,7 @@ tuple.PY$__iter__ = function() {
 
 tuple.PY$__contains__ = function(item) {
     for (var index in this._items) {
-        if (js(py_builtins.eq(item, this._items[index]))) {
+        if (js(this._items[index].PY$__eq__(item))) {
             return True;
         }
     }
