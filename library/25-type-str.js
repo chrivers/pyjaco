@@ -83,7 +83,7 @@ basestring.PY$__hash__ = function () {
 };
 
 basestring.PY$__len__ = function() {
-    return _int(this._obj.length);
+    return int(this._obj.length);
 };
 
 basestring.PY$__iter__ = function() {
@@ -209,7 +209,7 @@ basestring.PY$index = function(value, start, end) {
         }
 
         if (_value == value) {
-            return _int(i);
+            return int(i);
         }
     }
 

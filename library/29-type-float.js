@@ -23,25 +23,25 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var _float = __inherit(number, "float");
+var float = __inherit(number, "float");
 
-$PY.float = _float;
+$PY.float = float;
 
-_float.PY$__init__ = function(i) {
+float.PY$__init__ = function(i) {
     this._obj = parseFloat(i);
 };
 
-_float.PY$_isnumeric_float = true;
+float.PY$_isnumericfloat = true;
 
-_float.PY$__float__ = function () {
+float.PY$__float__ = function () {
     return this;
 };
 
-_float.PY$__int__ = function () {
-    return _int(parseInt(this._obj));
+float.PY$__int__ = function () {
+    return int(parseInt(this._obj));
 };
 
-_float.PY$__str__ = function () {
+float.PY$__str__ = function () {
     if (this._obj.toString().indexOf(".") === -1) {
         return str(this._obj + ".0");
     } else {
@@ -49,25 +49,25 @@ _float.PY$__str__ = function () {
     }
 };
 
-_float.PY$__repr__ = _float.PY$__str__;
+float.PY$__repr__ = float.PY$__str__;
 
-_float.PY$__hash__ = function () {
+float.PY$__hash__ = function () {
     return this._obj;
 };
 
-_float.PY$__div__ = function(x) {
+float.PY$__div__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot divide number and non-number");
     if (x._obj === 0)
         throw py_builtins.ZeroDivisionError("float division by zero");
-    return _float((0.0 + this._obj) / (0.0 + x._obj));
+    return float((0.0 + this._obj) / (0.0 + x._obj));
 };
 
-_float.PY$__pow__ = function(x) {
+float.PY$__pow__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot exponentiate number and non-number");
-    return _float(Math.pow(this._obj, x._obj));
+    return float(Math.pow(this._obj, x._obj));
 };
 
-_float.PY$__floordiv__ = _float.PY$__div__;
-_float.PY$__ifloordiv__ = _float.PY$__div__;
+float.PY$__floordiv__ = float.PY$__div__;
+float.PY$__ifloordiv__ = float.PY$__div__;

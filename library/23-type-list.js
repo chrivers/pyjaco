@@ -54,7 +54,7 @@ list.PY$__contains__ = tuple.PY$__contains__;
 list.PY$__getitem__ = tuple.PY$__getitem__;
 
 list.PY$__setitem__ = function(index, value) {
-    if (typeof(index) === 'number') index = _int(index);
+    if (typeof(index) === 'number') index = int(index);
 
     if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(len(this)))) {
         this._items[index.PY$__int__()] = value;
@@ -129,7 +129,7 @@ list.PY$append = function(value) {
     if (typeof(value) === 'string') {
         this._items.push(str(value));
     } else if (typeof(value) === 'number') {
-        this._items.push(_int(value));
+        this._items.push(int(value));
     } else {
         this._items.push(value);
     }

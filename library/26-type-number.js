@@ -91,7 +91,7 @@ number.PY$__le__ = function(x) {
 number.PY$__mul__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot multiply number and non-number");
-    if (this.PY$_isnumeric_float || (! x.PY$_isnumeric_float))
+    if (this.PY$_isnumericfloat || (! x.PY$_isnumericfloat))
         return this.PY$__class__(this._obj * x._obj);
     else
         return x.PY$__class__(this._obj * x._obj);
@@ -100,7 +100,7 @@ number.PY$__mul__ = function(x) {
 number.PY$__add__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot add number and non-number");
-    if (this.PY$_isnumeric_float || (! x.PY$_isnumeric_float))
+    if (this.PY$_isnumericfloat || (! x.PY$_isnumericfloat))
         return this.PY$__class__(this._obj + x._obj);
     else
         return x.PY$__class__(this._obj + x._obj);
@@ -109,7 +109,7 @@ number.PY$__add__ = function(x) {
 number.PY$__div__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot divide number and non-number");
-    if (this.PY$_isnumeric_float || (! x.PY$_isnumeric_float))
+    if (this.PY$_isnumericfloat || (! x.PY$_isnumericfloat))
         return this.PY$__class__(this._obj / x._obj);
     else
         return x.PY$__class__(this._obj / x._obj);
@@ -118,7 +118,7 @@ number.PY$__div__ = function(x) {
 number.PY$__sub__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot subtract number and non-number");
-    if (this.PY$_isnumeric_float || (! x.PY$_isnumeric_float))
+    if (this.PY$_isnumericfloat || (! x.PY$_isnumericfloat))
         return this.PY$__class__(this._obj - x._obj);
     else
         return x.PY$__class__(this._obj - x._obj);
@@ -127,7 +127,7 @@ number.PY$__sub__ = function(x) {
 number.PY$__pow__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot exponentiate number and non-number");
-    if (this.PY$_isnumeric_float || (! x.PY$_isnumeric_float))
+    if (this.PY$_isnumericfloat || (! x.PY$_isnumericfloat))
         return this.PY$__class__(Math.pow(this._obj, x._obj));
     else
         return x.PY$__class__(Math.pow(this._obj, x._obj));

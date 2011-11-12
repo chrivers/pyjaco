@@ -39,7 +39,7 @@ tuple.PY$__init__ = function(seq) {
         this._items = [];
         iterate(iter(seq), function(elm) {
                     if (typeof(elm) == 'number')
-                        that._items.push(_int(elm));
+                        that._items.push(int(elm));
                     else if (typeof(elm) == 'string')
                         that._items.push(str(elm));
                     else
@@ -106,7 +106,7 @@ tuple.PY$__hash__ = function () {
 };
 
 tuple.PY$__len__ = function() {
-    return _int(this._items.length);
+    return int(this._items.length);
 };
 
 tuple.PY$__iter__ = function() {
@@ -124,7 +124,7 @@ tuple.PY$__contains__ = function(item) {
 };
 
 tuple.PY$__getitem__ = function(index) {
-    if (typeof(index) === 'number') index = _int(index);
+    if (typeof(index) === 'number') index = int(index);
     var seq;
     if (js(isinstance(index, slice))) {
         var s = index;
@@ -138,8 +138,8 @@ tuple.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else {
-        if (!js(isinstance(index, _int)))
-            index = _int(index);
+        if (!js(isinstance(index, int)))
+            index = int(index);
 
         if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(len(this)))) {
             return this._items[index.PY$__int__()];

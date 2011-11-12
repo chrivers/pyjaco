@@ -87,7 +87,7 @@ dict.PY$__len__ = function() {
     for (var key in this._items)
         count += 1;
 
-    return _int(count);
+    return int(count);
 };
 
 dict.PY$__iter__ = function() {
