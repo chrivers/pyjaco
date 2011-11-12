@@ -40,7 +40,7 @@ function iterate(seq, func) {
         try {
             func(seq.PY$next());
         } catch (exc) {
-            if (js(isinstance(exc, py_builtins.StopIteration))) {
+            if (js(py_builtins.isinstance(exc, py_builtins.StopIteration))) {
                 break;
             } else {
                 throw exc;

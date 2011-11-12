@@ -54,7 +54,7 @@ tuple.PY$__str__ = function () {
     } else if (js(this.PY$__len__()) == 1) {
         return str("(" + str(this._items[0]) + ",)");
     } else {
-        var items = map(function (i) {return str(i);}, this._items);
+        var items = py_builtins.map(function (i) {return str(i);}, this._items);
         return str("(" + str(", ").PY$join(items) + ")");
     }
 };
@@ -63,17 +63,17 @@ tuple.PY$__repr__ = tuple.PY$__str__;
 
 tuple.PY$__eq__ = function (other) {
     if (other.PY$__class__ == this.PY$__class__) {
-        if (js(len(this)) != js(len(other))) {
+        if (js(py_builtins.len(this)) != js(py_builtins.len(other))) {
             return False;
         }
-        for (var i = 0; i < js(len(this)); i++) {
+        for (var i = 0; i < js(py_builtins.len(this)); i++) {
             if (js(this._items[i].PY$__ne__(other._items[i]))) {
                 return False;
             }
         }
         return True;
         // This doesn't take into account hash collisions:
-        //return hash(this) == hash(other)
+        //return py_builtins.hashthis) == hash(other)
     } else {
         return False;
     }
@@ -94,7 +94,7 @@ tuple.PY$__hash__ = function () {
     var length = js(this.PY$__len__());
 
     for (var index in this._items) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ hash(this._items[index]);
+        value = ((1000003*value) & 0xFFFFFFFF) ^ py_builtins.hash(this._items[index]);
         value = value ^ length;
     }
 
@@ -126,9 +126,9 @@ tuple.PY$__contains__ = function(item) {
 tuple.PY$__getitem__ = function(index) {
     if (typeof(index) === 'number') index = int(index);
     var seq;
-    if (js(isinstance(index, slice))) {
+    if (js(py_builtins.isinstance(index, slice))) {
         var s = index;
-        var inds = js(s.PY$indices(len(this)));
+        var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
@@ -138,13 +138,13 @@ tuple.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else {
-        if (!js(isinstance(index, int)))
+        if (!js(py_builtins.isinstance(index, int)))
             index = int(index);
 
-        if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(len(this)))) {
+        if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(py_builtins.len(this)))) {
             return this._items[index.PY$__int__()];
-        } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(len(this).PY$__neg__()))) {
-            return this._items[index.PY$__add__(len(this)).PY$__int__()];
+        } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(py_builtins.len(this).PY$__neg__()))) {
+            return this._items[index.PY$__add__(py_builtins.len(this)).PY$__int__()];
         } else {
             throw py_builtins.IndexError("list index out of range");
         }

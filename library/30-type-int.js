@@ -43,7 +43,7 @@ int.PY$__init__ = function(value) {
 var __int_real__ = int.PY$__create__;
 
 int.PY$__create__ = function(obj) {
-    if (js(isinstance(obj, object)) && (typeof obj.PY$__int__ != 'undefined')) {
+    if (js(py_builtins.isinstance(obj, object)) && (typeof obj.PY$__int__ != 'undefined')) {
         return obj.PY$__int__();
     } else {
         return __int_real__(obj);

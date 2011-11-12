@@ -310,7 +310,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("  }")
 
         js.append("} catch (%s) {" % exc_dummy)
-        js.append("  if (!js(isinstance(%s, py_builtins.StopIteration)))" % exc_dummy)
+        js.append("  if (!js(py_builtins.isinstance(%s, py_builtins.StopIteration)))" % exc_dummy)
         js.append("    throw %s;" % exc_dummy)
         if node.orelse:
             js.append("  else {")
@@ -382,7 +382,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 pre = ""
             if n.type:
                 if isinstance(n.type, ast.Name):
-                    js.extend(self.indent(["%sif (js(isinstance(%s, %s))) {" % (pre, err, self.visit(n.type))]))
+                    js.extend(self.indent(["%sif (js(py_builtins.isinstance(%s, %s))) {" % (pre, err, self.visit(n.type))]))
                 else:
                     raise JSError("Catching non-simple exceptions not supported")
             else:
@@ -582,7 +582,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         body = self.visit(node.elt)
         iterexp = self.visit(node.generators[0].iter)
-        return "map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, body, iterexp)
+        return "py_builtins.map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, body, iterexp)
 
     def visit_GeneratorExp(self, node):
         if not len(node.generators) == 1:
@@ -590,7 +590,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         if not isinstance(node.generators[0].target, ast.Name):
             raise JSError("Non-simple targets in generator expressions not supported")
 
-        return "map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
+        return "py_builtins.map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
 
     def visit_Slice(self, node):
         if node.lower and node.upper and node.step:

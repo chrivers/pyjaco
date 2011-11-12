@@ -177,7 +177,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("    try {")
         js.append("        %s = %s.next();" % (for_target, iter_dummy))
         js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
+        js.append("        if (py_builtins.isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
         js.append("            break;")
         js.append("        } else {")

@@ -47,7 +47,7 @@ basestring.PY$__init__ = function(s) {
 var __basestring_real__ = basestring.PY$__create__;
 
 basestring.PY$__create__ = function(obj) {
-    if (js(isinstance(obj, basestring))) {
+    if (js(py_builtins.isinstance(obj, basestring))) {
         return obj;
     } else {
         return __basestring_real__(obj);
@@ -101,7 +101,7 @@ basestring.PY$__bool__ = function() {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj == s);
-    else if (js(isinstance(s, $PY.basestring))) {
+    else if (js(py_builtins.isinstance(s, $PY.basestring))) {
         return bool(this._obj == s._obj);
     }
     else
@@ -111,7 +111,7 @@ basestring.PY$__eq__ = function(s) {
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj > s);
-    else if (js(isinstance(s, $PY.basestring)))
+    else if (js(py_builtins.isinstance(s, $PY.basestring)))
         return bool(this._obj > s._obj);
     else
         return False;
@@ -120,7 +120,7 @@ basestring.PY$__gt__ = function(s) {
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj < s);
-    else if (js(isinstance(s, $PY.basestring)))
+    else if (js(py_builtins.isinstance(s, $PY.basestring)))
         return bool(this._obj < s._obj);
     else
         return False;
@@ -138,9 +138,9 @@ basestring.PY$__contains__ = function(item) {
 
 basestring.PY$__getitem__ = function(index) {
     var seq;
-    if (js(isinstance(index, slice))) {
+    if (js(py_builtins.isinstance(index, slice))) {
         var s = index;
-        var inds = js(s.PY$indices(len(this)));
+        var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
@@ -149,10 +149,10 @@ basestring.PY$__getitem__ = function(index) {
             seq = seq + js(this.PY$__getitem__(i));
         }
         return this.PY$__class__(seq);
-    } else if ((index >= 0) && (index < js(len(this))))
+    } else if ((index >= 0) && (index < js(py_builtins.len(this))))
         return this._obj[index];
-    else if ((index < 0) && (index >= -js(len(this))))
-        return this._obj[index+js(len(this))];
+    else if ((index < 0) && (index >= -js(py_builtins.len(this))))
+        return this._obj[index+js(py_builtins.len(this))];
     else
         throw py_builtins.IndexError("string index out of range");
 };
@@ -232,7 +232,7 @@ basestring.PY$rfind = function(s) {
     var r = a.PY$find(b);
     if (r == -1)
         return r;
-    return len(this) - len(b) - r;
+    return py_builtins.len(this) - py_builtins.len(b) - r;
 };
 
 basestring.PY$join = function(s) {
@@ -260,27 +260,27 @@ basestring.PY$replace = function(old, _new, count) {
 };
 
 basestring.PY$lstrip = function(chars) {
-    if (js(len(this)) === 0)
+    if (js(py_builtins.len(this)) === 0)
         return this;
     if (defined(chars))
         chars = tuple(chars);
     else
         chars = tuple(["\n", "\t", " "]);
     var i = 0;
-    while ((i < js(len(this))) && (js(chars.PY$__contains__(this.PY$__getitem__(i))))) {
+    while ((i < js(py_builtins.len(this))) && (js(chars.PY$__contains__(this.PY$__getitem__(i))))) {
         i += 1;
     }
     return this.PY$__getitem__(slice(i, null));
 };
 
 basestring.PY$rstrip = function(chars) {
-    if (js(len(this)) === 0)
+    if (js(py_builtins.len(this)) === 0)
         return this;
     if (defined(chars))
         chars = tuple(chars);
     else
         chars = tuple(["\n", "\t", " "]);
-    var i = js(len(this))-1;
+    var i = js(py_builtins.len(this))-1;
     while ((i >= 0) && (js(chars.PY$__contains__(this.PY$__getitem__(i))))) {
         i -= 1;
     }
@@ -304,7 +304,7 @@ basestring.PY$split = function(sep) {
     } else {
         r_new = list([]);
         iterate(iter(this.PY$split(" ")), function(item) {
-                if (len(item) > 0)
+                if (py_builtins.len(item) > 0)
                     r_new.PY$append(item);
         });
         return r_new;

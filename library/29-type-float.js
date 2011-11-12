@@ -39,7 +39,7 @@ float.PY$__init__ = function(value) {
 var __float_real__ = float.PY$__create__;
 
 float.PY$__create__ = function(obj) {
-    if (js(isinstance(obj, object)) && (typeof obj.PY$__float__ != 'undefined')) {
+    if (js(py_builtins.isinstance(obj, object)) && (typeof obj.PY$__float__ != 'undefined')) {
         return obj.PY$__float__();
     } else {
         return __float_real__(obj);
