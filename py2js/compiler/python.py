@@ -552,7 +552,10 @@ class Compiler(py2js.compiler.BaseCompiler):
                 raise JSError("Unknown exception type")
 
     def visit_Attribute(self, node):
-        return """%s.PY$__getattr__("%s")""" % (self.visit(node.value), node.attr)
+        if node.attr.startswith("__"):
+            return """%s.PY$%s""" % (self.visit(node.value), node.attr)
+        else:
+            return """%s.PY$__getattr__("%s")""" % (self.visit(node.value), node.attr)
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
