@@ -103,7 +103,7 @@ object.PY$__repr__ = function() {
 };
 
 object.PY$__eq__ = function(other) {
-    return py_builtins.bool(this === other);
+    return bool(this === other);
 };
 
 object.PY$__str__ = object.PY$__repr__;

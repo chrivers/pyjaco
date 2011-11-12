@@ -95,7 +95,7 @@ basestring.PY$__mod__ = function(args) {
 };
 
 basestring.PY$__bool__ = function() {
-    return py_builtins.bool(this._obj);
+    return bool(this._obj);
 };
 
 basestring.PY$__eq__ = function(s) {

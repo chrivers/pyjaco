@@ -49,7 +49,7 @@ number._js_ = function () {
 };
 
 number.PY$__bool__ = function() {
-    return py_builtins.bool(this._obj);
+    return bool(this._obj);
 };
 
 number.PY$__pos__ = function() {
@@ -61,31 +61,31 @@ number.PY$__neg__ = function() {
 };
 
 number.PY$__nonzero__ = function() {
-    return py_builtins.bool(this._obj != 0);
+    return bool(this._obj != 0);
 };
 
 number.PY$__gt__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot compare number and non-number");
-    return py_builtins.bool(this._obj > x._obj);
+    return bool(this._obj > x._obj);
 };
 
 number.PY$__lt__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot compare number and non-number");
-    return py_builtins.bool(this._obj < x._obj);
+    return bool(this._obj < x._obj);
 };
 
 number.PY$__ge__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot compare number and non-number");
-    return py_builtins.bool(this._obj >= x._obj);
+    return bool(this._obj >= x._obj);
 };
 
 number.PY$__le__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot compare number and non-number");
-    return py_builtins.bool(this._obj <= x._obj);
+    return bool(this._obj <= x._obj);
 };
 
 number.PY$__mul__ = function(x) {

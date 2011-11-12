@@ -206,18 +206,6 @@ var isinstance = function(obj, cls) {
     }
 };
 
-py_builtins.bool = function(a) {
-    if ((a !== null) && defined(a.PY$__bool__)) {
-        return a.PY$__bool__();
-    } else {
-        if (a) {
-            return True;
-        } else {
-            return False;
-        }
-    }
-};
-
 py_builtins.eq = function(a, b) {
     if ((a != null) && defined(a.PY$__eq__))
         return a.PY$__eq__(b);
@@ -229,16 +217,16 @@ py_builtins.eq = function(a, b) {
 
 py_builtins.__not__ = function(obj) {
    if (hasattr(obj, '__nonzero__')) {
-       return py_builtins.bool(!js(obj.PY$__nonzero__()));
+       return bool(!js(obj.PY$__nonzero__()));
    } else if (hasattr(obj, '__len__')) {
-       return py_builtins.bool(js(obj.PY$__len__()) === 0);
+       return bool(js(obj.PY$__len__()) === 0);
    } else {
-       return py_builtins.bool(!js(obj));
+       return bool(!js(obj));
    }
 };
 
 py_builtins.__is__ = function(a, b) {
-    return py_builtins.bool(a === b);
+    return bool(a === b);
 };
 
 py_builtins.max = function(list) {
@@ -301,7 +289,7 @@ py_builtins.print = function(s) {
 py_builtins.filter = function(f, l) {
    var res = list();
    iterate(iter(l), function(item) {
-     if (py_builtins.bool(f(item))) {
+     if (js(bool(f(item)))) {
        res.PY$append(item);
      }
    });
