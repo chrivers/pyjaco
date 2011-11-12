@@ -27,8 +27,9 @@
 
 var tuple = __inherit(object, "tuple");
 
-tuple.PY$__init__ = function(seq) {
+$PY.tuple = tuple;
 
+tuple.PY$__init__ = function(seq) {
     if (arguments.length > 1) {
         throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (!defined(seq)) {
