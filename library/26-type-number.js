@@ -25,7 +25,7 @@
 
 var number = __inherit(object, "int");
 
-var __py2js_number = number;
+$PY.number = number;
 
 number.PY$_isnumeric_ = true;
 
