@@ -25,11 +25,11 @@
 
 var none = __inherit(object, "none");
 
+$PY.none = none;
+
 none.PY$__init__ = function() {
     this._obj = null;
 };
-
-var __py2jsnone = none;
 
 none.PY$__str__ = function () {
     return str("None");
