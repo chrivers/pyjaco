@@ -27,6 +27,8 @@
 
 var slice = __inherit(object, "slice");
 
+$PY.slice = slice;
+
 slice.PY$__init__ = function(start, stop, step) {
     if (!defined(stop) && !defined(step))
     {
