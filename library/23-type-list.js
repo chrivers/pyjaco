@@ -27,6 +27,8 @@
 
 var list = __inherit(object, "list");
 
+$PY.list = list;
+
 list.PY$__init__ = tuple.PY$__init__;
 
 list.PY$__str__ = function () {
