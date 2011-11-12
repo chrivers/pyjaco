@@ -27,6 +27,8 @@
 
 var dict = __inherit(object, "dict");
 
+$PY.dict = dict;
+
 dict.PY$__init__ = function(args) {
     var items;
     var key;
