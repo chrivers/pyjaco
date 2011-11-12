@@ -123,10 +123,10 @@ class Compiler(py2js.compiler.BaseCompiler):
             js_args.append(arg.id)
 
             if default is not None:
-                js_defaults.append("%(id)s = typeof(%(id)s) != 'undefined' ? %(id)s : %(def)s;" % { 'id': arg.id, 'def': self.visit(default) })
+                js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(def)s; };" % { 'id': arg.id, 'def': self.visit(default) })
 
         if node.name == "__getattr__":
-            js_defaults.append("%(id)s = typeof(%(id)s) === 'string' ? str(%(id)s) : %(id)s;" % { 'id': node.args.args[1].id })
+            js_defaults.append("if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id })
 
         if node.decorator_list and not is_static and not is_javascript:
             raise JSError("decorators are not supported")
