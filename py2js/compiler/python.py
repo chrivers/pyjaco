@@ -500,9 +500,9 @@ class Compiler(py2js.compiler.BaseCompiler):
             if (0 <= node.n <= 9):
                 return "$c%s" % str(node.n)
             else:
-                return "_int(%s)" % str(node.n)
+                return "int(%s)" % str(node.n)
         elif isinstance(node.n, float):
-            return "_float(%s)" % node.n
+            return "float(%s)" % node.n
         else:
             raise JSError("Unknown numeric type")
 

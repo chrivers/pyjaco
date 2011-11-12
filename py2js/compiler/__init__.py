@@ -36,8 +36,6 @@ class JSError(Exception):
 class BaseCompiler(object):
 
     name_map = {
-        'int'   : '_int',
-        'float' : '_float',
         'super' : '__super',
         'default' : '__default',
         'py_builtins' : '__py_builtins'
@@ -57,8 +55,8 @@ class BaseCompiler(object):
         'KeyError',
         'StopIteration',
 
-        '_int',
-        '_float',
+        'int',
+        'float',
         'max',
         'min',
         'sum',
