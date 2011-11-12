@@ -33,6 +33,7 @@ import py2js
 import inspect 
 
 class JSVar(object):
+    """Decorates a function by marking an identifier as belonging to JavaScript"""
 
     def __init__(self, *names):
         self.names = [x.split(".") for x in names]

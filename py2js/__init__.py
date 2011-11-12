@@ -34,9 +34,10 @@ import ast
 import inspect
 
 def compile_string(script, jsvars = None):
-    c = Compiler(jsvars)
-    c.append_string(script)
-    return str(c)
+    """Compile a python expression into javascript"""
+    comp = Compiler(jsvars)
+    comp.append_string(script)
+    return str(comp)
 
 class Compiler(object):
     """
