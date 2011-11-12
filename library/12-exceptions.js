@@ -37,10 +37,6 @@ Exception.PY$__str__ = function() {
     return str(this.PY$message);
 };
 
-Exception.toString = function() {
-    return js(this.PY$__str__());
-};
-
 py_builtins.PY$__exceptions__ = [
     'NotImplementedError',
     'ZeroDivisionError',

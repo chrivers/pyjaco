@@ -113,7 +113,7 @@ list.PY$index = function(value, start, end) {
         }
 
         if (defined(_value.PY$__eq__)) {
-            if (js(_value.PY$__eq__(value)))
+            if (_value.PY$__eq__(value) == true)
                 return i;
         }
     }
@@ -167,7 +167,7 @@ list.PY$sort = function() {
         reverse = js(arguments[2]);
 
     var mcmp;
-    if (js(reverse)) {
+    if (reverse == true) {
         mcmp = function(a, b) { return cmp(b, a); };
     } else {
         mcmp = function(a, b) { return cmp(a, b); };

@@ -114,13 +114,17 @@ object.PY$__ne__ = function (other) {
 
 object.PY$__cmp__ = function (y) {
     var g = this.PY$__gt__(y);
-    if (js(g)) {
-        return 1;
+    if (g == true) {
+        return $c1;
     } else {
-        return -js(this.PY$__lt__(y));
+        return int(-js(this.PY$__lt__(y)));
     }
 };
 
 object.toString = function () {
     return js(this.PY$__str__());
+};
+
+object.valueOf = function () {
+    return js(this);
 };

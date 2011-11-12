@@ -55,7 +55,7 @@ py_builtins.delattr = function(obj, name) {
 };
 
 py_builtins.hash = function(obj) {
-    if (js(py_builtins.hasattr(obj, '__hash__'))) {
+    if (py_builtins.hasattr(obj, '__hash__') == true) {
         return obj.PY$__hash__();
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
@@ -65,7 +65,7 @@ py_builtins.hash = function(obj) {
 };
 
 py_builtins.len = function(obj) {
-    if (js(py_builtins.hasattr(obj, '__len__'))) {
+    if (py_builtins.hasattr(obj, '__len__') == true) {
         return obj.PY$__len__();
     } else {
         throw py_builtins.AttributeError('__len__');
@@ -83,9 +83,9 @@ py_builtins.dir = function(obj) {
 py_builtins.repr = function(obj) {
     if (!defined(obj)) {
         return "None";
-    } else if (js(py_builtins.hasattr(obj, '__repr__'))) {
+    } else if (py_builtins.hasattr(obj, '__repr__') == true) {
         return obj.PY$__repr__(obj);
-    } else if (js(py_builtins.hasattr(obj, '__str__'))) {
+    } else if (py_builtins.hasattr(obj, '__str__') == true) {
         return obj.PY$__str__(obj);
     } else if (typeof obj.toString != 'undefined') {
         return obj.toString();
@@ -171,7 +171,7 @@ py_builtins.zip = function() {
             try {
                 var value = iters.PY$__getitem__(i).PY$next();
             } catch (exc) {
-                if (js(py_builtins.isinstance(exc, py_builtins.StopIteration))) {
+                if (py_builtins.isinstance(exc, py_builtins.StopIteration) == true) {
                     return items;
                 } else {
                     throw exc;
@@ -190,14 +190,14 @@ py_builtins.isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
         var length = cls.PY$__len__();
 
-        if (js(length.PY$__eq__($c0))) {
+        if (length.PY$__eq__($c0) == true) {
             return False;
         }
 
         for (var i = 0; i < length; i++) {
             var _cls = cls.PY$__getitem__(i);
 
-            if (js(py_builtins.isinstance(obj, _cls))) {
+            if (py_builtins.isinstance(obj, _cls) == true) {
                 return True;
             }
         }
@@ -215,9 +215,9 @@ py_builtins.isinstance = function(obj, cls) {
 };
 
 py_builtins.__not__ = function(obj) {
-   if (js(py_builtins.hasattr(obj, '__nonzero__'))) {
+   if (py_builtins.hasattr(obj, '__nonzero__') == true) {
        return bool(!js(obj.PY$__nonzero__()));
-   } else if (js(py_builtins.hasattr(obj, '__len__'))) {
+   } else if (py_builtins.hasattr(obj, '__len__') == true) {
        return bool(js(obj.PY$__len__()) === 0);
    } else {
        return bool(!js(obj));
@@ -229,7 +229,7 @@ py_builtins.__is__ = function(a, b) {
 };
 
 py_builtins.max = function(list) {
-    if (js(py_builtins.len(list).PY$__eq__($c0)))
+    if (py_builtins.len(list).PY$__eq__($c0) == true)
         throw py_builtins.ValueError("max() arg is an empty sequence");
     else {
         var result = null;
@@ -244,7 +244,7 @@ py_builtins.max = function(list) {
 };
 
 py_builtins.min = function(list) {
-    if (js(py_builtins.len(list).PY$__eq__($c0)))
+    if (py_builtins.len(list).PY$__eq__($c0) == true)
         throw py_builtins.ValueError("min() arg is an empty sequence");
     else {
         var result = null;
@@ -288,7 +288,7 @@ py_builtins.print = function(s) {
 py_builtins.filter = function(f, l) {
    var res = list();
    iterate(iter(l), function(item) {
-     if (js(bool(f(item)))) {
+     if (bool(f(item)) == true) {
        res.PY$append(item);
      }
    });

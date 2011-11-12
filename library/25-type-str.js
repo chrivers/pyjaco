@@ -47,7 +47,7 @@ basestring.PY$__init__ = function(s) {
 var __basestring_real__ = basestring.PY$__create__;
 
 basestring.PY$__create__ = function(obj) {
-    if (js(py_builtins.isinstance(obj, basestring))) {
+    if (py_builtins.isinstance(obj, basestring) == true) {
         return obj;
     } else {
         return __basestring_real__(obj);
@@ -101,7 +101,7 @@ basestring.PY$__bool__ = function() {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj == s);
-    else if (js(py_builtins.isinstance(s, $PY.basestring))) {
+    else if (py_builtins.isinstance(s, $PY.basestring) == true) {
         return bool(this._obj == s._obj);
     }
     else
@@ -111,7 +111,7 @@ basestring.PY$__eq__ = function(s) {
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj > s);
-    else if (js(py_builtins.isinstance(s, $PY.basestring)))
+    else if (py_builtins.isinstance(s, $PY.basestring) == true)
         return bool(this._obj > s._obj);
     else
         return False;
@@ -120,7 +120,7 @@ basestring.PY$__gt__ = function(s) {
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this._obj < s);
-    else if (js(py_builtins.isinstance(s, $PY.basestring)))
+    else if (py_builtins.isinstance(s, $PY.basestring) == true)
         return bool(this._obj < s._obj);
     else
         return False;
@@ -138,7 +138,7 @@ basestring.PY$__contains__ = function(item) {
 
 basestring.PY$__getitem__ = function(index) {
     var seq;
-    if (js(py_builtins.isinstance(index, slice))) {
+    if (py_builtins.isinstance(index, slice) == true) {
         var s = index;
         var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];

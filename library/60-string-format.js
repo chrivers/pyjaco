@@ -28,7 +28,7 @@ function sprintf(obj, args) {
     var i = 0;
     var res = "";
     var argc = 0;
-    if (!js(py_builtins.isinstance(args, tuple([dict, list, tuple])))) {
+    if (py_builtins.isinstance(args, tuple([dict, list, tuple])) == false) {
         args = tuple([args]);
     }
     while (i < s.length) {
