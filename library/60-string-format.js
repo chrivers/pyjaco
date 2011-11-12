@@ -162,7 +162,7 @@ function sprintf(obj, args) {
                     if (arg === 0 && !flag_hash) {
                         subres = "0";
                     } else if (arg < 0.0001 || parseInt(arg.toFixed().split(".")[0]) > flag_len) {
-                        var expchar = "e";
+                        expchar = "e";
                         if (s[i] == "G")
                             expchar = "E";
                         subres = format_exp(arg, expchar, 5, flag_len2-1, true);

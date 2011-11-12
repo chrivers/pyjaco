@@ -43,7 +43,7 @@ _int.PY$__create__ = function(obj) {
     } else {
         return ___int_real__(obj);
     }
-}
+};
 
 _int.PY$_isnumeric_float = false;
 

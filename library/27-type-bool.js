@@ -92,7 +92,7 @@ bool.PY$__or__ = function(x) {
     }
 };
 
-bool.PY$__int__ = function(x) {
+bool.PY$__int__ = function() {
     if (this._obj) {
         return $c1;
     } else {

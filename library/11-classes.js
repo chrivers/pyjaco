@@ -35,9 +35,7 @@ var __inherit = function(cls, name) {
             return res.PY$__create__.apply(res, arguments);
         } else {
             throw py_builtins.AttributeError("Class " + name + " does not have __create__ method");
-            print("Attributeerror");
-            return null;
-        };
+        }
     };
 
     if (typeof cls != 'undefined') {
@@ -53,9 +51,7 @@ var __inherit = function(cls, name) {
                 return res.PY$__call__.apply(res, arguments);
             } else {
                 throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
-                print("Attributeerror");
-                return null;
-            };
+            }
         };
 
         if (typeof res != 'undefined') {

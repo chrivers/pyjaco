@@ -157,11 +157,11 @@ basestring.PY$__getitem__ = function(index) {
         throw py_builtins.IndexError("string index out of range");
 };
 
-basestring.PY$__setitem__ = function(index, value) {
+basestring.PY$__setitem__ = function() {
     throw py_builtins.TypeError("'str' object doesn't support item assignment");
 };
 
-basestring.PY$__delitem__ = function(index) {
+basestring.PY$__delitem__ = function() {
     throw py_builtins.TypeError("'str' object doesn't support item deletion");
 };
 
@@ -323,11 +323,11 @@ basestring.PY$upper = function() {
     return __py2js_str(this._obj.toUpperCase());
 };
 
-basestring.PY$encode = function(encoding) {
+basestring.PY$encode = function() {
     return this;
 };
 
-basestring.PY$decode = function(encoding) {
+basestring.PY$decode = function() {
     return this;
 };
 

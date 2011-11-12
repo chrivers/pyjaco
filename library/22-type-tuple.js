@@ -150,11 +150,11 @@ tuple.PY$__getitem__ = function(index) {
     }
 };
 
-tuple.PY$__setitem__ = function(index, value) {
+tuple.PY$__setitem__ = function() {
     throw py_builtins.TypeError("'tuple' object doesn't support item assignment");
 };
 
-tuple.PY$__delitem__ = function(index) {
+tuple.PY$__delitem__ = function() {
     throw py_builtins.TypeError("'tuple' object doesn't support item deletion");
 };
 
