@@ -25,7 +25,7 @@
 
 var bool = __inherit(object, "bool");
 
-var __py2jsbool = bool;
+$PY.bool = bool;
 
 bool.PY$__init__ = function(b) {
     if (b) {
