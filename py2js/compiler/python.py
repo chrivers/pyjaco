@@ -166,11 +166,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             l = len(node.args.args)
             if self._class_name:
                 l -= 1
-            if node.args.kwarg:
-                end = ", arguments.length-1"
-            else:
-                end = ""
-            js.append("var %s = tuple(Array.prototype.slice.call(arguments, %s%s));" % (node.args.vararg, l, end))
+            js.extend(self.indent(["var %s = tuple(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, l)]))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
