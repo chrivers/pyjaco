@@ -34,6 +34,8 @@ from py2js.compiler.multiplexer import dump
 
 class Compiler(py2js.compiler.BaseCompiler):
 
+    obey_getattr_restriction = False
+
     ops_augassign = {
         "Add"     : "iadd",
         "Sub"     : "isub",
@@ -548,7 +550,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 raise JSError("Unknown exception type")
 
     def visit_Attribute(self, node):
-        if node.attr.startswith("__"):
+        if node.attr.startswith("__") and self.obey_getattr_restriction:
             return """%s.PY$%s""" % (self.visit(node.value), node.attr)
         else:
             return """%s.PY$__getattr__("%s")""" % (self.visit(node.value), node.attr)
