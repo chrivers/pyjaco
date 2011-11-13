@@ -56,7 +56,7 @@ var __kwargs_make = function(kw) {
 };
 
 var __kwargs_get = function(args) {
-    if (args.length && args[args.length-1].__kwargs === true) {
+    if (args.length && (args[args.length-1].__kwargs === true)) {
         delete args[args.length-1].__kwargs;
         var res = dict(args[args.length-1]);
         delete args[args.length-1];
