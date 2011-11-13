@@ -31,7 +31,15 @@ Super.PY$__init__ = function(cls, obj) {
 };
 
 Super.PY$__getattr__ = function(k) {
-    return this.cls.PY$__super__.PY$__getattr__(k);
+    var q = this.cls.PY$__super__.PY$__getattr__(k, false);
+    if ((typeof q == 'function') && typeof q.PY$__class__ == 'undefined') {
+        var that = this.obj;
+        var t = function() { return q.apply(that, arguments); };
+        t.PY$__call__ = t;
+        return t;
+    } else {
+        return q;
+    }
 };
 
 Super.PY$__repr__ = function() {
