@@ -145,7 +145,7 @@ class Compiler(py2js.compiler.BaseCompiler):
             js_defaults.append("var %(id)s = arguments[%(i)d];" % {"i": i, "id": arg.id })
             js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(kwarg)s.PY$get('%(id)s', %(def)s); };" % { 'id': arg.id, 'def': default, 'kwarg': kwarg_name })
 
-        if node.name == "__getattr__":
+        if node.name in ["__getattr__", "__setattr__"]:
             js_defaults.append("if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id })
 
         if node.decorator_list and not is_static and not is_javascript:
