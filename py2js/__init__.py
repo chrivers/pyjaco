@@ -157,8 +157,8 @@ class Compiler(object):
         res = ["var %s = object();" % module]
         for cls in classes:
             res.append(self.format_name("Class %s.%s" % (module, cls.__name__)))
-            res.append("%s.%s = function() {" % (module, cls.__name__))
+            res.append("%s.PY$__setattr__('%s', function() {" % (module, cls.__name__))
             res.append(self.compile_class(cls))
-            res.append("return %s}();" % (cls.__name__))
+            res.append("return %s}());" % (cls.__name__))
             res.append("")
         return "\n".join(res)
