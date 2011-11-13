@@ -64,7 +64,11 @@ var __inherit = function(cls, name) {
         return obj;
     };
 
-    res.PY$__name__  = name;
+    if (typeof str != 'undefined') {
+        res.PY$__name__  = str(name);
+    } else {
+        res.PY$__name__  = name;
+    }
     res.PY$__super__ = cls;
     return res;
 };
@@ -80,7 +84,7 @@ object.PY$__setattr__ = function(k, v) {
 
 object.PY$__getattr__ = function(k) {
     var q = this["PY$" + k];
-    if ((typeof q == 'function') && (typeof q.PY$__class__ == 'undefined')) {
+    if ((typeof q == 'function') && (typeof q.PY$__class__ == 'undefined') && (k !== '__class__') && arguments[1] !== false) {
         var that = this;
         var t = function() { return q.apply(that, arguments); };
         t.PY$__call__ = t;
@@ -98,7 +102,7 @@ object.PY$__repr__ = function() {
     if (this.PY$__class__) {
         return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
     } else {
-        return str("<instance of class-or-type at 0xPYJACO>");
+        return str("<" + this.PY$__name__ + " class at 0xPYJACO>");
     }
 };
 
