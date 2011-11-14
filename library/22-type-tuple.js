@@ -34,6 +34,11 @@ tuple.PY$__init__ = function(seq) {
         throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (!defined(seq)) {
         this._items = [];
+    } else if (seq.PY$__class__ === list || seq.PY$__class__ === tuple) {
+        this._items = [];
+        for (var i = 0; i < seq._items.length; i++) {
+            this._items.push(seq._items[i]);
+        }
     } else {
         var that = this;
         this._items = [];
