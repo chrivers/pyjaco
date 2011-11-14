@@ -276,10 +276,10 @@ class Compiler(py2js.compiler.BaseCompiler):
             left = self.visit(node.left)
             if isinstance(node.right, (ast.Tuple, ast.List)):
                 right = self.visit(node.right)
-                return "vsprintf(%s, %s)" % (left, right)
+                return "sprintf(str(%s), tuple(%s))" % (left, right)
             else:
                 right = self.visit(node.right)
-                return "sprintf(%s, %s)" % (left, right)
+                return "sprintf(str(%s), str(%s))" % (left, right)
         left = self.visit(node.left)
         right = self.visit(node.right)
 
