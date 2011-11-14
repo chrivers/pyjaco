@@ -24,6 +24,46 @@
 **/
 
 function sprintf(obj, args) {
+
+    var get_argument = function() {
+        if (flag_name) {
+            return args.PY$__getitem__(flag_name);
+        } else {
+            return args.PY$__getitem__(argc++);
+        }
+    };
+    var fixed_digits = function(num, digits) {
+        if (digits > 0 && digits < num.length) {
+            if (num[digits] >= "5") {
+                return num.substring(0, digits-1) + (parseInt(num[digits-1]) + 1).toString();
+            } else {
+                return num.substring(0, digits);
+            }
+        } else {
+            return num;
+        }
+    };
+    var format_float = function(num, defprec, prec) {
+        var parts = num.toFixed(defprec).split(".");
+        return parts[0] + "." + fixed_digits(parts[1], prec);
+    };
+    var format_exp = function(num, expchar, defprec, prec, drop_empty_exp) {
+        var parts = num.toExponential(defprec).split("e");
+        if (parts[1].length < 3) {
+            parts[1] = parts[1][0] + "0" + parts[1].substring(1);
+        }
+        if (prec) {
+            var decparts = parts[0].split(".");
+            decparts[1] = fixed_digits(decparts[1], prec);
+            parts[0] = decparts[0] + "." + decparts[1];
+        }
+        if (drop_empty_exp && parts[1] == "+00") {
+            return parts[0];
+        } else {
+            return parts[0] + expchar + parts[1];
+        }
+    };
+
     var s = js(obj);
     var i = 0;
     var res = "";
@@ -48,44 +88,6 @@ function sprintf(obj, args) {
             var prefix     = "";
             var has_sign  = false;
             var flag_name  = null;
-            var get_argument = function() {
-                if (flag_name) {
-                    return args.PY$__getitem__(flag_name);
-                } else {
-                    return args.PY$__getitem__(argc++);
-                }
-            };
-            var fixed_digits = function(num, digits) {
-                if (digits > 0 && digits < num.length) {
-                    if (num[digits] >= "5") {
-                        return num.substring(0, digits-1) + (parseInt(num[digits-1]) + 1).toString();
-                    } else {
-                        return num.substring(0, digits);
-                    }
-                } else {
-                    return num;
-                }
-            };
-            var format_float = function(num, defprec, prec) {
-                var parts = num.toFixed(defprec).split(".");
-                return parts[0] + "." + fixed_digits(parts[1], prec);
-            };
-            var format_exp = function(num, expchar, defprec, prec, drop_empty_exp) {
-                var parts = num.toExponential(defprec).split("e");
-                if (parts[1].length < 3) {
-                    parts[1] = parts[1][0] + "0" + parts[1].substring(1);
-                }
-                if (prec) {
-                    var decparts = parts[0].split(".");
-                    decparts[1] = fixed_digits(decparts[1], prec);
-                    parts[0] = decparts[0] + "." + decparts[1];
-                }
-                if (drop_empty_exp && parts[1] == "+00") {
-                    return parts[0];
-                } else {
-                    return parts[0] + expchar + parts[1];
-                }
-            };
 
             while (i < s.length) {
                 if (s[i] == "0") {
@@ -125,9 +127,11 @@ function sprintf(obj, args) {
                         }
                         flag_name += s[i];
                     }
+                } else if (s[i] == "%") {
+                    subres = "%";
                 } else if (s[i] == "d" || s[i] == "i" || s[i] == "u") {
                     has_sign = true;
-                    subres = js(get_argument().PY$__int__()).toString();
+                    subres = js(int(get_argument())).toString();
                 } else if (s[i] == "s") {
                     subres = js(get_argument().PY$__str__());
                 } else if (s[i] == "f" || s[i] == "F") {
