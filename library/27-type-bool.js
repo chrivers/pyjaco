@@ -87,7 +87,7 @@ bool.PY$__int__ = function() {
 var True = bool(true);
 var False = bool(false);
 
-bool.PY$__create__ = function(b) {
+bool.PY$__create__ = function(cls, b) {
     if ((b !== null) && (typeof b.PY$__bool__ != 'undefined')) {
         return b.PY$__bool__();
     } else if (b) {
