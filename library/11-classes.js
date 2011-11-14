@@ -89,11 +89,18 @@ object.PY$__getattr__ = function(k) {
     var q = this["PY$" + k];
     if ((typeof q == 'function') && (typeof q.PY$__class__ == 'undefined') && (k !== '__class__') && arguments[1] !== false) {
         var that = this;
-        var t = function() { return q.apply(that, arguments); };
-        t.PY$__call__ = t;
+        if (typeof this.PY$__class__ == 'undefined' && !q.__static) {
+            var t = function() { return q.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
+        } else {
+            var t = function() { return q.apply(that, arguments); };
+        }
         return t;
     } else {
-        return q;
+        if (q === undefined) {
+            return None;
+        } else {
+            return q;
+        }
     }
 };
 
