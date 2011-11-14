@@ -47,7 +47,3 @@ Super.PY$__repr__ = function() {
 };
 
 Super.PY$__str__ = Super.PY$__repr__;
-
-var __super = function(scls, obj) {
-    return Super(scls, obj);
-};
