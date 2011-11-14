@@ -32,7 +32,7 @@ var __inherit = function(cls, name) {
     var res = function() {
         var x = res.PY$__create__;
         if (typeof x != 'undefined') {
-            return res.PY$__create__.apply(res, arguments);
+            return res.PY$__create__.apply(null, [res].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw py_builtins.AttributeError("Class " + name + " does not have __create__ method");
         }
@@ -43,26 +43,6 @@ var __inherit = function(cls, name) {
             res[o] = cls[o];
         }
     }
-
-    res.PY$__create__ = function() {
-        var obj = function() {
-            var x = res.PY$__call__;
-            if (typeof x != 'undefined') {
-                return res.PY$__call__.apply(res, arguments);
-            } else {
-                throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
-            }
-        };
-
-        if (typeof res != 'undefined') {
-            for (var o in res) {
-                obj[o] = res[o];
-            }
-        }
-        obj.PY$__class__ = res;
-        obj.PY$__init__.apply(obj, arguments);
-        return obj;
-    };
 
     if (typeof str != 'undefined') {
         res.PY$__name__  = str(name);
@@ -76,6 +56,29 @@ var __inherit = function(cls, name) {
 var object = __inherit(null, "object");
 
 object.PY$__init__ = function() {
+};
+
+object.PY$__create__ = function(cls) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var obj = function() {
+        var x = cls.PY$__call__;
+        if (typeof x != 'undefined') {
+            return cls.PY$__call__.apply(cls, args);
+        } else {
+            throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
+        }
+    };
+
+    if (typeof cls != 'undefined') {
+        for (var o in cls) {
+            obj[o] = cls[o];
+        }
+    }
+
+    obj.PY$__class__ = cls;
+    obj.PY$__init__.apply(obj, args);
+    return obj;
 };
 
 object.PY$__setattr__ = function(k, v) {
