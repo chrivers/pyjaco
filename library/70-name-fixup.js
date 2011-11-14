@@ -22,14 +22,15 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.
 **/
-object.__name__ = str(object.__name__);
+object.PY$__name__ = str(object.PY$__name__);
 
 for (var x in py_builtins.PY$__exceptions__) {
-    py_builtins.PY$__exceptions__.__name__ = str(py_builtins.PY$__exceptions__.__name__);
+    var name = py_builtins.PY$__exceptions__[x];
+    py_builtins[name].PY$__name__ = str(py_builtins[name].PY$__name__);
 }
 
-Super.__name = str(Super.__name__);
+Super.PY$__name__ = str(Super.PY$__name__);
 
-for (var x in $PY) {
-    $PY[x].__name__ = str($PY[x].__name__);
+for (x in $PY) {
+    $PY[x].PY$__name__ = str($PY[x].PY$__name__);
 }
