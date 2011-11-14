@@ -29,10 +29,10 @@ py_builtins.hasattr = function(obj, name) {
 };
 
 py_builtins.getattr = function(obj, name, value) {
-    var _value = obj["PY$" + name];
+    var val = obj["PY$" + name];
 
-    if ((typeof _value) != 'undefined') {
-        return _value;
+    if ((typeof val) != 'undefined') {
+        return val;
     } else {
         if ((typeof value) != 'undefined') {
             return value;
@@ -269,7 +269,7 @@ py_builtins.sum = function(list) {
 py_builtins.print = function(s) {
     if (typeof(console) != "undefined" && defined(console.log)) {
         console.log.apply(null, arguments);
-    } else {
+    } else if (typeof window === 'undefined' || window.print !== print) {
         if (arguments.length <= 1) {
             if (defined(s)) {
                 print($PY.str(s));
@@ -280,6 +280,8 @@ py_builtins.print = function(s) {
             var args = tuple(Array.prototype.slice.call(arguments, 0));
             print($PY.str(" ").PY$join(args));
         }
+    } else {
+        alert($PY.str(s));
     }
 };
 
