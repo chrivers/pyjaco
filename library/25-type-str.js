@@ -32,25 +32,26 @@ $PY.basestring = basestring;
 basestring.PY$__init__ = function(s) {
     if (!defined(s)) {
         this._obj = '';
+    } else if (typeof s === "string") {
+        this._obj = s;
+    } else if (defined(s.toString)) {
+        this._obj = s.toString();
     } else {
-        if (typeof(s) === "string") {
-            this._obj = s;
-        } else if (defined(s.PY$__str__)) {
-            this._obj = js(s.PY$__str__());
-        } else if (defined(s.toString)) {
-            this._obj = s.toString();
-        } else
-            this._obj = js(s);
+        this._obj = js(s);
     }
 };
 
 var __basestring_real__ = basestring.PY$__create__;
 
-basestring.PY$__create__ = function(obj) {
+basestring.PY$__create__ = function(cls, obj) {
     if (py_builtins.isinstance(obj, basestring) == true) {
         return obj;
+    } else if (typeof obj.PY$__class__ == 'undefined' && typeof obj.PY$__super__ != 'undefined') {
+        return object.PY$__repr__.apply(obj);
+    } else if (defined(obj.PY$__str__)) {
+        return obj.PY$__str__();
     } else {
-        return __basestring_real__(obj);
+        return __basestring_real__(cls, obj);
     }
 };
 
