@@ -134,6 +134,8 @@ function sprintf(obj, args) {
                     subres = js(int(get_argument())).toString();
                 } else if (s[i] == "s") {
                     subres = js(get_argument().PY$__str__());
+                } else if (s[i] == "r") {
+                    subres = js(get_argument().PY$__repr__());
                 } else if (s[i] == "f" || s[i] == "F") {
                     has_sign = true;
                     subres = format_float(js(get_argument().PY$__float__()), 6, flag_len2);
