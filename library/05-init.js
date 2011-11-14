@@ -60,6 +60,7 @@ var __kwargs_get = function(args) {
         delete args[args.length-1].__kwargs;
         var res = dict(args[args.length-1]);
         delete args[args.length-1];
+        args.length -= 1;
         return res;
     } else {
         return dict();
