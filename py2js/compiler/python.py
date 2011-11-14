@@ -153,10 +153,15 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         self._scope = [arg.id for arg in node.args.args]
 
-        if self._class_name:
-            js = ["function() {"]
+        if is_static:
+            prefix = "__make_static("
         else:
-            js = ["var %s = function() {" % node.name]
+            prefix = ""
+
+        if self._class_name:
+            js = ["%sfunction() {" % prefix]
+        else:
+            js = ["%svar %s = function() {" % (prefix, node.name)]
 
         js.extend(self.indent(["var self = this;"]))
         js.extend(self.indent(["var %s = __kwargs_get(arguments);" % kwarg_name]))
@@ -172,7 +177,11 @@ class Compiler(py2js.compiler.BaseCompiler):
             js.extend(self.indent(self.visit(stmt)))
 
         self._scope = []
-        return js + ["};"]
+        if is_static:
+            js.append("})")
+        else:
+            js.append("}")
+        return js
 
     def visit_ClassDef(self, node):
         js = []
