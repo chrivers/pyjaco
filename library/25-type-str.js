@@ -338,17 +338,10 @@ var unicode = __inherit(basestring, "unicode");
 $PY.str = str;
 $PY.unicode = unicode;
 
-unicode.PY$__init__ = function(s) {
-    if (!defined(s)) {
-        this._obj = '';
+unicode.PY$__create__ = function(cls, obj) {
+    if (defined(obj.PY$__unicode__)) {
+        return obj.PY$__unicode__();
     } else {
-        if (typeof(s) === "string") {
-            this._obj = s;
-        } else if (defined(s.PY$__unicode__)) {
-            this._obj = js(s.PY$__unicode__());
-        } else if (defined(s.toString)) {
-            this._obj = s.toString();
-        } else
-            this._obj = js(s);
+        return basestring.PY$__create__(cls, obj);
     }
 };
