@@ -33,7 +33,10 @@ function sprintf(obj, args) {
     }
     while (i < s.length) {
         if (s[i] == "%") {
-            i++;
+            if (++i == s.length) {
+                throw py_builtins.ValueError("Incomplete format");
+            }
+
             var flag_zero  = false;
             var flag_minus = false;
             var flag_hash  = false;
@@ -87,29 +90,17 @@ function sprintf(obj, args) {
             while (i < s.length) {
                 if (s[i] == "0") {
                     flag_zero = true;
-                    i++;
-                    continue;
                 } else if (s[i] == "-") {
                     flag_minus = true;
-                    i++;
-                    continue;
                 } else if (s[i] == "#") {
                     flag_hash = true;
-                    i++;
-                    continue;
                 } else if (s[i] == "0") {
                     flag_zero = true;
-                    i++;
-                    continue;
                 } else if (s[i] == " ") {
                     flag_space = true;
-                    i++;
-                    continue;
                 } else if (s[i] == "+") {
                     flag_space = false;
                     flag_plus  = true;
-                    i++;
-                    continue;
                 } else if (s[i] > "0" && s[i] <= "9") {
                     flag_len = "";
                     while (s[i] >= "0" && s[i] <= "9") {
@@ -125,7 +116,7 @@ function sprintf(obj, args) {
                     }
                     flag_len = Number(flag_len);
                     flag_len2 = Number(flag_len2);
-                    continue;
+                    i--;
                 } else if (s[i] == "(") {
                     flag_name = "";
                     while (i++ < s.length) {
@@ -134,27 +125,18 @@ function sprintf(obj, args) {
                         }
                         flag_name += s[i];
                     }
-                    i++;
                 } else if (s[i] == "d" || s[i] == "i" || s[i] == "u") {
                     has_sign = true;
                     subres = js(get_argument().PY$__int__()).toString();
-                    i++;
-                    break;
                 } else if (s[i] == "s") {
                     subres = js(get_argument().PY$__str__());
-                    i++;
-                    break;
                 } else if (s[i] == "f" || s[i] == "F") {
                     has_sign = true;
                     subres = format_float(js(get_argument().PY$__float__()), 6, flag_len2);
-                    i++;
-                    break;
                 } else if (s[i] == "e" || s[i] == "E") {
                     has_sign = true;
                     var expchar = s[i];
                     subres = format_exp(js(get_argument().PY$__float__()), expchar, 6, flag_len2, false);
-                    i++;
-                    break;
                 } else if (s[i] == "g" || s[i] == "G") {
                     has_sign = true;
                     var arg = js(get_argument().PY$__float__());
@@ -169,32 +151,27 @@ function sprintf(obj, args) {
                     } else {
                         subres = format_float(arg, 5, flag_len2-1);
                     }
-                    i++;
-                    break;
                 } else if (s[i] == "o") {
                     has_sign = true;
                     subres = js(get_argument().PY$__int__()).toString(8);
                     if (flag_hash && subres[0] !== "0")
                         prefix = "0";
-                    i++;
-                    break;
                 } else if (s[i] == "x") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0x";
                     subres = js(get_argument().PY$__int__()).toString(16);
-                    i++;
-                    break;
                 } else if (s[i] == "X") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0X";
                     subres = js(get_argument().PY$__int__()).toString(16).toUpperCase();
-                    i++;
-                    break;
                 } else {
                     throw py_builtins.ValueError("Unsupported format character '" + s[i] + "' at index " + String(i));
                 }
+                i++;
+                if (subres != null)
+                    break;
             }
             var pad_char = " ";
             if (flag_zero)
