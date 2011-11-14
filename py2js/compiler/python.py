@@ -580,12 +580,18 @@ class Compiler(py2js.compiler.BaseCompiler):
     def visit_ListComp(self, node):
         if not len(node.generators) == 1:
             raise JSError("Compound list comprehension not supported")
-        if not isinstance(node.generators[0].target, ast.Name):
+        if isinstance(node.generators[0].target, ast.Name):
+            prefix = ""
+            name = node.generators[0].target.id
+        elif isinstance(node.generators[0].target, ast.Tuple):
+            name = self.alloc_var()
+            prefix = "".join(["%s = %s.PY$__getitem__(%d); " % (k.id, name, i) for i, k in enumerate(node.generators[0].target.elts)])
+        else:
             raise JSError("Non-simple targets in list comprehension not supported")
 
         body = self.visit(node.elt)
         iterexp = self.visit(node.generators[0].iter)
-        return "py_builtins.map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, body, iterexp)
+        return "py_builtins.map(function(%s) {%sreturn %s;}, %s)" % (name, prefix, body, iterexp)
 
     def visit_GeneratorExp(self, node):
         if not len(node.generators) == 1:
