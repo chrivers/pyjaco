@@ -35,6 +35,14 @@ function defined(obj) {
     return typeof(obj) != 'undefined';
 }
 
+function bt() {
+    try {
+        null();
+    } catch (x) {
+        py_builtins.print(x.stack);
+    }
+}
+
 function iterate(obj, func) {
     var seq = iter(obj);
     while (true) {
@@ -65,6 +73,11 @@ var __kwargs_get = function(args) {
     } else {
         return dict();
     }
+};
+
+var __make_static = function(func) {
+    func.__static = true;
+    return func;
 };
 
 var js = function(obj) {
