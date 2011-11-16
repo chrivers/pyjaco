@@ -44,11 +44,7 @@ var __inherit = function(cls, name) {
         }
     }
 
-    if (typeof str != 'undefined') {
-        res.PY$__name__  = str(name);
-    } else {
-        res.PY$__name__  = name;
-    }
+    res.PY$__name__  = name;
     res.PY$__super__ = cls;
     return res;
 };
@@ -95,6 +91,8 @@ object.PY$__getattr__ = function(k) {
             var t = function() { return q.apply(that, arguments); };
         }
         return t;
+    } else if (k === '__name__') {
+        return str(this.PY$__name__);
     } else {
         if (q === undefined) {
             return None;
