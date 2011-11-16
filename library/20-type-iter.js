@@ -40,8 +40,6 @@ iter.PY$__init__ = function(obj) {
         for (var i = 0; i < this._seq.length; i++) {
             this._seq[i] = str(this._seq[i]);
         }
-    } else if (obj.PY$__class__ == iter) {
-        this._seq = obj._seq;
     } else {
         throw py_builtins.TypeError("object is not iterable");
     }
@@ -50,7 +48,9 @@ iter.PY$__init__ = function(obj) {
 var __iter_real__ = iter.PY$__create__;
 
 iter.PY$__create__ = function(cls, obj) {
-    if (defined(obj.PY$__iter__)) {
+    if (obj.PY$__class__ == __orig_iter) {
+       return obj;
+    } else if (defined(obj.PY$__iter__)) {
         return obj.PY$__iter__();
     } else {
         return __iter_real__(cls, obj);
