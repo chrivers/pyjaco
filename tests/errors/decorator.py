@@ -1,18 +1,12 @@
-
-class wrapper:
-
-    def __init__(self,fn):
-        self.fn = fn
-
-    def __call__(self,*args):
-        return "("+apply(self.fn,args)+")"
-
 def mydecorator(x):
-    print "decorating " + str(x) 
-    return wrapper(x)
 
-class myclass:
+    def wrapped(self, a, b, c):
+        out = x(self)
+        return "(%s - %s, %s)" % (out, a+b, c)
 
+    return wrapped
+
+class myclass(object):
     def __init__(self,val):
         self.val = val
 
@@ -20,11 +14,5 @@ class myclass:
     def describe(self):
         return self.val
 
-@mydecorator
-def describe():
-    return "world"
-
 m = myclass("hello")
-print m.describe(m)
-
-print describe()
+print m.describe(10, 5, "foo")
