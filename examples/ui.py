@@ -172,6 +172,7 @@ def menu_help(e, t):
     w = Window(items)
     w.show()
 
+@JSVar("Ext")
 def initialize():
     Ext.get(document.body).update("<div id='mesh-editor'></div><div id='mesh-editor-help'></div>")
     Ext.QuickTips.init()
@@ -186,14 +187,17 @@ def initialize():
 
 class ExtObject(object):
 
+    @JSVar("self._obj")
     def __init__(self, args):
-        self._obj = _new(eval("Ext." + self.__class__.__name__), js(args))
+        self._obj = _new(eval(js("Ext." + self.__class__.__name__)), js(args))
 
+    @JSVar("self._obj")
     def _js_(self):
         return self._obj
 
 class Window(ExtObject):
 
+    @JSVar("self._obj")
     def show(self):
         self._obj.show()
 
@@ -216,35 +220,40 @@ def info_box(title, msg):
            "icon": Ext.MessageBox.INFO,
         })
 
-@JSVar("self._obj", "G_vmlCanvasManager")
 class Canvas(object):
 
-    @JSVar("dom")
+    @JSVar("self._obj", "dom", "Ext", "G_vmlCanvasManager")
     def __init__(self, id):
-        dom = Ext.getDom(id)
+        dom = Ext.getDom(js(id))
         if Ext.isIE:
             # This is needed for IE to emulate the canvas element:
             G_vmlCanvasManager.initElement(dom)
         self._obj = dom.getContext('2d')
 
+    @JSVar("self._obj")
     def fillRect(self, x1, y1, w, h):
         self._obj.fillStyle = js(self.fillStyle)
         self._obj.fillRect(x1, y1, w, h)
 
+    @JSVar("self._obj")
     def fillText(self, text, x, y):
         self._obj.fillStyle = js(self.fillStyle)
         self._obj.fillText(js(text), x, y)
 
+    @JSVar("self._obj")
     def beginPath(self):
         self._obj.strokeStyle = js(self.strokeStyle)
         self._obj.beginPath()
 
+    @JSVar("self._obj")
     def moveTo(self, x, y):
         self._obj.moveTo(x, y)
 
+    @JSVar("self._obj")
     def lineTo(self, x, y):
         self._obj.lineTo(x, y)
 
+    @JSVar("self._obj")
     def stroke(self):
         self._obj.stroke()
 
@@ -286,6 +295,7 @@ def main():
   <script language="JavaScript" src="../py-builtins.js"></script>
   <title id="page-title">Title</title>
   <script type="text/javascript">
+  function _new(cls, args) { return new cls(args); }
 %s
   Ext.onReady(initialize);
   </script>

@@ -14,11 +14,11 @@ class GoL(object):
         self.height = 75
         self.canvas = document.getElementById('canvas').getContext('2d')
         self.canvas.fillStyle = 'rgb(0, 0, 0)'
-        self.grid = list(range(self.width*self.height))
-        for i in range(self.width*self.height):
+        self.grid = list(range(self.width * self.height))
+        for i in range(self.width * self.height):
             self.grid[i] = Random() > 0.5
 
-        setInterval('window.gol.iter.__call__.call(window.gol)', 250)
+        setInterval('window.gol.PY$iter()', 250)
         self.draw()
 
     def get(self, x, y):
@@ -81,7 +81,7 @@ def main():
 <!--[if IE]><script type="text/javascript" src="http://explorercanvas.googlecode.com/svn/trunk/excanvas.js"></script><![endif]-->
 <script language="JavaScript" src="../py-builtins.js"></script>
 <script language="JavaScript">
-var Random = Function(function() { return _int.__call__(Math.random()); });
+var Random = function() { return float(Math.random()); };
 %s
 </script>
 </head>
