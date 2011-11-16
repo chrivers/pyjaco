@@ -98,73 +98,41 @@ class Compiler(py2js.compiler.BaseCompiler):
         return []
 
     def visit_FunctionDef(self, node):
-        is_static = False
-        is_javascript = False
-        if node.decorator_list:
-            if len(node.decorator_list) == 1 and \
-                    isinstance(node.decorator_list[0], ast.Name) and \
-                    node.decorator_list[0].id == "JavaScript":
-                is_javascript = True # this is our own decorator
-            elif self._class_name and \
-                    len(node.decorator_list) == 1 and \
-                    isinstance(node.decorator_list[0], ast.Name) and \
-                    node.decorator_list[0].id == "staticmethod":
-                is_static = True
-            else:
-                raise JSError("decorators are not supported")
-
-        js_args = []
         js_defaults = []
 
-        defaults = [None]*(len(node.args.args) - len(node.args.defaults)) + node.args.defaults
+        defaults = [None] * (len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
         if node.args.kwarg:
             kwarg_name = node.args.kwarg
         else:
             kwarg_name = "__kwargs"
 
-        for i, arg in enumerate(node.args.args):
-            default = defaults[i]
+        if len(node.args.args) and node.args.args[0].id == "self":
+            offset = 1
+        else:
+            offset = 0
 
-            if self._class_name:
-                if not is_static:
-                    if i == 0:
-                        continue
-                    else:
-                        i -= 1
-
+        for i, arg in enumerate(node.args.args[offset:]):
             if not isinstance(arg, ast.Name):
                 raise JSError("tuples in argument list are not supported")
 
-            js_args.append(arg.id)
-
-            if default == None:
-                default = "undefined"
+            if defaults[i+offset] == None:
+                js_defaults.append("var %(id)s = %(kwarg)s.PY$get('%(id)s', arguments[%(i)d]);" % {"i": i, "id": arg.id, 'kwarg': kwarg_name })
             else:
-                default = self.visit(default)
-            js_defaults.append("var %(id)s = arguments[%(i)d];" % {"i": i, "id": arg.id })
-            js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(kwarg)s.PY$get('%(id)s', %(def)s); };" % { 'id': arg.id, 'def': default, 'kwarg': kwarg_name })
+                js_defaults.append("var %(id)s = arguments[%(i)d];" % {"i": i, "id": arg.id })
+                js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(kwarg)s.PY$get('%(id)s', %(def)s); };" % { 'id': arg.id, 'def': self.visit(defaults[i+offset]), 'kwarg': kwarg_name })
 
         if node.name in ["__getattr__", "__setattr__"]:
             js_defaults.append("if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id })
 
-        if node.decorator_list and not is_static and not is_javascript:
-            raise JSError("decorators are not supported")
-
         self._scope = [arg.id for arg in node.args.args]
 
-        if is_static:
-            prefix = "__make_static("
-        else:
-            prefix = ""
-
         if self._class_name:
-            js = ["%sfunction() {" % prefix]
+            js = ["%s.PY$%s = function() {" % (self.heirar, node.name)]
         else:
-            js = ["%svar %s = function() {" % (prefix, node.name)]
+            js = ["var %s = function() {" % (node.name)]
 
-        js.extend(self.indent(["var self = this;"]))
-        js.extend(self.indent(["var %s = __kwargs_get(arguments);" % kwarg_name]))
+        js.extend(self.indent(["var self = this; var %s = __kwargs_get(arguments);" % kwarg_name]))
         js.extend(self.indent(js_defaults))
 
         if node.args.vararg:
@@ -177,10 +145,11 @@ class Compiler(py2js.compiler.BaseCompiler):
             js.extend(self.indent(self.visit(stmt)))
 
         self._scope = []
-        if is_static:
-            js.append("})")
-        else:
-            js.append("}")
+        js.append("}")
+
+        for dec in node.decorator_list:
+            js.extend(["%s.PY$%s = %s(%s.PY$__getattr__('%s'));" % (self.heirar, node.name, dec.id, self.heirar, node.name)])
+
         return js
 
     def visit_ClassDef(self, node):
@@ -211,7 +180,8 @@ class Compiler(py2js.compiler.BaseCompiler):
                     var = self.visit(t)
                     js.append("%s.PY$%s = %s;" % (heirar, var, value))
             elif isinstance(stmt, ast.FunctionDef):
-                js.append("%s.PY$%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
+                self.heirar = heirar
+                js.append("%s;" % ("\n".join(self.visit(stmt))))
             elif isinstance(stmt, ast.ClassDef):
                 js.append("%s.PY$%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
             elif isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Str):
