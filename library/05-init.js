@@ -75,9 +75,12 @@ var __kwargs_get = function(args) {
     }
 };
 
-var __make_static = function(func) {
-    func.__static = true;
-    return func;
+var staticmethod = function(func) {
+    var res = function () {
+        return func.apply(null, [this].concat(Array.prototype.slice.call(arguments)));
+    };
+    res.__static = true;
+    return res;
 };
 
 var js = function(obj) {
@@ -98,4 +101,24 @@ var js = function(obj) {
         return obj._js_();
     else
         return obj;
+};
+
+var py = function(obj) {
+  if (typeof obj === 'number') {
+      return int(obj);
+  } else if (typeof obj == 'string') {
+      return str(obj);
+  } else if (obj instanceof Array) {
+      var res = list();
+      for (var q in obj) {
+          res.PY$append(py(obj[q]));
+      }
+      return res;
+  } else {
+      var res = dict();
+      for (var q in obj) {
+          res.PY$__setitem__(q, py(obj[q]));
+      }
+      return res;
+  }
 };
