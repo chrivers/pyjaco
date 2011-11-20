@@ -80,12 +80,7 @@ int.PY$__div__ = function(x) {
     if (x._obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
     var res = this._obj / x._obj;
-    print(res, Math.floor(res), res == Math.floor(res));
-    if (res == Math.floor(res)) {
-        return int(res);
-    } else {
-        return float(res);
-    }
+    return float(res);
 };
 
 int.PY$__floordiv__ = function(x) {
