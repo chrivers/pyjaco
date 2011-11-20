@@ -35,10 +35,6 @@ none.PY$__str__ = function () {
     return str("None");
 };
 
-none.toString = function () {
-    return "";
-};
-
 none.PY$__repr__ = none.PY$__str__;
 
 none.PY$__eq__ = function (other) {
@@ -48,6 +44,18 @@ none.PY$__eq__ = function (other) {
         return True;
     } else {
         return bool(this._obj === other._obj);
+    }
+};
+
+none.PY$__gt__ = function(s) {
+    return False;
+};
+
+none.PY$__lt__ = function(s) {
+    if (s === None) {
+        return False;
+    } else {
+        return True;
     }
 };
 
