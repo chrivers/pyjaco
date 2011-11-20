@@ -109,14 +109,14 @@ function sprintf(obj, args) {
                         flag_len += s[i];
                         i++;
                     }
-                    if (s[i] == ".") {
-                        i++;
-                        while (s[i] >= "0" && s[i] <= "9") {
-                            flag_len2 += s[i];
-                            i++;
-                        }
-                    }
                     flag_len = Number(flag_len);
+                    i--;
+                } else if (s[i] == ".") {
+                    i++;
+                    while (s[i] >= "0" && s[i] <= "9") {
+                        flag_len2 += s[i];
+                        i++;
+                    }
                     flag_len2 = Number(flag_len2);
                     i--;
                 } else if (s[i] == "(") {
