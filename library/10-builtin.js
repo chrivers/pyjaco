@@ -46,6 +46,24 @@ py_builtins.setattr = function(obj, name, value) {
     obj["PY$" + name] = value;
 };
 
+py_builtins.js_getattr = function(obj, name, value) {
+    var val = obj[name];
+
+    if ((typeof val) != 'undefined') {
+        return val;
+    } else {
+        if ((typeof value) != 'undefined') {
+            return value;
+        } else {
+            throw py_builtins.AttributeError(obj, name);
+        }
+    }
+};
+
+py_builtins.js_setattr = function(obj, name, value) {
+    obj[name] = value;
+};
+
 py_builtins.delattr = function(obj, name) {
     if (typeof obj["PY$" + name] != 'undefined') {
         delete obj["PY$" + name];
@@ -78,6 +96,10 @@ py_builtins.dir = function(obj) {
         res.PY$append($PY.str(i));
     }
     return res;
+};
+
+py_builtins.cmp = function(x, y) {
+  return x.PY$__cmp__(y);
 };
 
 py_builtins.repr = function(obj) {
@@ -146,6 +168,18 @@ py_builtins.map = function() {
         return iter(items);
     else
         return items;
+};
+
+py_builtins.enumerate = function(obj) {
+    if (arguments.length != 1) {
+        throw py_builtins.NotImplementedError("enumerate() only supports 1 argument");
+    }
+    var items = list();
+    var count = 0;
+    iterate(obj, function(elm) {
+                items.PY$append(tuple([count++, elm]));
+            });
+    return items;
 };
 
 py_builtins.zip = function() {
