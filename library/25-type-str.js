@@ -114,8 +114,10 @@ basestring.PY$__gt__ = function(s) {
         return bool(this._obj > s);
     else if (py_builtins.isinstance(s, $PY.basestring) == true)
         return bool(this._obj > s._obj);
-    else
+    else if (py_builtins.isinstance(s, $PY.tuple) == true)
         return False;
+    else
+        return True;
 };
 
 basestring.PY$__lt__ = function(s) {
@@ -123,6 +125,8 @@ basestring.PY$__lt__ = function(s) {
         return bool(this._obj < s);
     else if (py_builtins.isinstance(s, $PY.basestring) == true)
         return bool(this._obj < s._obj);
+    else if (py_builtins.isinstance(s, $PY.tuple) == true)
+        return True;
     else
         return False;
 };
