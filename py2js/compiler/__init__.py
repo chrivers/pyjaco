@@ -60,6 +60,7 @@ class BaseCompiler(object):
         'getattr',
         'setattr',
         'hash',
+        'cmp',
         'len',
         'dir',
         'repr',
@@ -72,7 +73,8 @@ class BaseCompiler(object):
         'min',
         'sum',
         'filter',
-        'reduce'
+        'reduce',
+        'enumerate'
     ])
 
     def __init__(self):
