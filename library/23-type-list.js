@@ -38,6 +38,24 @@ list.PY$__str__ = function () {
 
 list.PY$__eq__ = tuple.PY$__eq__;
 
+list.PY$__cmp__ = tuple.PY$__cmp__;
+
+list.PY$__gt__ = function (other) {
+    if (py_builtins.isinstance(other, $PY.tuple)) {
+        return False;
+    } else {
+        return this.PY$__cmp__(other).PY$__gt__($c0);
+    }
+};
+
+list.PY$__lt__ = function (other) {
+    if (py_builtins.isinstance(other, $PY.tuple)) {
+        return False;
+    } else {
+        return this.PY$__cmp__(other).PY$__lt__($c0);
+    }
+};
+
 list.PY$__repr__ = function () {
     var items = py_builtins.map(function (i) {return py_builtins.repr(i);}, this._items);
     return str("[" + str(", ").PY$join(items) + "]");
@@ -96,30 +114,7 @@ list.PY$__delslice__ = function(x, y) {
 
 list.PY$count = tuple.PY$count;
 
-list.PY$index = function(value, start, end) {
-    if (!defined(start)) {
-        start = 0;
-    }
-
-    for (var i = start; !defined(end) || (start < end); i++) {
-        var _value = this._items[i];
-
-        if (!defined(_value)) {
-            break;
-        }
-
-        if (_value == value) {
-            return i;
-        }
-
-        if (defined(_value.PY$__eq__)) {
-            if (_value.PY$__eq__(value) == true)
-                return i;
-        }
-    }
-
-    throw py_builtins.ValueError("list.index(x): x not in list");
-};
+list.PY$index = tuple.PY$index;
 
 list.PY$remove = function(value) {
     this.PY$__delitem__(this.PY$index(value));
