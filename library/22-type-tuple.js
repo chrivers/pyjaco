@@ -83,6 +83,68 @@ tuple.PY$__eq__ = function (other) {
     }
 };
 
+tuple.PY$__cmp__ = function (other) {
+    if (py_builtins.isinstance(other, basestring) == true || py_builtins.isinstance(other, number) == true) {
+        return $c1;
+    } else {
+        var count = 0;
+        var res = $c0;
+        try {
+            var it = iter(other);
+        } catch (exc) {
+            if (py_builtins.isinstance(exc, py_builtins.TypeError)) {
+                return $c1;
+            } else {
+                throw exc;
+            }
+        }
+
+        while (true) {
+            try {
+                var elm = it.PY$next();
+            } catch (exc) {
+                if (py_builtins.isinstance(exc, py_builtins.StopIteration)) {
+                    break;
+                } else {
+                    throw exc;
+                }
+            }
+            if (count >= this._items.length) {
+                res = $cn1;
+                break;
+            }
+            var r = this._items[count].PY$__cmp__(elm);
+
+            if (r.PY$__gt__($c0) == true) {
+                res = $c1;
+                break;
+            } else if (r.PY$__lt__($c0) == true) {
+                res = $cn1;
+                break;
+            }
+            count++;
+        }
+
+        if (res == 0) {
+            if (this._items.length > count) {
+                return $c1;
+            } else {
+                return $c0;
+            }
+        } else {
+            return res;
+        }
+    }
+};
+
+tuple.PY$__gt__ = function (other) {
+    return this.PY$__cmp__(other).PY$__gt__($c0);
+};
+
+tuple.PY$__lt__ = function (other) {
+    return this.PY$__cmp__(other).PY$__lt__($c0);
+};
+
 tuple._js_ = function () {
     var items = [];
 
