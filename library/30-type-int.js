@@ -146,6 +146,7 @@ int.PY$__ibitor__    = int.PY$__bitor__;
 int.PY$__ibitxor__   = int.PY$__bitxor__;
 int.PY$__ifloordiv__ = int.PY$__floordiv__;
 
+var $cn1 = int(-1);
 var $c0 = int(0);
 var $c1 = int(1);
 var $c2 = int(2);
