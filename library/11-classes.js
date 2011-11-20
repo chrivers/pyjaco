@@ -114,22 +114,41 @@ object.PY$__repr__ = function() {
     }
 };
 
+object.PY$__str__ = object.PY$__repr__;
+
 object.PY$__eq__ = function(other) {
     return bool(this === other);
 };
-
-object.PY$__str__ = object.PY$__repr__;
 
 object.PY$__ne__ = function (other) {
     return py_builtins.__not__(this.PY$__eq__(other));
 };
 
+object.PY$__gt__ = function(other) {
+    return bool(this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__);
+};
+
+object.PY$__lt__ = function(other) {
+    return bool(this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__);
+};
+
+object.PY$__ge__ = function(other) {
+    return bool(this.PY$__lt__(other) == false);
+};
+
+object.PY$__le__ = function(other) {
+    return bool(this.PY$__gt__(other) == false);
+};
+
 object.PY$__cmp__ = function (y) {
-    var g = this.PY$__gt__(y);
-    if (g == true) {
+    if (this.PY$__gt__(y) == true) {
         return $c1;
     } else {
-        return int(-js(this.PY$__lt__(y)));
+        if (this.PY$__lt__(y) == true) {
+            return $cn1;
+        } else {
+            return $c0;
+        }
     }
 };
 
