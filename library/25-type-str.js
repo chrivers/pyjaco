@@ -171,16 +171,24 @@ basestring.PY$__delitem__ = function() {
 };
 
 basestring.PY$__mul__ = function(c) {
-    var max = js(c);
-    var res = "";
-    for (var i = 0; i < max; i++) {
-        res += this._obj;
+    if (py_builtins.isinstance(c, number) == true) {
+        var max = js(c);
+        var res = "";
+        for (var i = 0; i < max; i++) {
+            res += this._obj;
+        }
+        return basestring(res);
+    } else {
+        throw py_builtins.TypeError(sprintf("Cannot multiply string and <%s>", c.PY$__class__.PY$__name__));
     }
-    return basestring(res);
 };
 
 basestring.PY$__add__ = function(c) {
-    return this.PY$__class__(this._obj + c._obj);
+    if (py_builtins.isinstance(c, basestring) == true) {
+        return this.PY$__class__(this._obj + c.PY$__str__());
+    } else {
+        throw py_builtins.TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
+    }
 };
 
 basestring.PY$__iadd__ = basestring.PY$__add__;
