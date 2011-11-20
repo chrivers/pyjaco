@@ -104,21 +104,23 @@ var js = function(obj) {
 };
 
 var py = function(obj) {
-  if (typeof obj === 'number') {
-      return int(obj);
-  } else if (typeof obj == 'string') {
-      return str(obj);
-  } else if (obj instanceof Array) {
-      var res = list();
-      for (var q in obj) {
+    if (obj && typeof obj.PY$__class__ != 'undefined') {
+        return obj;
+    } else if (typeof obj === 'number') {
+        return int(obj);
+    } else if (typeof obj == 'string') {
+        return str(obj);
+    } else if (obj instanceof Array) {
+        var res = list();
+        for (var q in obj) {
           res.PY$append(py(obj[q]));
-      }
-      return res;
-  } else {
-      var res = dict();
-      for (var q in obj) {
-          res.PY$__setitem__(q, py(obj[q]));
-      }
-      return res;
-  }
+        }
+        return res;
+    } else {
+        var res = dict();
+        for (var q in obj) {
+            res.PY$__setitem__(q, py(obj[q]));
+        }
+        return res;
+    }
 };
