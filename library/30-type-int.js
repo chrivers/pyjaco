@@ -48,7 +48,7 @@ int.PY$__create__ = function(cls, obj) {
     if (js(py_builtins.isinstance(obj, object)) && (typeof obj.PY$__int__ != 'undefined')) {
         return obj.PY$__int__();
     } else {
-        return __int_real__(int, obj);
+        return __int_real__(cls, obj);
     }
 };
 
