@@ -261,5 +261,5 @@ tuple.PY$index = function(value, start, end) {
         }
     }
 
-    throw py_builtins.ValueError("tuple.index(x): x not in list");
+    throw py_builtins.ValueError(this.PY$__class__.PY$__name__ + ".index(x): x not in list");
 };
