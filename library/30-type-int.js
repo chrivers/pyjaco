@@ -28,6 +28,7 @@ var int = __inherit(number, "int");
 $PY.int = int;
 
 int.numbertype = "PY$__int__";
+int.numberclass = int;
 
 int.PY$__init__ = function(value) {
     if (arguments.length == 2) {

@@ -28,6 +28,7 @@ var float = __inherit(number, "float");
 $PY.float = float;
 
 float.numbertype = "PY$__float__";
+float.numberclass = int;
 
 float.PY$__init__ = function(value) {
     var s = value.toString();
