@@ -34,10 +34,11 @@ number.PY$__repr__ = number.PY$__str__;
 number.PY$__eq__ = function (other) {
     if (typeof(other) === "number") {
         return bool(this._obj === other);
+    } else if (other.PY$_isnumeric_) {
+        return bool(this._obj === other._obj);
+    } else {
+        return object.PY$__eq__.call(this, other);
     }
-    if (other.PY$__class__ !== this.PY$__class__)
-        return False;
-    return bool(this._obj === other._obj);
 };
 
 number.toString = function () {
@@ -74,18 +75,6 @@ number.PY$__lt__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot compare number and non-number");
     return bool(this._obj < x._obj);
-};
-
-number.PY$__ge__ = function(x) {
-    if (!x.PY$_isnumeric_)
-        throw py_builtins.TypeError("Cannot compare number and non-number");
-    return bool(this._obj >= x._obj);
-};
-
-number.PY$__le__ = function(x) {
-    if (!x.PY$_isnumeric_)
-        throw py_builtins.TypeError("Cannot compare number and non-number");
-    return bool(this._obj <= x._obj);
 };
 
 number.PY$__mul__ = function(x) {
