@@ -58,10 +58,36 @@ bool.toString = function () {
 bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function (other) {
-    if (other.PY$__class__ !== this.PY$__class__)
-        return False;
+    if (other.PY$__int__ !== undefined)
+        return bool(Number(this._obj) == other.PY$__int__()._js_());
 
     return bool(this._obj === other._obj);
+};
+
+bool.PY$__gt__ = function (other) {
+    if (other === None) {
+        return True;
+    } else if (other.PY$__int__ !== undefined) {
+        if (Number(this._obj) > other.PY$__int__()._js_())
+            return True;
+        else
+            return False;
+    } else {
+        return False;
+    }
+};
+
+bool.PY$__lt__ = function (other) {
+    if (other === None) {
+        return False;
+    } else if (other.PY$__int__ != undefined) {
+        if (Number(this._obj) < other.PY$__int__()._js_())
+            return True;
+        else
+            return False;
+    } else {
+        return True;
+    }
 };
 
 bool._js_ = function () {
