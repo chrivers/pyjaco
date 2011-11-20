@@ -66,11 +66,13 @@ object.PY$__create__ = function(cls) {
         }
     };
 
-    if (typeof cls != 'undefined') {
+    if (obj.__proto__ === undefined) {
         for (var o in cls) {
             obj[o] = cls[o];
         }
-    }
+    } else {
+        obj.__proto__ = cls;
+    };
 
     obj.PY$__class__ = cls;
     obj.PY$__init__.apply(obj, args);
