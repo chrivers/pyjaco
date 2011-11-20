@@ -59,8 +59,14 @@ tuple.PY$__str__ = function () {
     } else if (js(this.PY$__len__()) == 1) {
         return str("(" + str(this._items[0]) + ",)");
     } else {
-        var items = py_builtins.map(function (i) {return str(i);}, this._items);
-        return str("(" + str(", ").PY$join(items) + ")");
+        var res = "(";
+        for (var i = 0; i < this._items.length; i++)  {
+            if (i != 0) {
+                res += ", ";
+            }
+            res += js(this._items[i].PY$__repr__());
+        }
+        return res + ")";
     }
 };
 
@@ -251,7 +257,7 @@ tuple.PY$index = function(value, start, end) {
         }
 
         if (_value.PY$__eq__(value) == true) {
-            return i;
+            return int(i);
         }
     }
 
