@@ -27,6 +27,8 @@ var int = __inherit(number, "int");
 
 $PY.int = int;
 
+int.PY$_isnumeric_ = "PY$__int__";
+
 int.PY$__init__ = function(value) {
     if (arguments.length == 2) {
         this._obj = parseInt(i, arguments[1]);
@@ -49,8 +51,6 @@ int.PY$__create__ = function(cls, obj) {
         return __int_real__(int, obj);
     }
 };
-
-int.PY$_isnumericfloat = false;
 
 int.PY$__int__ = function () {
     return this;
@@ -79,7 +79,13 @@ int.PY$__div__ = function(x) {
         throw py_builtins.TypeError("Cannot divide int and non-int");
     if (x._obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
-    return float(this._obj / x._obj);
+    var res = this._obj / x._obj;
+    print(res, Math.floor(res), res == Math.floor(res));
+    if (res == Math.floor(res)) {
+        return int(res);
+    } else {
+        return float(res);
+    }
 };
 
 int.PY$__floordiv__ = function(x) {
@@ -87,7 +93,11 @@ int.PY$__floordiv__ = function(x) {
         throw py_builtins.TypeError("Cannot operate on int and non-int");
     if (x._obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
-    return int(Math.floor(this._obj / x._obj));
+    if (x.PY$_isnumeric_ == "PY$__float__") {
+        return float(this._obj / x._obj);
+    } else {
+        return int(Math.floor(this._obj / x._obj));
+    }
 };
 
 int.PY$__mod__ = function(x) {
@@ -99,7 +109,11 @@ int.PY$__mod__ = function(x) {
 int.PY$__pow__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot exponentiate int and non-int");
-    return int(Math.pow(this._obj, x._obj));
+    if (x.PY$_isnumeric_ == "PY$__float__") {
+        return float(Math.pow(this._obj, x._obj));
+    } else {
+        return int(Math.floor(Math.pow(this._obj, x._obj)));
+    }
 };
 
 int.PY$__bitand__ = function(x) {
@@ -130,12 +144,6 @@ int.PY$__rshift__ = function(x) {
     if (!x.PY$_isnumeric_)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
     return int(this._obj >> x._obj);
-};
-
-int.PY$__div__ = function(x) {
-    if (!x.PY$_isnumeric_)
-        throw py_builtins.TypeError("Cannot exponentiate number and number-int");
-    return float(this._obj / x._obj);
 };
 
 int.PY$__idiv__      = int.PY$__div__;

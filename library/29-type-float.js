@@ -27,6 +27,8 @@ var float = __inherit(number, "float");
 
 $PY.float = float;
 
+float.PY$_isnumeric_ = "PY$__float__";
+
 float.PY$__init__ = function(value) {
     var s = value.toString();
     if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
@@ -45,8 +47,6 @@ float.PY$__create__ = function(cls, obj) {
         return __float_real__(cls, obj);
     }
 };
-
-float.PY$_isnumericfloat = true;
 
 float.PY$__float__ = function () {
     return this;
