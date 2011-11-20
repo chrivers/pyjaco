@@ -90,8 +90,16 @@ tuple.PY$__eq__ = function (other) {
 };
 
 tuple.PY$__cmp__ = function (other) {
-    if (py_builtins.isinstance(other, basestring) == true || py_builtins.isinstance(other, number) == true) {
-        return $c1;
+    if (other.PY$__class__ !== this.PY$__class__) {
+        if (object.PY$__gt__.call(this, other) == true) {
+            return $c1;
+        } else {
+            if (object.PY$__lt__.call(this, other) == true) {
+                return $cn1;
+            } else {
+                return $c0;
+            }
+        }
     } else {
         var count = 0;
         var res = $c0;

@@ -23,7 +23,7 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var none = __inherit(object, "none");
+var none = __inherit(object, "NoneType");
 
 $PY.none = none;
 
@@ -44,18 +44,6 @@ none.PY$__eq__ = function (other) {
         return True;
     } else {
         return bool(this._obj === other._obj);
-    }
-};
-
-none.PY$__gt__ = function(s) {
-    return False;
-};
-
-none.PY$__lt__ = function(s) {
-    if (s === None) {
-        return False;
-    } else {
-        return True;
     }
 };
 

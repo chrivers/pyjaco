@@ -131,7 +131,11 @@ object.PY$__gt__ = function(other) {
 };
 
 object.PY$__lt__ = function(other) {
-    return bool(this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__);
+    if (other === this) {
+        return False;
+    } else {
+        return bool(this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__);
+    }
 };
 
 object.PY$__ge__ = function(other) {

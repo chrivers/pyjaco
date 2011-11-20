@@ -40,21 +40,9 @@ list.PY$__eq__ = tuple.PY$__eq__;
 
 list.PY$__cmp__ = tuple.PY$__cmp__;
 
-list.PY$__gt__ = function (other) {
-    if (py_builtins.isinstance(other, $PY.tuple)) {
-        return False;
-    } else {
-        return this.PY$__cmp__(other).PY$__gt__($c0);
-    }
-};
+list.PY$__gt__ = tuple.PY$__gt__;
 
-list.PY$__lt__ = function (other) {
-    if (py_builtins.isinstance(other, $PY.tuple)) {
-        return False;
-    } else {
-        return this.PY$__cmp__(other).PY$__lt__($c0);
-    }
-};
+list.PY$__lt__ = tuple.PY$__lt__;
 
 list.PY$__repr__ = function () {
     var items = py_builtins.map(function (i) {return py_builtins.repr(i);}, this._items);
