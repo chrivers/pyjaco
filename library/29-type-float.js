@@ -27,7 +27,7 @@ var float = __inherit(number, "float");
 
 $PY.float = float;
 
-float.PY$_isnumeric_ = "PY$__float__";
+float.numbertype = "PY$__float__";
 
 float.PY$__init__ = function(value) {
     var s = value.toString();
@@ -71,7 +71,7 @@ float.PY$__hash__ = function () {
 };
 
 float.PY$__div__ = function(x) {
-    if (!x.PY$_isnumeric_)
+    if (!x.numbertype)
         throw py_builtins.TypeError("Cannot divide number and non-number");
     if (x._obj === 0)
         throw py_builtins.ZeroDivisionError("float division by zero");
@@ -79,7 +79,7 @@ float.PY$__div__ = function(x) {
 };
 
 float.PY$__pow__ = function(x) {
-    if (!x.PY$_isnumeric_)
+    if (!x.numbertype)
         throw py_builtins.TypeError("Cannot exponentiate number and non-number");
     return float(Math.pow(this._obj, x._obj));
 };
