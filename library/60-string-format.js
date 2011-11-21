@@ -147,15 +147,41 @@ function sprintf(obj, args) {
                     has_sign = true;
                     var arg = js(get_argument().PY$__float__());
 
+                    var val = flag_len2;
+                    if (val == 0)
+                        val = 6;
+
                     if (arg === 0 && !flag_hash) {
                         subres = "0";
-                    } else if (arg < 0.0001 || parseInt(arg.toFixed().split(".")[0]) > flag_len) {
+                    } else if (arg < 0.0001 || arg.toFixed().split(".")[0].length > val) {
                         expchar = "e";
                         if (s[i] == "G")
                             expchar = "E";
                         subres = format_exp(arg, expchar, 5, flag_len2-1, true);
+
+                        if (!flag_hash) {
+                            var parts = subres.split(expchar);
+                            while (parts[0].charAt(parts[0].length - 1) == '0') {
+                                parts[0] = parts[0].substr(0, parts[0].length - 1);
+                            }
+                            if (parts[0].charAt(parts[0].length - 1) == '.') {
+                                parts[0] = parts[0].substr(0, parts[0].length - 1);
+                            }
+                            subres = parts[0];
+                            if (parts[1]) {
+                                subres += expchar + parts[1];
+                            }
+                        }
                     } else {
                         subres = format_float(arg, 5, flag_len2-1);
+                        if (!flag_hash) {
+                            while (subres.charAt(subres.length - 1) == '0') {
+                                subres = subres.substr(0, subres.length - 1);
+                            }
+                            if (subres.charAt(subres.length - 1) == '.') {
+                                subres = subres.substr(0, subres.length - 1);
+                            }
+                        }
                     }
                 } else if (s[i] == "o") {
                     has_sign = true;

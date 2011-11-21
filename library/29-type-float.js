@@ -58,11 +58,7 @@ float.PY$__int__ = function () {
 };
 
 float.PY$__str__ = function () {
-    if (this._obj.toString().indexOf(".") === -1) {
-        return str(this._obj + ".0");
-    } else {
-        return str(this._obj);
-    }
+    return sprintf("%g", this);
 };
 
 float.PY$__repr__ = float.PY$__str__;
