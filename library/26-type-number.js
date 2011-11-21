@@ -86,7 +86,7 @@ number.PY$__lt__ = function(x) {
 };
 
 number.PY$__mul__ = function(x) {
-    if (!x.numbertype) {
+    if (x.numbertype === undefined) {
         if (x.PY$__int__ !== undefined) {
             return this.numberclass(this._obj * x.PY$__int__()._js_());
         } else if (py_builtins.isinstance(x, basestring)) {
@@ -94,11 +94,11 @@ number.PY$__mul__ = function(x) {
         } else {
             throw py_builtins.TypeError("Cannot multiply number and non-number");
         }
-    } else
-    if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
+    } else if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__')) {
         return this.numberclass(this._obj * x._obj);
-    else
+    } else {
         return x.numberclass(this._obj * x._obj);
+    }
 };
 
 number.PY$__add__ = function(x) {
