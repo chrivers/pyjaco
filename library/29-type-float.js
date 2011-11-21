@@ -58,7 +58,16 @@ float.PY$__int__ = function () {
 };
 
 float.PY$__str__ = function () {
-    return sprintf("%g", this);
+    if (this._obj - Math.floor(this._obj) < 1e-6) {
+        var res = sprintf("%g", this);
+        if (res.indexOf('e') === -1) {
+            return str(res + ".0");
+        } else {
+            return str(res);
+        }
+    } else {
+        return sprintf("%.10g", this);
+    }
 };
 
 float.PY$__repr__ = float.PY$__str__;

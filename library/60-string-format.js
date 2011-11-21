@@ -44,8 +44,15 @@ function sprintf(obj, args) {
         }
     };
     var format_float = function(num, defprec, prec) {
-        var parts = num.toFixed(defprec).split(".");
-        return parts[0] + "." + fixed_digits(parts[1], prec);
+        if (prec < 1) {
+            prec = defprec;
+        }
+        var parts = num.toFixed(prec+1).split(".");
+        if (prec > defprec) {
+            return parts[0] + "." + parts[1].substring(0, prec);
+        } else {
+            return parts[0] + "." + fixed_digits(parts[1], prec);
+        }
     };
     var format_exp = function(num, expchar, defprec, prec, drop_empty_exp) {
         var parts = num.toExponential(defprec).split("e");
