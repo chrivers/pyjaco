@@ -171,7 +171,7 @@ basestring.PY$__delitem__ = function() {
 };
 
 basestring.PY$__mul__ = function(c) {
-    if (py_builtins.isinstance(c, number) == true) {
+    if (py_builtins.isinstance(c, int) == true) {
         var max = js(c);
         var res = "";
         for (var i = 0; i < max; i++) {
