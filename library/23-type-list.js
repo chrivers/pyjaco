@@ -44,6 +44,10 @@ list.PY$__gt__ = tuple.PY$__gt__;
 
 list.PY$__lt__ = tuple.PY$__lt__;
 
+list.PY$__mul__ = tuple.PY$__mul__;
+
+list.PY$__add__ = tuple.PY$__add__;
+
 list.PY$__repr__ = function () {
     var items = py_builtins.map(function (i) {return py_builtins.repr(i);}, this._items);
     return str("[" + str(", ").PY$join(items) + "]");
