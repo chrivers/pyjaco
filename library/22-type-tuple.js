@@ -159,6 +159,31 @@ tuple.PY$__lt__ = function (other) {
     return this.PY$__cmp__(other).PY$__lt__($c0);
 };
 
+tuple.PY$__mul__ = function(num) {
+    if (py_builtins.isinstance(num, int) == true) {
+        var res = [];
+        var count = num._js_();
+        for (var i = 0; i < count; i++) {
+            res = res.concat(this._items);
+        }
+        return this.PY$__class__(res);
+    } else {
+        throw py_builtins.NotImplementedError();
+    }
+};
+
+tuple.PY$__add__ = function(other) {
+    if (this.PY$__class__ == other.PY$__class__) {
+        var res = this._items.concat([]);
+        iterate(other, function(elm) {
+                    res.push(elm);
+                });
+        return this.PY$__class__(res);
+    } else {
+        throw py_builtins.NotImplementedError();
+    }
+};
+
 tuple._js_ = function () {
     var items = [];
 
