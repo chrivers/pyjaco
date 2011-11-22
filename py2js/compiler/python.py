@@ -127,8 +127,10 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         self._scope = [arg.id for arg in node.args.args]
 
-        if self._class_name:
-            js = ["%s.PY$%s = function() {" % (self.heirar, node.name)]
+        inclass = self.stack_destiny(["ClassDef", "FunctionDef"], 2) in ["ClassDef"]
+
+        if inclass:
+            js = ["function() {"]
         else:
             js = ["var %s = function() {" % (node.name)]
 
@@ -137,7 +139,7 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         if node.args.vararg:
             l = len(node.args.args)
-            if self._class_name:
+            if inclass:
                 l -= 1
             js.extend(self.indent(["var %s = tuple(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, l)]))
 
@@ -181,7 +183,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                     js.append("%s.PY$%s = %s;" % (heirar, var, value))
             elif isinstance(stmt, ast.FunctionDef):
                 self.heirar = heirar
-                js.append("%s;" % ("\n".join(self.visit(stmt))))
+                js.append("%s.PY$%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
             elif isinstance(stmt, ast.ClassDef):
                 js.append("%s.PY$%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
             elif isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Str):
