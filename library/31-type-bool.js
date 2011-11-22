@@ -65,7 +65,11 @@ bool.PY$__eq__ = function (other) {
 };
 
 bool._js_ = function () {
-    return this._obj;
+    if (this._obj) {
+        return true;
+    } else {
+        return false;
+    }
 };
 
 bool.PY$__neg__ = function() {
