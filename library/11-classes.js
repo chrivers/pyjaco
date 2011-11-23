@@ -97,7 +97,7 @@ object.PY$__getattr__ = function(k) {
         return str(this.PY$__name__);
     } else {
         if (q === undefined) {
-            return None;
+            throw py_builtins.AttributeError(this.PY$__repr__() + " does not have attribute '" + k + "'");
         } else {
             return q;
         }
