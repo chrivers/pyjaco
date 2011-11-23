@@ -37,7 +37,6 @@ class BaseCompiler(object):
 
     name_map = {
         'super' : 'Super',
-        'default' : '__default',
         'py_builtins' : '__py_builtins'
     }
 
