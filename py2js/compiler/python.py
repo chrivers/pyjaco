@@ -478,15 +478,17 @@ class Compiler(py2js.compiler.BaseCompiler):
             raise JSError("Unknown comparison type %s" % node.ops[0])
 
     def visit_Num(self, node):
-        if isinstance(node.n, int):
+        if isinstance(node.n, (int, long)):
             if (0 <= node.n <= 9):
                 return "$c%s" % str(node.n)
-            else:
+            elif -2**30 < node.n < 2**30:
                 return "int(%s)" % str(node.n)
+            else:
+                raise JSError("Long integer type outside of javascript range")
         elif isinstance(node.n, float):
             return "float(%s)" % node.n
         else:
-            raise JSError("Unknown numeric type")
+            raise JSError("Unknown numeric type: %s" % node.n.__class__.__name__)
 
     def visit_Str(self, node):
         # Uses the Python builtin repr() of a string and the strip string type
