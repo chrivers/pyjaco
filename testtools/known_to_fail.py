@@ -6,7 +6,6 @@ KNOWN_TO_FAIL = [
     "tests/basic/del_global.py",
     "tests/basic/del_local.py",
     "tests/basic/listcomp2.py",
-    "tests/basic/oo_descriptor_semantics.py",
 
     "tests/functions/cmp.py",
 
