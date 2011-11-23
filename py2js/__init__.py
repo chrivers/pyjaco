@@ -105,7 +105,10 @@ class Compiler(object):
 
     @staticmethod
     def format_name(name):
-        return "/*%s*/\n" % ("| %s |" % name).center(80, "*")
+        if name:
+            return "/*%s*/\n" % ("| %s |" % name).center(80, "*")
+        else:
+            return ""
 
     def comment_section(self, name):
         if name:
@@ -134,14 +137,13 @@ class Compiler(object):
     def append_module(self, module, classes, name = None):
         self.append_raw(self.compile_module(module, classes, name))
 
+    def append_data(self, key, value, name = None):
+        self.append_raw(self.compile_data(key, value))
+
     def compile_string(self, code, name = None, jsvars = None):
-        if name:
-            name = self.format_name(name)
-        else:
-            name = ""
         if jsvars:
             self.compiler.jsvars = jsvars
-        res = name + "\n".join(self.compiler.visit(ast.parse(code)))
+        res = self.format_name(name) + "\n".join(self.compiler.visit(ast.parse(code)))
         self.compiler.jsvars = []
         return res
 
@@ -153,8 +155,7 @@ class Compiler(object):
         return self.compile_string(inspect.getsource(code), name)
 
     def compile_module(self, module, classes, name = None):
-        self.comment_section(name)
-        res = ["var %s = object();" % module]
+        res = [self.format_name(name), "var %s = object();" % module]
         for cls in classes:
             res.append(self.format_name("Class %s.%s" % (module, cls.__name__)))
             res.append("%s.PY$__setattr__('%s', function() {" % (module, cls.__name__))
@@ -162,3 +163,6 @@ class Compiler(object):
             res.append("return %s}());" % (cls.__name__))
             res.append("")
         return "\n".join(res)
+
+    def compile_data(self, key, value):
+        return "var %s = %s" % (key, "\n".join(self.compiler.visit(ast.parse(repr(value)))))
