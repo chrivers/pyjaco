@@ -1,3 +1,4 @@
+SHELL=/bin/zsh -G
 
 all: stdlib
 	$(MAKE) -C examples generate
@@ -8,6 +9,13 @@ stdlib:
 clean:
 	@rm -fv py-builtins.js *~ library/*~ *.pyc
 	$(MAKE) -C examples clean
+	@rm -f tests/**/*.py.js.out
+	@rm -f tests/**/*.py.err
+	@rm -f tests/**/*.py.js
+	@rm -f tests/**/*.py.out
+	@rm -f tests/**/*.pyjs.err
+	@rm -f tests/**/*.py.comp.err
+	@rm -f tests/test_builtins.js.{err,out}
 
 examples:
 	$(MAKE) -C examples generate
