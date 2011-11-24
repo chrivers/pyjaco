@@ -65,7 +65,11 @@ iter.PY$next = function() {
     var value = this._seq[this._index++];
 
     if (this._index <= this._seq.length) {
-        return value;
+        if (value === undefined) {
+            return None;
+        } else {
+            return value;
+        }
     } else {
         throw py_builtins.StopIteration('no more items');
     }
