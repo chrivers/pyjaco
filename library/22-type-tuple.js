@@ -32,7 +32,7 @@ $PY.tuple = tuple;
 tuple.PY$__init__ = function(seq) {
     if (arguments.length > 1) {
         throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
-    } else if (!defined(seq)) {
+    } else if (seq === undefined) {
         this._items = [];
     } else if (seq.PY$__class__ === list || seq.PY$__class__ === tuple) {
         this._items = seq._items.concat();
@@ -273,14 +273,14 @@ tuple.PY$count = function(value) {
 };
 
 tuple.PY$index = function(value, start, end) {
-    if (!defined(start)) {
+    if (start === undefined) {
         start = 0;
     }
 
-    for (var i = start; !defined(end) || (start < end); i++) {
+    for (var i = start; (end === undefined) || (start < end); i++) {
         var _value = this._items[i];
 
-        if (!defined(_value)) {
+        if (_value === undefined) {
             break;
         }
 

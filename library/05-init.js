@@ -31,10 +31,6 @@ var py_builtins = {};
 
 py_builtins.PY$__python3__ = false;
 
-function defined(obj) {
-    return typeof(obj) != 'undefined';
-}
-
 function bt() {
     try {
         null();
@@ -97,14 +93,14 @@ var js = function(obj) {
        same object. It is the responsibility of _js_() to convert recursively
        the object itself.
     */
-    if ((obj != null) && typeof(obj._js_) != 'undefined')
+    if ((obj != null) && obj._js_ !== undefined)
         return obj._js_();
     else
         return obj;
 };
 
 var py = function(obj) {
-    if (obj && typeof obj.PY$__class__ != 'undefined') {
+    if (obj && obj.PY$__class__ !== undefined) {
         return obj;
     } else if (typeof obj === 'number') {
         return int(obj);

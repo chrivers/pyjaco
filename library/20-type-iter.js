@@ -31,7 +31,7 @@ $PY.iter = iter;
 
 iter.PY$__init__ = function(obj) {
     this._index = 0;
-    if (!defined(obj)) {
+    if (obj === undefined) {
         throw py_builtins.TypeError("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
         this._seq = obj;
@@ -50,7 +50,7 @@ var __iter_real__ = iter.PY$__create__;
 iter.PY$__create__ = function(cls, obj) {
     if (obj.PY$__class__ == iter) {
        return obj;
-    } else if (defined(obj.PY$__iter__)) {
+    } else if (obj.PY$__iter__ !== undefined) {
         return obj.PY$__iter__();
     } else {
         return __iter_real__(cls, obj);

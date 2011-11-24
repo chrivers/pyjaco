@@ -30,14 +30,14 @@ var slice = __inherit(object, "slice");
 $PY.slice = slice;
 
 slice.PY$__init__ = function(start, stop, step) {
-    if (!defined(stop) && !defined(step))
+    if (stop === undefined && step === undefined)
     {
         stop = start;
         start = null;
     }
     if (!start && start != 0) start = null;
-    if (!defined(stop)) stop = null;
-    if (!defined(step)) step = null;
+    if (stop === undefined) stop = null;
+    if (step === undefined) step = null;
     this.start = js(start);
     this.stop = js(stop);
     this.step = js(step);

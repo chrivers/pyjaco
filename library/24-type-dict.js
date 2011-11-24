@@ -34,8 +34,8 @@ dict.PY$__init__ = function(args) {
     var key;
     var value;
 
-    if (defined(args)) {
-        if (defined(args.PY$__iter__)) {
+    if (args !== undefined) {
+        if (args.PY$__iter__ !== undefined) {
             items = {};
             iterate(args, function(item) {
                     key = item.PY$__getitem__(0);
@@ -43,7 +43,7 @@ dict.PY$__init__ = function(args) {
                     items[key] = value;
             });
             this._items = items;
-        } else if (typeof args.length === 'undefined') {
+        } else if (args.length === undefined) {
             this._items = args;
         } else {
             this._items = {};
@@ -95,13 +95,13 @@ dict.PY$__iter__ = function() {
 };
 
 dict.PY$__contains__ = function(key) {
-    return bool(defined(this._items[key]));
+    return bool(this._items[key] !== undefined);
 };
 
 dict.PY$__getitem__ = function(key) {
     var value = this._items[key];
 
-    if (defined(value)) {
+    if (value !== undefined) {
         return value;
     } else {
         throw py_builtins.KeyError(str(key));
@@ -123,10 +123,10 @@ dict.PY$__delitem__ = function(key) {
 dict.PY$get = function(key, value) {
     var _value = this._items[key];
 
-    if (defined(_value)) {
+    if (_value !== undefined) {
         return _value;
     } else {
-        if (defined(value)) {
+        if (value !== undefined) {
             return value;
         } else {
             return None;
@@ -182,10 +182,10 @@ dict.PY$clear = function() {
 dict.PY$pop = function(key, value) {
     var _value = this._items[key];
 
-    if (defined(_value)) {
+    if (_value !== undefined) {
         delete this._items[key];
     } else {
-        if (defined(value)) {
+        if (value !== undefined) {
             _value = value;
         } else {
             throw py_builtins.KeyError(str(key));
@@ -203,7 +203,7 @@ dict.PY$popitem = function() {
         break;
     }
 
-    if (defined(key)) {
+    if (key !== undefined) {
         return [_key, this._items[_key]];
     } else {
         throw py_builtins.KeyError("popitem(): dictionary is empty");

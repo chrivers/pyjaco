@@ -25,16 +25,16 @@
 **/
 
 py_builtins.hasattr = function(obj, name) {
-    return bool(typeof obj["PY$" + name] != 'undefined');
+    return bool(obj["PY$" + name] !== undefined);
 };
 
 py_builtins.getattr = function(obj, name, value) {
     var val = obj["PY$" + name];
 
-    if ((typeof val) != 'undefined') {
+    if (val !== undefined) {
         return val;
     } else {
-        if ((typeof value) != 'undefined') {
+        if (value !== undefined) {
             return value;
         } else {
             throw py_builtins.AttributeError(obj, name);
@@ -49,10 +49,10 @@ py_builtins.setattr = function(obj, name, value) {
 py_builtins.js_getattr = function(obj, name, value) {
     var val = obj[name];
 
-    if ((typeof val) != 'undefined') {
+    if (val !== undefined) {
         return val;
     } else {
-        if ((typeof value) != 'undefined') {
+        if (value !== undefined) {
             return value;
         } else {
             throw py_builtins.AttributeError(obj, name);
@@ -65,7 +65,7 @@ py_builtins.js_setattr = function(obj, name, value) {
 };
 
 py_builtins.delattr = function(obj, name) {
-    if (typeof obj["PY$" + name] != 'undefined') {
+    if (obj["PY$" + name] !== undefined) {
         delete obj["PY$" + name];
     } else {
         throw py_builtins.AttributeError(obj, name);
@@ -103,13 +103,13 @@ py_builtins.cmp = function(x, y) {
 };
 
 py_builtins.repr = function(obj) {
-    if (!defined(obj)) {
+    if (obj == undefined) {
         return "None";
     } else if (py_builtins.hasattr(obj, '__repr__') == true) {
         return obj.PY$__repr__(obj);
     } else if (py_builtins.hasattr(obj, '__str__') == true) {
         return obj.PY$__str__(obj);
-    } else if (typeof obj.toString != 'undefined') {
+    } else if (obj.toString !=! undefined) {
         return obj.toString();
     } else {
         throw py_builtins.AttributeError('__repr__, __str__ or toString not found on ' + typeof(obj));
@@ -119,14 +119,14 @@ py_builtins.repr = function(obj) {
 py_builtins.range = function(start, end, step) {
     start = js(start);
 
-    if (!defined(end)) {
+    if (end === undefined) {
         end = start;
         start = 0;
     } else {
         end = js(end);
     }
 
-    if (!defined(step)) {
+    if (step === undefined) {
         step = 1;
     } else {
         step = js(step);
@@ -334,7 +334,7 @@ py_builtins.reduce = function(func, seq) {
     return accum;
 };
 
-if (typeof(console) != "undefined" && defined(console.log)) {
+if (typeof console !== 'undefined' && console.log !== undefined) {
     py_builtins.print = function()  {
         console.log.apply(null, arguments);
     };

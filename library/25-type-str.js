@@ -30,11 +30,11 @@ var basestring = __inherit(object, "basestring");
 $PY.basestring = basestring;
 
 basestring.PY$__init__ = function(s) {
-    if (!defined(s)) {
+    if (s === undefined) {
         this._obj = '';
     } else if (typeof s === "string") {
         this._obj = s;
-    } else if (defined(s.toString)) {
+    } else if (s.toString !== undefined) {
         this._obj = s.toString();
     } else {
         this._obj = js(s);
@@ -46,9 +46,9 @@ var __basestring_real__ = basestring.PY$__create__;
 basestring.PY$__create__ = function(cls, obj) {
     if (py_builtins.isinstance(obj, basestring) == true) {
         return obj;
-    } else if (typeof obj.PY$__class__ == 'undefined' && typeof obj.PY$__super__ != 'undefined') {
+    } else if (obj.PY$__class__ === undefined && obj.PY$__super__ !== undefined) {
         return object.PY$__repr__.apply(obj);
-    } else if (defined(obj.PY$__str__)) {
+    } else if (obj.PY$__str__ !== undefined) {
         return obj.PY$__str__();
     } else {
         return __basestring_real__(cls, obj);
@@ -194,9 +194,9 @@ basestring.PY$__add__ = function(c) {
 basestring.PY$__iadd__ = basestring.PY$__add__;
 
 basestring.PY$count = function(needle, start, end) {
-    if (!defined(start))
+    if (start === undefined)
         start = 0;
-    if (!defined(end))
+    if (end === undefined)
         end = null;
     var count = 0;
     var s = this.PY$__getitem__(slice(start, end));
@@ -210,14 +210,14 @@ basestring.PY$count = function(needle, start, end) {
 };
 
 basestring.PY$index = function(value, start, end) {
-    if (!defined(start)) {
+    if (start === undefined) {
         start = 0;
     }
 
-    for (var i = js(start); !defined(end) || (start < end); i++) {
+    for (var i = js(start); (end === undefined) || (start < end); i++) {
         var _value = this._obj[i];
 
-        if (!defined(_value)) {
+        if (_value === undefined) {
             break;
         }
 
@@ -258,7 +258,7 @@ basestring.PY$replace = function(old, _new, count) {
     var old_s;
     var new_s;
 
-    if (defined(count))
+    if (count !== undefined)
         count = js(count);
     else
         count = -1;
@@ -275,7 +275,7 @@ basestring.PY$replace = function(old, _new, count) {
 basestring.PY$lstrip = function(chars) {
     if (js(py_builtins.len(this)) === 0)
         return this;
-    if (defined(chars))
+    if (chars !== undefined)
         chars = tuple(chars);
     else
         chars = tuple(["\n", "\t", " "]);
@@ -289,7 +289,7 @@ basestring.PY$lstrip = function(chars) {
 basestring.PY$rstrip = function(chars) {
     if (js(py_builtins.len(this)) === 0)
         return this;
-    if (defined(chars))
+    if (chars !== undefined)
         chars = tuple(chars);
     else
         chars = tuple(["\n", "\t", " "]);
@@ -306,7 +306,7 @@ basestring.PY$strip = function(chars) {
 
 basestring.PY$split = function(sep) {
     var r_new;
-    if (defined(sep)) {
+    if (sep !== undefined) {
         var r = list(this._obj.split(sep));
         r_new = list([]);
         var that = this;
@@ -351,7 +351,7 @@ $PY.str = str;
 $PY.unicode = unicode;
 
 unicode.PY$__create__ = function(cls, obj) {
-    if (defined(obj.PY$__unicode__)) {
+    if (obj.PY$__unicode__ !== undefined) {
         return obj.PY$__unicode__();
     } else {
         return basestring.PY$__create__(cls, obj);

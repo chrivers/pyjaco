@@ -25,20 +25,20 @@
 
 var __inherit = function(cls, name) {
 
-    if (!defined(name)) {
+    if (name === undefined) {
         throw py_builtins.TypeError("The function __inherit must get exactly 2 arguments");
     }
 
     var res = function() {
         var x = res.PY$__create__;
-        if (typeof x != 'undefined') {
+        if (x !== undefined) {
             return res.PY$__create__.apply(null, [res].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw py_builtins.AttributeError("Class " + name + " does not have __create__ method");
         }
     };
 
-    if (typeof cls != 'undefined') {
+    if (cls !== undefined) {
         for (var o in cls) {
             res[o] = cls[o];
         }
@@ -59,7 +59,7 @@ object.PY$__create__ = function(cls) {
 
     var obj = function() {
         var x = cls.PY$__call__;
-        if (typeof x != 'undefined') {
+        if (x !== undefined) {
             return cls.PY$__call__.apply(cls, args);
         } else {
             throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
@@ -85,9 +85,9 @@ object.PY$__setattr__ = function(k, v) {
 
 object.PY$__getattr__ = function(k) {
     var q = this["PY$" + k];
-    if ((typeof q == 'function') && (typeof q.PY$__class__ == 'undefined') && (k !== '__class__') && arguments[1] !== false) {
+    if ((typeof q == 'function') && (q.PY$__class__ === undefined) && (k !== '__class__') && arguments[1] !== false) {
         var that = this;
-        if (typeof this.PY$__class__ == 'undefined' && !q.__static) {
+        if (this.PY$__class__ == undefined && !q.__static) {
             var t = function() { return q.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
         } else {
             var t = function() { return q.apply(that, arguments); };
