@@ -44,7 +44,7 @@ basestring.PY$__init__ = function(s) {
 var __basestring_real__ = basestring.PY$__create__;
 
 basestring.PY$__create__ = function(cls, obj) {
-    if (py_builtins.isinstance(obj, basestring) == true) {
+    if ($PY.isinstance(obj, basestring) == true) {
         return obj;
     } else if (obj.PY$__class__ === undefined && obj.PY$__super__ !== undefined) {
         return object.PY$__repr__.apply(obj);
@@ -102,7 +102,7 @@ basestring.PY$__bool__ = function() {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool(this.obj == s);
-    else if (py_builtins.isinstance(s, $PY.basestring) == true) {
+    else if ($PY.isinstance(s, $PY.basestring) == true) {
         return bool(this.obj == s.obj);
     }
     else
@@ -112,9 +112,9 @@ basestring.PY$__eq__ = function(s) {
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this.obj > s);
-    else if (py_builtins.isinstance(s, $PY.basestring) == true)
+    else if ($PY.isinstance(s, $PY.basestring) == true)
         return bool(this.obj > s.obj);
-    else if (py_builtins.isinstance(s, $PY.tuple) == true)
+    else if ($PY.isinstance(s, $PY.tuple) == true)
         return False;
     else
         return True;
@@ -123,9 +123,9 @@ basestring.PY$__gt__ = function(s) {
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
         return bool(this.obj < s);
-    else if (py_builtins.isinstance(s, $PY.basestring) == true)
+    else if ($PY.isinstance(s, $PY.basestring) == true)
         return bool(this.obj < s.obj);
-    else if (py_builtins.isinstance(s, $PY.tuple) == true)
+    else if ($PY.isinstance(s, $PY.tuple) == true)
         return True;
     else
         return False;
@@ -143,7 +143,7 @@ basestring.PY$__contains__ = function(item) {
 
 basestring.PY$__getitem__ = function(index) {
     var seq;
-    if (py_builtins.isinstance(index, slice) == true) {
+    if ($PY.isinstance(index, slice) == true) {
         var s = index;
         var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
@@ -171,7 +171,7 @@ basestring.PY$__delitem__ = function() {
 };
 
 basestring.PY$__mul__ = function(c) {
-    if (py_builtins.isinstance(c, int) == true) {
+    if ($PY.isinstance(c, int) == true) {
         var max = js(c);
         var res = "";
         for (var i = 0; i < max; i++) {
@@ -184,7 +184,7 @@ basestring.PY$__mul__ = function(c) {
 };
 
 basestring.PY$__add__ = function(c) {
-    if (py_builtins.isinstance(c, basestring) == true) {
+    if ($PY.isinstance(c, basestring) == true) {
         return this.PY$__class__(this.obj + c.PY$__str__());
     } else {
         throw py_builtins.TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));

@@ -45,7 +45,7 @@ function iterate(obj, func) {
         try {
             func(seq.PY$next());
         } catch (exc) {
-            if (py_builtins.isinstance(exc, py_builtins.StopIteration) == true) {
+            if ($PY.isinstance(exc, py_builtins.StopIteration) == true) {
                 break;
             } else {
                 throw exc;
@@ -118,5 +118,28 @@ var py = function(obj) {
             res.PY$__setitem__(q, py(obj[q]));
         }
         return res;
+    }
+};
+
+$PY.isinstance = function(obj, cls) {
+    if (cls instanceof Array) {
+        for (var i = 0; i < cls.length; i++) {
+            var c = obj.PY$__class__;
+            while (c) {
+                if (c === cls[i])
+                    return true;
+                c = c.PY$__super__;
+            }
+        }
+
+        return false;
+    } else {
+        var c = obj.PY$__class__;
+        while (c) {
+            if (c === cls)
+                return true;
+            c = c.PY$__super__;
+        }
+        return false;
     }
 };

@@ -203,7 +203,7 @@ py_builtins.zip = function() {
             try {
                 var value = iters.PY$__getitem__(i).PY$next();
             } catch (exc) {
-                if (py_builtins.isinstance(exc, py_builtins.StopIteration) == true) {
+                if ($PY.isinstance(exc, py_builtins.StopIteration) == true) {
                     return items;
                 } else {
                     throw exc;
@@ -229,7 +229,7 @@ py_builtins.isinstance = function(obj, cls) {
         for (var i = 0; i < length; i++) {
             var _cls = cls.PY$__getitem__(i);
 
-            if (py_builtins.isinstance(obj, _cls) == true) {
+            if ($PY.isinstance(obj, _cls) == true) {
                 return True;
             }
         }

@@ -101,7 +101,7 @@ tuple.PY$__cmp__ = function (other) {
         try {
             var it = iter(other);
         } catch (exc) {
-            if (py_builtins.isinstance(exc, py_builtins.TypeError)) {
+            if ($PY.isinstance(exc, py_builtins.TypeError)) {
                 return $c1;
             } else {
                 throw exc;
@@ -112,7 +112,7 @@ tuple.PY$__cmp__ = function (other) {
             try {
                 var elm = it.PY$next();
             } catch (exc) {
-                if (py_builtins.isinstance(exc, py_builtins.StopIteration)) {
+                if ($PY.isinstance(exc, py_builtins.StopIteration)) {
                     break;
                 } else {
                     throw exc;
@@ -155,7 +155,7 @@ tuple.PY$__lt__ = function (other) {
 };
 
 tuple.PY$__mul__ = function(num) {
-    if (py_builtins.isinstance(num, int) == true) {
+    if ($PY.isinstance(num, int) == true) {
         var res = [];
         var count = num._js_();
         for (var i = 0; i < count; i++) {
@@ -226,7 +226,7 @@ tuple.PY$__contains__ = function(item) {
 tuple.PY$__getitem__ = function(index) {
     if (typeof(index) === 'number') index = int(index);
     var seq;
-    if (py_builtins.isinstance(index, slice) == true) {
+    if ($PY.isinstance(index, slice) == true) {
         var s = index;
         var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
@@ -238,7 +238,7 @@ tuple.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else {
-        if (py_builtins.isinstance(index, int) == false) {
+        if ($PY.isinstance(index, int) == false) {
             index = int(index);
         }
 

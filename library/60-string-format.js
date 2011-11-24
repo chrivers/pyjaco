@@ -86,7 +86,7 @@ function sprintf(obj, args) {
     var i = 0;
     var res = "";
     var argc = 0;
-    if (py_builtins.isinstance(args, tuple([dict, list, tuple])) == false) {
+    if ($PY.isinstance(args, [dict, list, tuple]) == false) {
         args = tuple([args]);
     }
     while (i < s.length) {
