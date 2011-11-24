@@ -35,10 +35,7 @@ tuple.PY$__init__ = function(seq) {
     } else if (!defined(seq)) {
         this._items = [];
     } else if (seq.PY$__class__ === list || seq.PY$__class__ === tuple) {
-        this._items = [];
-        for (var i = 0; i < seq._items.length; i++) {
-            this._items.push(seq._items[i]);
-        }
+        this._items = seq._items.concat();
     } else {
         var that = this;
         this._items = [];
@@ -54,17 +51,15 @@ tuple.PY$__init__ = function(seq) {
 };
 
 tuple.PY$__str__ = function () {
-    if (js(this.PY$__len__()) === 0) {
+    var len = js(this.PY$__len__());
+    if (len === 0) {
         return str("()");
-    } else if (js(this.PY$__len__()) == 1) {
+    } else if (len === 1) {
         return str("(" + str(this._items[0]) + ",)");
     } else {
-        var res = "(";
-        for (var i = 0; i < this._items.length; i++)  {
-            if (i != 0) {
-                res += ", ";
-            }
-            res += js(this._items[i].PY$__repr__());
+        var res = "(" + js(py_builtins.repr(this._items[0]));
+        for (var i = 1; i < this._items.length; i++)  {
+            res += ", " + js(py_builtins.repr(this._items[i]));
         }
         return res + ")";
     }
