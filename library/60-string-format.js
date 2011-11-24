@@ -70,6 +70,17 @@ function sprintf(obj, args) {
             return parts[0] + expchar + parts[1];
         }
     };
+    var trim_trailing_zeroes = function(s) {
+        var i = s.length - 1;
+        while (s.charAt(i) == '0') {
+            i--;
+        }
+        s = s.substr(0, i + 1);
+        if (s.charAt(s.length - 1) == '.') {
+            s = s.substr(0, s.length - 1);
+        }
+        return s;
+    };
 
     var s = js(obj);
     var i = 0;
@@ -168,13 +179,7 @@ function sprintf(obj, args) {
 
                         if (!flag_hash) {
                             var parts = subres.split(expchar);
-                            while (parts[0].charAt(parts[0].length - 1) == '0') {
-                                parts[0] = parts[0].substr(0, parts[0].length - 1);
-                            }
-                            if (parts[0].charAt(parts[0].length - 1) == '.') {
-                                parts[0] = parts[0].substr(0, parts[0].length - 1);
-                            }
-                            subres = parts[0];
+                            subres = trim_trailing_zeroes(parts[0]);
                             if (parts[1]) {
                                 subres += expchar + parts[1];
                             }
@@ -182,12 +187,7 @@ function sprintf(obj, args) {
                     } else {
                         subres = format_float(arg, 5, flag_len2-1);
                         if (!flag_hash) {
-                            while (subres.charAt(subres.length - 1) == '0') {
-                                subres = subres.substr(0, subres.length - 1);
-                            }
-                            if (subres.charAt(subres.length - 1) == '.') {
-                                subres = subres.substr(0, subres.length - 1);
-                            }
+                            subres = trim_trailing_zeroes(subres);
                         }
                     }
                 } else if (s[i] == "o") {
