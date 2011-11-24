@@ -300,25 +300,6 @@ py_builtins.sum = function(list) {
     return result;
 };
 
-py_builtins.print = function(s) {
-    if (typeof(console) != "undefined" && defined(console.log)) {
-        console.log.apply(null, arguments);
-    } else if (typeof window === 'undefined' || window.print !== print) {
-        if (arguments.length <= 1) {
-            if (defined(s)) {
-                print($PY.str(s));
-            } else {
-                print("");
-            }
-        } else {
-            var args = tuple(Array.prototype.slice.call(arguments, 0));
-            print($PY.str(" ").PY$join(args));
-        }
-    } else {
-        alert($PY.str(s));
-    }
-};
-
 py_builtins.filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
@@ -352,3 +333,27 @@ py_builtins.reduce = function(func, seq) {
     }
     return accum;
 };
+
+if (typeof(console) != "undefined" && defined(console.log)) {
+    py_builtins.print = function()  {
+        console.log.apply(null, arguments);
+    };
+} else if (typeof window === 'undefined' || window.print !== print) {
+    py_builtins.print = function() {
+        if (arguments.length <= 1) {
+            if (arguments[0] !== undefined) {
+                print($PY.str(arguments[0]));
+            } else {
+                print("");
+            }
+        } else {
+            var args = tuple(Array.prototype.slice.call(arguments, 0));
+            print($PY.str(" ").PY$join(args));
+        }
+    };
+} else {
+    py_builtins.print = function() {
+        var args = tuple(Array.prototype.slice.call(arguments, 0));
+        alert($PY.str(" ").PY$join(args));
+    };
+}
