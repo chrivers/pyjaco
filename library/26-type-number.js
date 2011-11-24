@@ -89,7 +89,7 @@ number.PY$__mul__ = function(x) {
     if (x.numbertype === undefined) {
         if (x.PY$__int__ !== undefined) {
             return this.numberclass(this.obj * x.PY$__int__()._js_());
-        } else if (py_builtins.isinstance(x, basestring)) {
+        } else if ($PY.isinstance(x, [basestring, list, tuple])) {
             return x.PY$__mul__(this);
         } else {
             throw py_builtins.TypeError("Cannot multiply number and non-number");
