@@ -97,7 +97,7 @@ def compile_and_run_file_test(file_path, file_name=None):
         "js_path": file_path + ".js",
         "js_out_path": file_path + ".js.out",
         "py_error": file_path + ".err",
-        "js_error": file_path + "js.err",
+        "js_error": file_path + ".js.err",
         "compiler_error": file_path + ".comp.err",
         "name": file_name,
         }
