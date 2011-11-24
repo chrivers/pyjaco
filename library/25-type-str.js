@@ -31,13 +31,13 @@ $PY.basestring = basestring;
 
 basestring.PY$__init__ = function(s) {
     if (s === undefined) {
-        this._obj = '';
+        this.obj = '';
     } else if (typeof s === "string") {
-        this._obj = s;
+        this.obj = s;
     } else if (s.toString !== undefined) {
-        this._obj = s.toString();
+        this.obj = s.toString();
     } else {
-        this._obj = js(s);
+        this.obj = js(s);
     }
 };
 
@@ -64,15 +64,15 @@ basestring.PY$__repr__ = function () {
 };
 
 basestring._js_ = function () {
-    return this._obj;
+    return this.obj;
 };
 
 basestring.PY$__hash__ = function () {
     var value = 0x345678;
     var length = this.PY$__len__();
 
-    for (var index in this._obj) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ this._obj[index];
+    for (var index in this.obj) {
+        value = ((1000003*value) & 0xFFFFFFFF) ^ this.obj[index];
         value = value ^ length;
     }
 
@@ -84,11 +84,11 @@ basestring.PY$__hash__ = function () {
 };
 
 basestring.PY$__len__ = function() {
-    return int(this._obj.length);
+    return int(this.obj.length);
 };
 
 basestring.PY$__iter__ = function() {
-    return iter(this._obj);
+    return iter(this.obj);
 };
 
 basestring.PY$__mod__ = function(args) {
@@ -96,14 +96,14 @@ basestring.PY$__mod__ = function(args) {
 };
 
 basestring.PY$__bool__ = function() {
-    return bool(this._obj);
+    return bool(this.obj);
 };
 
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this._obj == s);
+        return bool(this.obj == s);
     else if (py_builtins.isinstance(s, $PY.basestring) == true) {
-        return bool(this._obj == s._obj);
+        return bool(this.obj == s.obj);
     }
     else
         return False;
@@ -111,9 +111,9 @@ basestring.PY$__eq__ = function(s) {
 
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this._obj > s);
+        return bool(this.obj > s);
     else if (py_builtins.isinstance(s, $PY.basestring) == true)
-        return bool(this._obj > s._obj);
+        return bool(this.obj > s.obj);
     else if (py_builtins.isinstance(s, $PY.tuple) == true)
         return False;
     else
@@ -122,9 +122,9 @@ basestring.PY$__gt__ = function(s) {
 
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this._obj < s);
+        return bool(this.obj < s);
     else if (py_builtins.isinstance(s, $PY.basestring) == true)
-        return bool(this._obj < s._obj);
+        return bool(this.obj < s.obj);
     else if (py_builtins.isinstance(s, $PY.tuple) == true)
         return True;
     else
@@ -132,8 +132,8 @@ basestring.PY$__lt__ = function(s) {
 };
 
 basestring.PY$__contains__ = function(item) {
-    for (var index in this._obj) {
-        if (item == this._obj[index]) {
+    for (var index in this.obj) {
+        if (item == this.obj[index]) {
             return True;
         }
     }
@@ -155,9 +155,9 @@ basestring.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else if ((index >= 0) && (index < js(py_builtins.len(this))))
-        return this._obj[index];
+        return this.obj[index];
     else if ((index < 0) && (index >= -js(py_builtins.len(this))))
-        return this._obj[index+js(py_builtins.len(this))];
+        return this.obj[index+js(py_builtins.len(this))];
     else
         throw py_builtins.IndexError("string index out of range");
 };
@@ -175,7 +175,7 @@ basestring.PY$__mul__ = function(c) {
         var max = js(c);
         var res = "";
         for (var i = 0; i < max; i++) {
-            res += this._obj;
+            res += this.obj;
         }
         return basestring(res);
     } else {
@@ -185,7 +185,7 @@ basestring.PY$__mul__ = function(c) {
 
 basestring.PY$__add__ = function(c) {
     if (py_builtins.isinstance(c, basestring) == true) {
-        return this.PY$__class__(this._obj + c.PY$__str__());
+        return this.PY$__class__(this.obj + c.PY$__str__());
     } else {
         throw py_builtins.TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
     }
@@ -215,7 +215,7 @@ basestring.PY$index = function(value, start, end) {
     }
 
     for (var i = js(start); (end === undefined) || (start < end); i++) {
-        var _value = this._obj[i];
+        var _value = this.obj[i];
 
         if (_value === undefined) {
             break;
@@ -230,7 +230,7 @@ basestring.PY$index = function(value, start, end) {
 };
 
 basestring.PY$find = function(s) {
-    return this._obj.search(s);
+    return this.obj.search(s);
 };
 
 basestring.PY$rfind = function(s) {
@@ -263,7 +263,7 @@ basestring.PY$replace = function(old, _new, count) {
     else
         count = -1;
     old_s = "";
-    new_s = this._obj;
+    new_s = this.obj;
     while ((count != 0) && (new_s != old_s)) {
         old_s = new_s;
         new_s = new_s.replace(old, _new);
@@ -307,7 +307,7 @@ basestring.PY$strip = function(chars) {
 basestring.PY$split = function(sep) {
     var r_new;
     if (sep !== undefined) {
-        var r = list(this._obj.split(sep));
+        var r = list(this.obj.split(sep));
         r_new = list([]);
         var that = this;
         iterate(r, function(item) {
@@ -329,11 +329,11 @@ basestring.PY$splitlines = function() {
 };
 
 basestring.PY$lower = function() {
-    return this.PY$__class__(this._obj.toLowerCase());
+    return this.PY$__class__(this.obj.toLowerCase());
 };
 
 basestring.PY$upper = function() {
-    return this.PY$__class__(this._obj.toUpperCase());
+    return this.PY$__class__(this.obj.toUpperCase());
 };
 
 basestring.PY$encode = function() {

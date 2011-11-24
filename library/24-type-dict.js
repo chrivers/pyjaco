@@ -42,25 +42,25 @@ dict.PY$__init__ = function(args) {
                     value = item.PY$__getitem__(1);
                     items[key] = value;
             });
-            this._items = items;
+            this.items = items;
         } else if (args.length === undefined) {
-            this._items = args;
+            this.items = args;
         } else {
-            this._items = {};
+            this.items = {};
             for (var i = 0; i < args.length / 2; i++) {
-                this._items[args[i*2]] = args[i*2+1];
+                this.items[args[i*2]] = args[i*2+1];
             }
         }
     } else {
-        this._items = {};
+        this.items = {};
     }
 };
 
 dict.PY$__str__ = function () {
     var strings = [];
 
-    for (var key in this._items) {
-        strings.push(str(key) + ": " + str(this._items[key]));
+    for (var key in this.items) {
+        strings.push(str(key) + ": " + str(this.items[key]));
     }
 
     return str("{" + strings.join(", ") + "}");
@@ -84,7 +84,7 @@ dict.PY$__hash__ = function () {
 dict.PY$__len__ = function() {
     var count = 0;
 
-    for (var key in this._items)
+    for (var key in this.items)
         count += 1;
 
     return int(count);
@@ -95,11 +95,11 @@ dict.PY$__iter__ = function() {
 };
 
 dict.PY$__contains__ = function(key) {
-    return bool(this._items[key] !== undefined);
+    return bool(this.items[key] !== undefined);
 };
 
 dict.PY$__getitem__ = function(key) {
-    var value = this._items[key];
+    var value = this.items[key];
 
     if (value !== undefined) {
         return value;
@@ -109,19 +109,19 @@ dict.PY$__getitem__ = function(key) {
 };
 
 dict.PY$__setitem__ = function(key, value) {
-    this._items[key] = value;
+    this.items[key] = value;
 };
 
 dict.PY$__delitem__ = function(key) {
     if (this.PY$__contains__(key) == true) {
-        delete this._items[key];
+        delete this.items[key];
     } else {
         throw py_builtins.KeyError(str(key));
     }
 };
 
 dict.PY$get = function(key, value) {
-    var _value = this._items[key];
+    var _value = this.items[key];
 
     if (_value !== undefined) {
         return _value;
@@ -137,8 +137,8 @@ dict.PY$get = function(key, value) {
 dict.PY$items = function() {
     var items = list();
 
-    for (var key in this._items) {
-        items.PY$append(tuple([key, this._items[key]]));
+    for (var key in this.items) {
+        items.PY$append(tuple([key, this.items[key]]));
     }
 
     return items;
@@ -147,7 +147,7 @@ dict.PY$items = function() {
 dict.PY$keys = function() {
     var keys = list();
 
-    for (var key in this._items) {
+    for (var key in this.items) {
         keys.PY$append(key);
     }
 
@@ -157,8 +157,8 @@ dict.PY$keys = function() {
 dict.PY$values = function() {
     var values = list();
 
-    for (var key in this._items) {
-        values.PY$append(this._items[key]);
+    for (var key in this.items) {
+        values.PY$append(this.items[key]);
     }
 
     return values;
@@ -168,22 +168,22 @@ dict.PY$update = function(other) {
    var that = this;
    iterate(other,
      function(key) {
-        that._items[key] = other.PY$__getitem__(key);
+        that.items[key] = other.PY$__getitem__(key);
      }
    );
 };
 
 dict.PY$clear = function() {
-    for (var key in this._items) {
-        delete this._items[key];
+    for (var key in this.items) {
+        delete this.items[key];
     }
 };
 
 dict.PY$pop = function(key, value) {
-    var _value = this._items[key];
+    var _value = this.items[key];
 
     if (_value !== undefined) {
-        delete this._items[key];
+        delete this.items[key];
     } else {
         if (value !== undefined) {
             _value = value;
@@ -198,13 +198,13 @@ dict.PY$pop = function(key, value) {
 dict.PY$popitem = function() {
     var _key;
 
-    for (var key in this._items) {
+    for (var key in this.items) {
         _key = key;
         break;
     }
 
     if (key !== undefined) {
-        return [_key, this._items[_key]];
+        return [_key, this.items[_key]];
     } else {
         throw py_builtins.KeyError("popitem(): dictionary is empty");
     }

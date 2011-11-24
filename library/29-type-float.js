@@ -33,7 +33,7 @@ float.numberclass = float;
 float.PY$__init__ = function(value) {
     var s = value.toString();
     if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
-        this._obj = parseFloat(value);
+        this.obj = parseFloat(value);
     } else {
         throw py_builtins.ValueError("Invalid float: " + s);
     }
@@ -54,11 +54,11 @@ float.PY$__float__ = function () {
 };
 
 float.PY$__int__ = function () {
-    return int(parseInt(this._obj));
+    return int(parseInt(this.obj));
 };
 
 float.PY$__str__ = function () {
-    if (this._obj - Math.floor(this._obj) < 1e-6) {
+    if (this.obj - Math.floor(this.obj) < 1e-6) {
         var res = sprintf("%g", this);
         if (res.indexOf('e') === -1) {
             return str(res + ".0");
@@ -73,21 +73,21 @@ float.PY$__str__ = function () {
 float.PY$__repr__ = float.PY$__str__;
 
 float.PY$__hash__ = function () {
-    return this._obj;
+    return this.obj;
 };
 
 float.PY$__div__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot divide number and non-number");
-    if (x._obj === 0)
+    if (x.obj === 0)
         throw py_builtins.ZeroDivisionError("float division by zero");
-    return float((0.0 + this._obj) / (0.0 + x._obj));
+    return float((0.0 + this.obj) / (0.0 + x.obj));
 };
 
 float.PY$__pow__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot exponentiate number and non-number");
-    return float(Math.pow(this._obj, x._obj));
+    return float(Math.pow(this.obj, x.obj));
 };
 
 float.PY$__floordiv__ = float.PY$__div__;

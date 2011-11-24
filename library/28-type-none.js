@@ -28,7 +28,7 @@ var none = __inherit(object, "NoneType");
 $PY.none = none;
 
 none.PY$__init__ = function() {
-    this._obj = null;
+    this.obj = null;
 };
 
 none.PY$__str__ = function () {
@@ -43,12 +43,12 @@ none.PY$__eq__ = function (other) {
     } else if (other === null) {
         return True;
     } else {
-        return bool(this._obj === other._obj);
+        return bool(this.obj === other.obj);
     }
 };
 
 none._js_ = function () {
-    return this._obj;
+    return this.obj;
 };
 
 none.PY$__nonzero__ = function() {

@@ -29,18 +29,18 @@ $PY.bool = bool;
 
 bool.PY$__init__ = function(b) {
     if (b) {
-        this._obj = 1;
+        this.obj = 1;
     } else {
-        this._obj = 0;
+        this.obj = 0;
     }
 };
 
 bool.PY$__bool__ = function () {
-    return this._obj;
+    return this.obj;
 };
 
 bool.PY$__str__ = function () {
-    if (this._obj) {
+    if (this.obj) {
         return str("True");
     } else {
         return str("False");
@@ -48,7 +48,7 @@ bool.PY$__str__ = function () {
 };
 
 bool.toString = function () {
-    if (this._obj) {
+    if (this.obj) {
         return "1";
     } else {
         return "";
@@ -59,13 +59,13 @@ bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function (other) {
     if (other.PY$__int__ !== undefined)
-        return bool(Number(this._obj) == other.PY$__int__()._js_());
+        return bool(Number(this.obj) == other.PY$__int__()._js_());
 
-    return bool(this._obj === other._obj);
+    return bool(this.obj === other.obj);
 };
 
 bool._js_ = function () {
-    if (this._obj) {
+    if (this.obj) {
         return true;
     } else {
         return false;
@@ -73,15 +73,15 @@ bool._js_ = function () {
 };
 
 bool.PY$__neg__ = function() {
-    return bool(!this._obj);
+    return bool(!this.obj);
 };
 
 bool.PY$__nonzero__ = function() {
-    return bool(this._obj);
+    return bool(this.obj);
 };
 
 bool.PY$__int__ = function() {
-    if (this._obj) {
+    if (this.obj) {
         return $c1;
     } else {
         return $c0;

@@ -32,11 +32,11 @@ int.numberclass = int;
 
 int.PY$__init__ = function(value) {
     if (arguments.length == 2) {
-        this._obj = parseInt(i, arguments[1]);
+        this.obj = parseInt(i, arguments[1]);
     } else {
         var s = value.toString();
         if (s.match(/^[-+0-9]+$/)) {
-            this._obj = parseInt(value, 10);
+            this.obj = parseInt(value, 10);
         } else {
             throw py_builtins.ValueError("Invalid integer: " + value);
         }
@@ -58,88 +58,88 @@ int.PY$__int__ = function () {
 };
 
 int.PY$__float__ = function () {
-    return float(this._obj);
+    return float(this.obj);
 };
 
 int.PY$__str__ = function () {
-    return str(this._obj);
+    return str(this.obj);
 };
 
 int.PY$__repr__ = int.PY$__str__;
 
 int.PY$__hash__ = function () {
-    return this._obj;
+    return this.obj;
 };
 
 int.PY$__invert__ = function() {
-    return int(~this._obj);
+    return int(~this.obj);
 };
 
 int.PY$__div__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot divide int and non-int");
-    if (x._obj === 0)
+    if (x.obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
-    var res = this._obj / x._obj;
+    var res = this.obj / x.obj;
     return float(res);
 };
 
 int.PY$__floordiv__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    if (x._obj === 0)
+    if (x.obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
     if (x.numbertype == "PY$__float__") {
-        return float(this._obj / x._obj);
+        return float(this.obj / x.obj);
     } else {
-        return int(Math.floor(this._obj / x._obj));
+        return int(Math.floor(this.obj / x.obj));
     }
 };
 
 int.PY$__mod__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot find remainder of int and non-int");
-    return int(this._obj % x._obj);
+    return int(this.obj % x.obj);
 };
 
 int.PY$__pow__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot exponentiate int and non-int");
     if (x.numbertype == "PY$__float__") {
-        return float(Math.pow(this._obj, x._obj));
+        return float(Math.pow(this.obj, x.obj));
     } else {
-        return int(Math.floor(Math.pow(this._obj, x._obj)));
+        return int(Math.floor(Math.pow(this.obj, x.obj)));
     }
 };
 
 int.PY$__bitand__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    return int(this._obj & x._obj);
+    return int(this.obj & x.obj);
 };
 
 int.PY$__bitor__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    return int(this._obj | x._obj);
+    return int(this.obj | x.obj);
 };
 
 int.PY$__bitxor__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    return int(this._obj ^ x._obj);
+    return int(this.obj ^ x.obj);
 };
 
 int.PY$__lshift__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    return int(this._obj << x._obj);
+    return int(this.obj << x.obj);
 };
 
 int.PY$__rshift__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot operate on int and non-int");
-    return int(this._obj >> x._obj);
+    return int(this.obj >> x.obj);
 };
 
 int.PY$__idiv__      = int.PY$__div__;

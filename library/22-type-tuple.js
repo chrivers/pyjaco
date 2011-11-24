@@ -33,19 +33,19 @@ tuple.PY$__init__ = function(seq) {
     if (arguments.length > 1) {
         throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (seq === undefined) {
-        this._items = [];
+        this.items = [];
     } else if (seq.PY$__class__ === list || seq.PY$__class__ === tuple) {
-        this._items = seq._items.concat();
+        this.items = seq.items.concat();
     } else {
         var that = this;
-        this._items = [];
+        this.items = [];
         iterate(seq, function(elm) {
                     if (typeof(elm) == 'number')
-                        that._items.push(int(elm));
+                        that.items.push(int(elm));
                     else if (typeof(elm) == 'string')
-                        that._items.push(str(elm));
+                        that.items.push(str(elm));
                     else
-                        that._items.push(elm);
+                        that.items.push(elm);
                 });
     }
 };
@@ -55,11 +55,11 @@ tuple.PY$__str__ = function () {
     if (len === 0) {
         return str("()");
     } else if (len === 1) {
-        return str("(" + str(this._items[0]) + ",)");
+        return str("(" + str(this.items[0]) + ",)");
     } else {
-        var res = "(" + js(py_builtins.repr(this._items[0]));
-        for (var i = 1; i < this._items.length; i++)  {
-            res += ", " + js(py_builtins.repr(this._items[i]));
+        var res = "(" + js(py_builtins.repr(this.items[0]));
+        for (var i = 1; i < this.items.length; i++)  {
+            res += ", " + js(py_builtins.repr(this.items[i]));
         }
         return res + ")";
     }
@@ -74,7 +74,7 @@ tuple.PY$__eq__ = function (other) {
         }
         var len = js(py_builtins.len(this));
         for (var i = 0; i < len; i++) {
-            if (this._items[i].PY$__ne__(other._items[i]) == true) {
+            if (this.items[i].PY$__ne__(other.items[i]) == true) {
                 return False;
             }
         }
@@ -118,11 +118,11 @@ tuple.PY$__cmp__ = function (other) {
                     throw exc;
                 }
             }
-            if (count >= this._items.length) {
+            if (count >= this.items.length) {
                 res = $cn1;
                 break;
             }
-            var r = this._items[count].PY$__cmp__(elm);
+            var r = this.items[count].PY$__cmp__(elm);
 
             if (r.PY$__gt__($c0) == true) {
                 res = $c1;
@@ -135,7 +135,7 @@ tuple.PY$__cmp__ = function (other) {
         }
 
         if (res == 0) {
-            if (this._items.length > count) {
+            if (this.items.length > count) {
                 return $c1;
             } else {
                 return $c0;
@@ -159,7 +159,7 @@ tuple.PY$__mul__ = function(num) {
         var res = [];
         var count = num._js_();
         for (var i = 0; i < count; i++) {
-            res = res.concat(this._items);
+            res = res.concat(this.items);
         }
         return this.PY$__class__(res);
     } else {
@@ -169,7 +169,7 @@ tuple.PY$__mul__ = function(num) {
 
 tuple.PY$__add__ = function(other) {
     if (this.PY$__class__ == other.PY$__class__) {
-        var res = this._items.concat([]);
+        var res = this.items.concat([]);
         iterate(other, function(elm) {
                     res.push(elm);
                 });
@@ -193,8 +193,8 @@ tuple.PY$__hash__ = function () {
     var value = 0x345678;
     var length = js(this.PY$__len__());
 
-    for (var index in this._items) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ py_builtins.hash(this._items[index]);
+    for (var index in this.items) {
+        value = ((1000003*value) & 0xFFFFFFFF) ^ py_builtins.hash(this.items[index]);
         value = value ^ length;
     }
 
@@ -206,16 +206,16 @@ tuple.PY$__hash__ = function () {
 };
 
 tuple.PY$__len__ = function() {
-    return int(this._items.length);
+    return int(this.items.length);
 };
 
 tuple.PY$__iter__ = function() {
-    return iter(this._items);
+    return iter(this.items);
 };
 
 tuple.PY$__contains__ = function(item) {
-    for (var index in this._items) {
-        if (this._items[index].PY$__eq__(item) == true) {
+    for (var index in this.items) {
+        if (this.items[index].PY$__eq__(item) == true) {
             return True;
         }
     }
@@ -243,9 +243,9 @@ tuple.PY$__getitem__ = function(index) {
         }
 
         if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(py_builtins.len(this)))) {
-            return this._items[index.PY$__int__()];
+            return this.items[index.PY$__int__()];
         } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(py_builtins.len(this).PY$__neg__()))) {
-            return this._items[index.PY$__add__(py_builtins.len(this)).PY$__int__()];
+            return this.items[index.PY$__add__(py_builtins.len(this)).PY$__int__()];
         } else {
             throw py_builtins.IndexError("list index out of range");
         }
@@ -263,8 +263,8 @@ tuple.PY$__delitem__ = function() {
 tuple.PY$count = function(value) {
     var count = 0;
 
-    for (var index in this._items) {
-        if (this._items[index].PY$__eq__(value) == true) {
+    for (var index in this.items) {
+        if (this.items[index].PY$__eq__(value) == true) {
             count += 1;
         }
     }
@@ -278,7 +278,7 @@ tuple.PY$index = function(value, start, end) {
     }
 
     for (var i = start; (end === undefined) || (start < end); i++) {
-        var _value = this._items[i];
+        var _value = this.items[i];
 
         if (_value === undefined) {
             break;

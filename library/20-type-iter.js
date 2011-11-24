@@ -30,15 +30,15 @@ var iter = __inherit(object, "iter");
 $PY.iter = iter;
 
 iter.PY$__init__ = function(obj) {
-    this._index = 0;
+    this.index = 0;
     if (obj === undefined) {
         throw py_builtins.TypeError("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
-        this._seq = obj;
+        this.seq = obj;
     } else if (typeof(obj) === "string") {
-        this._seq = obj.split("");
-        for (var i = 0; i < this._seq.length; i++) {
-            this._seq[i] = str(this._seq[i]);
+        this.seq = obj.split("");
+        for (var i = 0; i < this.seq.length; i++) {
+            this.seq[i] = str(this.seq[i]);
         }
     } else {
         throw py_builtins.TypeError("object is not iterable");
@@ -58,13 +58,13 @@ iter.PY$__create__ = function(cls, obj) {
 };
 
 iter.PY$__str__ = function () {
-    return str("<iterator of " + this._seq + " at " + this._index + ">");
+    return str("<iterator of " + this.seq + " at " + this.index + ">");
 };
 
 iter.PY$next = function() {
-    var value = this._seq[this._index++];
+    var value = this.seq[this.index++];
 
-    if (this._index <= this._seq.length) {
+    if (this.index <= this.seq.length) {
         if (value === undefined) {
             return None;
         } else {
