@@ -32,8 +32,18 @@ $PY.list = list;
 list.PY$__init__ = tuple.PY$__init__;
 
 list.PY$__str__ = function () {
-    var items = py_builtins.map(function (i) {return py_builtins.repr(i);}, this._items);
-    return str("[" + str(", ").PY$join(items) + "]");
+    var len = js(this.PY$__len__());
+    if (len === 0) {
+        return str("[]");
+    } else if (len === 1) {
+        return str("[" + str(this._items[0]) + "]");
+    } else {
+        var res = "[" + js(py_builtins.repr(this._items[0]));
+        for (var i = 1; i < this._items.length; i++)  {
+            res += ", " + js(py_builtins.repr(this._items[i]));
+        }
+        return res + "]";
+    }
 };
 
 list.PY$__eq__ = tuple.PY$__eq__;
@@ -48,10 +58,7 @@ list.PY$__mul__ = tuple.PY$__mul__;
 
 list.PY$__add__ = tuple.PY$__add__;
 
-list.PY$__repr__ = function () {
-    var items = py_builtins.map(function (i) {return py_builtins.repr(i);}, this._items);
-    return str("[" + str(", ").PY$join(items) + "]");
-};
+list.PY$__repr__ = list.PY$__str__;
 
 list._js_ = tuple._js_;
 
