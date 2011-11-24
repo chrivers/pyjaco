@@ -106,24 +106,38 @@ def compile_and_run_file_test(file_path, file_name=None):
 
         def runTest(self):
             """The actual test goes here."""
+            mtime_src = os.path.getmtime(self.templ['py_path'])
+            try:
+                mtime_py_res = os.path.getmtime(self.templ['py_out_path'])
+            except OSError:
+                mtime_py_res = 0
             python_command = (
                 'python "%(py_path)s" > "%(py_out_path)s" 2> '
                 '"%(py_error)s"'
                 ) % self.templ
+
+            try:
+                mtime_js_res = os.path.getmtime(self.templ['js_path'])
+            except OSError:
+                mtime_js_res = 0
             compile_command = (
                 'python pyjs.py --import-builtins '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
                 ) % self.templ 
+
             javascript_command = (
                 'js -f "%(js_path)s" > "%(js_out_path)s" 2> '
                 '"%(js_error)s"' 
                 ) % self.templ
-            commands = (
-                python_command,
-                compile_command,
-                javascript_command
-                )
+
+            commands = []
+            if mtime_py_res < mtime_src:
+                commands.append(python_command)
+            if mtime_js_res < mtime_src:
+                commands.append(compile_command)
+            commands.append(javascript_command)
+
             for cmd in commands:
                 self.assertEqual(0, subprocess.call([cmd], shell = True))
                 self.reportProgres()
