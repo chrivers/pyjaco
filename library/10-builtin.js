@@ -334,6 +334,12 @@ py_builtins.reduce = function(func, seq) {
     return accum;
 };
 
+py_builtins.sorted = function(iterable) {
+    var l = list(iterable);
+    l.PY$sort();
+    return l;
+};
+
 if (typeof console !== 'undefined' && console.log !== undefined) {
     py_builtins.print = function()  {
         console.log.apply(null, arguments);
