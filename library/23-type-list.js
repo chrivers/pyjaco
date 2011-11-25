@@ -81,6 +81,7 @@ list.PY$__setitem__ = function(index, value) {
         throw py_builtins.IndexError("list index out of range");
     }
 };
+
 list.PY$__setslice__ = function(lower, upper, value) {
      var it = list(value).items;
      if (lower < py_builtins.len(this) && upper < py_builtins.len(this)) {
