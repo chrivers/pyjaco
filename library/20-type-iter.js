@@ -35,7 +35,7 @@ iter.PY$__init__ = function(obj) {
         throw py_builtins.TypeError("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
         this.seq = obj;
-    } else if (typeof(obj) === "string") {
+    } else if (typeof obj === "string") {
         this.seq = obj.split("");
         for (var i = 0; i < this.seq.length; i++) {
             this.seq[i] = str(this.seq[i]);
