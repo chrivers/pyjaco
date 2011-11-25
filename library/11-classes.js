@@ -112,7 +112,7 @@ object.PY$__repr__ = function() {
     if (this.PY$__class__) {
         return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
     } else {
-        return str("<" + this.PY$__name__ + " class at 0xPYJACO>");
+        return str("<type '" + this.PY$__name__ + "'>");
     }
 };
 
