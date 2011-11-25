@@ -66,7 +66,7 @@ float.PY$__str__ = function () {
             return str(res);
         }
     } else {
-        return sprintf("%.10g", this);
+        return str(sprintf("%.10g", this));
     }
 };
 
