@@ -95,10 +95,6 @@ basestring.PY$__mod__ = function(args) {
     return basestring(sprintf(this, args));
 };
 
-basestring.PY$__bool__ = function() {
-    return bool(this.obj);
-};
-
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return bool(this.obj == s);

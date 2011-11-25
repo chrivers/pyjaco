@@ -49,10 +49,6 @@ number._js_ = function () {
     return this.obj;
 };
 
-number.PY$__bool__ = function() {
-    return bool(this.obj);
-};
-
 number.PY$__pos__ = function() {
     return this.PY$__class__(+this.obj);
 };
