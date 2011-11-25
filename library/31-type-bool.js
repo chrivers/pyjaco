@@ -35,10 +35,6 @@ bool.PY$__init__ = function(b) {
     }
 };
 
-bool.PY$__bool__ = function () {
-    return this.obj;
-};
-
 bool.PY$__str__ = function () {
     if (this.obj) {
         return str("True");
@@ -92,11 +88,26 @@ var True = bool(true);
 var False = bool(false);
 
 bool.PY$__create__ = function(cls, b) {
-    if ((b !== null) && (b.PY$__bool__ != undefined)) {
-        return b.PY$__bool__();
-    } else if (b) {
-        return True;
-    } else {
+    if (b === null || b === undefined) {
         return False;
+    } else if (b.PY$__nonzero__ != undefined) {
+        return b.PY$__nonzero__();
+    } else if (b.PY$__len__ != undefined) {
+        return b.PY$__len__().PY$__gt__($c0);
+    } else if (b instanceof Array) {
+        if (b.length) {
+            return True;
+        } else {
+            return False;
+        }
+    } else {
+        for (var i in b) {
+            return True;
+        }
+        if (!!b) {
+            return True;
+        } else {
+            return False;
+        }
     }
 };
