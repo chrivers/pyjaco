@@ -73,7 +73,8 @@ class BaseCompiler(object):
         'sum',
         'filter',
         'reduce',
-        'enumerate'
+        'enumerate',
+        'sorted'
     ])
 
     def __init__(self):
