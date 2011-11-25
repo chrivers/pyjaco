@@ -134,7 +134,10 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             js = ["var %s = function() {" % (node.name)]
 
-        js.extend(self.indent(["var self = this; var %s = __kwargs_get(arguments);" % kwarg_name]))
+        if inclass or offset == 1:
+            js.extend(self.indent(["var self = this;"]))
+
+        js.extend(self.indent(["var %s = __kwargs_get(arguments);" % kwarg_name]))
         js.extend(self.indent(js_defaults))
 
         if node.args.vararg:
