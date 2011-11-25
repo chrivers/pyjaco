@@ -100,10 +100,12 @@ bool.PY$__create__ = function(cls, b) {
         } else {
             return False;
         }
-    } else {
+    } else if (typeof b === 'object') {
         for (var i in b) {
             return True;
         }
+        return False;
+    } else {
         if (!!b) {
             return True;
         } else {
