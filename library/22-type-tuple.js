@@ -61,7 +61,7 @@ tuple.PY$__str__ = function () {
         for (var i = 1; i < this.items.length; i++)  {
             res += ", " + js(py_builtins.repr(this.items[i]));
         }
-        return res + ")";
+        return str(res + ")");
     }
 };
 
