@@ -32,10 +32,9 @@ $PY.list = list;
 list.PY$__init__ = tuple.PY$__init__;
 
 list.PY$__str__ = function () {
-    var len = js(this.PY$__len__());
-    if (len === 0) {
+    if (this.items.length === 0) {
         return str("[]");
-    } else if (len === 1) {
+    } else if (this.items.length === 1) {
         return str("[" + str(this.items[0]) + "]");
     } else {
         var res = "[" + js(py_builtins.repr(this.items[0]));
