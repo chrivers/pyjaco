@@ -98,8 +98,6 @@ class Compiler(py2js.compiler.BaseCompiler):
         return []
 
     def visit_FunctionDef(self, node):
-        js_defaults = []
-
         defaults = [None] * (len(node.args.args) - len(node.args.defaults)) + node.args.defaults
 
         if node.args.kwarg:
@@ -107,23 +105,15 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             kwarg_name = "__kwargs"
 
+        if node.args.vararg:
+            vararg_name = node.args.vararg
+        else:
+            vararg_name = "__varargs"
+
         if len(node.args.args) and node.args.args[0].id == "self":
             offset = 1
         else:
             offset = 0
-
-        for i, arg in enumerate(node.args.args[offset:]):
-            if not isinstance(arg, ast.Name):
-                raise JSError("tuples in argument list are not supported")
-
-            if defaults[i+offset] == None:
-                js_defaults.append("var %(id)s = %(kwarg)s.PY$get('%(id)s', arguments[%(i)d]);" % {"i": i, "id": arg.id, 'kwarg': kwarg_name })
-            else:
-                js_defaults.append("var %(id)s = arguments[%(i)d];" % {"i": i, "id": arg.id })
-                js_defaults.append("if (typeof %(id)s === 'undefined') { %(id)s = %(kwarg)s.PY$get('%(id)s', %(def)s); };" % { 'id': arg.id, 'def': self.visit(defaults[i+offset]), 'kwarg': kwarg_name })
-
-        if node.name in ["__getattr__", "__setattr__"]:
-            js_defaults.append("if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id })
 
         self._scope = [arg.id for arg in node.args.args]
 
@@ -137,14 +127,32 @@ class Compiler(py2js.compiler.BaseCompiler):
         if inclass or offset == 1:
             js.extend(self.indent(["var self = this;"]))
 
+        newargs = self.alloc_var()
+
         js.extend(self.indent(["var %s = __kwargs_get(arguments);" % kwarg_name]))
-        js.extend(self.indent(js_defaults))
+        js.extend(self.indent(["var %s = __varargs_get(arguments);" % vararg_name]))
+        js.extend(self.indent(["var %s = Array.prototype.slice.call(arguments).concat(js(%s));" % (newargs, vararg_name)]))
+        for i, arg in enumerate(node.args.args[offset:]):
+            if not isinstance(arg, ast.Name):
+                raise JSError("tuples in argument list are not supported")
+
+            if defaults[i + offset] == None:
+                js.extend(self.indent(["var %(id)s = (%(id)s in %(kwarg)s) ? %(kwarg)s[%(id)s] : %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'kwarg': kwarg_name, 'newargs': newargs }]))
+            else:
+                js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'newargs': newargs }]))
+                js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(def)s : %(kwarg)s.%(id)s; };" % { 'id': arg.id, 'def': self.visit(defaults[i + offset]), 'kwarg': kwarg_name }]))
+
+        if node.name in ["__getattr__", "__setattr__"]:
+            js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))
+
+        if node.args.kwarg:
+            js.extend(self.indent(["%s = dict(%s);" % (node.args.kwarg, node.args.kwarg)]))
 
         if node.args.vararg:
             l = len(node.args.args)
             if inclass:
                 l -= 1
-            js.extend(self.indent(["var %s = tuple(Array.prototype.slice.call(arguments, %s));" % (node.args.vararg, l)]))
+            js.extend(self.indent(["%s = tuple(%s.slice(%s));" % (node.args.vararg, newargs, l)]))
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
@@ -512,7 +520,12 @@ class Compiler(py2js.compiler.BaseCompiler):
         else:
             kwargs = []
 
-        js_args = ", ".join([ self.visit(arg) for arg in node.args ] + kwargs)
+        if node.starargs:
+            varargs = ["__varargs_make(%s)" % self.visit(node.starargs)]
+        else:
+            varargs = []
+
+        js_args = ", ".join([ self.visit(arg) for arg in node.args ] + varargs + kwargs)
 
         js.append("%s(%s)" % (func, js_args))
 
