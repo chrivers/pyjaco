@@ -29,11 +29,13 @@ var dict = __inherit(object, "dict");
 
 $PY.dict = dict;
 
-dict.PY$__init__ = function(args) {
+dict.PY$__init__ = function() {
     var items;
     var key;
     var value;
 
+    var kwargs = __kwargs_get(arguments);
+    var args = arguments[0];
     if (args !== undefined) {
         if (args.PY$__iter__ !== undefined) {
             items = {};
@@ -54,17 +56,22 @@ dict.PY$__init__ = function(args) {
     } else {
         this.items = {};
     }
+    for (var p in kwargs) {
+        this.items[p] = kwargs[p];
+    }
 };
 
 dict.PY$__str__ = function () {
     var strings = [];
 
     for (var key in this.items) {
-        strings.push(str(key) + ": " + str(this.items[key]));
+        strings.push(py_builtins.repr(str(key)) + ": " + py_builtins.repr(this.items[key]));
     }
 
     return str("{" + strings.join(", ") + "}");
 };
+
+dict.PY$__repr__ = dict.PY$__str__;
 
 dict._js_ = function () {
     var items = {};
