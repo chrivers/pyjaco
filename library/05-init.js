@@ -54,8 +54,16 @@ function iterate(obj, func) {
     }
 }
 
-var __kwargs_make = function(kw) {
+var __kwargs_make = function(kw, kwargs) {
     kw.__kwargs = true;
+    if (kwargs !== undefined) {
+        if (kwargs.PY$__class__ !== dict) {
+            throw TypeError("Keyword arguments with non-standard dictionary types not supported");
+        }
+        for (var key in kwargs.items) {
+            kw[key] = kwargs.items[key];
+        };
+    };
     return kw;
 };
 
