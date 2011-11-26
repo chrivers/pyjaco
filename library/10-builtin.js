@@ -353,13 +353,13 @@ if (typeof console !== 'undefined' && console.log !== undefined) {
                 print("");
             }
         } else {
-            var args = tuple(Array.prototype.slice.call(arguments, 0));
+            var args = tuple(Array.prototype.slice.call(arguments));
             print($PY.str(" ").PY$join(args));
         }
     };
 } else {
     py_builtins.print = function() {
-        var args = tuple(Array.prototype.slice.call(arguments, 0));
+        var args = tuple(Array.prototype.slice.call(arguments));
         alert($PY.str(" ").PY$join(args));
     };
 }
