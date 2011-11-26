@@ -230,18 +230,7 @@ basestring.PY$find = function(s) {
 };
 
 basestring.PY$rfind = function(s) {
-    var rev = function(s) {
-        var a = list(s.PY$__class__(s));
-        a.PY$reverse();
-        a = s.PY$__class__("").PY$join(a);
-        return a;
-    };
-    var a = rev(this);
-    var b = rev(s);
-    var r = a.PY$find(b);
-    if (r == -1)
-        return r;
-    return py_builtins.len(this) - py_builtins.len(b) - r;
+    return int(this.obj.lastIndexOf(js(s)));
 };
 
 basestring.PY$join = function(s) {
