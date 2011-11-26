@@ -59,15 +59,31 @@ var __kwargs_make = function(kw) {
     return kw;
 };
 
+var __varargs_make = function(vr) {
+    vr = tuple(vr);
+    vr.__varargs = true;
+    return vr;
+};
+
+var __varargs_get = function(args) {
+    if (args.length && (args[args.length-1].__varargs === true)) {
+        var vargs = args[args.length-1];
+        args.length -= 1;
+        return vargs;
+    } else {
+        return tuple();
+    }
+};
+
 var __kwargs_get = function(args) {
     if (args.length && (args[args.length-1].__kwargs === true)) {
         delete args[args.length-1].__kwargs;
-        var res = dict(args[args.length-1]);
+        var res = args[args.length-1];
         delete args[args.length-1];
         args.length -= 1;
         return res;
     } else {
-        return dict();
+        return [];
     }
 };
 
