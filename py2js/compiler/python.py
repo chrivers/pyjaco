@@ -137,7 +137,7 @@ class Compiler(py2js.compiler.BaseCompiler):
                 raise JSError("tuples in argument list are not supported")
 
             if defaults[i + offset] == None:
-                js.extend(self.indent(["var %(id)s = (%(id)s in %(kwarg)s) ? %(kwarg)s[%(id)s] : %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'kwarg': kwarg_name, 'newargs': newargs }]))
+                js.extend(self.indent(["var %(id)s = ('%(id)s' in %(kwarg)s) ? %(kwarg)s['%(id)s'] : %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'kwarg': kwarg_name, 'newargs': newargs }]))
             else:
                 js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'newargs': newargs }]))
                 js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(def)s : %(kwarg)s.%(id)s; };" % { 'id': arg.id, 'def': self.visit(defaults[i + offset]), 'kwarg': kwarg_name }]))
@@ -512,11 +512,15 @@ class Compiler(py2js.compiler.BaseCompiler):
         func = self.visit(node.func)
         compound = ("Assign" in self.stack) or ("AugAssign" in self.stack) or (self.stack.count("Call") > 1)
 
-        if node.keywords:
+        if node.keywords or node.kwargs:
             keywords = []
             for kw in node.keywords:
                 keywords.append("%s: %s" % (kw.arg, self.visit(kw.value)))
-            kwargs = ["__kwargs_make({%s})" % ", ".join(keywords)]
+            if node.kwargs:
+                kwparam = ", %s" % self.visit(node.kwargs)
+            else:
+                kwparam = ""
+            kwargs = ["__kwargs_make({%s}%s)" % (", ".join(keywords), kwparam)]
         else:
             kwargs = []
 
