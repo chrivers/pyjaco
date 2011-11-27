@@ -71,6 +71,6 @@ iter.PY$next = function() {
             return value;
         }
     } else {
-        throw py_builtins.StopIteration('no more items');
+        throw $PY.StopIter;
     }
 };
