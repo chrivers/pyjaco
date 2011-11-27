@@ -40,15 +40,27 @@ function bt() {
 }
 
 function iterate(obj, func) {
-    var seq = iter(obj);
-    while (true) {
-        try {
-            func(seq.PY$next());
-        } catch (exc) {
-            if ($PY.isinstance(exc, py_builtins.StopIteration) == true) {
-                break;
-            } else {
-                throw exc;
+    if (obj.PY$__class__ === undefined) {
+        for (var i in obj) {
+            func(obj[i]);
+        };
+    } else if (obj.PY$__class__ === list || obj.PY$__class__ === tuple) {
+        for (var i = 0; i < obj.items.length; i++) {
+            func(obj.items[i]);
+        };
+    } else {
+        var seq = iter(obj);
+        while (true) {
+            try {
+                func(seq.PY$next());
+            } catch (exc) {
+                if (exc === $PY.StopIter) {
+                    break;
+                } else if ($PY.isinstance(exc, py_builtins.StopIteration)) {
+                    break;
+                } else {
+                    throw exc;
+                }
             }
         }
     }
