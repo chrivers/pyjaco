@@ -57,3 +57,5 @@ for (var i in py_builtins.PY$__exceptions__) {
     var name = py_builtins.PY$__exceptions__[i];
     py_builtins[name] = __inherit(Exception, name);
 }
+
+$PY.StopIter = py_builtins.StopIteration("No more items");
