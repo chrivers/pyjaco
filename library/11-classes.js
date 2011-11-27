@@ -119,7 +119,7 @@ object.PY$__repr__ = function() {
 object.PY$__str__ = object.PY$__repr__;
 
 object.PY$__eq__ = function(other) {
-    return bool(this === other);
+    return this === other ? True : False;
 };
 
 object.PY$__ne__ = function (other) {
@@ -127,23 +127,23 @@ object.PY$__ne__ = function (other) {
 };
 
 object.PY$__gt__ = function(other) {
-    return bool(this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__);
+    return this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__ ? True : False;
 };
 
 object.PY$__lt__ = function(other) {
     if (other === this) {
         return False;
     } else {
-        return bool(this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__);
+        return this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__ ? True : False;
     }
 };
 
 object.PY$__ge__ = function(other) {
-    return bool(this.PY$__lt__(other) == false);
+    return this.PY$__lt__(other) == false ? True : False;
 };
 
 object.PY$__le__ = function(other) {
-    return bool(this.PY$__gt__(other) == false);
+    return this.PY$__gt__(other) == false ? True : False;
 };
 
 object.PY$__cmp__ = function (y) {
