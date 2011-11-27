@@ -54,9 +54,7 @@ function iterate(obj, func) {
             try {
                 func(seq.PY$next());
             } catch (exc) {
-                if (exc === $PY.StopIter) {
-                    break;
-                } else if ($PY.isinstance(exc, py_builtins.StopIteration)) {
+                if (exc === $PY.StopIter || $PY.isinstance(exc, py_builtins.StopIteration)) {
                     break;
                 } else {
                     throw exc;
