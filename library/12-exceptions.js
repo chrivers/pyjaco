@@ -50,7 +50,8 @@ py_builtins.PY$__exceptions__ = [
     'NameError',
     'IndexError',
     'KeyError',
-    'StopIteration'
+    'StopIteration',
+    'IOError'
 ];
 
 for (var i in py_builtins.PY$__exceptions__) {
