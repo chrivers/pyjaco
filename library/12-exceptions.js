@@ -31,6 +31,7 @@ Exception.PY$__init__ = function() {
     } else {
         this.PY$message = "";
     }
+    this.message = "Exception: " + this.PY$__class__.PY$__name__ + ": " + this.PY$message;
 };
 
 Exception.PY$__str__ = function() {
