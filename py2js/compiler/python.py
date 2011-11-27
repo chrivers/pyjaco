@@ -283,6 +283,36 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         js = []
 
+        if isinstance(node.iter, ast.Call) and isinstance(node.iter.func, ast.Name) and node.iter.func.id == "range" and not node.orelse:
+            counter  = self.visit(node.target)
+            end_var  = self.alloc_var()
+            assert(len(node.iter.args) in (1,2,3))
+            if len(node.iter.args) == 1:
+                start = "$c0"
+                end   = self.visit(node.iter.args[0])
+                step  = "$c1"
+            elif len(node.iter.args) == 2:
+                start = self.visit(node.iter.args[0])
+                end   = self.visit(node.iter.args[1])
+                step  = "$c1"
+            else:
+                start = self.visit(node.iter.args[0])
+                end   = self.visit(node.iter.args[1])
+                step  = self.visit(node.iter.args[2])
+
+            js.append("%s = %s;" % (end_var, end))
+            if step <> "$c1":
+                step_var = self.alloc_var()
+                js.append("%s = %s;" % (step_var, step));
+            else:
+                step_var = step
+            js.append("for (%s = %s; %s.PY$__lt__(%s) == true; %s = %s.PY$__add__(%s)) {" % (counter, start, counter, end_var, counter, counter, step_var))
+            for stmt in node.body:
+                js.extend(self.indent(self.visit(stmt)))
+            js.append("}")
+            return js
+
+
         for_iter = self.visit(node.iter)
 
         iter_dummy = self.alloc_var()
@@ -303,7 +333,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         js.append("  }")
 
         js.append("} catch (%s) {" % exc_dummy)
-        js.append("  if (!js(py_builtins.isinstance(%s, py_builtins.StopIteration)))" % exc_dummy)
+        js.append("  if (%s !== $PY.StopIter && !$PY.isinstance(%s, py_builtins.StopIteration))" % (exc_dummy, exc_dummy))
         js.append("    throw %s;" % exc_dummy)
         if node.orelse:
             js.append("  else {")
@@ -368,6 +398,7 @@ class Compiler(py2js.compiler.BaseCompiler):
         err = self.alloc_var()
         self._exceptions.append(err)
         js.append("} catch (%s) {" % err)
+        catchall = False
         for i, n in enumerate(node.handlers):
             if i > 0:
                 pre = "else "
@@ -375,10 +406,11 @@ class Compiler(py2js.compiler.BaseCompiler):
                 pre = ""
             if n.type:
                 if isinstance(n.type, ast.Name):
-                    js.extend(self.indent(["%sif (js(py_builtins.isinstance(%s, %s))) {" % (pre, err, self.visit(n.type))]))
+                    js.extend(self.indent(["%sif ($PY.isinstance(%s, %s)) {" % (pre, err, self.visit(n.type))]))
                 else:
                     raise JSError("Catching non-simple exceptions not supported")
             else:
+                catchall = True
                 js.append("%sif (true) {" % (pre))
 
             if n.name:
@@ -391,6 +423,9 @@ class Compiler(py2js.compiler.BaseCompiler):
                 js.extend(self.indent(self.visit(b)))
 
             js.append("}")
+
+        if not catchall:
+            js.append("else { throw %s; }" % err);
 
         js.append("};")
         self._exceptions.pop()
