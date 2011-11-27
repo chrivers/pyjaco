@@ -97,9 +97,9 @@ basestring.PY$__mod__ = function(args) {
 
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this.obj == s);
+        return this.obj == s ? True : False;
     else if ($PY.isinstance(s, $PY.basestring) == true) {
-        return bool(this.obj == s.obj);
+        return this.obj == s.obj ? True : False;
     }
     else
         return False;
@@ -107,9 +107,9 @@ basestring.PY$__eq__ = function(s) {
 
 basestring.PY$__gt__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this.obj > s);
+        return this.obj > s ? True : False;
     else if ($PY.isinstance(s, $PY.basestring) == true)
-        return bool(this.obj > s.obj);
+        return this.obj > s.obj ? True : False;
     else if ($PY.isinstance(s, $PY.tuple) == true)
         return False;
     else
@@ -118,9 +118,9 @@ basestring.PY$__gt__ = function(s) {
 
 basestring.PY$__lt__ = function(s) {
     if (typeof(s) === "string")
-        return bool(this.obj < s);
+        return this.obj < s ? True : False;
     else if ($PY.isinstance(s, $PY.basestring) == true)
-        return bool(this.obj < s.obj);
+        return this.obj < s.obj ? True : False;
     else if ($PY.isinstance(s, $PY.tuple) == true)
         return True;
     else

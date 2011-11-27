@@ -43,7 +43,7 @@ none.PY$__eq__ = function (other) {
     } else if (other === null) {
         return True;
     } else {
-        return bool(this.obj === other.obj);
+        return this.obj === other.obj ? True : False;
     }
 };
 

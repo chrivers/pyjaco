@@ -31,11 +31,11 @@ number.PY$__repr__ = number.PY$__str__;
 
 number.PY$__eq__ = function (other) {
     if (typeof(other) === "number") {
-        return bool(this.obj === other);
+        return this.obj === other ? True : False;
     } else if (other.numbertype) {
-        return bool(this.obj === other.obj);
+        return this.obj === other.obj ? True : False;
     } else if (other[this.numbertype] !== undefined) {
-        return bool(this.obj === other[this.numbertype]()._js_());
+        return this.obj === other[this.numbertype]()._js_() ? True : False;
     } else {
         return object.PY$__eq__.call(this, other);
     }
@@ -58,14 +58,14 @@ number.PY$__neg__ = function() {
 };
 
 number.PY$__nonzero__ = function() {
-    return bool(this.obj != 0);
+    return this.obj != 0 ? True : False;
 };
 
 number.PY$__gt__ = function(x) {
     if (x.numbertype) {
-        return bool(this.obj > x.obj);
+        return this.obj > x.obj ? True : False;
     } else if (x[this.numbertype] !== undefined) {
-        return bool(this.obj > x[this.numbertype]()._js_());
+        return this.obj > x[this.numbertype]()._js_() ? True : False;
     } else {
         return object.PY$__gt__.call(this, x);
     }
@@ -73,9 +73,9 @@ number.PY$__gt__ = function(x) {
 
 number.PY$__lt__ = function(x) {
     if (x.numbertype) {
-        return bool(this.obj < x.obj);
+        return this.obj < x.obj ? True : False;
     } else if (x[this.numbertype] !== undefined) {
-        return bool(this.obj < x[this.numbertype]()._js_());
+        return this.obj < x[this.numbertype]()._js_() ? True : False;
     } else {
         return object.PY$__lt__.call(this, x);
     }

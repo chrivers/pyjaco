@@ -55,9 +55,9 @@ bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function (other) {
     if (other.PY$__int__ !== undefined)
-        return bool(Number(this.obj) == other.PY$__int__()._js_());
+        return Number(this.obj) == other.PY$__int__()._js_() ? True : False;
 
-    return bool(this.obj === other.obj);
+    return this.obj === other.obj ? True : False;
 };
 
 bool._js_ = function () {
@@ -69,11 +69,11 @@ bool._js_ = function () {
 };
 
 bool.PY$__neg__ = function() {
-    return bool(!this.obj);
+    return this.obj ? False : True;
 };
 
 bool.PY$__nonzero__ = function() {
-    return bool(this.obj);
+    return this.obj ? True : False;
 };
 
 bool.PY$__int__ = function() {

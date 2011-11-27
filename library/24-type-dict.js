@@ -102,7 +102,7 @@ dict.PY$__iter__ = function() {
 };
 
 dict.PY$__contains__ = function(key) {
-    return bool(this.items[key] !== undefined);
+    return this.items[key] !== undefined ? True : False;
 };
 
 dict.PY$__getitem__ = function(key) {
