@@ -25,7 +25,7 @@
 **/
 
 py_builtins.hasattr = function(obj, name) {
-    return bool(obj["PY$" + name] !== undefined);
+    return obj["PY$" + name] === undefined ? False : True;
 };
 
 py_builtins.getattr = function(obj, name, value) {
@@ -203,7 +203,7 @@ py_builtins.zip = function() {
             try {
                 var value = iters.PY$__getitem__(i).PY$next();
             } catch (exc) {
-                if ($PY.isinstance(exc, py_builtins.StopIteration) == true) {
+                if (exc === $PY.StopIter || $PY.isinstance(exc, py_builtins.StopIteration) == true) {
                     return items;
                 } else {
                     throw exc;
@@ -248,16 +248,16 @@ py_builtins.isinstance = function(obj, cls) {
 
 py_builtins.__not__ = function(obj) {
    if (py_builtins.hasattr(obj, '__nonzero__') == true) {
-       return bool(!js(obj.PY$__nonzero__()));
+       return js(obj.PY$__nonzero__()) ? False : True;
    } else if (py_builtins.hasattr(obj, '__len__') == true) {
-       return bool(js(obj.PY$__len__()) === 0);
+       return js(obj.PY$__len__()) === 0 ? True : False;
    } else {
-       return bool(!js(obj));
+       return js(obj) ? False : True;
    }
 };
 
 py_builtins.__is__ = function(a, b) {
-    return bool(a === b);
+    return a === b ? True : False;
 };
 
 py_builtins.max = function(list) {
@@ -303,7 +303,7 @@ py_builtins.sum = function(list) {
 py_builtins.filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
-     if (bool(f(item)) == true) {
+     if (f(item) == true) {
        res.PY$append(item);
      }
    });
