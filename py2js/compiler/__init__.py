@@ -53,6 +53,7 @@ class BaseCompiler(object):
         'IndexError',
         'KeyError',
         'StopIteration',
+        'IOError',
 
         'delattr',
         'hasattr',
