@@ -5,6 +5,7 @@ KNOWN_TO_FAIL = [
     "tests/basic/oo_super.py",
     "tests/basic/del_global.py",
     "tests/basic/del_local.py",
+    "tests/basic/dictionary3.py",
     "tests/basic/listcomp2.py",
 
     "tests/functions/cmp.py",
