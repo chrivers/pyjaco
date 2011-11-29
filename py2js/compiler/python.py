@@ -93,6 +93,12 @@ class Compiler(py2js.compiler.BaseCompiler):
 
         return name
 
+    def visit_Return(self, node):
+        if node.value is not None:
+            return ["return %s;" % self.visit(node.value)]
+        else:
+            return ["return None;"]
+
     def visit_Global(self, node):
         self._scope.extend(node.names)
         return []
@@ -160,6 +166,8 @@ class Compiler(py2js.compiler.BaseCompiler):
             js.extend(self.indent(self.visit(stmt)))
 
         self._scope = []
+        if not (node.body and isinstance(node.body[-1], ast.Return)):
+            js.append("return None;")
         js.append("}")
 
         for dec in node.decorator_list:
