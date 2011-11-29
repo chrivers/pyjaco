@@ -37,7 +37,7 @@ py_builtins.getattr = function(obj, name, value) {
         if (value !== undefined) {
             return value;
         } else {
-            throw py_builtins.AttributeError(obj, name);
+            throw py_builtins.AttributeError("Object " + obj + " does not have attribute " + name);
         }
     }
 };
@@ -55,7 +55,7 @@ py_builtins.js_getattr = function(obj, name, value) {
         if (value !== undefined) {
             return value;
         } else {
-            throw py_builtins.AttributeError(obj, name);
+            throw py_builtins.AttributeError("Object " + obj + " does not have attribute " + name);
         }
     }
 };
@@ -68,7 +68,7 @@ py_builtins.delattr = function(obj, name) {
     if (obj["PY$" + name] !== undefined) {
         delete obj["PY$" + name];
     } else {
-        throw py_builtins.AttributeError(obj, name);
+        throw py_builtins.AttributeError("Object " + obj + " does not have attribute " + name);
     }
 };
 
