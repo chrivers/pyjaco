@@ -37,7 +37,8 @@ class BaseCompiler(object):
 
     name_map = {
         'super' : 'Super',
-        'py_builtins' : '__py_builtins'
+        'py_builtins' : '__py_builtins',
+        'delete': '__delete',
     }
 
     builtin = set([

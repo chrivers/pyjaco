@@ -136,11 +136,13 @@ class Compiler(py2js.compiler.BaseCompiler):
             if not isinstance(arg, ast.Name):
                 raise JSError("tuples in argument list are not supported")
 
+            values = dict(i = i, id = self.visit(arg), kwarg = kwarg_name, newargs = newargs)
             if defaults[i + offset] == None:
-                js.extend(self.indent(["var %(id)s = ('%(id)s' in %(kwarg)s) ? %(kwarg)s['%(id)s'] : %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'kwarg': kwarg_name, 'newargs': newargs }]))
+                js.extend(self.indent(["var %(id)s = ('%(id)s' in %(kwarg)s) ? %(kwarg)s['%(id)s'] : %(newargs)s[%(i)d];" % values]))
             else:
-                js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % {"i": i, "id": arg.id, 'newargs': newargs }]))
-                js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(def)s : %(kwarg)s.%(id)s; };" % { 'id': arg.id, 'def': self.visit(defaults[i + offset]), 'kwarg': kwarg_name }]))
+                values['default'] = self.visit(defaults[i + offset])
+                js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % values]))
+                js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(default)s : %(kwarg)s.%(id)s; };" % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
             js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))
