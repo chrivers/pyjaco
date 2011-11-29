@@ -162,7 +162,8 @@ tuple.PY$__mul__ = function(num) {
         }
         return this.PY$__class__(res);
     } else {
-        throw py_builtins.NotImplementedError();
+        var name = this.PY$__class__.PY$__name__;
+        throw py_builtins.NotImplementedError("Cannot multiply " + name + " and non-int");
     }
 };
 
@@ -174,7 +175,8 @@ tuple.PY$__add__ = function(other) {
                 });
         return this.PY$__class__(res);
     } else {
-        throw py_builtins.NotImplementedError();
+        var name = this.PY$__class__.PY$__name__;
+        throw py_builtins.NotImplementedError("Cannot add " + name + " and non-" + name);
     }
 };
 
