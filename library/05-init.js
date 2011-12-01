@@ -107,7 +107,7 @@ var __kwargs_get = function(args) {
 
 var staticmethod = function(func) {
     var res = function () {
-        return func.apply(null, [this].concat(Array.prototype.slice.call(arguments)));
+        return func.apply(null, [null].concat(Array.prototype.slice.call(arguments)));
     };
     res.__static = true;
     return res;
