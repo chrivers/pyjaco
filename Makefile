@@ -15,8 +15,9 @@ testclean:
 	@rm -f tests/**/*.py.err
 	@rm -f tests/**/*.py.js
 	@rm -f tests/**/*.py.out
-	@rm -f tests/**/*.pyjs.err
+	@rm -f tests/**/*.py.js.err
 	@rm -f tests/**/*.py.comp.err
+	@rm -f tests/**/*.pyc
 	@rm -f tests/test_builtins.js.{err,out}
 
 examples:
