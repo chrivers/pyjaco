@@ -90,7 +90,11 @@ object.PY$__getattr__ = function(k) {
         if (this.PY$__class__ == undefined && !q.__static) {
             var t = function() { return q.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
         } else {
-            var t = function() { return q.apply(that, arguments); };
+            if (q.PY$__super__ !== undefined) {
+                return q;
+            } else {
+                var t = function() { return q.apply(that, arguments); };
+            }
         }
         return t;
     } else if (k === '__name__') {
