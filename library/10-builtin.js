@@ -73,7 +73,7 @@ py_builtins.delattr = function(obj, name) {
 };
 
 py_builtins.hash = function(obj) {
-    if (py_builtins.hasattr(obj, '__hash__') == true) {
+    if (obj.PY$__hash__ !== undefined) {
         return obj.PY$__hash__();
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
@@ -83,7 +83,7 @@ py_builtins.hash = function(obj) {
 };
 
 py_builtins.len = function(obj) {
-    if (py_builtins.hasattr(obj, '__len__') == true) {
+    if (obj.PY$__len__ !== undefined) {
         return obj.PY$__len__();
     } else {
         throw py_builtins.AttributeError('__len__');
@@ -93,8 +93,11 @@ py_builtins.len = function(obj) {
 py_builtins.dir = function(obj) {
     var res = list();
     for (var i in obj) {
-        res.PY$append($PY.str(i));
+        if (i.indexOf('PY$') !== -1) {
+            res.PY$append($PY.str(i.substr(3)));
+        }
     }
+    res.PY$sort();
     return res;
 };
 
@@ -105,9 +108,9 @@ py_builtins.cmp = function(x, y) {
 py_builtins.repr = function(obj) {
     if (obj == undefined) {
         return "None";
-    } else if (py_builtins.hasattr(obj, '__repr__') == true) {
+    } else if (obj.PY$__repr__ !== undefined) {
         return obj.PY$__repr__(obj);
-    } else if (py_builtins.hasattr(obj, '__str__') == true) {
+    } else if (obj.PY$__str__ !== undefined) {
         return obj.PY$__str__(obj);
     } else if (obj.toString !=! undefined) {
         return obj.toString();
@@ -247,9 +250,9 @@ py_builtins.isinstance = function(obj, cls) {
 };
 
 py_builtins.__not__ = function(obj) {
-   if (py_builtins.hasattr(obj, '__nonzero__') == true) {
+   if (obj.PY$__nonzero__ !== undefined) {
        return js(obj.PY$__nonzero__()) ? False : True;
-   } else if (py_builtins.hasattr(obj, '__len__') == true) {
+   } else if (obj.PY$__len__ !== undefined) {
        return js(obj.PY$__len__()) === 0 ? True : False;
    } else {
        return js(obj) ? False : True;
@@ -341,9 +344,17 @@ py_builtins.sorted = function(iterable) {
 };
 
 if (typeof console !== 'undefined' && console.log !== undefined) {
-    py_builtins.print = function()  {
-        console.log.apply(null, arguments);
-    };
+    if (console.log.apply !== undefined) {
+        py_builtins.print = function()  {
+            console.log.apply(null, arguments);
+        };
+    } else {
+        // Guess which one is not like the other? Yes, it's IE again.
+        py_builtins.print = function()  {
+            var args = tuple(Array.prototype.slice.call(arguments));
+            console.log(js(str(" ").PY$join(args)));
+        };
+    }
 } else if (typeof window === 'undefined' || window.print !== print) {
     py_builtins.print = function() {
         if (arguments.length <= 1) {
