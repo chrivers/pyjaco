@@ -68,12 +68,12 @@ basestring._js_ = function () {
 };
 
 basestring.PY$__hash__ = function () {
-    var value = 0x345678;
-    var length = this.PY$__len__();
+    var value = this.obj.charCodeAt(0) << 7;
+    var len = this.obj.length;
 
-    for (var index in this.obj) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ this.obj[index];
-        value = value ^ length;
+    for (var i = 1; i < len; i++) {
+        value = ((1000003 * value) & 0xFFFFFFFF) ^ this.obj[i];
+        value = value ^ len;
     }
 
     if (value == -1) {
@@ -234,7 +234,15 @@ basestring.PY$rfind = function(s) {
 };
 
 basestring.PY$join = function(s) {
-    return this.PY$__class__(js(s).join(js(this)));
+    // return this.PY$__class__(js(s).join(js(this)));
+    var res = "";
+    var that = this;
+    iterate(s, function(elm) {
+                if (res != "")
+                    res += that.obj;
+                res += str(elm)._js_();
+            });
+    return str(res);
 };
 
 basestring.PY$replace = function(old, _new, count) {
@@ -289,24 +297,36 @@ basestring.PY$strip = function(chars) {
     return this.PY$lstrip(chars).PY$rstrip(chars);
 };
 
-basestring.PY$split = function(sep) {
+basestring.PY$split = function(sep, max) {
     var r_new;
-    if (sep !== undefined) {
-        var r = list(this.obj.split(sep));
-        r_new = list([]);
-        var that = this;
-        iterate(r, function(item) {
-                    r_new.PY$append(that.PY$__class__(item));
-        });
-        return r_new;
+    if (sep === undefined) {
+        sep = " ";
     } else {
-        r_new = list([]);
-        iterate(this.PY$split(" "), function(item) {
-                if (py_builtins.len(item) > 0)
-                    r_new.PY$append(item);
-        });
-        return r_new;
+        sep = js(sep);
     }
+    if (max === undefined) {
+        max = 0xFFFFFFFF;
+    } else {
+        max = js(max);
+        if (max === 0) {
+            return list([this]);
+        }
+    }
+    r_new = list();
+    var i = -sep.length;
+    var c = 0;
+    var q = 0;
+    while (c < max) {
+        i = this.obj.indexOf(sep, i + sep.length);
+        if (i === -1) {
+            break;
+        }
+        r_new.PY$append(this.PY$__class__(this.obj.substring(q, i)));
+        q = i + sep.length;
+        c++;
+    }
+    r_new.PY$append(this.PY$__class__(this.obj.substring(q)));
+    return r_new;
 };
 
 basestring.PY$splitlines = function() {
@@ -327,6 +347,16 @@ basestring.PY$encode = function() {
 
 basestring.PY$decode = function() {
     return this;
+};
+
+basestring.PY$startswith = function(other) {
+    return bool(this.obj.indexOf(js(other)) === 0);
+};
+
+basestring.PY$endswith = function(other) {
+    var x = js(other);
+    var i = this.obj.lastIndexOf(x);
+    return (i !== -1 && i == (this.obj.length - x.length)) ? True : False;
 };
 
 var str = __inherit(basestring, "str");
