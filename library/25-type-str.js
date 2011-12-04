@@ -300,7 +300,11 @@ basestring.PY$strip = function(chars) {
 basestring.PY$split = function(sep, max) {
     var r_new;
     if (sep === undefined) {
-        sep = " ";
+        var strings = this.obj.split(/\s+/);
+        for (var x = 0; x < strings.length; x++) {
+            strings[x] = str(strings[x]);
+        };
+        return list(strings);
     } else {
         sep = js(sep);
     }
