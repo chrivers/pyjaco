@@ -190,9 +190,9 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         self._classes[class_name] = node
 
         if len(self._class_name) > 0:
-            js.append("__inherit(%s, \"%s\");" % (bases[0], class_name))
+            js.append("__inherit(%s, '%s');" % (bases[0], class_name))
         else:
-            js.append("var %s = __inherit(%s, \"%s\");" % (class_name, bases[0], class_name))
+            js.append("var %s = __inherit(%s, '%s');" % (class_name, bases[0], class_name))
 
         self._class_name.append(class_name)
         heirar = ".PY$".join(self._class_name + [])
@@ -227,7 +227,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         elif isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Slice):
             js = "%s.PY$__delslice__(%s, %s);" % (self.visit(node.value), self.visit(node.slice.lower), self.visit(node.slice.upper))
         elif isinstance(node, ast.Attribute):
-            js = '%s.PY$__delattr__("%s");' % (self.visit(node.value), node.attr)
+            js = "%s.PY$__delattr__('%s');" % (self.visit(node.value), node.attr)
         elif isinstance(node, ast.Name):
             raise JSError("Javascript does not support deleting variables. Cannot compile")
         else:
@@ -264,7 +264,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                     declare = ""
                 js = ["%s%s = %s;" % (declare, var, value)]
             elif isinstance(target, ast.Attribute):
-                js = ['%s.PY$__setattr__("%s", %s);' % (self.visit(target.value), str(target.attr), value)]
+                js = ["%s.PY$__setattr__('%s', %s);" % (self.visit(target.value), str(target.attr), value)]
             else:
                 raise JSError("Unsupported assignment type")
         return js
@@ -597,7 +597,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         if node.attr.startswith("__") and self.obey_getattr_restriction:
             return """%s.PY$%s""" % (self.visit(node.value), node.attr)
         else:
-            return """%s.PY$__getattr__("%s")""" % (self.visit(node.value), node.attr)
+            return """%s.PY$__getattr__('%s')""" % (self.visit(node.value), node.attr)
 
     def visit_Tuple(self, node):
         els = [self.visit(e) for e in node.elts]
