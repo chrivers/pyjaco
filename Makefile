@@ -7,7 +7,7 @@ stdlib:
 	@./generate_library.py
 
 clean: testclean
-	@rm -fv py-builtins.js *~ library/*~ *.pyc
+	@rm -fv py-builtins.js *~ library/*~ *.pyc 1 2 res
 	$(MAKE) -C examples clean
 
 testclean:
