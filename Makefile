@@ -35,3 +35,6 @@ install:
 	rsync -vaP pyjaco $(DESTDIR)/usr/lib/python2.5/site-packages
 	rsync -vaP pyjs.py $(DESTDIR)/usr/bin/pyjaco
 	rsync -vaP py-builtins.js $(DESTDIR)/usr/share/pyjaco
+
+clean-package: clean
+	debian/rules clean
