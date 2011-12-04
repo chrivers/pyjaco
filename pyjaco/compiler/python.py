@@ -28,11 +28,11 @@
 ######################################################################
 
 import ast
-import py2js.compiler
-from py2js.compiler import JSError
-from py2js.compiler.multiplexer import dump
+import pyjaco.compiler
+from pyjaco.compiler import JSError
+from pyjaco.compiler.multiplexer import dump
 
-class Compiler(py2js.compiler.BaseCompiler):
+class Compiler(pyjaco.compiler.BaseCompiler):
 
     obey_getattr_restriction = False
 

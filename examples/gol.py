@@ -1,4 +1,4 @@
-from py2js.decorator import JavaScript, JSVar
+from pyjaco.decorator import JavaScript, JSVar
 
 @JavaScript()
 @JSVar("window", "alert")

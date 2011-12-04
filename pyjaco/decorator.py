@@ -28,7 +28,7 @@
 ##
 ######################################################################
 
-import py2js
+import pyjaco
 
 import inspect 
 
@@ -117,6 +117,6 @@ class JavaScript(object):
         lines = inspect.getsource(obj).split("\n")
         if lines[0].startswith("@"):
             lines.pop(0)
-        self._js = py2js.compile_string("\n".join(lines), self.jsvars)
+        self._js = pyjaco.compile_string("\n".join(lines), self.jsvars)
         return self._js
 

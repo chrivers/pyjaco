@@ -1,14 +1,14 @@
-py2js.py
+pyjaco.py
 ========
 
 Python to JavaScript translator.
 
 It uses Python ASTs to take any Python code and translate it to JS. The
 generated JS code depends on the ``builtins.js`` library. Thanks to this clean
-separation, the py2js itself is a very small script, that does a fairly direct
+separation, the pyjaco itself is a very small script, that does a fairly direct
 translation from Python to JS.
 
-The best way to learn py2js is to take some example from the examples/
+The best way to learn pyjaco is to take some example from the examples/
 directory and start modifying it to do what you need.
 
 Usage
@@ -73,7 +73,7 @@ Alternatively, an equivalent way is to use ``JavaScript()`` as a function::
 Another Example
 ---------------
 
-The goal of py2js is to eventually translate any Python code. For example::
+The goal of pyjaco is to eventually translate any Python code. For example::
 
     @JavaScript
     def test():

@@ -1,12 +1,12 @@
-"""py2js-verbatim:
+"""pyjaco-verbatim:
 function foo(x) {
     print(x);
 }
 """
 
-"""py2js-skip-begin"""
+"""pyjaco-skip-begin"""
 def foo(x):
     print x
-"""py2js-skip-end"""
+"""pyjaco-skip-end"""
 
 foo('bar')

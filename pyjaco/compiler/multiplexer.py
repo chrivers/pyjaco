@@ -25,11 +25,11 @@
 ##
 ######################################################################
 
-import py2js.compiler
-import py2js.compiler.javascript
-import py2js.compiler.python
+import pyjaco.compiler
+import pyjaco.compiler.javascript
+import pyjaco.compiler.python
 import ast
-from py2js.compiler import JSError
+from pyjaco.compiler import JSError
 
 def dump(node):
     s = "%r -> %s" % (node, ast.dump(node))
@@ -51,12 +51,12 @@ def dump(node):
 #           buf += "\n" + " " * indent
     print buf
 
-class Compiler(py2js.compiler.BaseCompiler):
+class Compiler(pyjaco.compiler.BaseCompiler):
 
     def __init__(self, jsvars = None):
         super(Compiler, self).__init__()
-        self.comp_py = py2js.compiler.python.Compiler()
-        self.comp_js = py2js.compiler.javascript.Compiler()
+        self.comp_py = pyjaco.compiler.python.Compiler()
+        self.comp_js = pyjaco.compiler.javascript.Compiler()
 
         self.visit_py = self.comp_py.visit
         self.visit_js = self.comp_js.visit

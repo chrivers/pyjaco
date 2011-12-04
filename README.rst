@@ -1,19 +1,19 @@
-py2js
+pyjaco
 =====
 
 Python to JavaScript translator.
 
-Webpage: http://qsnake.github.com/py2js/html/
+Webpage: http://qsnake.github.com/pyjaco/html/
 
-Mailinglist: http://groups.google.com/group/py2js
+Mailinglist: http://groups.google.com/group/pyjaco
 
 Installation
 ------------
 
 Execute the following::
 
-    git clone git://github.com/qsnake/py2js.git
-    cd py2js
+    git clone git://github.com/qsnake/pyjaco.git
+    cd pyjaco
     make
 
 Examples

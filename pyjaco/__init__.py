@@ -25,9 +25,9 @@
 ##
 ######################################################################
 
-import py2js.compiler.python
-import py2js.compiler.javascript
-import py2js.compiler.multiplexer
+import pyjaco.compiler.python
+import pyjaco.compiler.javascript
+import pyjaco.compiler.multiplexer
 import re
 import StringIO
 import ast
@@ -41,7 +41,7 @@ def compile_string(script, jsvars = None):
 
 class Compiler(object):
     """
-    py2js: A python-to-javascript compiler
+    pyjaco. A python-to-javascript compiler
 
     Usage:
 
@@ -63,7 +63,7 @@ class Compiler(object):
     re_comment = re.compile("^[ ]*#")
 
     def __init__(self, jsvars = None):
-        self.compiler = py2js.compiler.multiplexer.Compiler(jsvars)
+        self.compiler = pyjaco.compiler.multiplexer.Compiler(jsvars)
         self.buffer = None
         self.reset()
 

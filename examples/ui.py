@@ -1,6 +1,6 @@
 import inspect
-import py2js
-from py2js.decorator import JSVar
+import pyjaco
+from pyjaco.decorator import JSVar
 
 @JSVar("items")
 def get_toolbar():
@@ -282,7 +282,7 @@ def main():
     source = ""
     for f in funcs:
         source += inspect.getsource(f) + "\n"
-    js = py2js.compile_string(source)
+    js = pyjaco.compile_string(source)
 
     print """\
 <html>

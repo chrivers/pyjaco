@@ -67,17 +67,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/py2js.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/pyjaco.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/py2js.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/pyjaco.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) _build/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/py2js"
-	@echo "# ln -s _build/devhelp $$HOME/.local/share/devhelp/py2js"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/pyjaco"
+	@echo "# ln -s _build/devhelp $$HOME/.local/share/devhelp/pyjaco"
 	@echo "# devhelp"
 
 latex:

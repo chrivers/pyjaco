@@ -10,7 +10,7 @@ def main():
     installHandler()
     option_parser = optparse.OptionParser(
         usage="%prog [options] [filenames]",
-        description="py2js unittests script."
+        description="pyjaco unittests script."
         )
     option_parser.add_option(
         "-a",

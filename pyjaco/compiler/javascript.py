@@ -27,11 +27,11 @@
 ##
 ######################################################################
 
-import py2js.compiler
+import pyjaco.compiler
 import ast
-from py2js.compiler import JSError
+from pyjaco.compiler import JSError
 
-class Compiler(py2js.compiler.BaseCompiler):
+class Compiler(pyjaco.compiler.BaseCompiler):
 
     unary_op = {
         'Invert' : '~',

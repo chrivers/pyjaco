@@ -3,7 +3,7 @@
 import sys
 import os.path
 from optparse import OptionParser
-from py2js import Compiler
+from pyjaco import Compiler
 
 def main():
     parser = OptionParser(usage="%prog [options] filename",

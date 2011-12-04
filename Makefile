@@ -24,7 +24,7 @@ examples:
 	$(MAKE) -C examples generate
 
 lint:
-	pylint --rcfile=pylint.conf py2js
+	pylint --rcfile=pylint.conf pyjaco
 
 jslint:
 	jsl py-builtins.js

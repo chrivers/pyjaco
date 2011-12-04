@@ -1,5 +1,5 @@
-import py2js
-from py2js.decorator import JavaScript, JSVar
+import pyjaco
+from pyjaco.decorator import JavaScript, JSVar
 
 from math import sqrt
 
@@ -191,7 +191,7 @@ def main():
             example2,
             start_triag,
             ]
-    js = py2js.Compiler()
+    js = pyjaco.Compiler()
     for f in funcs:
        js.append_method(f, f.func_name)
     py_result = example1()

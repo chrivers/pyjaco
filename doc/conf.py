@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# py2js documentation build configuration file, created by
+# pyjaco documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 27 13:05:04 2010.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -37,7 +37,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'py2js'
+project = u'pyjaco'
 copyright = u'2010, hp-FEM group at UNR'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'py2jsdoc'
+htmlhelp_basename = 'pyjacodoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -178,7 +178,7 @@ htmlhelp_basename = 'py2jsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'py2js.tex', u'py2js Documentation',
+  ('index', 'pyjaco.tex', u'pyjaco Documentation',
    u'hp-FEM group at UNR', 'manual'),
 ]
 

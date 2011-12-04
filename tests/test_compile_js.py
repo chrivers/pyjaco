@@ -1,5 +1,5 @@
 """
-This test only tests that Python code can be compiled using the py2js.
+This test only tests that Python code can be compiled using the pyjaco.
 
 It doesn't test if the resulting javascript makes any sense.
 """

@@ -12,7 +12,7 @@ course that sometimes you need to use quite verbose syntax, e.g.
 a good Python to JavaScript translator to convert the Python syntax to JS with
 the help of this library.
 
-See the file `tests/test_builtins.js <http://github.com/qsnake/py2js/blob/master/tests/test_builtins.js>`_ for
+See the file `tests/test_builtins.js <http://github.com/qsnake/pyjaco/blob/master/tests/test_builtins.js>`_ for
 thorough tests that you can use as examples how to use the library. Below you
 can find a brief documentation with a few examples to get some idea what this
 library can do for you.
