@@ -381,7 +381,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         return js
 
     def visit_If(self, node):
-        js = ["if (js(%s)) {" % self.visit(node.test)]
+        js = ["if (bool(%s) === True) {" % self.visit(node.test)]
 
         for stmt in node.body:
             js.extend(self.indent(self.visit(stmt)))
