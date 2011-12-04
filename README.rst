@@ -3,7 +3,7 @@ pyjaco
 
 Python to JavaScript translator.
 
-Webpage: http://qsnake.github.com/pyjaco/html/
+Webpage: http://pyjaco.org
 
 Mailinglist: http://groups.google.com/group/pyjaco
 
@@ -12,7 +12,7 @@ Installation
 
 Execute the following::
 
-    git clone git://github.com/qsnake/pyjaco.git
+    git clone https://github.com/chrivers/pyjaco
     cd pyjaco
     make
 
@@ -33,6 +33,10 @@ Tests
 
 Will run all tests, that are supposed to work. If any test fails, it's a bug.
 
+./run_tests.py foo
+
+Will run all tests with "foo" in the name. Very useful for running a group of tests.
+
 ./run_tests.py -a
 
 Will run all tests including those that are known to fail (currently). It
@@ -49,8 +53,20 @@ For more flags then described here
 
 ./run_tests.py -h
 
+Single test cases
+-----------------
+
+With the "casetest" script you can keep comparing the output of pyjaco to
+the output of python on the same python script. It's very useful if you are
+debugging the compiler or standard library.
+
+./casetest foo.py
+
+Will run foo.py through python and pyjaco, and display the differences. It
+will then display a line of "#", and wait for you to press enter to do another
+iteration. When the files match, casetest will exit.
 
 License
 -------
 
-MIT, see the LICENSE file for exact details.
+Free Software. See the LICENSE file for exact details.
