@@ -28,3 +28,10 @@ lint:
 
 jslint:
 	jsl py-builtins.js
+
+install:
+	mkdir -p $(DESTDIR)/usr/lib/python2.5/site-packages
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/pyjaco
+	rsync -vaP pyjaco $(DESTDIR)/usr/lib/python2.5/site-packages
+	rsync -vaP pyjs.py $(DESTDIR)/usr/bin/pyjaco
+	rsync -vaP py-builtins.js $(DESTDIR)/usr/share/pyjaco
