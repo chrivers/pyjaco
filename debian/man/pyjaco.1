@@ -1,0 +1,79 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH PYJACO 1 "December 4th, 2011"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+pyjaco \- The Python-to-Javascript Compiler
+.SH SYNOPSIS
+.B pyjaco
+.RI [ options ] "python file"
+.br
+.SH DESCRIPTION
+This manual page documents the
+.B pyjaco
+command.
+.PP
+.B pyjaco
+is a command-line frontend for the Pyjaco python package. It should be
+noted that the pyjaco frontend is intended mainly for unit testing and
+for having fun. Serious users should use the python package, which
+offers many more options for customizing Pyjaco.
+
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Prints a help message
+
+.TP
+
+.TP
+.B \-\-output <file>
+Instead of writing to stdout, write to <file>.
+
+.TP
+.B \-I
+Import the standard library using the load() function that several
+stand-alone javascript interpreters have. This is the preferred method
+of using pyjaco.
+
+.TP
+.B \-i
+Include the whole standard library at the top of the generated
+output. This will make the output files rather large, but it is a
+convenient way to create entirely self-contained output files.
+
+.TP
+.B \-N
+Do not attempt to load the standard library at all. This can be useful
+if pyjaco is used to compile multiple files which will be combined in
+the end, where neither including the library multiple times, or
+loading it multiple times would be desired.
+
+.SH AUTHOR
+The pyjaco frontend was written primarily by Samuel Ytterbrink, with some
+additional code from Christian Iversen.
+
+The pyjaco project is a fork of the older qsnake-py2js project, which
+was originally written by Ondrej Certik and Mateusz Paprocki, among others.
+
+The new version is extensively rewritten, cleaned up, has more
+features, and a broader test suite. It is written primarily by
+Christian Iversen (compiler code, standard library, semantical
+mapping) and Samuel Ytterbrink (standard library, a great new testing
+framework, code cleanup), among others.
+
+.PP
+This manual page was written by Christian Iversen <software@sikkerhed.org>,
