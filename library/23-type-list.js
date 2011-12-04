@@ -34,8 +34,6 @@ list.PY$__init__ = tuple.PY$__init__;
 list.PY$__str__ = function () {
     if (this.items.length === 0) {
         return str("[]");
-    } else if (this.items.length === 1) {
-        return str("[" + str(this.items[0]) + "]");
     } else {
         var res = "[" + js(py_builtins.repr(this.items[0]));
         for (var i = 1; i < this.items.length; i++)  {
