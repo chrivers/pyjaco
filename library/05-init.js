@@ -84,7 +84,7 @@ var __varargs_make = function(vr) {
 };
 
 var __varargs_get = function(args) {
-    if (args.length && (args[args.length-1].__varargs === true)) {
+    if (args.length && (args[args.length-1] !== undefined) && (args[args.length-1].__varargs === true)) {
         var vargs = args[args.length-1];
         args.length -= 1;
         return vargs;
@@ -94,7 +94,7 @@ var __varargs_get = function(args) {
 };
 
 var __kwargs_get = function(args) {
-    if (args.length && (args[args.length-1].__kwargs === true)) {
+    if (args.length && (args[args.length-1] !== undefined) && (args[args.length-1].__kwargs === true)) {
         delete args[args.length-1].__kwargs;
         var res = args[args.length-1];
         delete args[args.length-1];
