@@ -586,9 +586,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         if not node.type:
             return ["throw %s;" % self._exceptions[-1]]
         else:
-            if isinstance(node.type, ast.Name):
-                return ["throw %s();" % self.visit(node.type)]
-            elif isinstance(node.type, ast.Call):
+            if isinstance(node.type, (ast.Call, ast.Name)):
                 return ["throw %s;" % self.visit(node.type)]
             else:
                 raise JSError("Unknown exception type")
