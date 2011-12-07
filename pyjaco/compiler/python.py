@@ -316,7 +316,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 js.append("%s = %s;" % (step_var, step));
             else:
                 step_var = step
-            js.append("for (%s = %s; %s.PY$__lt__(%s) == true; %s = %s.PY$__add__(%s)) {" % (counter, start, counter, end_var, counter, counter, step_var))
+            js.append("for (%s = %s; %s.PY$__lt__(%s) == True; %s = %s.PY$__add__(%s)) {" % (counter, start, counter, end_var, counter, counter, step_var))
             for stmt in node.body:
                 js.extend(self.indent(self.visit(stmt)))
             js.append("}")
