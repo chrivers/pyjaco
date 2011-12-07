@@ -7,7 +7,7 @@ a = A()
 print a
 a.append(5)
 print a
-a.append(6)
+a.my_append(6)
 print a
 a.remove(5)
 print a
