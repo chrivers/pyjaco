@@ -31,9 +31,9 @@ float.numbertype = "PY$__float__";
 float.numberclass = float;
 
 float.PY$__init__ = function(value) {
-    var s = value.toString();
+    var s = str(value)._js_();
     if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
-        this.obj = parseFloat(value);
+        this.obj = parseFloat(s);
     } else {
         throw py_builtins.ValueError("Invalid float: " + s);
     }
