@@ -77,7 +77,7 @@ dict._js_ = function () {
     var items = {};
 
     for (var k in this.items) {
-        items[k] = this.items[k];
+        items[k] = js(this.items[k]);
     }
 
     return items;
