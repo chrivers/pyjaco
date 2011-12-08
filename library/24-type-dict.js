@@ -42,7 +42,7 @@ dict.PY$__init__ = function() {
             iterate(args, function(item) {
                     key = item.PY$__getitem__(0);
                     value = item.PY$__getitem__(1);
-                    items[key] = value;
+                    items[js(key)] = value;
             });
             this.items = items;
         } else if (args.length === undefined) {
@@ -50,14 +50,14 @@ dict.PY$__init__ = function() {
         } else {
             this.items = {};
             for (var i = 0; i < args.length / 2; i++) {
-                this.items[args[i*2]] = args[i*2+1];
+                this.items[js(args[i*2])] = args[i*2+1];
             }
         }
     } else {
         this.items = {};
     }
     for (var p in kwargs) {
-        this.items[p] = kwargs[p];
+        this.items[js(p)] = kwargs[p];
     }
 };
 
@@ -65,10 +65,10 @@ dict.PY$__str__ = function () {
     var strings = [];
 
     for (var key in this.items) {
-        strings.push(py_builtins.repr(str(key)) + ": " + py_builtins.repr(this.items[key]));
+        strings.push($PY.repr(py(key)) + ": " + $PY.repr(this.items[key]));
     }
 
-    return str("{" + strings.join(", ") + "}");
+    return str("{" + js(strings.join(", ")) + "}");
 };
 
 dict.PY$__repr__ = dict.PY$__str__;
@@ -76,10 +76,9 @@ dict.PY$__repr__ = dict.PY$__str__;
 dict._js_ = function () {
     var items = {};
 
-    var that = this; // so that we can access it from within the closure:
-    iterate(this, function(key) {
-        items[key] = js(that.PY$__getitem__(key));
-    });
+    for (var k in this.items) {
+        items[k] = this.items[k];
+    }
 
     return items;
 };
@@ -102,11 +101,11 @@ dict.PY$__iter__ = function() {
 };
 
 dict.PY$__contains__ = function(key) {
-    return this.items[key] !== undefined ? True : False;
+    return this.items[js(key)] !== undefined ? True : False;
 };
 
 dict.PY$__getitem__ = function(key) {
-    var value = this.items[key];
+    var value = this.items[js(key)];
 
     if (value !== undefined) {
         return value;
@@ -116,19 +115,19 @@ dict.PY$__getitem__ = function(key) {
 };
 
 dict.PY$__setitem__ = function(key, value) {
-    this.items[key] = value;
+    this.items[js(key)] = value;
 };
 
 dict.PY$__delitem__ = function(key) {
-    if (this.PY$__contains__(key) == true) {
-        delete this.items[key];
+    if (this.PY$__contains__(key) == True) {
+        delete this.items[js(key)];
     } else {
         throw py_builtins.KeyError(str(key));
     }
 };
 
 dict.PY$get = function(key, value) {
-    var _value = this.items[key];
+    var _value = this.items[js(key)];
 
     if (_value !== undefined) {
         return _value;
@@ -175,7 +174,7 @@ dict.PY$update = function(other) {
    var that = this;
    iterate(other,
      function(key) {
-        that.items[key] = other.PY$__getitem__(key);
+        that.items[js(key)] = other.PY$__getitem__(key);
      }
    );
 };
