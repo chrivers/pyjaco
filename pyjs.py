@@ -51,9 +51,9 @@ def main():
 
         if options.include_builtins:
             builtins = open(path_library).read()
-            output.write("  Standard library  ".center(80, "#") + "\n")
+            output.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
             output.write(builtins)
-            output.write("  User code  ".center(80, "#") + "\n")
+            output.write("/*%s*/\n" % "  User code  ".center(76, "*"))
         elif options.import_builtins:
             output.write('load("%s");\n' % path_library)
 
