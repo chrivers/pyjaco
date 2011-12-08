@@ -73,7 +73,7 @@ tuple.PY$__eq__ = function (other) {
         }
         var len = js(py_builtins.len(this));
         for (var i = 0; i < len; i++) {
-            if (this.items[i].PY$__ne__(other.items[i]) == true) {
+            if (this.items[i].PY$__ne__(other.items[i]) == True) {
                 return False;
             }
         }
@@ -85,10 +85,10 @@ tuple.PY$__eq__ = function (other) {
 
 tuple.PY$__cmp__ = function (other) {
     if (other.PY$__class__ !== this.PY$__class__) {
-        if (object.PY$__gt__.call(this, other) == true) {
+        if (object.PY$__gt__.call(this, other) == True) {
             return $c1;
         } else {
-            if (object.PY$__lt__.call(this, other) == true) {
+            if (object.PY$__lt__.call(this, other) == True) {
                 return $cn1;
             } else {
                 return $c0;
@@ -123,17 +123,17 @@ tuple.PY$__cmp__ = function (other) {
             }
             var r = this.items[count].PY$__cmp__(elm);
 
-            if (r.PY$__gt__($c0) == true) {
+            if (r.PY$__gt__($c0) == True) {
                 res = $c1;
                 break;
-            } else if (r.PY$__lt__($c0) == true) {
+            } else if (r.PY$__lt__($c0) == True) {
                 res = $cn1;
                 break;
             }
             count++;
         }
 
-        if (res == 0) {
+        if (res == $c0) {
             if (this.items.length > count) {
                 return $c1;
             } else {
@@ -154,7 +154,7 @@ tuple.PY$__lt__ = function (other) {
 };
 
 tuple.PY$__mul__ = function(num) {
-    if ($PY.isinstance(num, int) == true) {
+    if ($PY.isinstance(num, int)) {
         var res = [];
         var count = num._js_();
         for (var i = 0; i < count; i++) {
@@ -216,7 +216,7 @@ tuple.PY$__iter__ = function() {
 
 tuple.PY$__contains__ = function(item) {
     for (var index in this.items) {
-        if (this.items[index].PY$__eq__(item) == true) {
+        if (this.items[index].PY$__eq__(item) == True) {
             return True;
         }
     }
@@ -227,7 +227,7 @@ tuple.PY$__contains__ = function(item) {
 tuple.PY$__getitem__ = function(index) {
     if (typeof(index) === 'number') index = int(index);
     var seq;
-    if ($PY.isinstance(index, slice) == true) {
+    if ($PY.isinstance(index, slice)) {
         var s = index;
         var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
@@ -235,18 +235,18 @@ tuple.PY$__getitem__ = function(index) {
         var step = inds[2];
         seq = [];
         for (var i = start; i < stop; i += step) {
-            seq.push(this.PY$__getitem__(i));
+            seq.push(this.items[i]);
         }
         return this.PY$__class__(seq);
     } else {
-        if ($PY.isinstance(index, int) == false) {
+        if (!$PY.isinstance(index, int)) {
             index = int(index);
         }
 
         if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(py_builtins.len(this)))) {
-            return this.items[index.PY$__int__()];
+            return this.items[index.PY$__int__()._js_()];
         } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(py_builtins.len(this).PY$__neg__()))) {
-            return this.items[index.PY$__add__(py_builtins.len(this)).PY$__int__()];
+            return this.items[index.PY$__add__(py_builtins.len(this)).PY$__int__()._js_()];
         } else {
             throw py_builtins.IndexError("list index out of range");
         }
@@ -265,7 +265,7 @@ tuple.PY$count = function(value) {
     var count = 0;
 
     for (var index in this.items) {
-        if (this.items[index].PY$__eq__(value) == true) {
+        if (this.items[index].PY$__eq__(value) == True) {
             count += 1;
         }
     }
@@ -276,7 +276,10 @@ tuple.PY$count = function(value) {
 tuple.PY$index = function(value, start, end) {
     if (start === undefined) {
         start = 0;
+    } else {
+        start = js(start);
     }
+    end = js(end);
 
     for (var i = start; (end === undefined) || (start < end); i++) {
         var _value = this.items[i];
@@ -285,7 +288,7 @@ tuple.PY$index = function(value, start, end) {
             break;
         }
 
-        if (_value.PY$__eq__(value) == true) {
+        if (_value.PY$__eq__(value) == True) {
             return int(i);
         }
     }
