@@ -1,9 +1,9 @@
 
 
-str = "aBcddEzUh"
+s = "aBcddEzUh"
 
-print str
-str = str.upper()
-print str
-str = str.lower()
-print str
+print s
+s = s.upper()
+print s
+s = s.lower()
+print s
