@@ -120,8 +120,12 @@ var js = function(obj) {
        In particular:
 
        tuple -> Array
-       list -> Array
-       dict -> Object
+       list  -> Array
+       dict  -> Object
+       bool  -> Boolean
+       int   -> Number
+       float -> Number
+       None  -> null
 
        It uses the obj._js_() if it is defined, otherwise it just returns the
        same object. It is the responsibility of _js_() to convert recursively
@@ -138,8 +142,12 @@ var py = function(obj) {
         return obj;
     } else if (typeof obj === 'number') {
         return int(obj);
-    } else if (typeof obj == 'string') {
+    } else if (typeof obj === 'string') {
         return str(obj);
+    } else if (typeof obj === 'boolean') {
+        return bool(obj);
+    } else if (typeof obj === 'undefined' || obj == null) {
+        return None;
     } else if (obj instanceof Array) {
         var res = list();
         for (var q in obj) {
@@ -175,5 +183,24 @@ $PY.isinstance = function(obj, cls) {
             c = c.PY$__super__;
         }
         return false;
+    }
+};
+
+$PY.repr = function(obj) {
+    if (obj.PY$__repr__ !== undefined) {
+        return obj.PY$__repr__()._js_();
+    } else {
+        return obj.toString();
+    }
+};
+
+$PY.len = function(obj) {
+    var c = obj.PY$__class__;
+    if (c === list || c === tuple || c === str || c == basestring || c == unicode) {
+        return obj.obj.length;
+    } else if (obj.PY$__len__ !== undefined) {
+        return obj.PY$__len__()._js_();
+    } else {
+        throw py_builtins.AttributeError('__len__');
     }
 };
