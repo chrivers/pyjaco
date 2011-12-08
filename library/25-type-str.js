@@ -60,7 +60,7 @@ basestring.PY$__str__ = function () {
 };
 
 basestring.PY$__repr__ = function () {
-    return "'" + this + "'";
+    return this.PY$__class__("'" + this.obj + "'");
 };
 
 basestring._js_ = function () {
@@ -139,21 +139,26 @@ basestring.PY$__contains__ = function(item) {
 
 basestring.PY$__getitem__ = function(index) {
     var seq;
+    index = js(index);
     if ($PY.isinstance(index, slice) == true) {
         var s = index;
         var inds = js(s.PY$indices(py_builtins.len(this)));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
-        seq = "";
-        for (var i = start; i < stop; i += step) {
-            seq = seq + js(this.PY$__getitem__(i));
+        if (step != 1) {
+            seq = "";
+            for (var i = start; i < stop; i += step) {
+                seq = seq + js(this.obj.charAt(i));
+            }
+            return this.PY$__class__(seq);
+        } else {
+            return this.PY$__class__(this.obj.slice(start, stop));
         }
-        return this.PY$__class__(seq);
     } else if ((index >= 0) && (index < js(py_builtins.len(this))))
-        return this.obj[index];
+        return this.obj.charAt(index);
     else if ((index < 0) && (index >= -js(py_builtins.len(this))))
-        return this.obj[index+js(py_builtins.len(this))];
+        return this.obj.charAt(index + js(py_builtins.len(this)));
     else
         throw py_builtins.IndexError("string index out of range");
 };
@@ -181,7 +186,7 @@ basestring.PY$__mul__ = function(c) {
 
 basestring.PY$__add__ = function(c) {
     if ($PY.isinstance(c, basestring) == true) {
-        return this.PY$__class__(this.obj + c.PY$__str__());
+        return this.PY$__class__(this.obj + c.PY$__str__()._js_());
     } else {
         throw py_builtins.TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
     }
@@ -190,17 +195,22 @@ basestring.PY$__add__ = function(c) {
 basestring.PY$__iadd__ = basestring.PY$__add__;
 
 basestring.PY$count = function(needle, start, end) {
-    if (start === undefined)
+    if (start === undefined) {
         start = 0;
+    } else {
+      start = js(start);
+    }
     if (end === undefined)
         end = null;
+    else
+        end = js(end);
     var count = 0;
     var s = this.PY$__getitem__(slice(start, end));
-    var idx = s.PY$find(needle);
+    var idx = js(s.PY$find(needle));
     while (idx != -1) {
         count += 1;
         s = s.PY$__getitem__(slice(idx+1, null));
-        idx = s.PY$find(needle);
+        idx = js(s.PY$find(needle));
     }
     return count;
 };
@@ -226,7 +236,7 @@ basestring.PY$index = function(value, start, end) {
 };
 
 basestring.PY$find = function(s) {
-    return this.obj.search(s);
+    return int(this.obj.indexOf(js(s)));
 };
 
 basestring.PY$rfind = function(s) {
