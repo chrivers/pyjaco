@@ -135,7 +135,7 @@ def toolbar_mesh3(b, e):
     canvas.stroke()
 
 def menu_about(e, t):
-    info_box("About", "FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR")
+    info_box(js("About"), js("FEMhub Mesh Editor, (c) 2010 hp-FEM group at UNR"))
 
 @JSVar("items")
 def menu_help(e, t):
@@ -225,20 +225,21 @@ class Canvas(object):
     @JSVar("self._obj", "dom", "Ext", "G_vmlCanvasManager")
     def __init__(self, id):
         dom = Ext.getDom(js(id))
-        if Ext.isIE:
+        if js(Ext.isIE):
             # This is needed for IE to emulate the canvas element:
             G_vmlCanvasManager.initElement(dom)
         self._obj = dom.getContext('2d')
+        self._obj.clearRect(0, 0, 200, 200)
 
     @JSVar("self._obj")
     def fillRect(self, x1, y1, w, h):
         self._obj.fillStyle = js(self.fillStyle)
-        self._obj.fillRect(x1, y1, w, h)
+        self._obj.fillRect(js(x1), js(y1), js(w), js(h))
 
     @JSVar("self._obj")
     def fillText(self, text, x, y):
         self._obj.fillStyle = js(self.fillStyle)
-        self._obj.fillText(js(text), x, y)
+        self._obj.fillText(js(text), js(x), js(y))
 
     @JSVar("self._obj")
     def beginPath(self):
@@ -247,11 +248,11 @@ class Canvas(object):
 
     @JSVar("self._obj")
     def moveTo(self, x, y):
-        self._obj.moveTo(x, y)
+        self._obj.moveTo(js(x), js(y))
 
     @JSVar("self._obj")
     def lineTo(self, x, y):
-        self._obj.lineTo(x, y)
+        self._obj.lineTo(js(x), js(y))
 
     @JSVar("self._obj")
     def stroke(self):
