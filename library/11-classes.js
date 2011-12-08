@@ -101,7 +101,7 @@ object.PY$__getattr__ = function(k) {
         return str(this.PY$__name__);
     } else {
         if (q === undefined) {
-            throw py_builtins.AttributeError(this.PY$__repr__() + " does not have attribute '" + k + "'");
+            throw py_builtins.AttributeError(js(this.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
         } else {
             return q;
         }
@@ -143,18 +143,18 @@ object.PY$__lt__ = function(other) {
 };
 
 object.PY$__ge__ = function(other) {
-    return this.PY$__lt__(other) == false ? True : False;
+    return this.PY$__lt__(other) == False ? True : False;
 };
 
 object.PY$__le__ = function(other) {
-    return this.PY$__gt__(other) == false ? True : False;
+    return this.PY$__gt__(other) == False ? True : False;
 };
 
 object.PY$__cmp__ = function (y) {
-    if (this.PY$__gt__(y) == true) {
+    if (this.PY$__gt__(y) == True) {
         return $c1;
     } else {
-        if (this.PY$__lt__(y) == true) {
+        if (this.PY$__lt__(y) == True) {
             return $cn1;
         } else {
             return $c0;
