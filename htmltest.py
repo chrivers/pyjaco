@@ -70,7 +70,7 @@ import glob
 def encode(s):
     return s.replace("\\", "\\\\").replace("\n", "\\n").replace('\"', '\\\"').replace('\'', '\\\'')
 
-for x in glob.glob("tests/**/*.py"):
+for x in sorted(glob.glob("tests/**/*.py")):
     if not (os.path.exists("%s.js" % x) and os.path.exists("%s.out" % x)):
         continue
     name = x.replace("/", "-").replace(".", "-").replace("_", "-")
