@@ -324,7 +324,7 @@ py_builtins.reduce = function(func, seq) {
     } else {
         initial = null;
     }
-    if (py_builtins.len(seq) < 2) {
+    if (py_builtins.len(seq)._js_() < 2) {
         return initial;
     }
     var accum, start;
