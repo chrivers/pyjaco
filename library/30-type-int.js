@@ -34,9 +34,9 @@ int.PY$__init__ = function(value) {
     if (arguments.length == 2) {
         this.obj = parseInt(i, arguments[1]);
     } else {
-        var s = value.toString();
+        var s = js(str(value));
         if (s.match(/^[-+0-9]+$/)) {
-            this.obj = parseInt(value, 10);
+            this.obj = parseInt(s, 10);
         } else {
             throw py_builtins.ValueError("Invalid integer: " + value);
         }
