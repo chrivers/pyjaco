@@ -40,13 +40,9 @@ template = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.o
           $("#" + COUNTER_var_).text("OK").css('background-color', 'green');
         } else {
           $("#" + COUNTER_var_).text("FAIL").css('background-color', 'red');
-          console.log(tests[i]);
-          console.log(res[i]);
-          console.log(out)
         }
       } catch (e) {
         $("#" + COUNTER_var_).text("CRASH").css('background-color', 'purple');
-        console.log(e);
       }
     }
 
