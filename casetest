@@ -1,22 +1,35 @@
-#!/bin/zsh
+#!/bin/zsh -f
 
 if [[ $1 == "" ]]; then
     echo "Usage: $0 <testname>"
     exit 1
 fi
 
+if [[ -x $(which js) ]]; then
+    function run() {
+        $(which js) $1
+    }
+elif [[ -x $(which cscript) ]]; then
+    function run() {
+        $(which cscript) //NoLogo //U $1 | iconv -f UTF-16LE -t UTF-8 | sed -re 's|\x0A\n|\n|'
+    }
+else
+    echo "Could not find a javascript interpreter"
+    exit 1
+fi
+
 while true; do
     ./generate_library.py
-    python $1 > res
-    ./pyjs.py -I $1 > 1
-    if js 1 > 2; then
-        if diff -u res 2; then
+    python $1 > 1.res
+    ./pyjs.py -i $1 > 1.js
+    if run 1.js > 1.out; then
+        if diff -au 1.res 1.out; then
             echo "Files now match!"
             exit
         fi
     else
         echo "Could not run $1:"
-        cat 2
+        cat 1.out
     fi
     read "dummy?Press enter to continue>"
     echo
