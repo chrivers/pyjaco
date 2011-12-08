@@ -23,7 +23,7 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var __inherit = function(cls, name) {
+var __inherit = function(cls, name, prototyping) {
 
     if (name === undefined) {
         throw py_builtins.TypeError("The function __inherit must get exactly 2 arguments");
@@ -38,14 +38,13 @@ var __inherit = function(cls, name) {
         }
     };
 
-    if (cls !== undefined) {
-        for (var o in cls) {
-            res[o] = cls[o];
-        }
+    for (var o in cls) {
+        res[o] = cls[o];
     }
 
     res.PY$__name__  = name;
     res.PY$__super__ = cls;
+    res.prototyping  = prototyping;
     return res;
 };
 
@@ -67,8 +66,14 @@ object.PY$__create__ = function(cls) {
     };
 
     if (obj.__proto__ === undefined) {
-        for (var o in cls) {
-            obj[o] = cls[o];
+        if (cls.prototyping) {
+            var x = function() {};
+            x.prototype = cls;
+            obj = new x();
+        } else {
+            for (var o in cls) {
+                obj[o] = cls[o];
+            }
         }
     } else {
         obj.__proto__ = cls;

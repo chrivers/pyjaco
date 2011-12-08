@@ -189,10 +189,11 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         #self._classes remembers all classes defined
         self._classes[class_name] = node
 
+        has_call = "true" if any([isinstance(x, ast.FunctionDef) and x.name == "__call__" for x in node.body]) else "false"
         if len(self._class_name) > 0:
-            js.append("__inherit(%s, '%s');" % (bases[0], class_name))
+            js.append("__inherit(%s, '%s', %s);" % (bases[0], class_name, has_call))
         else:
-            js.append("var %s = __inherit(%s, '%s');" % (class_name, bases[0], class_name))
+            js.append("var %s = __inherit(%s, '%s', %s);" % (class_name, bases[0], class_name, has_call))
 
         self._class_name.append(class_name)
         heirar = ".PY$".join(self._class_name + [])
