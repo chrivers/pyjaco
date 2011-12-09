@@ -1,3 +1,9 @@
+pyjaco (0.2) oneiric; urgency=low
+
+  * Relase 0.2: Added IE support
+
+ -- Christian Iversen <software@sikkerhed.org>  Thu, 08 Dec 2011 16:49:43 +0100
+
 pyjaco (0.1) stable; urgency=low
 
   * Initial release
