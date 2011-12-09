@@ -40,9 +40,7 @@ dict.PY$__init__ = function() {
         if (args.PY$__iter__ !== undefined) {
             items = {};
             iterate(args, function(item) {
-                    key = item.PY$__getitem__(0);
-                    value = item.PY$__getitem__(1);
-                    items[js(key)] = value;
+                    items[js(item)] = args.PY$__getitem__(item);
             });
             this.items = items;
         } else if (args.length === undefined) {
