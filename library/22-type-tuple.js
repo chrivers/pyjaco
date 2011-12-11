@@ -27,8 +27,6 @@
 
 var tuple = __inherit(object, "tuple");
 
-$PY.tuple = tuple;
-
 tuple.PY$__init__ = function(seq) {
     if (arguments.length > 1) {
         throw py_builtins.TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
@@ -295,3 +293,6 @@ tuple.PY$index = function(value, start, end) {
 
     throw py_builtins.ValueError(this.PY$__class__.PY$__name__ + ".index(x): x not in list");
 };
+
+$PY.tuple = tuple;
+$PY.$c_emptytuple = tuple();

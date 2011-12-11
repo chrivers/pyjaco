@@ -89,7 +89,7 @@ var __varargs_get = function(args) {
         args.length -= 1;
         return vargs;
     } else {
-        return tuple();
+        return $PY.$c_emptytuple;
     }
 };
 
