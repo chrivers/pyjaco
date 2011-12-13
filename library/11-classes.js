@@ -61,7 +61,7 @@ object.PY$__create__ = function(cls) {
         if (x !== undefined) {
             return cls.PY$__call__.apply(cls, args);
         } else {
-            throw py_builtins.AttributeError("Object " + name + " does not have __call__ method");
+            throw py_builtins.AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
         }
     };
 
