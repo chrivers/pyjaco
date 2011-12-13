@@ -149,6 +149,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 values['default'] = self.visit(defaults[i + offset])
                 js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % values]))
                 js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(default)s : %(kwarg)s.%(id)s; };" % values]))
+            js.extend(self.indent(["delete %(kwarg)s.%(id)s" % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
             js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))
