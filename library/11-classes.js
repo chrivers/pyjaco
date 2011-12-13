@@ -156,10 +156,10 @@ object.PY$__le__ = function(other) {
 };
 
 object.PY$__cmp__ = function (y) {
-    if (this.PY$__gt__(y) == True) {
+    if (this.PY$__gt__(y) === True) {
         return $c1;
     } else {
-        if (this.PY$__lt__(y) == True) {
+        if (this.PY$__lt__(y) === True) {
             return $cn1;
         } else {
             return $c0;
