@@ -66,11 +66,10 @@ tuple.PY$__repr__ = tuple.PY$__str__;
 
 tuple.PY$__eq__ = function (other) {
     if (other.PY$__class__ == this.PY$__class__) {
-        if (js(py_builtins.len(this)) != js(py_builtins.len(other))) {
+        if (this.items.length != js(py_builtins.len(other))) {
             return False;
         }
-        var len = js(py_builtins.len(this));
-        for (var i = 0; i < len; i++) {
+        for (var i = 0; i < this.items.length; i++) {
             if (this.items[i].PY$__ne__(other.items[i]) == True) {
                 return False;
             }
@@ -190,7 +189,7 @@ tuple._js_ = function () {
 
 tuple.PY$__hash__ = function () {
     var value = 0x345678;
-    var length = js(this.PY$__len__());
+    var length = this.items.length;
 
     for (var index in this.items) {
         value = ((1000003*value) & 0xFFFFFFFF) ^ py_builtins.hash(this.items[index]);
@@ -223,11 +222,10 @@ tuple.PY$__contains__ = function(item) {
 };
 
 tuple.PY$__getitem__ = function(index) {
-    if (typeof(index) === 'number') index = int(index);
     var seq;
     if ($PY.isinstance(index, slice)) {
         var s = index;
-        var inds = js(s.PY$indices(py_builtins.len(this)));
+        var inds = js(s.PY$indices(this.items.length));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
@@ -237,14 +235,15 @@ tuple.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else {
-        if (!$PY.isinstance(index, int)) {
-            index = int(index);
+        if (typeof(index) !== 'number') {
+            index = js(index);
         }
 
-        if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(py_builtins.len(this)))) {
-            return this.items[index.PY$__int__()._js_()];
-        } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(py_builtins.len(this).PY$__neg__()))) {
-            return this.items[index.PY$__add__(py_builtins.len(this)).PY$__int__()._js_()];
+        var len = int(this.items.length);
+        if (index >= 0 && index < len) {
+            return this.items[index];
+        } else if (index < 0 && index >= -len) {
+            return this.items[index + len];
         } else {
             throw py_builtins.IndexError("list index out of range");
         }
