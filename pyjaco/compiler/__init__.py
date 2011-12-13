@@ -39,6 +39,7 @@ class BaseCompiler(object):
         'super' : 'Super',
         'py_builtins' : '__py_builtins',
         'delete': '__delete',
+        'default': '__default',
     }
 
     builtin = set([
