@@ -201,8 +201,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             if isinstance(stmt, ast.Assign):
                 value = self.visit(stmt.value)
                 for t in stmt.targets:
-                    var = self.visit(t)
-                    js.append("%s.PY$%s = %s;" % (heirar, var, value))
+                    js.append("%s.PY$%s = %s;" % (heirar, t.id, value))
             elif isinstance(stmt, ast.FunctionDef):
                 self.heirar = heirar
                 js.append("%s.PY$%s = %s;" % (heirar, stmt.name, "\n".join(self.visit(stmt))))
