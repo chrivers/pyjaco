@@ -142,13 +142,13 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             if not isinstance(arg, ast.Name):
                 raise JSError("tuples in argument list are not supported")
 
-            values = dict(i = i, id = self.visit(arg), kwarg = kwarg_name, newargs = newargs)
+            values = dict(i = i, id = self.visit(arg), rawid = arg.id, kwarg = kwarg_name, newargs = newargs)
             if defaults[i + offset] == None:
-                js.extend(self.indent(["var %(id)s = ('%(id)s' in %(kwarg)s) ? %(kwarg)s['%(id)s'] : %(newargs)s[%(i)d];" % values]))
+                js.extend(self.indent(["var %(id)s = ('%(rawid)s' in %(kwarg)s) ? %(kwarg)s['%(rawid)s'] : %(newargs)s[%(i)d];" % values]))
             else:
                 values['default'] = self.visit(defaults[i + offset])
                 js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % values]))
-                js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(id)s === undefined ? %(default)s : %(kwarg)s.%(id)s; };" % values]))
+                js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(rawid)s === undefined ? %(default)s : %(kwarg)s.%(rawid)s; };" % values]))
             js.extend(self.indent(["delete %(kwarg)s.%(id)s" % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
