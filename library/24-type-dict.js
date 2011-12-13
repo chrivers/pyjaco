@@ -37,20 +37,25 @@ dict.PY$__init__ = function() {
     var kwargs = __kwargs_get(arguments);
     var args = arguments[0];
     if (args !== undefined) {
-        if (args.PY$__iter__ !== undefined) {
+        if (args.PY$__class__ === dict) {
+            items = {};
+            for (var k in args.items) {
+                items[k] = args.items[k];
+            }
+        } else if (args.PY$__iter__ !== undefined) {
             items = {};
             iterate(args, function(item) {
-                    items[js(item)] = args.PY$__getitem__(item);
+                    items[js(item.PY$__getitem__($c0))] = item.PY$__getitem__($c1);
             });
-            this.items = items;
         } else if (args.length === undefined) {
-            this.items = args;
+            items = args;
         } else {
-            this.items = {};
+            items = {};
             for (var i = 0; i < args.length / 2; i++) {
-                this.items[js(args[i*2])] = args[i*2+1];
+                items[js(args[i*2])] = args[i*2+1];
             }
         }
+        this.items = items;
     } else {
         this.items = {};
     }
