@@ -148,11 +148,11 @@ object.PY$__lt__ = function(other) {
 };
 
 object.PY$__ge__ = function(other) {
-    return this.PY$__lt__(other) == False ? True : False;
+    return this.PY$__lt__(other) === False ? True : False;
 };
 
 object.PY$__le__ = function(other) {
-    return this.PY$__gt__(other) == False ? True : False;
+    return this.PY$__gt__(other) === False ? True : False;
 };
 
 object.PY$__cmp__ = function (y) {
