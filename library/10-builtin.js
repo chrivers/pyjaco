@@ -229,7 +229,7 @@ py_builtins.isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
         var length = cls.PY$__len__();
 
-        if (length.PY$__eq__($c0) == True) {
+        if (length.PY$__eq__($c0) === True) {
             return False;
         }
 
@@ -268,7 +268,7 @@ py_builtins.__is__ = function(a, b) {
 };
 
 py_builtins.max = function(list) {
-    if (py_builtins.len(list).PY$__eq__($c0) == True)
+    if (py_builtins.len(list).PY$__eq__($c0) === True)
         throw py_builtins.ValueError("max() arg is an empty sequence");
     else {
         var result = null;
@@ -283,7 +283,7 @@ py_builtins.max = function(list) {
 };
 
 py_builtins.min = function(list) {
-    if (py_builtins.len(list).PY$__eq__($c0) == True)
+    if (py_builtins.len(list).PY$__eq__($c0) === True)
         throw py_builtins.ValueError("min() arg is an empty sequence");
     else {
         var result = null;
@@ -310,7 +310,7 @@ py_builtins.sum = function(list) {
 py_builtins.filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
-     if (f(item) == True) {
+     if (f(item) === True) {
        res.PY$append(item);
      }
    });
