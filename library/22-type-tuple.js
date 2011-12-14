@@ -235,11 +235,9 @@ tuple.PY$__getitem__ = function(index) {
         }
         return this.PY$__class__(seq);
     } else {
-        if (typeof(index) !== 'number') {
-            index = js(index);
-        }
+        index = js(int(index));
 
-        var len = int(this.items.length);
+        var len = this.items.length;
         if (index >= 0 && index < len) {
             return this.items[index];
         } else if (index < 0 && index >= -len) {
