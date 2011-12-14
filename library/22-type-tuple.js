@@ -70,7 +70,7 @@ tuple.PY$__eq__ = function (other) {
             return False;
         }
         for (var i = 0; i < this.items.length; i++) {
-            if (this.items[i].PY$__ne__(other.items[i]) == True) {
+            if (this.items[i].PY$__ne__(other.items[i]) === True) {
                 return False;
             }
         }
@@ -82,10 +82,10 @@ tuple.PY$__eq__ = function (other) {
 
 tuple.PY$__cmp__ = function (other) {
     if (other.PY$__class__ !== this.PY$__class__) {
-        if (object.PY$__gt__.call(this, other) == True) {
+        if (object.PY$__gt__.call(this, other) === True) {
             return $c1;
         } else {
-            if (object.PY$__lt__.call(this, other) == True) {
+            if (object.PY$__lt__.call(this, other) === True) {
                 return $cn1;
             } else {
                 return $c0;
@@ -120,10 +120,10 @@ tuple.PY$__cmp__ = function (other) {
             }
             var r = this.items[count].PY$__cmp__(elm);
 
-            if (r.PY$__gt__($c0) == True) {
+            if (r.PY$__gt__($c0) === True) {
                 res = $c1;
                 break;
-            } else if (r.PY$__lt__($c0) == True) {
+            } else if (r.PY$__lt__($c0) === True) {
                 res = $cn1;
                 break;
             }
@@ -213,7 +213,7 @@ tuple.PY$__iter__ = function() {
 
 tuple.PY$__contains__ = function(item) {
     for (var index in this.items) {
-        if (this.items[index].PY$__eq__(item) == True) {
+        if (this.items[index].PY$__eq__(item) === True) {
             return True;
         }
     }
@@ -262,7 +262,7 @@ tuple.PY$count = function(value) {
     var count = 0;
 
     for (var index in this.items) {
-        if (this.items[index].PY$__eq__(value) == True) {
+        if (this.items[index].PY$__eq__(value) === True) {
             count += 1;
         }
     }
@@ -285,7 +285,7 @@ tuple.PY$index = function(value, start, end) {
             break;
         }
 
-        if (_value.PY$__eq__(value) == True) {
+        if (_value.PY$__eq__(value) === True) {
             return int(i);
         }
     }

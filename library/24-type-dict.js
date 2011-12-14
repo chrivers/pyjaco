@@ -122,7 +122,7 @@ dict.PY$__setitem__ = function(key, value) {
 };
 
 dict.PY$__delitem__ = function(key) {
-    if (this.PY$__contains__(key) == True) {
+    if (this.PY$__contains__(key) === True) {
         delete this.items[js(key)];
     } else {
         throw py_builtins.KeyError(str(key));
