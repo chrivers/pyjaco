@@ -11,6 +11,6 @@ setup(
     author_email = "mattpap@gmail.com",
     description = ("Python to JavaScript translator"),
     url = "http://pyjaco.org",
-    keywords = "javascript translator compiler",
+    keywords = "python javascript translator compiler",
     packages=["pyjaco", "pyjaco.compiler"],
 )

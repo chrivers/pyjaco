@@ -66,6 +66,16 @@ Will run foo.py through python and pyjaco, and display the differences. It
 will then display a line of "#", and wait for you to press enter to do another
 iteration. When the files match, casetest will exit.
 
+Usage
+------------
+
+    import sys
+	from pyjaco import Compiler
+	code = open("tojs.py", "r")
+	compiler = Compiler()
+	compiler.append_string(code.read())
+	print str(compiler)
+
 License
 -------
 
