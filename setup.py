@@ -7,8 +7,8 @@ except:
 setup(
     name = "pyjaco",
     version = "1.0.0",
-    author = "Mateusz Paprocki",
-    author_email = "mattpap@gmail.com",
+    author = "Pyjaco development team",
+    author_email = "developer@pyjaco.org",
     description = ("Python to JavaScript translator"),
     url = "http://pyjaco.org",
     keywords = "python javascript translator compiler",
