@@ -62,7 +62,9 @@ number.PY$__nonzero__ = function() {
 };
 
 number.PY$__gt__ = function(x) {
-    if (x.numbertype) {
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__gt__.call(this, x);
+    } else if (x.numbertype) {
         return this.obj > x.obj ? True : False;
     } else if (x[this.numbertype] !== undefined) {
         return this.obj > x[this.numbertype]()._js_() ? True : False;
@@ -72,7 +74,9 @@ number.PY$__gt__ = function(x) {
 };
 
 number.PY$__lt__ = function(x) {
-    if (x.numbertype) {
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__lt__.call(this, x);
+    } else if (x.numbertype) {
         return this.obj < x.obj ? True : False;
     } else if (x[this.numbertype] !== undefined) {
         return this.obj < x[this.numbertype]()._js_() ? True : False;
