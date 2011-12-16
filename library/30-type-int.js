@@ -31,7 +31,7 @@ int.numbertype = "PY$__int__";
 int.numberclass = int;
 
 int.PY$__init__ = function(value) {
-    if (arguments.length == 2) {
+    if (arguments.length === 2) {
         this.obj = parseInt(i, arguments[1]);
     } else {
         var s = js(str(value));
@@ -89,7 +89,7 @@ int.PY$__floordiv__ = function(x) {
         throw py_builtins.TypeError("Cannot operate on int and non-int");
     if (x.obj === 0)
         throw py_builtins.ZeroDivisionError("integer division or modulo by zero");
-    if (x.numbertype == "PY$__float__") {
+    if (x.numbertype === "PY$__float__") {
         return float(this.obj / x.obj);
     } else {
         return int(Math.floor(this.obj / x.obj));
@@ -105,7 +105,7 @@ int.PY$__mod__ = function(x) {
 int.PY$__pow__ = function(x) {
     if (!x.numbertype)
         throw py_builtins.TypeError("Cannot exponentiate int and non-int");
-    if (x.numbertype == "PY$__float__") {
+    if (x.numbertype === "PY$__float__") {
         return float(Math.pow(this.obj, x.obj));
     } else {
         return int(Math.floor(Math.pow(this.obj, x.obj)));
