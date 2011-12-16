@@ -38,9 +38,9 @@ tuple.PY$__init__ = function(seq) {
         var that = this;
         this.items = [];
         iterate(seq, function(elm) {
-                    if (typeof(elm) == 'number')
+                    if (typeof elm === 'number')
                         that.items.push(int(elm));
-                    else if (typeof(elm) == 'string')
+                    else if (typeof elm === 'string')
                         that.items.push(str(elm));
                     else
                         that.items.push(elm);
@@ -65,7 +65,7 @@ tuple.PY$__str__ = function () {
 tuple.PY$__repr__ = tuple.PY$__str__;
 
 tuple.PY$__eq__ = function (other) {
-    if (other.PY$__class__ == this.PY$__class__) {
+    if (other.PY$__class__ === this.PY$__class__) {
         if (this.items.length != js(py_builtins.len(other))) {
             return False;
         }
@@ -81,6 +81,9 @@ tuple.PY$__eq__ = function (other) {
 };
 
 tuple.PY$__cmp__ = function (other) {
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__cmp__.call(this, other);
+    }
     if (other.PY$__class__ !== this.PY$__class__) {
         if (object.PY$__gt__.call(this, other) === True) {
             return $c1;
@@ -130,7 +133,7 @@ tuple.PY$__cmp__ = function (other) {
             count++;
         }
 
-        if (res == $c0) {
+        if (res === $c0) {
             if (this.items.length > count) {
                 return $c1;
             } else {
@@ -143,11 +146,19 @@ tuple.PY$__cmp__ = function (other) {
 };
 
 tuple.PY$__gt__ = function (other) {
-    return this.PY$__cmp__(other).PY$__gt__($c0);
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__gt__.call(this, other);
+    } else {
+        return this.PY$__cmp__(other).PY$__gt__($c0);
+    }
 };
 
 tuple.PY$__lt__ = function (other) {
-    return this.PY$__cmp__(other).PY$__lt__($c0);
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__lt__.call(this, other);
+    } else {
+        return this.PY$__cmp__(other).PY$__lt__($c0);
+    }
 };
 
 tuple.PY$__mul__ = function(num) {
@@ -165,7 +176,7 @@ tuple.PY$__mul__ = function(num) {
 };
 
 tuple.PY$__add__ = function(other) {
-    if (this.PY$__class__ == other.PY$__class__) {
+    if (this.PY$__class__ === other.PY$__class__) {
         var res = this.items.concat([]);
         iterate(other, function(elm) {
                     res.push(elm);
@@ -196,7 +207,7 @@ tuple.PY$__hash__ = function () {
         value = value ^ length;
     }
 
-    if (value == -1) {
+    if (value === -1) {
         value = -2;
     }
 
