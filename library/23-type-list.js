@@ -68,12 +68,13 @@ list.PY$__contains__ = tuple.PY$__contains__;
 list.PY$__getitem__ = tuple.PY$__getitem__;
 
 list.PY$__setitem__ = function(index, value) {
-    if (typeof(index) === 'number') index = int(index);
+    index = js(int(index));
 
-    if (js(index.PY$__ge__($c0)) && js(index.PY$__lt__(py_builtins.len(this)))) {
-        this.items[index.PY$__int__()._js_()] = value;
-    } else if (js(index.PY$__lt__($c0)) && js(index.PY$__ge__(py_builtins.len(this).PY$__neg__()))) {
-        this.items[index.PY$__add__(py_builtins.len(this)._js_()).PY$__int__()._js_()] = value;
+    var len = this.items.length;
+    if (index >= 0 && index < len) {
+        this.items[index] = value;
+    } else if (index < 0 && index >= -len) {
+        this.items[index + len] = value;
     } else {
         throw py_builtins.IndexError("list index out of range");
     }
@@ -83,20 +84,18 @@ list.PY$__setslice__ = function(lower, upper, value) {
     var it = list(value).items;
     lower = js(lower);
     upper = js(upper);
-    if (lower < py_builtins.len(this)._js_() && upper < py_builtins.len(this)._js_()) {
-        this.items = this.items.slice(0, lower).concat(it).concat(this.items.slice(upper, py_builtins.len(this)._js_()));
-        this.len = -1;
+    if (lower < this.items.length && upper < this.items.length) {
+        this.items = this.items.slice(0, lower).concat(it).concat(this.items.slice(upper, this.items.length));
     }
 };
 
 list.PY$__delitem__ = function(index) {
     if (typeof(index) !== 'number') index = js(index);
 
-    if ((index >= 0) && (index < py_builtins.len(this)._js_())) {
+    if ((index >= 0) && (index < this.items.length)) {
         var a = this.items.slice(0, index);
-        var b = this.items.slice(index+1, py_builtins.len(this)._js_());
+        var b = this.items.slice(index+1, this.items.length);
         this.items = a.concat(b);
-        this.len = -1;
     } else
         throw py_builtins.IndexError("list assignment index out of range");
 };
@@ -104,11 +103,10 @@ list.PY$__delitem__ = function(index) {
 list.PY$__delslice__ = function(x, y) {
     x = js(x);
     y = js(y);
-    if ((x >= 0) && (y < py_builtins.len(this)._js_())) {
+    if ((x >= 0) && (y < this.items.length)) {
         var a = this.items.slice(0, x);
         var b = this.items.slice(y);
         this.items = a.concat(b);
-        this.len = -1;
     } else
         throw py_builtins.IndexError("list assignment index out of range");
 };
@@ -129,7 +127,6 @@ list.PY$append = function(value) {
     } else {
         this.items.push(value);
     }
-    this.len = -1;
 };
 
 list.PY$extend = function(l) {
@@ -138,38 +135,29 @@ list.PY$extend = function(l) {
     iterate(l, function(item) {
         items.push(item);
     });
-    this.len = -1;
 };
 
 list.PY$pop = function() {
-    if (py_builtins.len(this)._js_() > 0) {
-        this.len = -1;
+    if (this.items.length > 0) {
         return this.items.pop();
     } else
         throw py_builtins.IndexError("pop from empty list");
 };
 
 list.PY$sort = function() {
-    var cmp = function(a, b) { return js(a.PY$__cmp__(b));};
-    if (arguments.length > 0)
-        cmp = js(arguments[0]);
+    var __kwargs = __kwargs_get(arguments);
+    var cmp = js(arguments[0]);
+    if (cmp === undefined) { cmp = __kwargs.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(b));} : __kwargs.cmp; };
 
-    var key = function(x) { return x; };
-    if (arguments.length > 1)
-        key = js(arguments[1]);
+    var key = js(arguments[1]);
+    if (key === undefined) { key = __kwargs.key === undefined ? function(x) { return x; } : __kwargs.key; };
 
-    var reverse = False;
-    if (arguments.length > 2)
-        reverse = arguments[2];
+    var reverse = arguments[2];
+    if (reverse === undefined) { reverse = __kwargs.reverse === undefined ? False : __kwargs.reverse; };
 
-    var mcmp;
-    if (reverse == True) {
-        mcmp = function(a, b) { return cmp(b, a); };
-    } else {
-        mcmp = function(a, b) { return cmp(a, b); };
-    }
+    var direction = reverse === True ? -1 : 1;
 
-    this.items.sort(function (a, b) {return js(mcmp(key(a), key(b)));});
+    this.items.sort(function (a, b) {return js(cmp(key(a), key(b))) * direction;});
 };
 
 list.PY$insert = function(index, x) {
@@ -177,7 +165,6 @@ list.PY$insert = function(index, x) {
     var a = this.items.slice(0, i);
     var b = this.items.slice(i);
     this.items = a.concat([x], b);
-    this.len = -1;
 };
 
 list.PY$reverse = function() {
