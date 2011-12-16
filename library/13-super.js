@@ -32,7 +32,7 @@ Super.PY$__init__ = function(cls, obj) {
 
 Super.PY$__getattr__ = function(k) {
     var q = this.cls.PY$__super__.PY$__getattr__(k, false);
-    if ((typeof q == 'function') && q.PY$__class__ === undefined) {
+    if ((typeof q === 'function') && q.PY$__class__ === undefined) {
         var that = this.obj;
         var t = function() { return q.apply(that, arguments); };
         t.PY$__call__ = t;
