@@ -110,7 +110,7 @@ py_builtins.cmp = function(x, y) {
 };
 
 py_builtins.repr = function(obj) {
-    if (obj == undefined) {
+    if (obj === undefined) {
         return "None";
     } else if (obj.PY$__repr__ !== undefined) {
         return obj.PY$__repr__(obj);
@@ -319,7 +319,7 @@ py_builtins.filter = function(f, l) {
 
 py_builtins.reduce = function(func, seq) {
     var initial;
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
         initial = arguments[2];
     } else {
         initial = null;
@@ -328,7 +328,7 @@ py_builtins.reduce = function(func, seq) {
         return initial;
     }
     var accum, start;
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
         accum = initial;
         start = 0;
     } else {
