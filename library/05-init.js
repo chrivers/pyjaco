@@ -146,7 +146,7 @@ var py = function(obj) {
         return str(obj);
     } else if (typeof obj === 'boolean') {
         return bool(obj);
-    } else if (typeof obj === 'undefined' || obj == null) {
+    } else if (obj === undefined || obj === null) {
         return None;
     } else if (obj instanceof Array) {
         var res = list();
@@ -196,7 +196,7 @@ $PY.repr = function(obj) {
 
 $PY.len = function(obj) {
     var c = obj.PY$__class__;
-    if (c === list || c === tuple || c === str || c == basestring || c == unicode) {
+    if (c === list || c === tuple || c === str || c === basestring || c === unicode) {
         return obj.obj.length;
     } else if (obj.PY$__len__ !== undefined) {
         return obj.PY$__len__()._js_();
