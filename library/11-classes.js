@@ -90,9 +90,9 @@ object.PY$__setattr__ = function(k, v) {
 
 object.PY$__getattr__ = function(k) {
     var q = this["PY$" + k];
-    if ((typeof q == 'function') && (q.PY$__class__ === undefined) && (k !== '__class__') && arguments[1] !== false) {
+    if ((typeof q === 'function') && (q.PY$__class__ === undefined) && (k !== '__class__') && arguments[1] !== false) {
         var that = this;
-        if (this.PY$__class__ == undefined && !q.__static) {
+        if (this.PY$__class__ === undefined && !q.__static) {
             var t = function() { return q.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
         } else {
             if (q.PY$__super__ !== undefined) {
@@ -136,14 +136,22 @@ object.PY$__ne__ = function (other) {
 };
 
 object.PY$__gt__ = function(other) {
-    return this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__ ? True : False;
+    if (this.PY$__class__ === undefined) {
+        return this.PY$__name__ > other.PY$__name__ ? True : False;
+    } else {
+        return this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__ ? True : False;
+    }
 };
 
 object.PY$__lt__ = function(other) {
     if (other === this) {
         return False;
     } else {
-        return this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__ ? True : False;
+        if (this.PY$__class__ === undefined) {
+            return this.PY$__name__ < other.PY$__name__ ? True : False;
+        } else {
+            return this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__ ? True : False;
+        }
     }
 };
 
