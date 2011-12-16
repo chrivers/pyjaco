@@ -55,7 +55,7 @@ bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function (other) {
     if (other.PY$__int__ !== undefined)
-        return Number(this.obj) == other.PY$__int__()._js_() ? True : False;
+        return Number(this.obj) === other.PY$__int__()._js_() ? True : False;
 
     return this.obj === other.obj ? True : False;
 };

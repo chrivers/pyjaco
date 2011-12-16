@@ -64,7 +64,7 @@ function sprintf(obj, args) {
             decparts[1] = fixed_digits(decparts[1], prec);
             parts[0] = decparts[0] + "." + decparts[1];
         }
-        if (drop_empty_exp && parts[1] == "+00") {
+        if (drop_empty_exp && parts[1] === "+00") {
             return parts[0];
         } else {
             return parts[0] + expchar + parts[1];
@@ -72,11 +72,11 @@ function sprintf(obj, args) {
     };
     var trim_trailing_zeroes = function(s) {
         var i = s.length - 1;
-        while (s.charAt(i) == '0') {
+        while (s.charAt(i) === '0') {
             i--;
         }
         s = s.substr(0, i + 1);
-        if (s.charAt(s.length - 1) == '.') {
+        if (s.charAt(s.length - 1) === '.') {
             s = s.substr(0, s.length - 1);
         }
         return s;
@@ -87,13 +87,13 @@ function sprintf(obj, args) {
     var res = "";
     var argc = 0;
     var si;
-    if ($PY.isinstance(args, [dict, list, tuple]) == false) {
+    if ($PY.isinstance(args, [dict, list, tuple]) === false) {
         args = tuple([args]);
     }
     while (i < s.length) {
         si = s.charAt(i);
-        if (si == "%") {
-            if (++i == s.length) {
+        if (si === "%") {
+            if (++i === s.length) {
                 throw py_builtins.ValueError("Incomplete format");
             }
 
@@ -110,17 +110,17 @@ function sprintf(obj, args) {
             var flag_name  = null;
             while (i < s.length) {
                 si = s.charAt(i);
-                if (si == "0") {
+                if (si === "0") {
                     flag_zero = true;
-                } else if (si == "-") {
+                } else if (si === "-") {
                     flag_minus = true;
-                } else if (si == "#") {
+                } else if (si === "#") {
                     flag_hash = true;
-                } else if (si == "0") {
+                } else if (si === "0") {
                     flag_zero = true;
-                } else if (si == " ") {
+                } else if (si === " ") {
                     flag_space = true;
-                } else if (si == "+") {
+                } else if (si === "+") {
                     flag_space = false;
                     flag_plus  = true;
                 } else if (si > "0" && si <= "9") {
@@ -131,7 +131,7 @@ function sprintf(obj, args) {
                     }
                     flag_len = Number(flag_len);
                     i--;
-                } else if (si == ".") {
+                } else if (si === ".") {
                     si = s.charAt(++i);
                     while (si >= "0" && si <= "9") {
                         flag_len2 += si;
@@ -139,44 +139,44 @@ function sprintf(obj, args) {
                     }
                     flag_len2 = Number(flag_len2);
                     i--;
-                } else if (si == "(") {
+                } else if (si === "(") {
                     flag_name = "";
                     while (i++ < s.length) {
                         si = s.charAt(i);
-                        if (si == ")") {
+                        if (si === ")") {
                             break;
                         }
                         flag_name += si;
                     }
-                } else if (si == "%") {
+                } else if (si === "%") {
                     subres = "%";
-                } else if (si == "d" || si == "i" || si == "u") {
+                } else if (si === "d" || si === "i" || si === "u") {
                     has_sign = true;
                     subres = js(int(get_argument())).toString();
-                } else if (si == "s") {
+                } else if (si === "s") {
                     subres = js(get_argument().PY$__str__());
-                } else if (si == "r") {
+                } else if (si === "r") {
                     subres = js(get_argument().PY$__repr__());
-                } else if (si == "f" || si == "F") {
+                } else if (si === "f" || si === "F") {
                     has_sign = true;
                     subres = format_float(js(get_argument().PY$__float__()), 6, flag_len2);
-                } else if (si == "e" || si == "E") {
+                } else if (si === "e" || si === "E") {
                     has_sign = true;
                     var expchar = si;
                     subres = format_exp(js(get_argument().PY$__float__()), expchar, 6, flag_len2, false);
-                } else if (si == "g" || si == "G") {
+                } else if (si === "g" || si === "G") {
                     has_sign = true;
                     var arg = js(get_argument().PY$__float__());
 
                     var val = flag_len2;
-                    if (val == 0)
+                    if (val === 0)
                         val = 6;
 
                     if (arg === 0 && !flag_hash) {
                         subres = "0";
                     } else if (arg < 0.0001 || arg.toFixed().split(".")[0].length > val) {
                         expchar = "e";
-                        if (si == "G")
+                        if (si === "G")
                             expchar = "E";
                         subres = format_exp(arg, expchar, 5, flag_len2-1, true);
 
@@ -193,17 +193,17 @@ function sprintf(obj, args) {
                             subres = trim_trailing_zeroes(subres);
                         }
                     }
-                } else if (si == "o") {
+                } else if (si === "o") {
                     has_sign = true;
                     subres = js(get_argument().PY$__int__()).toString(8);
                     if (flag_hash && subres.charAt(0) !== "0")
                         prefix = "0";
-                } else if (si == "x") {
+                } else if (si === "x") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0x";
                     subres = js(get_argument().PY$__int__()).toString(16);
-                } else if (si == "X") {
+                } else if (si === "X") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0X";
@@ -220,7 +220,7 @@ function sprintf(obj, args) {
                 pad_char = "0";
             var sign = "";
             if (has_sign) {
-                if (subres.charAt(0) == "-" || subres.charAt(0) == "+") {
+                if (subres.charAt(0) === "-" || subres.charAt(0) === "+") {
                     sign = subres.charAt(0);
                     subres = subres.substring(1);
                 } else if (flag_plus) {
@@ -230,7 +230,7 @@ function sprintf(obj, args) {
             if (flag_space) {
                 prefix = " " + prefix;
             }
-            if (pad_char == " x") {
+            if (pad_char === " x") {
                 prefix = sign + prefix;
                 sign = "";
             }

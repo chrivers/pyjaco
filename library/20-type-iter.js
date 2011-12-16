@@ -48,7 +48,7 @@ iter.PY$__init__ = function(obj) {
 var __iter_real__ = iter.PY$__create__;
 
 iter.PY$__create__ = function(cls, obj) {
-    if (obj.PY$__class__ == iter) {
+    if (obj.PY$__class__ === iter) {
        return obj;
     } else if (obj.PY$__iter__ !== undefined) {
         return obj.PY$__iter__();
