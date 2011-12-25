@@ -88,7 +88,7 @@ function sprintf(obj, args) {
     var argc = 0;
     var si;
     if ($PY.isinstance(args, [dict, list, tuple]) === false) {
-        args = tuple([args]);
+        args = tuple(args);
     }
     while (i < s.length) {
         si = s.charAt(i);
