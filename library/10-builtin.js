@@ -111,15 +111,15 @@ py_builtins.cmp = function(x, y) {
 
 py_builtins.repr = function(obj) {
     if (obj === undefined) {
-        return "None";
+        return str("None");
+    } else if (obj.PY$__class__ === undefined) {
+        return object.PY$__repr__.call(obj);
     } else if (obj.PY$__repr__ !== undefined) {
         return obj.PY$__repr__(obj);
     } else if (obj.PY$__str__ !== undefined) {
         return obj.PY$__str__(obj);
-    } else if (obj.toString !== undefined) {
-        return str(obj.toString());
     } else {
-        throw py_builtins.AttributeError('__repr__, __str__ or toString not found on ' + typeof(obj));
+        throw py_builtins.AttributeError('__repr__ or __str__ not found on ' + typeof(obj));
     }
 };
 
