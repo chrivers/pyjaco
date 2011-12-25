@@ -37,51 +37,49 @@ function test_dict() {
 
     raises(py_builtins.KeyError, function() { d.PY$popitem() });
 
-    raises(py_builtins.KeyError, function() { d.PY$pop(0) });
-    raises(py_builtins.KeyError, function() { d.PY$__getitem__(int(0)) });
-    raises(py_builtins.KeyError, function() { d.PY$__delitem__(0) });
+    raises(py_builtins.KeyError, function() { d.PY$pop($c0) });
+    raises(py_builtins.KeyError, function() { d.PY$__getitem__($c0) });
+    raises(py_builtins.KeyError, function() { d.PY$__delitem__($c0) });
 
     raises(py_builtins.KeyError, function() { d.PY$pop('a') });
     raises(py_builtins.KeyError, function() { d.PY$__getitem__('a') });
     raises(py_builtins.KeyError, function() { d.PY$__delitem__('a') });
 
-    d.PY$__setitem__(0, 1);
+    d.PY$__setitem__($c0, $c1);
 
-    test(function() { return str(d) == "{'0': 1}" });
+    test(function() { return str(d) == "{0: 1}" });
     test(function() { return py_builtins.len(d) == 1 });
-    test(function() { return d.PY$__getitem__(int(0)) == 1 });
+    test(function() { return d.PY$__getitem__($c0) == 1 });
 
-    d.PY$__setitem__(0, 2);
+    d.PY$__setitem__($c0, $c2);
 
-    test(function() { return str(d) == "{'0': 2}" });
+    test(function() { return str(d) == "{0: 2}" });
     test(function() { return py_builtins.len(d) == 1 });
-    test(function() { return d.PY$__getitem__(int(0)) == 2 });
+    test(function() { return d.PY$__getitem__($c0) == 2 });
 
     test(function() { return d.PY$pop(0) == 2 });
     test(function() { return py_builtins.len(d) == 0 });
 
-    d = dict({1: 6, 2: 8});
-    test(function() { return str(d) == "{'1': 6, '2': 8}" });
+    d = dict([$c1, $c6, $c2, $c8]);
+    test(function() { return str(d) == "{1: 6, 2: 8}" });
+
     d = dict(tuple([tuple([1, 6]), tuple([2, 8])]));
-    test(function() { return str(d) == "{'1': 6, '2': 8}" });
+    test(function() { return str(d) == "{1: 6, 2: 8}" });
+
     d = dict(tuple([tuple([1, "x"]), tuple([2, "y"])]));
-    // This will change when repr() is implemented:
-    test(function() { return str(d) == "{'1': 'x', '2': 'y'}" });
+    test(function() { return str(d) == "{1: 'x', 2: 'y'}" });
 
     d = dict(tuple([tuple([1, str("x")]), tuple([2, str("y")])]));
-    // This will change when repr() is implemented:
-    test(function() { return str(d) == "{'1': 'x', '2': 'y'}" });
+    test(function() { return str(d) == "{1: 'x', 2: 'y'}" });
 
-    d = dict(tuple([tuple(["a", str("x")]), tuple(["b", str("y")])]));
-    // This will change when repr() is implemented:
+    d = dict(tuple([tuple([str("a"), str("x")]), tuple([str("b"), str("y")])]));
+    print(d);
     test(function() { return str(d) == "{'a': 'x', 'b': 'y'}" });
 
     d = dict(tuple([tuple([str("a"), str("x")]), tuple([str("b"), str("y")])]));
-    // This will change when repr() is implemented:
     test(function() { return str(d) == "{'a': 'x', 'b': 'y'}" });
 
     d = dict(list([list([str("a"), str("x")]), list([str("b"), str("y")])]));
-    // This will change when repr() is implemented:
     test(function() { return str(d) == "{'a': 'x', 'b': 'y'}" });
 }
 
@@ -259,9 +257,9 @@ function test_list() {
     t.PY$append(3);
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1, 3]' });
 
-    t.PY$__setitem__(1, 3);
+    t.PY$__setitem__(1, $c3);
     test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1, 3]' });
-    t.PY$__setitem__(7, 0);
+    t.PY$__setitem__(7, $c0);
     test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1, 0]' });
     t.PY$__delitem__(7);
     test(function() { return str(t) == '[3, 3, 5, 5, 4, 4, 1]' });
@@ -273,23 +271,23 @@ function test_list() {
     test(function() { return str(t) == '[5, 4, 4, 1]' });
     raises(py_builtins.IndexError, function() { t.PY$__delitem__(4) });
 
-    t.PY$__setitem__(0, 1);
+    t.PY$__setitem__(0, $c1);
     test(function() { return str(t) == '[1, 4, 4, 1]' });
-    t.PY$__setitem__(1, 2);
+    t.PY$__setitem__(1, $c2);
     test(function() { return str(t) == '[1, 2, 4, 1]' });
-    t.PY$__setitem__(2, 3);
+    t.PY$__setitem__(2, $c3);
     test(function() { return str(t) == '[1, 2, 3, 1]' });
-    t.PY$__setitem__(3, 4);
+    t.PY$__setitem__(3, $c4);
     test(function() { return str(t) == '[1, 2, 3, 4]' });
     raises(py_builtins.IndexError, function() { t.PY$__setitem__(4, 5) });
     raises(py_builtins.IndexError, function() { t.PY$__setitem__(5, 6) });
-    t.PY$__setitem__(-1, 1);
+    t.PY$__setitem__(-1, $c1);
     test(function() { return str(t) == '[1, 2, 3, 1]' });
-    t.PY$__setitem__(-2, 2);
+    t.PY$__setitem__(-2, $c2);
     test(function() { return str(t) == '[1, 2, 2, 1]' });
-    t.PY$__setitem__(-3, 3);
+    t.PY$__setitem__(-3, $c3);
     test(function() { return str(t) == '[1, 3, 2, 1]' });
-    t.PY$__setitem__(-4, 4);
+    t.PY$__setitem__(-4, $c4);
     test(function() { return str(t) == '[4, 3, 2, 1]' });
     raises(py_builtins.IndexError, function() { t.PY$__setitem__(-5, 5) });
     raises(py_builtins.IndexError, function() { t.PY$__setitem__(-6, 6) });

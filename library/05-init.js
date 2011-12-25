@@ -70,8 +70,9 @@ var __kwargs_make = function(kw, kwargs) {
         if (kwargs.PY$__class__ !== dict) {
             throw TypeError("Keyword arguments with non-standard dictionary types not supported");
         }
-        for (var key in kwargs.items) {
-            kw[key] = kwargs.items[key];
+        var items = kwargs.items;
+        for (var i = 0; i < items.length; i += 2) {
+            kw[str(items[i])._js_()] = items[i+1];
         };
     };
     return kw;

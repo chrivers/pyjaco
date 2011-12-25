@@ -38,37 +38,37 @@ dict.PY$__init__ = function() {
     var args = arguments[0];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
-            items = {};
-            for (var k in args.items) {
-                items[k] = args.items[k];
-            }
+            items = args.items.slice();
         } else if (args.PY$__iter__ !== undefined) {
-            items = {};
+            items = [];
             iterate(args, function(item) {
-                    items[js(item.PY$__getitem__($c0))] = item.PY$__getitem__($c1);
+                        items.push(item.PY$__getitem__($c0));
+                        items.push(item.PY$__getitem__($c1));
             });
         } else if (args.length === undefined) {
-            items = args;
+            items = [];
+            for (var item in args) {
+                items.push(str(item));
+                items.push(args[item]);
+            };
         } else {
-            items = {};
-            for (var i = 0; i < args.length / 2; i++) {
-                items[js(args[i*2])] = args[i*2+1];
-            }
+            items = args.slice();
         }
         this.items = items;
     } else {
-        this.items = {};
+        this.items = [];
     }
     for (var p in kwargs) {
-        this.items[js(p)] = kwargs[p];
+        this.PY$__setitem__(str(p), kwargs[p]);
     }
 };
 
 dict.PY$__str__ = function () {
     var strings = [];
+    var items = this.items;
 
-    for (var key in this.items) {
-        strings.push($PY.repr(py(key)) + ": " + $PY.repr(this.items[key]));
+    for (var i = 0; i < items.length; i += 2) {
+        strings.push($PY.repr(items[i]) + ": " + $PY.repr(items[i+1]));
     }
 
     return str("{" + js(strings.join(", ")) + "}");
@@ -79,8 +79,8 @@ dict.PY$__repr__ = dict.PY$__str__;
 dict._js_ = function () {
     var items = {};
 
-    for (var k in this.items) {
-        items[k] = js(this.items[k]);
+    for (var i = 0; i < this.items.length; i += 2) {
+        items[str(this.items[i])] = js(this.items[i+1]);
     }
 
     return items;
@@ -91,12 +91,7 @@ dict.PY$__hash__ = function () {
 };
 
 dict.PY$__len__ = function() {
-    var count = 0;
-
-    for (var key in this.items)
-        count += 1;
-
-    return int(count);
+    return int(this.items.length / 2);
 };
 
 dict.PY$__iter__ = function() {
@@ -104,116 +99,134 @@ dict.PY$__iter__ = function() {
 };
 
 dict.PY$__contains__ = function(key) {
-    return this.items[js(key)] !== undefined ? True : False;
+    var items = this.items;
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            return True;
+        }
+    }
+    return False;
 };
 
 dict.PY$__getitem__ = function(key) {
-    var value = this.items[js(key)];
+    var items = this.items;
 
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            return items[i+1];
+        }
+    }
+    throw py_builtins.KeyError(str(key));
+};
+
+dict.PY$__setitem__ = function(key, value) {
+    var items = this.items;
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            items[i+1] = value;
+            return;
+        }
+    }
+    items.push(key);
+    items.push(value);
+};
+
+dict.PY$__delitem__ = function(key) {
+    var items = this.items;
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            this.items = items.slice(0, i).concat(items.slice(i+2));
+            return;
+        }
+    }
+    throw py_builtins.KeyError(str(key));
+};
+
+dict.PY$get = function(key, value) {
+    var items = this.items;
+
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            return items[i+1];
+        }
+    }
     if (value !== undefined) {
+        return value;
+    } else {
+        return None;
+    }
+};
+
+dict.PY$items = function() {
+    var res = [];
+    var items = this.items;
+    for (var i = 0; i < items.length; i += 2) {
+        res.push(tuple([items[i], items[i+1]]));
+    }
+
+    return list(res);
+};
+
+dict.PY$keys = function() {
+    var res = [];
+    var items = this.items;
+
+    for (var i = 0; i < this.items.length; i += 2) {
+        res.push(items[i]);
+    }
+
+    return list(res);
+};
+
+dict.PY$values = function() {
+    var res = [];
+    var items = this.items;
+
+    for (var i = 1; i < items.length; i += 2) {
+        res.push(items[i]);
+    }
+
+    return list(res);
+};
+
+dict.PY$update = function(other) {
+   var self = this;
+   iterate(other,
+     function(key) {
+         self.PY$__setitem__(key, other.PY$__getitem__(key));
+     }
+   );
+};
+
+dict.PY$clear = function() {
+    this.items = [];
+};
+
+dict.PY$pop = function(key, value) {
+    var items = this.items;
+    var res = null;
+
+    for (var i = 0; i < items.length; i += 2) {
+        if (items[i].PY$__eq__(key) === True) {
+            res = items[i+1];
+            this.items = items.slice(0, i).concat(items.slice(i+2));
+        }
+    }
+    if (res !== null) {
+        return res;
+    } else if (value !== undefined) {
         return value;
     } else {
         throw py_builtins.KeyError(str(key));
     }
 };
 
-dict.PY$__setitem__ = function(key, value) {
-    this.items[js(key)] = value;
-};
-
-dict.PY$__delitem__ = function(key) {
-    if (this.PY$__contains__(key) === True) {
-        delete this.items[js(key)];
-    } else {
-        throw py_builtins.KeyError(str(key));
-    }
-};
-
-dict.PY$get = function(key, value) {
-    var _value = this.items[js(key)];
-
-    if (_value !== undefined) {
-        return _value;
-    } else {
-        if (value !== undefined) {
-            return value;
-        } else {
-            return None;
-        }
-    }
-};
-
-dict.PY$items = function() {
-    var items = list();
-
-    for (var key in this.items) {
-        items.PY$append(tuple([key, this.items[key]]));
-    }
-
-    return items;
-};
-
-dict.PY$keys = function() {
-    var keys = list();
-
-    for (var key in this.items) {
-        keys.PY$append(key);
-    }
-
-    return keys;
-};
-
-dict.PY$values = function() {
-    var values = list();
-
-    for (var key in this.items) {
-        values.PY$append(this.items[key]);
-    }
-
-    return values;
-};
-
-dict.PY$update = function(other) {
-   var that = this;
-   iterate(other,
-     function(key) {
-        that.items[js(key)] = other.PY$__getitem__(key);
-     }
-   );
-};
-
-dict.PY$clear = function() {
-    for (var key in this.items) {
-        delete this.items[key];
-    }
-};
-
-dict.PY$pop = function(key, value) {
-    var _value = this.items[key];
-
-    if (_value !== undefined) {
-        delete this.items[key];
-    } else {
-        if (value !== undefined) {
-            _value = value;
-        } else {
-            throw py_builtins.KeyError(str(key));
-        }
-    }
-
-    return _value;
-};
-
 dict.PY$popitem = function() {
-    var _key;
-
-    for (var key in this.items) {
-        _key = key;
-        break;
-    }
-
-    if (key !== undefined) {
-        return [_key, this.items[_key]];
+    var items = this.items;
+    if (items.length > 1) {
+        var item = items.pop();
+        var key = items.pop();
+        return tuple([key, value]);
     } else {
         throw py_builtins.KeyError("popitem(): dictionary is empty");
     }
