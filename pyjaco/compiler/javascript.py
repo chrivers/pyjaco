@@ -72,7 +72,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
     def __init__(self):
         super(Compiler, self).__init__()
         self.name_map = self.name_map.copy()
-        self.name_map.update({"True": "true", "False": "false", "None": "null", "self": "this"})
+        self.name_map.update({"True": "true", "False": "false", "None": "null"})
 
     def get_bool_op(self, node):
         return self.bool_op[node.op.__class__.__name__]
@@ -170,12 +170,35 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         orelse_dummy = self.alloc_var()
         exc_dummy = self.alloc_var()
 
+        if isinstance(node.iter, ast.Call) and isinstance(node.iter.func, ast.Name) and node.iter.func.id == "range" and not node.orelse:
+            counter  = self.visit(node.target)
+            end_var  = self.alloc_var()
+            assert(len(node.iter.args) in (1,2,3))
+            if len(node.iter.args) == 1:
+                start = "0"
+                end   = self.visit(node.iter.args[0])
+                step  = "1"
+            elif len(node.iter.args) == 2:
+                start = self.visit(node.iter.args[0])
+                end   = self.visit(node.iter.args[1])
+                step  = "1"
+            else:
+                start = self.visit(node.iter.args[0])
+                end   = self.visit(node.iter.args[1])
+                step  = self.visit(node.iter.args[2])
+
+            js.append("for (%s = %s; %s < %s; %s += %s) {" % (counter, start, counter, end, counter, step))
+            for stmt in node.body:
+                js.extend(self.indent(self.visit(stmt)))
+            js.append("}")
+            return js
+
         js.append("var %s = iter(%s);" % (iter_dummy, for_iter))
         js.append("var %s = false;" % orelse_dummy)
         js.append("while (1) {")
         js.append("    var %s;" % for_target)
         js.append("    try {")
-        js.append("        %s = %s.next();" % (for_target, iter_dummy))
+        js.append("        %s = %s.PY$next();" % (for_target, iter_dummy))
         js.append("    } catch (%s) {" % exc_dummy)
         js.append("        if (py_builtins.isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
