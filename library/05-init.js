@@ -187,11 +187,7 @@ $PY.isinstance = function(obj, cls) {
 };
 
 $PY.repr = function(obj) {
-    if (obj.PY$__repr__ !== undefined) {
-        return obj.PY$__repr__()._js_();
-    } else {
-        return obj.toString();
-    }
+    return py_builtins.repr(obj)._js_();
 };
 
 $PY.len = function(obj) {
