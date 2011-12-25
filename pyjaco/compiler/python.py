@@ -607,10 +607,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
     def visit_Dict(self, node):
         els = []
         for k, v in zip(node.keys, node.values):
-            if isinstance(k, ast.Name):
-                els.append('"%s", %s' % (self.visit(k), self.visit(v)))
-            else:
-                els.append("%s, %s" % (self.visit(k), self.visit(v)))
+            els.append("%s, %s" % (self.visit(k), self.visit(v)))
         return "dict([%s])" % (", ".join(els))
 
     def visit_List(self, node):
