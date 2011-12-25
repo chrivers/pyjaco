@@ -326,14 +326,17 @@ class Compiler(pyjaco.compiler.BaseCompiler):
 
         for_iter = self.visit(node.iter)
 
-        iter_dummy = self.alloc_var()
-        exc_dummy = self.alloc_var()
+        iter_var = self.alloc_var()
+        exc_var = self.alloc_var()
 
-        js.append("try {")
-        js.append("  var %s;" % for_target)
-        for_init = "var %s = iter(%s)" % (iter_dummy, for_iter)
-        for_iter = "%s = %s.PY$next()" % (for_target, iter_dummy)
-        for_cond = ""
+        if node.orelse:
+            orelse_var = self.alloc_var()
+            js.append("var %s = true;" % orelse_var)
+
+        js.append("var %s;" % for_target);
+        for_init = "var %s = iter(%s)" % (iter_var, for_iter)
+        for_iter = "%s = $PY.next(%s)" % (for_target, iter_var)
+        for_cond = "%s !== null" % (for_target)
         js.append("  for (%s; %s; %s) {" % (for_init, for_iter, for_cond))
         if isinstance(node.target, ast.Tuple):
             js.append("    %s;" % "; ".join(["var %s = %s.PY$__getitem__(%s)" % (x.id, for_target, i) for i, x in enumerate(node.target.elts)]))
@@ -343,15 +346,11 @@ class Compiler(pyjaco.compiler.BaseCompiler):
 
         js.append("  }")
 
-        js.append("} catch (%s) {" % exc_dummy)
-        js.append("  if (%s !== $PY.StopIter && !$PY.isinstance(%s, py_builtins.StopIteration))" % (exc_dummy, exc_dummy))
-        js.append("    throw %s;" % exc_dummy)
         if node.orelse:
-            js.append("  else {")
+            js.append("if (%s) {" % orelse_var)
             for stmt in node.orelse:
                 js.extend(self.indent(self.visit(stmt)))
             js.append("  }")
-        js.append("}")
 
         return js
 

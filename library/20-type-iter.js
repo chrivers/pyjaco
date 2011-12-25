@@ -74,3 +74,11 @@ iter.PY$next = function() {
         throw $PY.StopIter;
     }
 };
+
+iter.next = function() {
+    if (this.index >= this.seq.length) {
+        return null;
+    } else {
+        return this.seq[this.index++];
+    }
+};

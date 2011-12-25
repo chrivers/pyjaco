@@ -158,7 +158,7 @@ var py = function(obj) {
     } else {
         var res = dict();
         for (var q in obj) {
-            res.PY$__setitem__(q, py(obj[q]));
+            res.PY$__setitem__(str(q), py(obj[q]));
         }
         return res;
     }
@@ -199,5 +199,21 @@ $PY.len = function(obj) {
         return obj.PY$__len__()._js_();
     } else {
         throw py_builtins.AttributeError('__len__');
+    }
+};
+
+$PY.next = function(obj) {
+    if (obj.PY$__class__ === iter) {
+        return obj.next();
+    } else {
+        try {
+            return obj.PY$next();
+        } catch (x) {
+            if ($PY.isinstance(x, py_builtins.StopIteration)) {
+                return null;
+            } else {
+                throw x;
+            }
+       }
     }
 };
