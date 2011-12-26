@@ -361,7 +361,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             orelse_var = self.alloc_var()
             js.append("var %s = true;" % orelse_var)
 
-        js.append("while (js(%s)) {" % self.visit(node.test))
+        js.append("while (bool(%s) === True) {" % self.visit(node.test))
         if node.orelse:
             js.extend(self.indent(["var %s = true;" % orelse_var]))
 
@@ -485,9 +485,9 @@ class Compiler(pyjaco.compiler.BaseCompiler):
 
         if assign:
             var = self.alloc_var()
-            return "function() { %s; return %s; }()" % (op.join(["js(%s = %s)" % (var, self.visit(val)) for val in node.values]), var)
+            return "function() { var %s; %s; return %s; }()" % (var, op.join(["bool(%s = %s) === True" % (var, self.visit(val)) for val in node.values]), var)
         else:
-            return op.join(["js(%s)" % self.visit(val) for val in node.values])
+            return op.join(["bool(%s) === True" % self.visit(val) for val in node.values])
 
     def visit_UnaryOp(self, node):
         if   isinstance(node.op, ast.USub  ): return "%s.PY$__neg__()"            % (self.visit(node.operand))
