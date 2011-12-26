@@ -474,7 +474,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         return "function(%s) {return %s;}" % (node_args, node_body)
 
     def visit_BoolOp(self, node):
-        assign = self.stack_destiny(["Assign", "FunctionDef", "Print", "Call"], 1) in ["Assign", "Print", "Call"]
+        assign = self.stack_destiny(["Assign", "FunctionDef", "Print", "Call", "comprehension"], 1) in ["Assign", "Print", "Call"]
 
         if isinstance(node.op, ast.And):
             op = " && "
@@ -613,21 +613,27 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         els = [self.visit(e) for e in node.elts]
         return "list([%s])" % (", ".join(els))
 
-    def visit_ListComp(self, node):
-        if not len(node.generators) == 1:
-            raise JSError("Compound list comprehension not supported")
-        if isinstance(node.generators[0].target, ast.Name):
-            prefix = ""
-            name = node.generators[0].target.id
-        elif isinstance(node.generators[0].target, ast.Tuple):
-            name = self.alloc_var()
-            prefix = "".join(["%s = %s.PY$__getitem__(%d); " % (k.id, name, i) for i, k in enumerate(node.generators[0].target.elts)])
-        else:
-            raise JSError("Non-simple targets in list comprehension not supported")
+    def visit_comprehension(self, node):
+        if not isinstance(node.target, ast.Name):
+            raise JSError("Unsupported syntax")
 
-        body = self.visit(node.elt)
-        iterexp = self.visit(node.generators[0].iter)
-        return "py_builtins.map(function(%s) {%sreturn %s;}, %s)" % (name, prefix, body, iterexp)
+        var = node.target.id
+        iter_var = self.alloc_var()
+        res = "var %s; for (var %s = iter(%s); %s = $PY.next(%s); %s !== null) {" % (var, iter_var, self.visit(node.iter), var, iter_var, var)
+        if node.ifs:
+            ifexp = []
+            for exp in node.ifs:
+                ifexp.append("bool(%s) === False" % self.visit(exp))
+            res += "if (%s) { continue; }" % (" || ".join(ifexp))
+        return res
+
+    def visit_ListComp(self, node):
+        res_var = self.alloc_var()
+        exp = "%s.PY$append(%s)" % (res_var, self.visit(node.elt))
+        for x in node.generators:
+            exp = "%s %s}" % (self.visit(x), exp)
+
+        return "(function() {var %s = list(); %s; return %s})()" % (res_var, exp, res_var)
 
     def visit_GeneratorExp(self, node):
         if not len(node.generators) == 1:
