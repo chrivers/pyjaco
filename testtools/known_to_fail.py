@@ -1,17 +1,15 @@
 """lists all the tests that are known to fail"""
 KNOWN_TO_FAIL = [
-    "tests/basic/getattr2.py",
-    "tests/basic/oo_diamond.py",
-    "tests/basic/oo_super.py",
-    "tests/basic/del_global.py",
-    "tests/basic/del_local.py",
-    "tests/basic/dictionary3.py",
-    "tests/basic/listcomp2.py",
-
+    "tests/class/getattr2.py",
+    "tests/class/oo_diamond.py",
+    "tests/class/oo_super.py",
+    "tests/namespace/del_global.py",
+    "tests/namespace/del_local.py",
+    "tests/dict/dictionary3.py",
+    "tests/list/listcomp2.py",
     "tests/functions/cmp.py",
 
     "tests/libraries/xmlwriter.py",
-
     "tests/modules/classname.py",
     "tests/modules/from_import.py",
     "tests/modules/import.py",
