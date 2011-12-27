@@ -614,12 +614,22 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         return "list([%s])" % (", ".join(els))
 
     def visit_comprehension(self, node):
-        if not isinstance(node.target, ast.Name):
-            raise JSError("Unsupported syntax")
-
-        var = node.target.id
+        if isinstance(node.target, ast.Name):
+            var = self.visit(node.target)
+        elif isinstance(node.target, ast.Tuple):
+            var = self.alloc_var()
+        else:
+            raise JSError("Unsupported target type in list comprehension")
         iter_var = self.alloc_var()
-        res = "var %s; for (var %s = iter(%s); %s = $PY.next(%s); %s !== null) {" % (var, iter_var, self.visit(node.iter), var, iter_var, var)
+        res = "var %s; for (var %s = iter(%s); %s = $PY.next(%s); %s !== null) {\n" % (var, iter_var, self.visit(node.iter), var, iter_var, var)
+        if isinstance(node.target, ast.Tuple):
+            for i, el in enumerate(node.target.elts):
+                if isinstance(el, ast.Name):
+                    n = self.visit(el)
+                else:
+                    raise JSError("Invalid tuple element in list comprehension")
+                res += "var %s = %s.PY$__getitem__($c%d);\n" % (n, var, i)
+
         if node.ifs:
             ifexp = []
             for exp in node.ifs:
