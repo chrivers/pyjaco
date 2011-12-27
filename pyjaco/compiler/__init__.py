@@ -80,7 +80,7 @@ class BaseCompiler(object):
         'sorted'
     ])
 
-    def __init__(self):
+    def __init__(self, opts):
         self.index_var = 0
         # This is the name of the classes that we are currently in:
         self._class_name = []
@@ -89,6 +89,7 @@ class BaseCompiler(object):
         self._scope = []
         self._classes = {}
         self._exceptions = []
+        self.opts = opts
 
     def alloc_var(self):
         self.index_var += 1

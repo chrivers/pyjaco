@@ -69,10 +69,11 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             'IsNot' : "is not", # Not implemented yet
     }
 
-    def __init__(self):
-        super(Compiler, self).__init__()
+    def __init__(self, opts):
+        super(Compiler, self).__init__(opts)
         self.name_map = self.name_map.copy()
         self.name_map.update({"True": "true", "False": "false", "None": "null"})
+        self.opts = opts
 
     def get_bool_op(self, node):
         return self.bool_op[node.op.__class__.__name__]

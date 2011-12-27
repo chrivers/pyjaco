@@ -74,9 +74,10 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         "LtE": "le",
     }
 
-    def __init__(self):
-        super(Compiler, self).__init__()
+    def __init__(self, opts):
+        super(Compiler, self).__init__(opts)
         self.future_division = False
+        self.opts = opts
 
     def stack_destiny(self, names, skip):
         for name in reversed(self.stack[:-skip]):
@@ -142,7 +143,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             if not isinstance(arg, ast.Name):
                 raise JSError("tuples in argument list are not supported")
 
-            values = dict(i = i, id = self.visit(arg), rawid = arg.id, kwarg = kwarg_name, newargs = newargs)
+            values = dict(i = i, id = self.visit(arg), rawid = arg.id, kwarg = kwarg_name, newargs = newargs, func = node.name)
             if defaults[i + offset] == None:
                 js.extend(self.indent(["var %(id)s = ('%(rawid)s' in %(kwarg)s) ? %(kwarg)s['%(rawid)s'] : %(newargs)s[%(i)d];" % values]))
             else:
@@ -150,6 +151,8 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 js.extend(self.indent(["var %(id)s = %(newargs)s[%(i)d];" % values]))
                 js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(rawid)s === undefined ? %(default)s : %(kwarg)s.%(rawid)s; };" % values]))
             js.extend(self.indent(["delete %(kwarg)s.%(id)s" % values]))
+            if self.opts['check_params']:
+                js.extend(self.indent(["if (%(id)s === undefined) { \nbt(); py_builtins.print('%(func)s() did not get parameter %(id)s'); }; " % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
             js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))

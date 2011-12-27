@@ -62,8 +62,13 @@ class Compiler(object):
 
     re_comment = re.compile("^[ ]*#")
 
-    def __init__(self, jsvars = None):
-        self.compiler = pyjaco.compiler.multiplexer.Compiler(jsvars)
+    def __init__(self, jsvars = None, opts = dict()):
+        defaults = dict(check_params = True)
+
+        compiler_opts = dict()
+        compiler_opts.update(defaults)
+        compiler_opts.update(opts)
+        self.compiler = pyjaco.compiler.multiplexer.Compiler(jsvars, compiler_opts)
         self.buffer = None
         self.reset()
 
