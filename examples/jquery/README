@@ -1,0 +1,16 @@
+An example of using pyjaco to build a stand-alone javascript file that can be
+included with HTML. I like this method as it allows separating javascript from
+HTML and can therefore be used with a variety of backend setups.
+
+First run the following command in the main pyjaco directory:
+
+# python generate_library.py
+
+This will create the py-builtins.js that is included in the index.html file
+
+Next, generate the clicker.js javascript from clicker.py:
+
+python pyjs.py -N --output clicker.js 
+
+Now you can load index.html in a browser and click the heading for a simple
+jQuery interaction.
