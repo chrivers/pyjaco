@@ -19,29 +19,15 @@ def main():
                       dest   = "output",
                       help   = "write output to OUTPUT, can be a file or directory")
 
-    parser.add_option("-i", "--include-builtins",
-                      action  = "store_true",
-                      dest    = "include_builtins",
-                      default = False,
-                      help    = "include py-builtins.js library in the output")
-
-    parser.add_option("-I", "--import-builtins",
-                      action  = "store_true",
-                      dest    = "import_builtins",
-                      default = False,
-                      help    = "call load('py-builtins.js') to source the standard library")
-
-    parser.add_option("-N", "--no-include",
-                      action  = "store_true",
-                      dest    = "no_builtins",
-                      default = False,
-                      help    = "Do not include attempt to load py-builtins.js. The generated javascript code will not run by itself, unless this library is included")
+    parser.add_option("-b", "--builtins",
+            action = "store",
+            dest = "builtins",
+            choices = ["include", "import", "generate", "none"],
+            default = "none")
 
     options, args = parser.parse_args()
 
-    if options.include_builtins + options.import_builtins + options.no_builtins <> 1 and len(args) == 1:
-        print "You must specify either the -i, -I or -N mode!"
-    elif len(args) == 1:
+    if len(args) == 1:
         filename = args[0]
 
         if options.output:
@@ -54,12 +40,12 @@ def main():
         else:
             output = sys.stdout
 
-        if options.include_builtins:
+        if options.builtins in ("include", "generate"):
             builtins = open(path_library).read()
             output.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
             output.write(builtins)
             output.write("/*%s*/\n" % "  User code  ".center(76, "*"))
-        elif options.import_builtins:
+        elif options.builtins == "import":
             output.write('load("%s");\n' % path_library)
 
         c = Compiler()
