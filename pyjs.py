@@ -14,7 +14,7 @@ def main():
     parser = OptionParser(usage="%prog [options] filename",
                           description="Python to JavaScript compiler.")
 
-    parser.add_option("--output",
+    parser.add_option("-o", "--output",
                       action = "store",
                       dest   = "output",
                       help   = "write output to OUTPUT")
