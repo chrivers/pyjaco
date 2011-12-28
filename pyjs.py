@@ -5,6 +5,7 @@ import os.path
 from optparse import OptionParser
 from pyjaco import Compiler
 
+# FIXME: This hardcoding is undesirable
 if os.path.exists("py-builtins.js"):
     path_library = "py-builtins.js"
 else:
@@ -23,7 +24,8 @@ def main():
             action = "store",
             dest = "builtins",
             choices = ["include", "import", "generate", "none"],
-            default = "none")
+            default = "none",
+            help = "INCLUDE builtins statically in each file\nIMPORT builtins using a load statement in each file\nGENERATE a separate file for builtins (output must be a directory)\nNONE don't include builtins")
 
     options, args = parser.parse_args()
 
@@ -41,10 +43,19 @@ def main():
             output = sys.stdout
 
         if options.builtins in ("include", "generate"):
+            if options.builtins == "include":
+                builtin_output = output
+            else:
+                builtin_filename = os.path.abspath(os.path.join(os.path.dirname(
+                    filename), "py-builtins.js"))
+                builtin_output = open(builtin_filename, "w")
+
             builtins = open(path_library).read()
-            output.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
-            output.write(builtins)
-            output.write("/*%s*/\n" % "  User code  ".center(76, "*"))
+
+            builtin_output.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
+            builtin_output.write(builtins)
+            if options.builtins == "include":
+                builtin_output.write("/*%s*/\n" % "  User code  ".center(76, "*"))
         elif options.builtins == "import":
             output.write('load("%s");\n' % path_library)
 
