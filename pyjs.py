@@ -11,6 +11,23 @@ if os.path.exists("py-builtins.js"):
 else:
     path_library = "/usr/share/pyjaco/py-builtins.js"
 
+def compile_file(infile, outfile, options):
+    '''Compile a single python file object to a single javascript output file
+    object'''
+    if options.builtins == "include":
+        with open(path_library) as library_file:
+            builtins = library_file.read()
+
+        outfile.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
+        outfile.write(builtins)
+        outfile.write("/*%s*/\n" % "  User code  ".center(76, "*"))
+    elif options.builtins == "import":
+        outfile.write('load("%s");\n' % path_library)
+
+    c = Compiler()
+    c.append_string(infile.read())
+    outfile.write(str(c))
+
 def main():
     parser = OptionParser(usage="%prog [options] filename",
                           description="Python to JavaScript compiler.")
@@ -42,26 +59,19 @@ def main():
         else:
             output = sys.stdout
 
-        if options.builtins in ("include", "generate"):
-            if options.builtins == "include":
-                builtin_output = output
-            else:
-                builtin_filename = os.path.abspath(os.path.join(os.path.dirname(
-                    filename), "py-builtins.js"))
-                builtin_output = open(builtin_filename, "w")
+        if options.builtins == "generate":
+            if not options.output or not os.path.isdir(options.output):
+                parser.error("--builtins=generate can only be used if --output is a directory")
 
-            builtins = open(path_library).read()
+            builtin_filename = os.path.join(options.output, "py-builtins.js")
+            with open(builtin_filename, "w") as builtin_output:
+                with open(path_library) as builtin_input:
+                    builtins = builtin_input.read()
+                builtin_output.write(builtins)
 
-            builtin_output.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
-            builtin_output.write(builtins)
-            if options.builtins == "include":
-                builtin_output.write("/*%s*/\n" % "  User code  ".center(76, "*"))
-        elif options.builtins == "import":
-            output.write('load("%s");\n' % path_library)
+        with open(filename) as input:
+            compile_file(input, output, options)
 
-        c = Compiler()
-        c.append_string(open(filename).read())
-        output.write(str(c))
     else:
         parser.print_help()
 
