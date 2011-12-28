@@ -17,7 +17,7 @@ def main():
     parser.add_option("-o", "--output",
                       action = "store",
                       dest   = "output",
-                      help   = "write output to OUTPUT")
+                      help   = "write output to OUTPUT, can be a file or directory")
 
     parser.add_option("-i", "--include-builtins",
                       action  = "store_true",
@@ -45,7 +45,12 @@ def main():
         filename = args[0]
 
         if options.output:
-            output = open(options.output, "w")
+            if os.path.isdir(options.output):
+                output_filename = os.path.splitext(os.path.basename(filename))[0]
+                output_filename += ".js"
+                output = open(os.path.join(options.output, output_filename), "w")
+            else:
+                output = open(options.output, "w")
         else:
             output = sys.stdout
 
