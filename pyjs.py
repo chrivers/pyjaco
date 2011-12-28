@@ -29,7 +29,12 @@ def compile_file(infile, outfile, options):
     outfile.write(str(c))
 
 def main():
-    parser = OptionParser(usage="%prog [options] filename",
+    parser = OptionParser(usage="""%prog [options] <infile>
+            
+            where infile is the name of a file or directory to be compiled.
+            If infile is a directory, all files in that directory that have
+            an extension of .py or .pyjaco will be compiled to .js files
+            in the output directory.""",
                           description="Python to JavaScript compiler.")
 
     parser.add_option("-o", "--output",
@@ -47,17 +52,7 @@ def main():
     options, args = parser.parse_args()
 
     if len(args) == 1:
-        filename = args[0]
-
-        if options.output:
-            if os.path.isdir(options.output):
-                output_filename = os.path.splitext(os.path.basename(filename))[0]
-                output_filename += ".js"
-                output = open(os.path.join(options.output, output_filename), "w")
-            else:
-                output = open(options.output, "w")
-        else:
-            output = sys.stdout
+        input_filename = args[0]
 
         if options.builtins == "generate":
             if not options.output or not os.path.isdir(options.output):
@@ -69,8 +64,30 @@ def main():
                     builtins = builtin_input.read()
                 builtin_output.write(builtins)
 
-        with open(filename) as input:
-            compile_file(input, output, options)
+        if os.path.isdir(input_filename):
+            if not options.output or not os.path.isdir(options.output):
+                parser.error("--output must be a directory if the input file is a directory")
+
+            input_filenames = [f for f in os.listdir(input_filename) if os.path.splitext(f)[1] in (".py", ".pyjaco")]
+            for filename in input_filenames:
+                output_filename = os.path.splitext(os.path.basename(filename))[0]
+                output_filename += ".js"
+                with open(os.path.join(input_filename, filename)) as input:
+                    with open(os.path.join(options.output, output_filename), "w") as output:
+                        compile_file(input, output, options)
+
+        else:
+            if not options.output:
+                output = sys.stdout
+            elif os.path.isdir(options.output):
+                output_filename = os.path.splitext(os.path.basename(filename))[0]
+                output_filename += ".js"
+                output = open(os.path.join(options.output, output_filename), "w")
+            else:
+                output = open(options.output, "w")
+
+            with open(input_filename) as input:
+                compile_file(input, output, options)
 
     else:
         parser.print_help()
