@@ -28,6 +28,46 @@ def compile_file(infile, outfile, options):
     c.append_string(infile.read())
     outfile.write(str(c))
 
+def run_once(input_filename, options):
+    '''Given the input filename and collection of options, run the compilation
+    step exactly once. Ignores the -w option. If the -w option is passed, then
+    this function should be called each time a file changes.'''
+    if options.builtins == "generate":
+        if not options.output or not os.path.isdir(options.output):
+            parser.error("--builtins=generate can only be used if --output is a directory")
+
+        builtin_filename = os.path.join(options.output, "py-builtins.js")
+        with open(builtin_filename, "w") as builtin_output:
+            with open(path_library) as builtin_input:
+                builtins = builtin_input.read()
+            builtin_output.write(builtins)
+
+    if os.path.isdir(input_filename):
+        if not options.output or not os.path.isdir(options.output):
+            parser.error("--output must be a directory if the input file is a directory")
+
+        input_filenames = [f for f in os.listdir(input_filename) if os.path.splitext(f)[1] in (".py", ".pyjaco")]
+        for filename in input_filenames:
+            output_filename = os.path.splitext(os.path.basename(filename))[0]
+            output_filename += ".js"
+            with open(os.path.join(input_filename, filename)) as input:
+                with open(os.path.join(options.output, output_filename), "w") as output:
+                    compile_file(input, output, options)
+
+    else:
+        if not options.output:
+            output = sys.stdout
+        elif os.path.isdir(options.output):
+            output_filename = os.path.splitext(os.path.basename(input_filename))[0]
+            output_filename += ".js"
+            output = open(os.path.join(options.output, output_filename), "w")
+        else:
+            output = open(options.output, "w")
+
+        with open(input_filename) as input:
+            compile_file(input, output, options)
+
+
 def main():
     parser = OptionParser(usage="""%prog [options] <infile>
             
@@ -52,43 +92,7 @@ def main():
     options, args = parser.parse_args()
 
     if len(args) == 1:
-        input_filename = args[0]
-
-        if options.builtins == "generate":
-            if not options.output or not os.path.isdir(options.output):
-                parser.error("--builtins=generate can only be used if --output is a directory")
-
-            builtin_filename = os.path.join(options.output, "py-builtins.js")
-            with open(builtin_filename, "w") as builtin_output:
-                with open(path_library) as builtin_input:
-                    builtins = builtin_input.read()
-                builtin_output.write(builtins)
-
-        if os.path.isdir(input_filename):
-            if not options.output or not os.path.isdir(options.output):
-                parser.error("--output must be a directory if the input file is a directory")
-
-            input_filenames = [f for f in os.listdir(input_filename) if os.path.splitext(f)[1] in (".py", ".pyjaco")]
-            for filename in input_filenames:
-                output_filename = os.path.splitext(os.path.basename(filename))[0]
-                output_filename += ".js"
-                with open(os.path.join(input_filename, filename)) as input:
-                    with open(os.path.join(options.output, output_filename), "w") as output:
-                        compile_file(input, output, options)
-
-        else:
-            if not options.output:
-                output = sys.stdout
-            elif os.path.isdir(options.output):
-                output_filename = os.path.splitext(os.path.basename(filename))[0]
-                output_filename += ".js"
-                output = open(os.path.join(options.output, output_filename), "w")
-            else:
-                output = open(options.output, "w")
-
-            with open(input_filename) as input:
-                compile_file(input, output, options)
-
+        run_once(args[0], options)
     else:
         parser.print_help()
 
