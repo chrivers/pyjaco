@@ -5,6 +5,9 @@ import os.path
 from optparse import OptionParser
 from pyjaco import Compiler
 
+# extensions of files that can be compiled to .js
+VALID_EXTENSIONS = ['.py', '.pyjaco']
+
 # FIXME: This hardcoding is undesirable
 if os.path.exists("py-builtins.js"):
     path_library = "py-builtins.js"
@@ -46,7 +49,7 @@ def run_once(input_filename, options):
         if not options.output or not os.path.isdir(options.output):
             parser.error("--output must be a directory if the input file is a directory")
 
-        input_filenames = [f for f in os.listdir(input_filename) if os.path.splitext(f)[1] in (".py", ".pyjaco")]
+        input_filenames = [f for f in os.listdir(input_filename) if os.path.splitext(f)[1] in VALID_EXTENSIONS]
         for filename in input_filenames:
             output_filename = os.path.splitext(os.path.basename(filename))[0]
             output_filename += ".js"
