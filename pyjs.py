@@ -2,6 +2,8 @@
 
 import sys
 import os.path
+import datetime
+import time
 from optparse import OptionParser
 from pyjaco import Compiler
 
@@ -35,6 +37,7 @@ def run_once(input_filename, options):
     '''Given the input filename and collection of options, run the compilation
     step exactly once. Ignores the -w option. If the -w option is passed, then
     this function should be called each time a file changes.'''
+    sys.stderr.write("[%s] compiling %s\n" % (datetime.datetime.now(), input_filename))
     if options.builtins == "generate":
         if not options.output or not os.path.isdir(options.output):
             parser.error("--builtins=generate can only be used if --output is a directory")
@@ -70,6 +73,60 @@ def run_once(input_filename, options):
         with open(input_filename) as input:
             compile_file(input, output, options)
 
+class Monitor:
+    '''Class to monitor for changes in a file or directory and recompile if
+    they have changed.'''
+    def __init__(self, input_filename, options):
+        self.input_filename = input_filename
+        self.options = options
+        self.reset_mtimes()
+
+    def reset_mtimes(self):
+        '''reset the modification times to a dict with empty values.'''
+        self.mtimes = dict([(f, None) for f in self.filenames])
+
+    @property
+    def filenames(self):
+        '''Return a list of filenames to be monitored. If the input_filename is a single
+        file return a list containing that file. Otherwise if it is a directory, return
+        the list of files in that directory that have .py or .pyjaco extensions.'''
+        if os.path.isdir(self.input_filename):
+            return [os.path.join(self.input_filename, f
+                ) for f in os.listdir(self.input_filename) if os.path.splitext(f)[1] in VALID_EXTENSIONS]
+        else:
+            return [self.input_filename]
+
+    def code_changed(self):
+        '''Return True if the code has changed since the previous run of this
+        method.'''
+        filenames = self.filenames
+        if len(filenames) != len(self.mtimes):
+            # a file was added or deleted, therefore code has changed
+            self.reset_mtimes()
+            return True
+
+        for filename in filenames:
+            stat = os.stat(filename)
+            mtime = stat.st_mtime
+            mtime = mtime - stat.st_ctime if sys.platform == "win32" else mtime
+
+            if self.mtimes.get(filename) == None:
+                self.mtimes[filename] = mtime
+                continue
+
+            if mtime != self.mtimes[filename]:
+                self.reset_mtimes()
+                return True
+
+        return False
+
+    def run(self):
+        run_once(self.input_filename, self.options)
+        while True:
+            if self.code_changed():
+                run_once(self.input_filename, self.options)
+            time.sleep(1)
+
 
 def main():
     parser = OptionParser(usage="""%prog [options] <infile>
@@ -92,10 +149,23 @@ def main():
             default = "none",
             help = "INCLUDE builtins statically in each file\nIMPORT builtins using a load statement in each file\nGENERATE a separate file for builtins (output must be a directory)\nNONE don't include builtins")
 
+    parser.add_option("-w", "--watch",
+            action = "store_true",
+            dest = "watch",
+            default = False,
+            help = "Watch the input files for changes and recompile. If the input file is a single file, watch it for changes and recompile. If a directory, recompile if any .py or .pyjaco files in the directory have changes.")
+
     options, args = parser.parse_args()
 
     if len(args) == 1:
-        run_once(args[0], options)
+        if not os.path.exists(args[0]):
+            parser.error("The input path '%s' does not point to a valid file or directory" % args[0])
+
+        if not options.watch:
+            run_once(args[0], options)
+        else:
+            monitor = Monitor(args[0], options)
+            monitor.run()
     else:
         parser.print_help()
 
