@@ -4,6 +4,7 @@ import sys
 import os.path
 import datetime
 import time
+import traceback
 from optparse import OptionParser
 from pyjaco import Compiler
 
@@ -124,7 +125,11 @@ class Monitor:
         run_once(self.input_filename, self.options)
         while True:
             if self.code_changed():
-                run_once(self.input_filename, self.options)
+                try:
+                    run_once(self.input_filename, self.options)
+                except Exception as e:
+                    traceback.print_exc(file=sys.stderr)
+
             time.sleep(1)
 
 
