@@ -14,4 +14,5 @@ setup(
     url = "http://pyjaco.org",
     keywords = "python javascript translator compiler",
     packages=["pyjaco", "pyjaco.compiler"],
+    package_data={"pyjaco": ["jslib/*js"]}
 )

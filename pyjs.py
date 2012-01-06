@@ -1,34 +1,76 @@
 #! /usr/bin/env python
 
+import re
 import sys
 import os.path
 import datetime
 import time
 import traceback
 from optparse import OptionParser
-from pyjaco import Compiler
+from pyjaco import Compiler, __file__ as pyjaco_init_filename
 
 # extensions of files that can be compiled to .js
 VALID_EXTENSIONS = ['.py', '.pyjaco']
 
-# FIXME: This hardcoding is undesirable
-if os.path.exists("py-builtins.js"):
-    path_library = "py-builtins.js"
-else:
-    path_library = "/usr/share/pyjaco/py-builtins.js"
+OPEN_COMMENT = re.compile("^\s*/\*")
+CLOSE_COMMENT = re.compile(".*\*/\s*$")
+COMMENT = re.compile("^\s*//")
+BLANK = re.compile("^\s*$")
+
+class BuiltinGenerator(object):
+    def comment_stripper(self, lines):
+        '''Generator that removes all javascript comment lines from a file.
+        Takes a sequence of strings as input, generates a sequence of strings
+        with comments stripped.
+        
+        Assumes multi-line comments start with /* and end with */ with no valid
+        code other than whitespace before or after the opening and closing
+        symbols. In other words, comments like this:
+
+        alert('hello'); /* this is
+        a multi line comment */ alert('world')
+
+        would not have the comment stripped.
+        '''
+        in_multi_comment = False
+        for line in lines:
+            if in_multi_comment:
+                if CLOSE_COMMENT.match(line):
+                    in_multi_comment = False
+            elif OPEN_COMMENT.match(line):
+                in_multi_comment = True
+            elif not BLANK.match(line) and not COMMENT.match(line):
+                yield line
+
+    def generate_builtins(self):
+        '''Combine the builtins shipped with the pyjaco library into a single
+        py-builtins.js file.'''
+        builtins_directory = os.path.join(
+                os.path.dirname(pyjaco_init_filename),
+                "stdlib")
+        builtin_lines = []
+        js_filenames = sorted(
+                [f for f in os.listdir(builtins_directory) if f.endswith(".js")])
+        for js_filename in js_filenames:
+            builtin_lines.append("\n/* %-30s*/\n" % js_filename)
+            with open(os.path.join(builtins_directory, js_filename)) as js_file:
+                lines = self.comment_stripper(js_file.readlines())
+                builtin_lines.extend(lines)
+
+        return "".join(builtin_lines)
+
 
 def compile_file(infile, outfile, options):
     '''Compile a single python file object to a single javascript output file
     object'''
     if options.builtins == "include":
-        with open(path_library) as library_file:
-            builtins = library_file.read()
+        builtins = BuiltinGenerator().generate_builtins()
 
         outfile.write("/*%s*/\n" % "  Standard library  ".center(76, "*"))
         outfile.write(builtins)
         outfile.write("/*%s*/\n" % "  User code  ".center(76, "*"))
     elif options.builtins == "import":
-        outfile.write('load("%s");\n' % path_library)
+        outfile.write('load("py-builtins.js");\n')
 
     c = Compiler()
     c.append_string(infile.read())
@@ -45,8 +87,7 @@ def run_once(input_filename, options):
 
         builtin_filename = os.path.join(options.output, "py-builtins.js")
         with open(builtin_filename, "w") as builtin_output:
-            with open(path_library) as builtin_input:
-                builtins = builtin_input.read()
+            builtins = BuiltinGenerator().generate_builtins()
             builtin_output.write(builtins)
 
     if os.path.isdir(input_filename):
