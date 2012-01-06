@@ -132,16 +132,16 @@ class Monitor:
 
             time.sleep(1)
 
+parser = OptionParser(usage="""%prog [options] <infile>
+        
+        where infile is the name of a file or directory to be compiled.
+        If infile is a directory, all files in that directory that have
+        an extension of .py or .pyjaco will be compiled to .js files
+        in the output directory.""",
+                      description="Python to JavaScript compiler.")
+
 
 def main():
-    parser = OptionParser(usage="""%prog [options] <infile>
-            
-            where infile is the name of a file or directory to be compiled.
-            If infile is a directory, all files in that directory that have
-            an extension of .py or .pyjaco will be compiled to .js files
-            in the output directory.""",
-                          description="Python to JavaScript compiler.")
-
     parser.add_option("-o", "--output",
                       action = "store",
                       dest   = "output",
