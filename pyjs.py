@@ -154,6 +154,12 @@ def main():
             default = "none",
             help = "INCLUDE builtins statically in each file\nIMPORT builtins using a load statement in each file\nGENERATE a separate file for builtins (output must be a directory)\nNONE don't include builtins")
 
+    parser.add_option("-I", "--import",
+            action = "store_const",
+            const = "import",
+            dest = "builtins",
+            help = "IMPORT builtins using a load statement in each file\n\nThis is an alias for -b import")
+
     parser.add_option("-w", "--watch",
             action = "store_true",
             dest = "watch",
