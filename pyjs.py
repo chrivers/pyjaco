@@ -6,8 +6,9 @@ import os.path
 import datetime
 import time
 import traceback
+import pkg_resources
 from optparse import OptionParser
-from pyjaco import Compiler, __file__ as pyjaco_init_filename
+from pyjaco import Compiler
 
 # extensions of files that can be compiled to .js
 VALID_EXTENSIONS = ['.py', '.pyjaco']
@@ -45,19 +46,17 @@ class BuiltinGenerator(object):
     def generate_builtins(self):
         '''Combine the builtins shipped with the pyjaco library into a single
         py-builtins.js file.'''
-        builtins_directory = os.path.join(
-                os.path.dirname(pyjaco_init_filename),
-                "stdlib")
         builtin_lines = []
         js_filenames = sorted(
-                [f for f in os.listdir(builtins_directory) if f.endswith(".js")])
+                [f for f in pkg_resources.resource_listdir("pyjaco", "stdlib") if f.endswith(".js")])
         for js_filename in js_filenames:
-            builtin_lines.append("\n/* %-30s*/\n" % js_filename)
-            with open(os.path.join(builtins_directory, js_filename)) as js_file:
-                lines = self.comment_stripper(js_file.readlines())
-                builtin_lines.extend(lines)
+            builtin_lines.append("\n/* %-30s*/" % js_filename)
+            lines = self.comment_stripper(pkg_resources.resource_string(
+                "pyjaco", "stdlib/%s" % js_filename
+                ).splitlines())
+            builtin_lines.extend(lines)
 
-        return "".join(builtin_lines)
+        return "\n".join(builtin_lines)
 
 
 def compile_file(infile, outfile, options):
