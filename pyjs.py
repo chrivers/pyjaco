@@ -166,14 +166,20 @@ class Monitor:
 
         return False
 
+    def safe_run_once(self):
+        '''Run once, catching any exceptions and printing them, but allowing
+        the watcher to continue.'''
+        try:
+            run_once(self.input_filenames, self.options)
+        except Exception as e:
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write("\n")
+
     def run(self):
-        run_once(self.input_filenames, self.options)
+        self.safe_run_once()
         while True:
             if self.code_changed():
-                try:
-                    run_once(self.input_filenames, self.options)
-                except Exception as e:
-                    traceback.print_exc(file=sys.stderr)
+                self.safe_run_once()
 
             time.sleep(1)
 
