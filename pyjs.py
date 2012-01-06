@@ -228,11 +228,11 @@ def main():
             if not os.path.exists(arg):
                 parser.error("The input path '%s' does not point to a valid file or directory" % arg)
 
-            if not options.watch:
-                run_once(args, options)
-            else:
-                monitor = Monitor(args, options)
-                monitor.run()
+        if not options.watch:
+            run_once(args, options)
+        else:
+            monitor = Monitor(args, options)
+            monitor.run()
 
 if __name__ == '__main__':
     main()
