@@ -80,13 +80,20 @@ def run_once(input_filenames, options):
     step exactly once. Ignores the -w option. If the -w option is passed, then
     this function should be called each time a file changes.'''
     if options.builtins == "generate":
-        if not options.output or not os.path.isdir(options.output):
-            parser.error("--builtins=generate can only be used if --output is a directory")
+        if input_filenames and (not options.output or not os.path.isdir(options.output)):
+            parser.error("--builtins=generate can only be used if --output is a directory or if no input files are specified")
 
-        builtin_filename = os.path.join(options.output, "py-builtins.js")
-        with open(builtin_filename, "w") as builtin_output:
-            builtins = BuiltinGenerator().generate_builtins()
-            builtin_output.write(builtins)
+        if options.output: 
+            if os.path.isdir(options.output):
+                builtin_filename = os.path.join(options.output, "py-builtins.js")
+            else:
+                builtin_filename = options.output
+            builtin_output = open(builtin_filename, "w")
+        else:
+            builtin_output = sys.stdout
+
+        builtins = BuiltinGenerator().generate_builtins()
+        builtin_output.write(builtins)
 
     if len(input_filenames) == 1 and not os.path.isdir(input_filenames[0]):
         if not options.output:
@@ -102,7 +109,7 @@ def run_once(input_filenames, options):
         with open(input_filenames[0]) as input:
             compile_file(input, output, options)
     else:
-        if not options.output or not os.path.isdir(options.output):
+        if input_filenames and (not options.output or not os.path.isdir(options.output)):
             parser.error("--output must be a directory if the input file is a directory")
 
         if len(input_filenames) == 1: # input_filenames contains a directory
