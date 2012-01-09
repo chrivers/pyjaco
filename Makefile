@@ -4,7 +4,7 @@ all: stdlib
 	$(MAKE) -C examples generate
 
 stdlib:
-	@./generate_library.py
+	@./pyjs.py -b generate --output .
 
 clean: testclean
 	@rm -fv py-builtins.js *~ library/*~ *.pyc 1.{res,out,js}
