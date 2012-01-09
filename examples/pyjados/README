@@ -1,0 +1,13 @@
+A complete todos application written in pyjaco with html5 local storage for
+persistence.
+
+build the standard library using:
+pyjs.py -b generate -o py-builtins.js
+
+Then compile using:
+pyjs.py pyjados.py -o pyjados.js
+
+open the app in a web browser
+
+For more information, see the tutorial at:
+http://archlinux.me/dusty/2012/01/08/pyjaco-in-a-real-app-todos-with-local-storage/
