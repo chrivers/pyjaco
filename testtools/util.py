@@ -57,6 +57,7 @@ def compile_file_test(file_path, file_name=None):
         """Test if a file can be compiled by python."""
 
         templ = {
+            "py_executable": sys.executable,
             "py_path": file_path, 
             "py_unix_path": get_posix_path(file_path), 
             "py_out_path": file_path + ".out",
@@ -70,7 +71,7 @@ def compile_file_test(file_path, file_name=None):
             """The actual test goes here."""
             commands = (
                 (
-                'python "%(py_path)s" > '
+                '%(py_executable)s "%(py_path)s" > '
                 '"%(py_out_path)s" 2> "%(py_error)s"'
                 ) % self.templ,
               )
@@ -91,6 +92,7 @@ def compile_and_run_file_test(file_path, file_name=None):
     class CompileAndRunFile(unittest.TestCase):
         """Tests that a file can be compiled and run as js"""
         templ = {
+        "py_executable": sys.executable,
         "py_path": file_path, 
         "py_unix_path": get_posix_path(file_path),
         "py_out_path": file_path + ".out",
@@ -112,7 +114,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             except OSError:
                 mtime_py_res = 0
             python_command = (
-                'python "%(py_path)s" > "%(py_out_path)s" 2> '
+                '%(py_executable)s "%(py_path)s" > "%(py_out_path)s" 2> '
                 '"%(py_error)s"'
                 ) % self.templ
 
@@ -121,7 +123,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             except OSError:
                 mtime_js_res = 0
             compile_command = (
-                'python pyjs.py -I '
+                '%(py_executable)s pyjs.py -I '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
                 ) % self.templ 
