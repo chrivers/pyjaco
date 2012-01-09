@@ -121,7 +121,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             except OSError:
                 mtime_js_res = 0
             compile_command = (
-                'python pyjs.py --import-builtins '
+                'python pyjs.py -I '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
                 ) % self.templ 
