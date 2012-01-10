@@ -105,7 +105,8 @@ def run_once(input_filenames, options):
         else:
             output = open(options.output, "w")
 
-        sys.stderr.write("[%s] compiling %s\n" % (datetime.datetime.now(), input_filenames[0]))
+        if not options.quiet:
+            sys.stderr.write("[%s] compiling %s\n" % (datetime.datetime.now(), input_filenames[0]))
         with open(input_filenames[0]) as input:
             compile_file(input, output, options)
     else:
@@ -119,7 +120,8 @@ def run_once(input_filenames, options):
         for input_filename in input_filenames:
             output_filename = os.path.splitext(os.path.basename(input_filename))[0]
             output_filename += ".js"
-            sys.stderr.write("[%s] compiling %s\n" % (datetime.datetime.now(), input_filename))
+            if not options.quiet:
+                sys.stderr.write("[%s] compiling %s\n" % (datetime.datetime.now(), input_filename))
             with open(input_filename) as input:
                 with open(os.path.join(options.output, output_filename), "w") as output:
                     compile_file(input, output, options)
@@ -179,8 +181,9 @@ class Monitor:
         try:
             run_once(self.input_filenames, self.options)
         except Exception as e:
-            traceback.print_exc(file=sys.stderr)
-            sys.stderr.write("\n")
+            if not self.options.quiet:
+                traceback.print_exc(file=sys.stderr)
+                sys.stderr.write("\n")
 
     def run(self):
         self.safe_run_once()
@@ -204,6 +207,10 @@ def main():
                       action = "store",
                       dest   = "output",
                       help   = "write output to OUTPUT, can be a file or directory")
+
+    parser.add_option("-q", "--quiet",
+            action = "store_true",
+            help = "Do not print informative notes to stderr")
 
     parser.add_option("-b", "--builtins",
             action = "store",

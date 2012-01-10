@@ -123,7 +123,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             except OSError:
                 mtime_js_res = 0
             compile_command = (
-                '%(py_executable)s pyjs.py -I '
+                '%(py_executable)s pyjs.py -I -q '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
                 ) % self.templ 
