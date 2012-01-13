@@ -19,9 +19,9 @@ else
 fi
 
 while true; do
-    ./generate_library.py
+    ./pyjs.py -b generate -o .
     python $1 > 1.res
-    ./pyjs.py -i $1 > 1.js
+    ./pyjs.py --builtins=include -o 1.js $1
     if run 1.js > 1.out; then
         if diff -au 1.res 1.out; then
             echo "Files now match!"
