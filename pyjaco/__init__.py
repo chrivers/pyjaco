@@ -171,3 +171,6 @@ class Compiler(object):
 
     def compile_data(self, key, value):
         return "var %s = %s" % (key, "\n".join(self.compiler.visit(ast.parse(repr(value)))))
+
+    def compile_expr(self, value):
+        return "\n".join(self.compiler.visit(ast.parse(repr(value))))
