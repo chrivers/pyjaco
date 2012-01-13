@@ -144,6 +144,11 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 raise JSError("tuples in argument list are not supported")
 
             values = dict(i = i, id = self.visit(arg), rawid = arg.id, kwarg = kwarg_name, newargs = newargs, func = node.name)
+            if len(self._class_name):
+                values['fullfunc'] = "%s.%s" % (self._class_name[-1], node.name)
+            else:
+                values['fullfunc'] = node.name
+
             if defaults[i + offset] == None:
                 js.extend(self.indent(["var %(id)s = ('%(rawid)s' in %(kwarg)s) ? %(kwarg)s['%(rawid)s'] : %(newargs)s[%(i)d];" % values]))
             else:
@@ -152,7 +157,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(rawid)s === undefined ? %(default)s : %(kwarg)s.%(rawid)s; };" % values]))
             js.extend(self.indent(["delete %(kwarg)s.%(id)s" % values]))
             if self.opts['check_params']:
-                js.extend(self.indent(["if (%(id)s === undefined) { \nbt(); py_builtins.print('%(func)s() did not get parameter %(id)s'); }; " % values]))
+                js.extend(self.indent(["if (%(id)s === undefined) { \npy_builtins.print('%(fullfunc)s() did not get parameter %(id)s'); }; " % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
             js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))
