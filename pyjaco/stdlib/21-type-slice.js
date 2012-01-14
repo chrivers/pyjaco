@@ -27,7 +27,7 @@
 
 var slice = __inherit(object, "slice");
 
-$PY.slice = slice;
+__builtins__.PY$slice = slice;
 
 slice.PY$__init__ = function(start, stop, step) {
     if (stop === undefined && step === undefined)
