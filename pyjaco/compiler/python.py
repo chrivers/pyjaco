@@ -501,7 +501,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         if   isinstance(node.op, ast.USub  ): return "%s.PY$__neg__()"            % (self.visit(node.operand))
         elif isinstance(node.op, ast.UAdd  ): return "%s.PY$__pos__()"            % (self.visit(node.operand))
         elif isinstance(node.op, ast.Invert): return "%s.PY$__invert__()"         % (self.visit(node.operand))
-        elif isinstance(node.op, ast.Not   ): return "__builtins__.PY$__not__(%s)" % (self.visit(node.operand))
+        elif isinstance(node.op, ast.Not   ): return "$PY.__not__(%s)" % (self.visit(node.operand))
         else:
             raise JSError("Unsupported unary op %s" % node.op)
 
@@ -535,9 +535,9 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         elif isinstance(op, ast.In):
             return "%s.PY$__contains__(%s)" % (self.visit(comp), self.visit(node.left))
         elif isinstance(op, ast.Is):
-            return "__builtins__.PY$__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
+            return "$PY.__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
         elif isinstance(op, ast.NotIn):
-            return "__builtins__.PY$__not__(%s.PY$__contains__(%s))" % (self.visit(comp), self.visit(node.left))
+            return "$PY.__not__(%s.PY$__contains__(%s))" % (self.visit(comp), self.visit(node.left))
         else:
             raise JSError("Unknown comparison type %s" % node.ops[0])
 
