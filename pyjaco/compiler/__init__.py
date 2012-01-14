@@ -37,7 +37,6 @@ class BaseCompiler(object):
 
     name_map = {
         'super' : 'Super',
-        'py_builtins' : '__py_builtins',
         'delete': '__delete',
         'default': '__default',
     }
@@ -136,7 +135,7 @@ class BaseCompiler(object):
         assert node.nl
         values = [self.visit(v) for v in node.values]
         values = ", ".join(values)
-        return ["py_builtins.print(%s);" % values]
+        return ["__builtins__.PY$print(%s);" % values]
 
     def visit_Module(self, node):
         module = []
