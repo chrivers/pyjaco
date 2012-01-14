@@ -38,7 +38,7 @@ Exception.PY$__str__ = function() {
     return str(this.PY$message);
 };
 
-py_builtins.PY$__exceptions__ = [
+__builtins__.PY$__exceptions__ = [
     'NotImplementedError',
     'ZeroDivisionError',
     'AssertionError',
@@ -54,8 +54,8 @@ py_builtins.PY$__exceptions__ = [
     'IOError'
 ];
 
-for (var i in py_builtins.PY$__exceptions__) {
-    py_builtins[py_builtins.PY$__exceptions__[i]] = __inherit(Exception, py_builtins.PY$__exceptions__[i]);
+for (var i in __builtins__.PY$__exceptions__) {
+    __builtins__["PY$" + __builtins__.PY$__exceptions__[i]] = __inherit(Exception, __builtins__.PY$__exceptions__[i]);
 }
 
-$PY.StopIter = py_builtins.StopIteration("No more items");
+$PY.c_stopiter = __builtins__.PY$StopIteration("No more items");
