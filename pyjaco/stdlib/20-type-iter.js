@@ -27,12 +27,12 @@
 
 var iter = __inherit(object, "iter");
 
-$PY.iter = iter;
+__builtins__.PY$iter = iter;
 
 iter.PY$__init__ = function(obj) {
     this.index = 0;
     if (obj === undefined) {
-        throw py_builtins.TypeError("iter() expects at least 1 argument");
+        throw __builtins__.PY$TypeError("iter() expects at least 1 argument");
     } else if (obj instanceof Array) {
         this.seq = obj;
     } else if (typeof obj === "string") {
@@ -41,7 +41,7 @@ iter.PY$__init__ = function(obj) {
             this.seq[i] = str(this.seq[i]);
         }
     } else {
-        throw py_builtins.TypeError("object is not iterable");
+        throw __builtins__.PY$TypeError("object is not iterable");
     }
 };
 
@@ -71,7 +71,7 @@ iter.PY$next = function() {
             return value;
         }
     } else {
-        throw $PY.StopIter;
+        throw $PY.c_stopiter;
     }
 };
 
