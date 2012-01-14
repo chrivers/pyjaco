@@ -26,7 +26,7 @@
 var __inherit = function(cls, name, prototyping) {
 
     if (name === undefined) {
-        throw py_builtins.TypeError("The function __inherit must get exactly 2 arguments");
+        throw __builtins__.PY$TypeError("The function __inherit must get exactly 2 arguments");
     }
 
     var res = function() {
@@ -34,7 +34,7 @@ var __inherit = function(cls, name, prototyping) {
         if (x !== undefined) {
             return res.PY$__create__.apply(null, [res].concat(Array.prototype.slice.call(arguments)));
         } else {
-            throw py_builtins.AttributeError("Class " + name + " does not have __create__ method");
+            throw __builtins__.PY$AttributeError("Class " + name + " does not have __create__ method");
         }
     };
 
@@ -50,6 +50,8 @@ var __inherit = function(cls, name, prototyping) {
 
 var object = __inherit(null, "object");
 
+__builtins__.PY$object = object;
+
 object.PY$__init__ = function() {
 };
 
@@ -61,7 +63,7 @@ object.PY$__create__ = function(cls) {
         if (x !== undefined) {
             return cls.PY$__call__.apply(cls, args);
         } else {
-            throw py_builtins.AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
+            throw __builtins__.PY$AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
         }
     };
 
@@ -106,7 +108,7 @@ object.PY$__getattr__ = function(k) {
         return str(this.PY$__name__);
     } else {
         if (q === undefined) {
-            throw py_builtins.AttributeError(js(this.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
+            throw __builtins__.PY$AttributeError(js(this.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
         } else {
             return q;
         }
@@ -132,7 +134,7 @@ object.PY$__eq__ = function(other) {
 };
 
 object.PY$__ne__ = function (other) {
-    return py_builtins.__not__(this.PY$__eq__(other));
+    return __builtins__.PY$__not__(this.PY$__eq__(other));
 };
 
 object.PY$__gt__ = function(other) {
