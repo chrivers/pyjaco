@@ -27,15 +27,15 @@
 
 var $PY = {};
 
-var py_builtins = {};
+var __builtins__ = {};
 
-py_builtins.PY$__python3__ = false;
+__builtins__.PY$__python3__ = false;
 
 function bt() {
     try {
         null();
     } catch (x) {
-        py_builtins.print(x.stack);
+        __builtins__.PY$print(x.stack);
     }
 }
 
@@ -54,7 +54,7 @@ function iterate(obj, func) {
             try {
                 func(seq.PY$next());
             } catch (exc) {
-                if (exc === $PY.StopIter || $PY.isinstance(exc, py_builtins.StopIteration)) {
+                if ($PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     break;
                 } else {
                     throw exc;
@@ -188,7 +188,7 @@ $PY.isinstance = function(obj, cls) {
 };
 
 $PY.repr = function(obj) {
-    return py_builtins.repr(obj)._js_();
+    return __builtins__.PY$repr(obj)._js_();
 };
 
 $PY.len = function(obj) {
@@ -198,7 +198,7 @@ $PY.len = function(obj) {
     } else if (obj.PY$__len__ !== undefined) {
         return obj.PY$__len__()._js_();
     } else {
-        throw py_builtins.AttributeError('__len__');
+        throw __builtins__.PY$AttributeError('__len__');
     }
 };
 
@@ -209,7 +209,7 @@ $PY.next = function(obj) {
         try {
             return obj.PY$next();
         } catch (x) {
-            if ($PY.isinstance(x, py_builtins.StopIteration)) {
+            if ($PY.isinstance(x, __builtins__.PY$StopIteration)) {
                 return null;
             } else {
                 throw x;
