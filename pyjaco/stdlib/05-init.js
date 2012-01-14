@@ -23,7 +23,6 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
   OTHER DEALINGS IN THE SOFTWARE.
 **/
-"use strict";
 
 var $PY = {};
 
@@ -161,59 +160,5 @@ var py = function(obj) {
             res.PY$__setitem__(str(q), py(obj[q]));
         }
         return res;
-    }
-};
-
-$PY.isinstance = function(obj, cls) {
-    if (cls instanceof Array) {
-        for (var i = 0; i < cls.length; i++) {
-            var c = obj.PY$__class__;
-            while (c) {
-                if (c === cls[i])
-                    return true;
-                c = c.PY$__super__;
-            }
-        }
-
-        return false;
-    } else {
-        var c = obj.PY$__class__;
-        while (c) {
-            if (c === cls)
-                return true;
-            c = c.PY$__super__;
-        }
-        return false;
-    }
-};
-
-$PY.repr = function(obj) {
-    return __builtins__.PY$repr(obj)._js_();
-};
-
-$PY.len = function(obj) {
-    var c = obj.PY$__class__;
-    if (c === list || c === tuple || c === str || c === basestring || c === unicode) {
-        return obj.obj.length;
-    } else if (obj.PY$__len__ !== undefined) {
-        return obj.PY$__len__()._js_();
-    } else {
-        throw __builtins__.PY$AttributeError('__len__');
-    }
-};
-
-$PY.next = function(obj) {
-    if (obj.PY$__class__ === iter) {
-        return obj.next();
-    } else {
-        try {
-            return obj.PY$next();
-        } catch (x) {
-            if ($PY.isinstance(x, __builtins__.PY$StopIteration)) {
-                return null;
-            } else {
-                throw x;
-            }
-       }
     }
 };
