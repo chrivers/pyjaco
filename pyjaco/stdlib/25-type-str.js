@@ -27,7 +27,7 @@
 
 var basestring = __inherit(object, "basestring");
 
-$PY.basestring = basestring;
+__builtins__.PY$basestring = basestring;
 
 basestring.PY$__init__ = function(s) {
     if (s === undefined) {
@@ -98,7 +98,7 @@ basestring.PY$__mod__ = function(args) {
 basestring.PY$__eq__ = function(s) {
     if (typeof(s) === "string")
         return this.obj === s ? True : False;
-    else if ($PY.isinstance(s, $PY.basestring)) {
+    else if ($PY.isinstance(s, __builtins__.PY$basestring)) {
         return this.obj === s.obj ? True : False;
     }
     else
@@ -110,9 +110,9 @@ basestring.PY$__gt__ = function(s) {
         return object.PY$__gt__.call(this, s);
     else if (typeof(s) === "string")
         return this.obj > s ? True : False;
-    else if ($PY.isinstance(s, $PY.basestring))
+    else if ($PY.isinstance(s, __builtins__.PY$basestring))
         return this.obj > s.obj ? True : False;
-    else if ($PY.isinstance(s, $PY.tuple))
+    else if ($PY.isinstance(s, __builtins__.PY$tuple))
         return False;
     else
         return True;
@@ -123,9 +123,9 @@ basestring.PY$__lt__ = function(s) {
         return object.PY$__lt__.call(this, s);
     if (typeof(s) === "string")
         return this.obj < s ? True : False;
-    else if ($PY.isinstance(s, $PY.basestring))
+    else if ($PY.isinstance(s, __builtins__.PY$basestring))
         return this.obj < s.obj ? True : False;
-    else if ($PY.isinstance(s, $PY.tuple))
+    else if ($PY.isinstance(s, __builtins__.PY$tuple))
         return True;
     else
         return False;
@@ -164,15 +164,15 @@ basestring.PY$__getitem__ = function(index) {
     else if ((index < 0) && (index >= -this.obj.length))
         return this.obj.charAt(index + this.obj.length);
     else
-        throw py_builtins.IndexError("string index out of range");
+        throw __builtins__.PY$IndexError("string index out of range");
 };
 
 basestring.PY$__setitem__ = function() {
-    throw py_builtins.TypeError("'str' object doesn't support item assignment");
+    throw __builtins__.PY$TypeError("'str' object doesn't support item assignment");
 };
 
 basestring.PY$__delitem__ = function() {
-    throw py_builtins.TypeError("'str' object doesn't support item deletion");
+    throw __builtins__.PY$TypeError("'str' object doesn't support item deletion");
 };
 
 basestring.PY$__mul__ = function(c) {
@@ -184,7 +184,7 @@ basestring.PY$__mul__ = function(c) {
         }
         return basestring(res);
     } else {
-        throw py_builtins.TypeError(sprintf("Cannot multiply string and <%s>", c.PY$__class__.PY$__name__));
+        throw __builtins__.PY$TypeError(sprintf("Cannot multiply string and <%s>", c.PY$__class__.PY$__name__));
     }
 };
 
@@ -192,7 +192,7 @@ basestring.PY$__add__ = function(c) {
     if ($PY.isinstance(c, basestring)) {
         return this.PY$__class__(this.obj + c.PY$__str__()._js_());
     } else {
-        throw py_builtins.TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
+        throw __builtins__.PY$TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
     }
 };
 
@@ -236,7 +236,7 @@ basestring.PY$index = function(value, start, end) {
         }
     }
 
-    throw py_builtins.ValueError("substring not found");
+    throw __builtins__.PY$ValueError("substring not found");
 };
 
 basestring.PY$find = function(s) {
@@ -380,8 +380,8 @@ basestring.PY$endswith = function(other) {
 var str = __inherit(basestring, "str");
 var unicode = __inherit(basestring, "unicode");
 
-$PY.str = str;
-$PY.unicode = unicode;
+__builtins__.PY$str = str;
+__builtins__.PY$unicode = unicode;
 
 unicode.PY$__create__ = function(cls, obj) {
     if (obj.PY$__unicode__ !== undefined) {

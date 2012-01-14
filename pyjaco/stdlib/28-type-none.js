@@ -25,7 +25,7 @@
 
 var none = __inherit(object, "NoneType");
 
-$PY.none = none;
+__builtins__.PY$None = none;
 
 none.PY$__init__ = function() {
     this.obj = null;

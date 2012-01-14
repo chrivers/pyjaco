@@ -94,7 +94,7 @@ function sprintf(obj, args) {
         si = s.charAt(i);
         if (si === "%") {
             if (++i === s.length) {
-                throw py_builtins.ValueError("Incomplete format");
+                throw __builtins__.PY$ValueError("Incomplete format");
             }
 
             var flag_zero  = false;
@@ -209,7 +209,7 @@ function sprintf(obj, args) {
                         prefix = "0X";
                     subres = js(get_argument().PY$__int__()).toString(16).toUpperCase();
                 } else {
-                    throw py_builtins.ValueError("Unsupported format character '" + si + "' at index " + String(i));
+                    throw __builtins__.PY$ValueError("Unsupported format character '" + si + "' at index " + String(i));
                 }
                 i++;
                 if (subres != null)

@@ -25,7 +25,7 @@
 
 var bool = __inherit(int, "bool");
 
-$PY.bool = bool;
+__builtins__.PY$bool = bool;
 
 bool.PY$__init__ = function(b) {
     if (b) {
@@ -86,6 +86,9 @@ bool.PY$__int__ = function() {
 
 var True = bool(true);
 var False = bool(false);
+
+__builtins__.PY$True = True;
+__builtins__.PY$False = False;
 
 bool.PY$__create__ = function(cls, b) {
     if (b === null || b === undefined) {
