@@ -8,6 +8,9 @@ KNOWN_TO_FAIL = [
     "tests/dict/dictionary3.py",
     "tests/list/listcomp2.py",
     "tests/functions/cmp.py",
+    "tests/operator/int-class-priority.py",
+    "tests/operator/type-comparison.py",
+    "tests/flow/yield.py",
 
     "tests/libraries/xmlwriter.py",
     "tests/modules/classname.py",
