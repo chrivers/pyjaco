@@ -23,7 +23,9 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var Super = __inherit(object, "Super");
+__builtins__.PY$super = __inherit(object, "Super");
+
+var Super = __builtins__.PY$super;
 
 Super.PY$__init__ = function(cls, obj) {
     this.cls = cls;
