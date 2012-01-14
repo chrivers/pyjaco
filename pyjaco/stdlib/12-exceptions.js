@@ -54,6 +54,47 @@ __builtins__.PY$__exceptions__ = [
     'IOError'
 ];
 
+__builtins__.PY$__exceptions__ = __builtins__.PY$__exceptions__.concat(
+    [
+        "ArithmeticError",
+        "BaseException",
+        "BufferError",
+        "BytesWarning",
+        "DeprecationWarning",
+        "EOFError",
+        "Ellipsis",
+        "EnvironmentError",
+        "Exception",
+        "FloatingPointError",
+        "FutureWarning",
+        "GeneratorExit",
+        "ImportWarning",
+        "IndentationError",
+        "KeyboardInterrupt",
+        "LookupError",
+        "MemoryError",
+        "NotImplemented",
+        "OSError",
+        "OverflowError",
+        "PendingDeprecationWarning",
+        "ReferenceError",
+        "RuntimeWarning",
+        "StandardError",
+        "SyntaxError",
+        "SyntaxWarning",
+        "SystemError",
+        "SystemExit",
+        "TabError",
+        "UnboundLocalError",
+        "UnicodeDecodeError",
+        "UnicodeEncodeError",
+        "UnicodeError",
+        "UnicodeTranslateError",
+        "UnicodeWarning",
+        "UserWarning",
+        "Warning"
+    ]);
+
 for (var i in __builtins__.PY$__exceptions__) {
     __builtins__["PY$" + __builtins__.PY$__exceptions__[i]] = __inherit(Exception, __builtins__.PY$__exceptions__[i]);
 }
