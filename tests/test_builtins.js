@@ -9,7 +9,7 @@ function test(code) {
         print("  ", x);
     }
     if (!code()) {
-        throw py_builtins.AssertionError("test failed: " + code);
+        throw __builtins__.PY$AssertionError("test failed: " + code);
     }
 }
 
@@ -22,43 +22,43 @@ function raises(exc, code) {
         if (name == exc.PY$__getattr__("__name__")) {
             return;
         } else {
-            throw py_builtins.AssertionError(name + " exception was thrown in " + code);
+            throw __builtins__.PY$AssertionError(name + " exception was thrown in " + code);
         }
     }
 
-    throw py_builtins.AssertionError("did not raise " + exc.PY$__name__ + " in " + code);
+    throw __builtins__.PY$AssertionError("did not raise " + exc.PY$__name__ + " in " + code);
 }
 
 function test_dict() {
     var d = dict();
 
     test(function() { return str(d) == '{}' });
-    test(function() { return py_builtins.len(d) == 0 });
+    test(function() { return __builtins__.PY$len(d) == 0 });
 
-    raises(py_builtins.KeyError, function() { d.PY$popitem() });
+    raises(__builtins__.PY$KeyError, function() { d.PY$popitem() });
 
-    raises(py_builtins.KeyError, function() { d.PY$pop($c0) });
-    raises(py_builtins.KeyError, function() { d.PY$__getitem__($c0) });
-    raises(py_builtins.KeyError, function() { d.PY$__delitem__($c0) });
+    raises(__builtins__.PY$KeyError, function() { d.PY$pop($c0) });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__getitem__($c0) });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__delitem__($c0) });
 
-    raises(py_builtins.KeyError, function() { d.PY$pop('a') });
-    raises(py_builtins.KeyError, function() { d.PY$__getitem__('a') });
-    raises(py_builtins.KeyError, function() { d.PY$__delitem__('a') });
+    raises(__builtins__.PY$KeyError, function() { d.PY$pop('a') });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__getitem__('a') });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__delitem__('a') });
 
     d.PY$__setitem__($c0, $c1);
 
     test(function() { return str(d) == "{0: 1}" });
-    test(function() { return py_builtins.len(d) == 1 });
+    test(function() { return __builtins__.PY$len(d) == 1 });
     test(function() { return d.PY$__getitem__($c0) == 1 });
 
     d.PY$__setitem__($c0, $c2);
 
     test(function() { return str(d) == "{0: 2}" });
-    test(function() { return py_builtins.len(d) == 1 });
+    test(function() { return __builtins__.PY$len(d) == 1 });
     test(function() { return d.PY$__getitem__($c0) == 2 });
 
     test(function() { return d.PY$pop(0) == 2 });
-    test(function() { return py_builtins.len(d) == 0 });
+    test(function() { return __builtins__.PY$len(d) == 0 });
 
     d = dict([$c1, $c6, $c2, $c8]);
     test(function() { return str(d) == "{1: 6, 2: 8}" });
@@ -98,7 +98,7 @@ function test_iter() {
     test(function() { return i.PY$next() == 1 });
     test(function() { return i.PY$next() == 2 });
 
-    raises(py_builtins.StopIteration, function() { i.PY$next() });
+    raises(__builtins__.PY$StopIteration, function() { i.PY$next() });
 
     var t = tuple([7, 3, 5]);
     var i = iter(t);
@@ -107,7 +107,7 @@ function test_iter() {
     test(function() { return i.PY$next() == 3 });
     test(function() { return i.PY$next() == 5 });
 
-    raises(py_builtins.StopIteration, function() { i.PY$next() });
+    raises(__builtins__.PY$StopIteration, function() { i.PY$next() });
 
     var t = list([7, 3, 5]);
     var i = iter(t);
@@ -116,9 +116,9 @@ function test_iter() {
     test(function() { return i.PY$next() == 3 });
     test(function() { return i.PY$next() == 5 });
 
-    raises(py_builtins.StopIteration, function() { i.PY$next() });
+    raises(__builtins__.PY$StopIteration, function() { i.PY$next() });
 
-    var i = iter(py_builtins.range(5));
+    var i = iter(__builtins__.PY$range(5));
 
     test(function() { return i.PY$next() == 0 });
     test(function() { return i.PY$next() == 1 });
@@ -126,37 +126,37 @@ function test_iter() {
     test(function() { return i.PY$next() == 3 });
     test(function() { return i.PY$next() == 4 });
 
-    raises(py_builtins.StopIteration, function() { i.PY$next() });
+    raises(__builtins__.PY$StopIteration, function() { i.PY$next() });
 }
 
 function test_tuple() {
-    raises(py_builtins.TypeError, function() { tuple(1, 2, 3) });
+    raises(__builtins__.PY$TypeError, function() { tuple(1, 2, 3) });
 
     var t = tuple();
 
     test(function() { return str(t) == '()' });
-    test(function() { return py_builtins.len(t) == 0 });
+    test(function() { return __builtins__.PY$len(t) == 0 });
 
     test(function() { return t.PY$__contains__(5) == False });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(0) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(0) });
 
-    raises(py_builtins.TypeError, function() { t.PY$__setitem__(7, 0) });
-    raises(py_builtins.TypeError, function() { t.PY$__delitem__(7) });
+    raises(__builtins__.PY$TypeError, function() { t.PY$__setitem__(7, 0) });
+    raises(__builtins__.PY$TypeError, function() { t.PY$__delitem__(7) });
 
-    raises(py_builtins.ValueError, function() { t.PY$index(5) });
+    raises(__builtins__.PY$ValueError, function() { t.PY$index(5) });
     test(function() { return t.PY$count(5) == 0 });
 
-    test(function() { return py_builtins.hash(t) == 3430008 });
+    test(function() { return __builtins__.PY$hash(t) == 3430008 });
 
     var t = tuple([1]);
 
     test(function() { return str(t) == '(1,)' });
-    test(function() { return py_builtins.len(t) == 1 });
+    test(function() { return __builtins__.PY$len(t) == 1 });
 
     var t = tuple([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str(t) == '(3, 4, 5, 5, 4, 4, 1)' });
-    test(function() { return py_builtins.len(t) == 7 });
+    test(function() { return __builtins__.PY$len(t) == 7 });
 
     test(function() { return t.PY$__contains__(5) == True });
     test(function() { return t.PY$__getitem__(int(0)) == 3 });
@@ -166,8 +166,8 @@ function test_tuple() {
     test(function() { return t.PY$__getitem__(int(4)) == 4 });
     test(function() { return t.PY$__getitem__(int(5)) == 4 });
     test(function() { return t.PY$__getitem__(int(6)) == 1 });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(7) });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(8) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(7) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(8) });
     test(function() { return t.PY$__getitem__(int(-1)) == 1; });
     test(function() { return t.PY$__getitem__(int(-2)) == 4; });
     test(function() { return t.PY$__getitem__(int(-3)) == 4; });
@@ -175,16 +175,16 @@ function test_tuple() {
     test(function() { return t.PY$__getitem__(int(-5)) == 5; });
     test(function() { return t.PY$__getitem__(int(-6)) == 4; });
     test(function() { return t.PY$__getitem__(int(-7)) == 3; });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(-8); });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(-9); });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(-8); });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(-9); });
 
-    raises(py_builtins.TypeError, function() { t.PY$__setitem__(7, 0); });
-    raises(py_builtins.TypeError, function() { t.PY$__delitem__(7); });
+    raises(__builtins__.PY$TypeError, function() { t.PY$__setitem__(7, 0); });
+    raises(__builtins__.PY$TypeError, function() { t.PY$__delitem__(7); });
 
     test(function() { return t.PY$index(5) == 2 });
     test(function() { return t.PY$count(5) == 2 });
 
-    test(function() { return py_builtins.hash(t) == -2017591611 });
+    test(function() { return __builtins__.PY$hash(t) == -2017591611 });
 
     t = tuple([1, 2, 3, 4]);
     test(function() { return str(t) == '(1, 2, 3, 4)' })
@@ -203,28 +203,28 @@ function test_tuple() {
 }
 
 function test_list() {
-    raises(py_builtins.TypeError, function() { list(1, 2, 3) });
+    raises(__builtins__.PY$TypeError, function() { list(1, 2, 3) });
 
     var t = list();
 
     test(function() { return str(t) == '[]' });
-    test(function() { return py_builtins.len(t) == 0 });
+    test(function() { return __builtins__.PY$len(t) == 0 });
 
     test(function() { return t.PY$__contains__(5) == False });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(0) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(0) });
 
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(7, 0) });
-    raises(py_builtins.IndexError, function() { t.PY$__delitem__(7) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(7, 0) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__delitem__(7) });
 
-    raises(py_builtins.ValueError, function() { t.PY$index(5) });
+    raises(__builtins__.PY$ValueError, function() { t.PY$index(5) });
     test(function() { return t.PY$count(5) == 0 });
 
-    raises(py_builtins.AttributeError, function() { return py_builtins.hash(t) });
+    raises(__builtins__.PY$AttributeError, function() { return __builtins__.PY$hash(t) });
 
     var t = list([3, 4, 5, 5, 4, 4, 1]);
 
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1]' });
-    test(function() { return py_builtins.len(t) == 7 });
+    test(function() { return __builtins__.PY$len(t) == 7 });
 
     test(function() { return t.PY$__contains__(5) == True });
     test(function() { return t.PY$__getitem__(0) == 3 });
@@ -234,8 +234,8 @@ function test_list() {
     test(function() { return t.PY$__getitem__(4) == 4 });
     test(function() { return t.PY$__getitem__(5) == 4 });
     test(function() { return t.PY$__getitem__(6) == 1 });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(7) });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(8) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(7) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(8) });
     test(function() { return t.PY$__getitem__(-1) == 1 });
     test(function() { return t.PY$__getitem__(-2) == 4 });
     test(function() { return t.PY$__getitem__(-3) == 4 });
@@ -243,16 +243,16 @@ function test_list() {
     test(function() { return t.PY$__getitem__(-5) == 5 });
     test(function() { return t.PY$__getitem__(-6) == 4 });
     test(function() { return t.PY$__getitem__(-7) == 3 });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(-8) });
-    raises(py_builtins.IndexError, function() { t.PY$__getitem__(-9) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(-8) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__getitem__(-9) });
 
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(7, 0) });
-    raises(py_builtins.IndexError, function() { t.PY$__delitem__(7) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(7, 0) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__delitem__(7) });
 
     test(function() { return t.PY$index(5) == 2 });
     test(function() { return t.PY$count(5) == 2 });
 
-    raises(py_builtins.AttributeError, function() { return py_builtins.hash(t) });
+    raises(__builtins__.PY$AttributeError, function() { return __builtins__.PY$hash(t) });
 
     t.PY$append(3);
     test(function() { return str(t) == '[3, 4, 5, 5, 4, 4, 1, 3]' });
@@ -269,7 +269,7 @@ function test_list() {
     test(function() { return str(t) == '[3, 5, 4, 4, 1]' });
     t.PY$__delitem__(0);
     test(function() { return str(t) == '[5, 4, 4, 1]' });
-    raises(py_builtins.IndexError, function() { t.PY$__delitem__(4) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__delitem__(4) });
 
     t.PY$__setitem__(0, $c1);
     test(function() { return str(t) == '[1, 4, 4, 1]' });
@@ -279,8 +279,8 @@ function test_list() {
     test(function() { return str(t) == '[1, 2, 3, 1]' });
     t.PY$__setitem__(3, $c4);
     test(function() { return str(t) == '[1, 2, 3, 4]' });
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(4, 5) });
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(5, 6) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(4, 5) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(5, 6) });
     t.PY$__setitem__(-1, $c1);
     test(function() { return str(t) == '[1, 2, 3, 1]' });
     t.PY$__setitem__(-2, $c2);
@@ -289,8 +289,8 @@ function test_list() {
     test(function() { return str(t) == '[1, 3, 2, 1]' });
     t.PY$__setitem__(-4, $c4);
     test(function() { return str(t) == '[4, 3, 2, 1]' });
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(-5, 5) });
-    raises(py_builtins.IndexError, function() { t.PY$__setitem__(-6, 6) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(-5, 5) });
+    raises(__builtins__.PY$IndexError, function() { t.PY$__setitem__(-6, 6) });
 
 
     t = list([1, 2, 3, 4]);
@@ -318,20 +318,20 @@ function test_list() {
     test(function() { return str(t) == '[1]' });
     test(function() { return t.PY$pop() == 1 });
     test(function() { return str(t) == '[]' });
-    raises(py_builtins.IndexError, function() { t.PY$pop() });
+    raises(__builtins__.PY$IndexError, function() { t.PY$pop() });
 
     t = list([4, 3, 1, 2]);
     test(function() { return str(t) == '[4, 3, 1, 2]' });
     t.PY$remove(3);
     test(function() { return str(t) == '[4, 1, 2]' });
-    raises(py_builtins.ValueError, function() { t.PY$remove(3) });
+    raises(__builtins__.PY$ValueError, function() { t.PY$remove(3) });
     t.PY$remove(4);
     test(function() { return str(t) == '[1, 2]' });
     t.PY$remove(2);
     test(function() { return str(t) == '[1]' });
     t.PY$remove(1);
     test(function() { return str(t) == '[]' });
-    raises(py_builtins.ValueError, function() { t.PY$remove(3) });
+    raises(__builtins__.PY$ValueError, function() { t.PY$remove(3) });
 
     var t1 = tuple([1, 2]);
     var t2 = tuple([1, 3]);
@@ -344,20 +344,20 @@ function test_list() {
 }
 
 function test_range() {
-    // Test tuple/list conversion from py_builtins.range()
-    var t = tuple(py_builtins.range(5));
+    // Test tuple/list conversion from __builtins__.PY$range()
+    var t = tuple(__builtins__.PY$range(5));
     test(function() { return str(t) == '(0, 1, 2, 3, 4)' });
-    var t = list(py_builtins.range(5));
+    var t = list(__builtins__.PY$range(5));
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 
-    // test min/max/step in py_builtins.range():
-    t = list(py_builtins.range(1, 3));
+    // test min/max/step in __builtins__.PY$range():
+    t = list(__builtins__.PY$range(1, 3));
     test(function() { return str(t) == '[1, 2]' });
-    t = list(py_builtins.range(1, 5, 2));
+    t = list(__builtins__.PY$range(1, 5, 2));
     test(function() { return str(t) == '[1, 3]' });
 
     // test iter:
-    var t = list(iter(py_builtins.range(5)));
+    var t = list(iter(__builtins__.PY$range(5)));
     test(function() { return str(t) == '[0, 1, 2, 3, 4]' });
 }
 
@@ -365,125 +365,125 @@ function test_map() {
     var f = function(x) { return x*x };
     var a = list([1, 2, 3]);
 
-    test(function() { return str(py_builtins.map(f, list())) == '[]' });
-    test(function() { return str(py_builtins.map(f, a)) == '[1, 4, 9]' });
+    test(function() { return str(__builtins__.PY$map(f, list())) == '[]' });
+    test(function() { return str(__builtins__.PY$map(f, a)) == '[1, 4, 9]' });
 
-    raises(py_builtins.TypeError, function() { py_builtins.map(f) });
-    raises(py_builtins.NotImplementedError, function() { py_builtins.map(f, a, a) });
+    raises(__builtins__.PY$TypeError, function() { __builtins__.PY$map(f) });
+    raises(__builtins__.PY$NotImplementedError, function() { __builtins__.PY$map(f, a, a) });
 }
 
 function test_zip() {
-    test(function() { return str(py_builtins.zip()) == "[]" });
+    test(function() { return str(__builtins__.PY$zip()) == "[]" });
 
     var a = list([1, 2, 3]);
     var b = list([4, 5, 6]);
     var c = list([7, 8, 9]);
 
-    test(function() { return str(py_builtins.zip(a)) == "[(1,), (2,), (3,)]" });
-    test(function() { return str(py_builtins.zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
-    test(function() { return str(py_builtins.zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
+    test(function() { return str(__builtins__.PY$zip(a)) == "[(1,), (2,), (3,)]" });
+    test(function() { return str(__builtins__.PY$zip(a,b)) == "[(1, 4), (2, 5), (3, 6)]" });
+    test(function() { return str(__builtins__.PY$zip(a,b,c)) == "[(1, 4, 7), (2, 5, 8), (3, 6, 9)]" });
 
     var d = list([7, 8, 9, 10]);
     var e = list([7, 8, 9, 10, 11]);
 
-    test(function() { return str(py_builtins.zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
-    test(function() { return str(py_builtins.zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
+    test(function() { return str(__builtins__.PY$zip(a,d)) == "[(1, 7), (2, 8), (3, 9)]" });
+    test(function() { return str(__builtins__.PY$zip(d,a)) == "[(7, 1), (8, 2), (9, 3)]" });
 
-    test(function() { return str(py_builtins.zip(e,d)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
-    test(function() { return str(py_builtins.zip(d,e)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+    test(function() { return str(__builtins__.PY$zip(e,d)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
+    test(function() { return str(__builtins__.PY$zip(d,e)) == "[(7, 7), (8, 8), (9, 9), (10, 10)]" });
 
-    test(function() { return str(py_builtins.zip(e,a,d)) == "[(7, 1, 7), (8, 2, 8), (9, 3, 9)]" });
-    test(function() { return str(py_builtins.zip(e,d,a)) == "[(7, 7, 1), (8, 8, 2), (9, 9, 3)]" });
+    test(function() { return str(__builtins__.PY$zip(e,a,d)) == "[(7, 1, 7), (8, 2, 8), (9, 3, 9)]" });
+    test(function() { return str(__builtins__.PY$zip(e,d,a)) == "[(7, 7, 1), (8, 8, 2), (9, 9, 3)]" });
 }
 
 function test_isinstance() {
     test(function() {
-        return py_builtins.isinstance(py_builtins.StopIteration(), py_builtins.StopIteration) == True;
+        return __builtins__.PY$isinstance(__builtins__.PY$StopIteration(), __builtins__.PY$StopIteration) == True;
     });
 
     test(function() {
-        return py_builtins.isinstance(py_builtins.StopIteration(), py_builtins.ValueError) == False;
+        return __builtins__.PY$isinstance(__builtins__.PY$StopIteration(), __builtins__.PY$ValueError) == False;
     });
 
-    test(function() { return py_builtins.isinstance([], tuple()) == False });
+    test(function() { return __builtins__.PY$isinstance([], tuple()) == False });
 
     var t = tuple([1, 2, 3]);
 
-    test(function() { return py_builtins.isinstance(t, Array) == False });
-    test(function() { return py_builtins.isinstance(t, Number) == False });
-    test(function() { return py_builtins.isinstance(t, String) == False });
+    test(function() { return __builtins__.PY$isinstance(t, Array) == False });
+    test(function() { return __builtins__.PY$isinstance(t, Number) == False });
+    test(function() { return __builtins__.PY$isinstance(t, String) == False });
 
-    test(function() { return py_builtins.isinstance(t, tuple()) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple()) == False });
 
-    test(function() { return py_builtins.isinstance(t, tuple([Number, Array])) == False });
-    test(function() { return py_builtins.isinstance(t, tuple([Array, Number])) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple([Number, Array])) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple([Array, Number])) == False });
 
-    test(function() { return py_builtins.isinstance(t, tuple([Number, String])) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple([Number, String])) == False });
 
-    test(function() { return py_builtins.isinstance(t, tuple) == True });
-    test(function() { return py_builtins.isinstance(t, list) == False });
-    test(function() { return py_builtins.isinstance(t, dict) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple) == True });
+    test(function() { return __builtins__.PY$isinstance(t, list) == False });
+    test(function() { return __builtins__.PY$isinstance(t, dict) == False });
 
-    test(function() { return py_builtins.isinstance(t, tuple([list, dict])) == False });
+    test(function() { return __builtins__.PY$isinstance(t, tuple([list, dict])) == False });
 }
 
 function test_exceptions() {
-    var e = py_builtins.NotImplementedError('not implemented');
+    var e = __builtins__.PY$NotImplementedError('not implemented');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'NotImplementedError' });
     test(function() { return e.PY$message == 'not implemented' });
 
-    var e = py_builtins.ZeroDivisionError('division by zero');
+    var e = __builtins__.PY$ZeroDivisionError('division by zero');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'ZeroDivisionError' });
     test(function() { return e.PY$message == 'division by zero' });
 
-    var e = py_builtins.AssertionError('assertion error');
+    var e = __builtins__.PY$AssertionError('assertion error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'AssertionError' });
     test(function() { return e.PY$message == 'assertion error' });
 
-    var e = py_builtins.AttributeError('attribute error');
+    var e = __builtins__.PY$AttributeError('attribute error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'AttributeError' });
     test(function() { return e.PY$message == 'attribute error' });
 
-    var e = py_builtins.RuntimeError('runtime error');
+    var e = __builtins__.PY$RuntimeError('runtime error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'RuntimeError' });
     test(function() { return e.PY$message == 'runtime error' });
 
-    var e = py_builtins.ImportError('import error');
+    var e = __builtins__.PY$ImportError('import error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'ImportError' });
     test(function() { return e.PY$message == 'import error' });
 
-    var e = py_builtins.TypeError('type error');
+    var e = __builtins__.PY$TypeError('type error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'TypeError' });
     test(function() { return e.PY$message == 'type error' });
 
-    var e = py_builtins.ValueError('value error');
+    var e = __builtins__.PY$ValueError('value error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'ValueError' });
     test(function() { return e.PY$message == 'value error' });
 
-    var e = py_builtins.NameError('name error');
+    var e = __builtins__.PY$NameError('name error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'NameError' });
     test(function() { return e.PY$message == 'name error' });
 
-    var e = py_builtins.IndexError('index error');
+    var e = __builtins__.PY$IndexError('index error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'IndexError' });
     test(function() { return e.PY$message == 'index error' });
 
-    var e = py_builtins.KeyError('key error');
+    var e = __builtins__.PY$KeyError('key error');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'KeyError' });
     test(function() { return e.PY$message == 'key error' });
 
-    var e = py_builtins.StopIteration('stop iteration');
+    var e = __builtins__.PY$StopIteration('stop iteration');
 
     test(function() { return e.PY$__class__.PY$__name__ == 'StopIteration' });
     test(function() { return e.PY$message == 'stop iteration' });
@@ -669,15 +669,15 @@ function test_to_js() {
 
 function test_str() {
     var s = str("some testing string");
-    test(function() { return py_builtins.len(s) == 19 });
+    test(function() { return __builtins__.PY$len(s) == 19 });
     test(function() { return s.PY$__getitem__(0) == "s" });
     test(function() { return s.PY$__getitem__(1) == "o" });
     test(function() { return s.PY$__getitem__(2) == "m" });
     test(function() { return s.PY$__getitem__(3) == "e" });
     test(function() { return s.PY$__getitem__(4) == " " });
     test(function() { return s.PY$__getitem__(5) == "t" });
-    raises(py_builtins.TypeError, function() { s.PY$__setitem__(5, 3) });
-    raises(py_builtins.TypeError, function() { s.PY$__delitem__(5) });
+    raises(__builtins__.PY$TypeError, function() { s.PY$__setitem__(5, 3) });
+    raises(__builtins__.PY$TypeError, function() { s.PY$__delitem__(5) });
 
     test(function() { return s.PY$__getitem__(slice(3, 6)) == "e t" });
     test(function() { return s.PY$__getitem__(slice(1, 3)) == "om" });
@@ -694,7 +694,7 @@ function test_str() {
     test(function() { return s.PY$index("t") == 5 });
     test(function() { return s.PY$index("e") == 3 });
     test(function() { return s.PY$index("m") == 2 });
-    raises(py_builtins.ValueError, function() { s.PY$index("3") });
+    raises(__builtins__.PY$ValueError, function() { s.PY$index("3") });
 
     test(function() { return s.PY$find("t") == 5 });
     test(function() { return s.PY$find("e") == 3 });
