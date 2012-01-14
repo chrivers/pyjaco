@@ -24,12 +24,34 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-py_builtins.hasattr = function(obj, name) {
+/*
+ * Bastardized javascript-python builtins. Will be moved in the future
+ */
+__builtins__.PY$js_getattr = function(obj, name, value) {
+    var val = obj[name];
+
+    if (val !== undefined) {
+        return val;
+    } else {
+        if (value !== undefined) {
+            return value;
+        } else {
+            throw __builtins__.PY$AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
+        }
+    }
+};
+
+__builtins__.PY$js_setattr = function(obj, name, value) {
+    obj[name] = value;
+};
+
+
+__builtins__.PY$hasattr = function(obj, name) {
     name = js(name);
     return obj["PY$" + name] === undefined ? False : True;
 };
 
-py_builtins.getattr = function(obj, name, value) {
+__builtins__.PY$getattr = function(obj, name, value) {
     name = js(name);
     var val = obj["PY$" + name];
 
@@ -39,77 +61,60 @@ py_builtins.getattr = function(obj, name, value) {
         if (value !== undefined) {
             return value;
         } else {
-            throw py_builtins.AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
+            throw __builtins__.PY$AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
         }
     }
 };
 
-py_builtins.setattr = function(obj, name, value) {
+
+__builtins__.PY$setattr = function(obj, name, value) {
     name = js(name);
     obj["PY$" + name] = value;
 };
 
-py_builtins.js_getattr = function(obj, name, value) {
-    var val = obj[name];
-
-    if (val !== undefined) {
-        return val;
-    } else {
-        if (value !== undefined) {
-            return value;
-        } else {
-            throw py_builtins.AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
-        }
-    }
-};
-
-py_builtins.js_setattr = function(obj, name, value) {
-    obj[name] = value;
-};
-
-py_builtins.delattr = function(obj, name) {
+__builtins__.PY$delattr = function(obj, name) {
     name = js(name);
     if (obj["PY$" + name] !== undefined) {
         delete obj["PY$" + name];
     } else {
-        throw py_builtins.AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
+        throw __builtins__.PY$AttributeError("Object " + js(str(obj)) + " does not have attribute " + name);
     }
 };
 
-py_builtins.hash = function(obj) {
+__builtins__.PY$hash = function(obj) {
     if (obj.PY$__hash__ !== undefined) {
         return obj.PY$__hash__();
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
     } else {
-        throw py_builtins.AttributeError('__hash__');
+        throw __builtins__.PY$AttributeError('__hash__');
     }
 };
 
-py_builtins.len = function(obj) {
+__builtins__.PY$len = function(obj) {
     if (obj.PY$__len__ !== undefined) {
         return obj.PY$__len__();
     } else {
-        throw py_builtins.AttributeError('__len__');
+        throw __builtins__.PY$AttributeError('__len__');
     }
 };
 
-py_builtins.dir = function(obj) {
+__builtins__.PY$dir = function(obj) {
     var res = list();
     for (var i in obj) {
         if (i.indexOf('PY$') !== -1) {
-            res.PY$append($PY.str(i.substr(3)));
+            res.PY$append(__builtins__.PY$str(i.substr(3)));
         }
     }
     res.PY$sort();
     return res;
 };
 
-py_builtins.cmp = function(x, y) {
+__builtins__.PY$cmp = function(x, y) {
   return x.PY$__cmp__(y);
 };
 
-py_builtins.repr = function(obj) {
+__builtins__.PY$repr = function(obj) {
     if (obj === undefined) {
         return str("None");
     } else if (obj.PY$__class__ === undefined) {
@@ -119,11 +124,11 @@ py_builtins.repr = function(obj) {
     } else if (obj.PY$__str__ !== undefined) {
         return obj.PY$__str__(obj);
     } else {
-        throw py_builtins.AttributeError('__repr__ or __str__ not found on ' + typeof(obj));
+        throw __builtins__.PY$AttributeError('__repr__ or __str__ not found on ' + typeof(obj));
     }
 };
 
-py_builtins.range = function(start, end, step) {
+__builtins__.PY$range = function(start, end, step) {
     start = js(start);
 
     if (end === undefined) {
@@ -145,23 +150,23 @@ py_builtins.range = function(start, end, step) {
         seq.push(i);
     }
 
-    if (py_builtins.PY$__python3__)
+    if (__builtins__.PY$__python3__)
         return iter(seq);
     else
         return list(seq);
 };
 
-py_builtins.xrange = function(start, end, step) {
-    return iter(py_builtins.range(start, end, step));
+__builtins__.PY$xrange = function(start, end, step) {
+    return iter(__builtins__.PY$range(start, end, step));
 };
 
-py_builtins.map = function() {
+__builtins__.PY$map = function() {
     if (arguments.length < 2) {
-        throw py_builtins.TypeError("py_builtins.map() requires at least two args");
+        throw __builtins__.PY$TypeError("__builtins__.PY$map() requires at least two args");
     }
 
     if (arguments.length > 2) {
-        throw py_builtins.NotImplementedError("only one sequence allowed in py_builtins.map()");
+        throw __builtins__.PY$NotImplementedError("only one sequence allowed in __builtins__.PY$map()");
     }
 
     var func = arguments[0];
@@ -171,15 +176,15 @@ py_builtins.map = function() {
         items.PY$append(func(item));
     });
 
-    if (py_builtins.PY$__python3__)
+    if (__builtins__.PY$__python3__)
         return iter(items);
     else
         return items;
 };
 
-py_builtins.enumerate = function(obj) {
+__builtins__.PY$enumerate = function(obj) {
     if (arguments.length != 1) {
-        throw py_builtins.NotImplementedError("enumerate() only supports 1 argument");
+        throw __builtins__.PY$NotImplementedError("enumerate() only supports 1 argument");
     }
     var items = list();
     var count = 0;
@@ -189,7 +194,7 @@ py_builtins.enumerate = function(obj) {
     return items;
 };
 
-py_builtins.zip = function() {
+__builtins__.PY$zip = function() {
     if (!arguments.length) {
         return list();
     }
@@ -210,7 +215,7 @@ py_builtins.zip = function() {
             try {
                 var value = iters.PY$__getitem__(i).PY$next();
             } catch (exc) {
-                if (exc === $PY.StopIter || $PY.isinstance(exc, py_builtins.StopIteration)) {
+                if ($PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     return items;
                 } else {
                     throw exc;
@@ -225,7 +230,7 @@ py_builtins.zip = function() {
     return None;
 };
 
-py_builtins.isinstance = function(obj, cls) {
+__builtins__.PY$isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
         var length = cls.PY$__len__();
 
@@ -253,7 +258,7 @@ py_builtins.isinstance = function(obj, cls) {
     }
 };
 
-py_builtins.__not__ = function(obj) {
+__builtins__.PY$__not__ = function(obj) {
    if (obj.PY$__nonzero__ !== undefined) {
        return js(obj.PY$__nonzero__()) ? False : True;
    } else if (obj.PY$__len__ !== undefined) {
@@ -263,13 +268,13 @@ py_builtins.__not__ = function(obj) {
    }
 };
 
-py_builtins.__is__ = function(a, b) {
+__builtins__.PY$__is__ = function(a, b) {
     return a === b ? True : False;
 };
 
-py_builtins.max = function(list) {
-    if (py_builtins.len(list).PY$__eq__($c0) === True)
-        throw py_builtins.ValueError("max() arg is an empty sequence");
+__builtins__.PY$max = function(list) {
+    if (__builtins__.PY$len(list).PY$__eq__($c0) === True)
+        throw __builtins__.PY$ValueError("max() arg is an empty sequence");
     else {
         var result = null;
 
@@ -282,9 +287,9 @@ py_builtins.max = function(list) {
     }
 };
 
-py_builtins.min = function(list) {
-    if (py_builtins.len(list).PY$__eq__($c0) === True)
-        throw py_builtins.ValueError("min() arg is an empty sequence");
+__builtins__.PY$min = function(list) {
+    if (__builtins__.PY$len(list).PY$__eq__($c0) === True)
+        throw __builtins__.PY$ValueError("min() arg is an empty sequence");
     else {
         var result = null;
 
@@ -297,7 +302,7 @@ py_builtins.min = function(list) {
     }
 };
 
-py_builtins.sum = function(list) {
+__builtins__.PY$sum = function(list) {
     var result = 0;
 
     iterate(list, function(item) {
@@ -307,7 +312,7 @@ py_builtins.sum = function(list) {
     return result;
 };
 
-py_builtins.filter = function(f, l) {
+__builtins__.PY$filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
      if (f(item) === True) {
@@ -317,14 +322,14 @@ py_builtins.filter = function(f, l) {
    return res;
 };
 
-py_builtins.reduce = function(func, seq) {
+__builtins__.PY$reduce = function(func, seq) {
     var initial;
     if (arguments.length === 3) {
         initial = arguments[2];
     } else {
         initial = null;
     }
-    if (py_builtins.len(seq)._js_() < 2) {
+    if (__builtins__.PY$len(seq)._js_() < 2) {
         return initial;
     }
     var accum, start;
@@ -335,13 +340,13 @@ py_builtins.reduce = function(func, seq) {
         accum = func(seq.PY$__getitem__(0), seq.PY$__getitem__(1));
         start = 2;
     }
-    for (var i = start; i < py_builtins.len(seq)._js_(); i++) {
+    for (var i = start; i < __builtins__.PY$len(seq)._js_(); i++) {
         accum = func(accum, seq.PY$__getitem__(i));
     }
     return accum;
 };
 
-py_builtins.sorted = function(iterable) {
+__builtins__.PY$sorted = function(iterable) {
     var l = list(iterable);
     l.PY$sort();
     return l;
@@ -349,25 +354,25 @@ py_builtins.sorted = function(iterable) {
 
 if (typeof console !== 'undefined' && console.log !== undefined) {
     if (console.log.apply !== undefined) {
-        py_builtins.print = function()  {
+        __builtins__.PY$print = function()  {
             console.log.apply(console, arguments);
         };
     } else {
-        py_builtins.print = function()  {
+        __builtins__.PY$print = function()  {
             var args = js(str(" ").PY$join(tuple(Array.prototype.slice.call(arguments))));
             console.log(args);
         };
     }
 } else if (typeof WScript !== 'undefined') {
-    py_builtins.print = function() {
+    __builtins__.PY$print = function() {
         var args = js(str(" ").PY$join(tuple(Array.prototype.slice.call(arguments))));
         WScript.Echo(args);
     };
 } else if (typeof window === 'undefined' || window.print !== print) {
-    py_builtins.print = function() {
+    __builtins__.PY$print = function() {
         if (arguments.length <= 1) {
             if (arguments[0] !== undefined) {
-                print($PY.str(arguments[0]));
+                print(__builtins__.PY$str(arguments[0]));
             } else {
                 print("");
             }
@@ -376,8 +381,8 @@ if (typeof console !== 'undefined' && console.log !== undefined) {
         }
     };
 } else {
-    py_builtins.print = function() {
+    __builtins__.PY$print = function() {
         var args = tuple(Array.prototype.slice.call(arguments));
-        alert(js($PY.str(" ").PY$join(py_builtins.map(py_builtins.repr, args))));
+        alert(js(__builtins__.PY$str(" ").PY$join(__builtins__.PY$map(__builtins__.PY$repr, args))));
     };
 }
