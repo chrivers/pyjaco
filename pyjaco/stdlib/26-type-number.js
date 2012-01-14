@@ -25,7 +25,7 @@
 
 var number = __inherit(object, "int");
 
-$PY.number = number;
+__builtins__.number = number;
 
 number.PY$__repr__ = number.PY$__str__;
 
@@ -92,7 +92,7 @@ number.PY$__mul__ = function(x) {
         } else if ($PY.isinstance(x, [basestring, list, tuple])) {
             return x.PY$__mul__(this);
         } else {
-            throw py_builtins.TypeError("Cannot multiply number and non-number");
+            throw __builtins__.PY$TypeError("Cannot multiply number and non-number");
         }
     } else if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__')) {
         return this.numberclass(this.obj * x.obj);
@@ -103,7 +103,7 @@ number.PY$__mul__ = function(x) {
 
 number.PY$__add__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot add number and non-number");
+        throw __builtins__.PY$TypeError("Cannot add number and non-number");
     if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
         return this.numberclass(this.obj + x.obj);
     else
@@ -112,7 +112,7 @@ number.PY$__add__ = function(x) {
 
 number.PY$__div__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot divide number and non-number");
+        throw __builtins__.PY$TypeError("Cannot divide number and non-number");
     if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
         return this.numberclass(this.obj / x.obj);
     else
@@ -121,7 +121,7 @@ number.PY$__div__ = function(x) {
 
 number.PY$__sub__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot subtract number and non-number");
+        throw __builtins__.PY$TypeError("Cannot subtract number and non-number");
     if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
         return this.numberclass(this.obj - x.obj);
     else
@@ -130,7 +130,7 @@ number.PY$__sub__ = function(x) {
 
 number.PY$__pow__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot exponentiate number and non-number");
+        throw __builtins__.PY$TypeError("Cannot exponentiate number and non-number");
     if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
         return this.numberclass(Math.pow(this.obj, x.obj));
     else

@@ -27,7 +27,7 @@
 
 var list = __inherit(object, "list");
 
-$PY.list = list;
+__builtins__.PY$list = list;
 
 list.PY$__init__ = tuple.PY$__init__;
 
@@ -35,9 +35,9 @@ list.PY$__str__ = function () {
     if (this.items.length === 0) {
         return str("[]");
     } else {
-        var res = "[" + js(py_builtins.repr(this.items[0]));
+        var res = "[" + js(__builtins__.PY$repr(this.items[0]));
         for (var i = 1; i < this.items.length; i++)  {
-            res += ", " + js(py_builtins.repr(this.items[i]));
+            res += ", " + js(__builtins__.PY$repr(this.items[i]));
         }
         return str(res + "]");
     }
@@ -76,7 +76,7 @@ list.PY$__setitem__ = function(index, value) {
     } else if (index < 0 && index >= -len) {
         this.items[index + len] = value;
     } else {
-        throw py_builtins.IndexError("list index out of range");
+        throw __builtins__.PY$IndexError("list index out of range");
     }
 };
 
@@ -97,7 +97,7 @@ list.PY$__delitem__ = function(index) {
         var b = this.items.slice(index+1, this.items.length);
         this.items = a.concat(b);
     } else
-        throw py_builtins.IndexError("list assignment index out of range");
+        throw __builtins__.PY$IndexError("list assignment index out of range");
 };
 
 list.PY$__delslice__ = function(x, y) {
@@ -108,7 +108,7 @@ list.PY$__delslice__ = function(x, y) {
         var b = this.items.slice(y);
         this.items = a.concat(b);
     } else
-        throw py_builtins.IndexError("list assignment index out of range");
+        throw __builtins__.PY$IndexError("list assignment index out of range");
 };
 
 list.PY$count = tuple.PY$count;
@@ -141,7 +141,7 @@ list.PY$pop = function() {
     if (this.items.length > 0) {
         return this.items.pop();
     } else
-        throw py_builtins.IndexError("pop from empty list");
+        throw __builtins__.PY$IndexError("pop from empty list");
 };
 
 list.PY$sort = function() {

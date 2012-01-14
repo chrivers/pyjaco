@@ -25,7 +25,7 @@
 
 var float = __inherit(number, "float");
 
-$PY.float = float;
+__builtins__.PY$float = float;
 
 float.numbertype = "PY$__float__";
 float.numberclass = float;
@@ -35,7 +35,7 @@ float.PY$__init__ = function(value) {
     if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
         this.obj = parseFloat(s);
     } else {
-        throw py_builtins.ValueError("Invalid float: " + s);
+        throw __builtins__.PY$ValueError("Invalid float: " + s);
     }
 };
 
@@ -78,15 +78,15 @@ float.PY$__hash__ = function () {
 
 float.PY$__div__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot divide number and non-number");
+        throw __builtins__.PY$TypeError("Cannot divide number and non-number");
     if (x.obj === 0)
-        throw py_builtins.ZeroDivisionError("float division by zero");
+        throw __builtins__.PY$ZeroDivisionError("float division by zero");
     return float((0.0 + this.obj) / (0.0 + x.obj));
 };
 
 float.PY$__pow__ = function(x) {
     if (!x.numbertype)
-        throw py_builtins.TypeError("Cannot exponentiate number and non-number");
+        throw __builtins__.PY$TypeError("Cannot exponentiate number and non-number");
     return float(Math.pow(this.obj, x.obj));
 };
 

@@ -27,7 +27,7 @@
 
 var dict = __inherit(object, "dict");
 
-$PY.dict = dict;
+__builtins__.PY$dict = dict;
 
 dict.PY$__init__ = function() {
     var items;
@@ -87,7 +87,7 @@ dict._js_ = function () {
 };
 
 dict.PY$__hash__ = function () {
-    throw py_builtins.TypeError("unhashable type: 'dict'");
+    throw __builtins__.PY$TypeError("unhashable type: 'dict'");
 };
 
 dict.PY$__len__ = function() {
@@ -116,7 +116,7 @@ dict.PY$__getitem__ = function(key) {
             return items[i+1];
         }
     }
-    throw py_builtins.KeyError(str(key));
+    throw __builtins__.PY$KeyError(str(key));
 };
 
 dict.PY$__setitem__ = function(key, value) {
@@ -139,7 +139,7 @@ dict.PY$__delitem__ = function(key) {
             return;
         }
     }
-    throw py_builtins.KeyError(str(key));
+    throw __builtins__.PY$KeyError(str(key));
 };
 
 dict.PY$get = function(key, value) {
@@ -217,7 +217,7 @@ dict.PY$pop = function(key, value) {
     } else if (value !== undefined) {
         return value;
     } else {
-        throw py_builtins.KeyError(str(key));
+        throw __builtins__.PY$KeyError(str(key));
     }
 };
 
@@ -228,6 +228,6 @@ dict.PY$popitem = function() {
         var key = items.pop();
         return tuple([key, value]);
     } else {
-        throw py_builtins.KeyError("popitem(): dictionary is empty");
+        throw __builtins__.PY$KeyError("popitem(): dictionary is empty");
     }
 };
