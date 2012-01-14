@@ -134,7 +134,7 @@ object.PY$__eq__ = function(other) {
 };
 
 object.PY$__ne__ = function (other) {
-    return __builtins__.PY$__not__(this.PY$__eq__(other));
+    return $PY.__not__(this.PY$__eq__(other));
 };
 
 object.PY$__gt__ = function(other) {
