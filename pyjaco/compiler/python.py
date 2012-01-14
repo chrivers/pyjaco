@@ -90,7 +90,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         name = self.name_map.get(node.id, node.id)
 
         if (name in self.builtin) and not (name in self._scope):
-            name = "py_builtins." + name
+            name = "__builtins__.PY$" + name
 
         return name
 
@@ -157,7 +157,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
                 js.extend(self.indent(["if (%(id)s === undefined) { %(id)s = %(kwarg)s.%(rawid)s === undefined ? %(default)s : %(kwarg)s.%(rawid)s; };" % values]))
             js.extend(self.indent(["delete %(kwarg)s.%(id)s" % values]))
             if self.opts['check_params']:
-                js.extend(self.indent(["if (%(id)s === undefined) { \npy_builtins.print('%(fullfunc)s() did not get parameter %(id)s'); }; " % values]))
+                js.extend(self.indent(["if (%(id)s === undefined) { \n__builtins__.PY$print('%(fullfunc)s() did not get parameter %(id)s'); }; " % values]))
 
         if node.name in ["__getattr__", "__setattr__"]:
             js.extend(self.indent(["if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); };" % { 'id': node.args.args[1].id }]))
@@ -501,7 +501,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         if   isinstance(node.op, ast.USub  ): return "%s.PY$__neg__()"            % (self.visit(node.operand))
         elif isinstance(node.op, ast.UAdd  ): return "%s.PY$__pos__()"            % (self.visit(node.operand))
         elif isinstance(node.op, ast.Invert): return "%s.PY$__invert__()"         % (self.visit(node.operand))
-        elif isinstance(node.op, ast.Not   ): return "py_builtins.__not__(%s)" % (self.visit(node.operand))
+        elif isinstance(node.op, ast.Not   ): return "__builtins__.PY$__not__(%s)" % (self.visit(node.operand))
         else:
             raise JSError("Unsupported unary op %s" % node.op)
 
@@ -535,9 +535,9 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         elif isinstance(op, ast.In):
             return "%s.PY$__contains__(%s)" % (self.visit(comp), self.visit(node.left))
         elif isinstance(op, ast.Is):
-            return "py_builtins.__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
+            return "__builtins__.PY$__is__(%s, %s)" % (self.visit(node.left), self.visit(comp))
         elif isinstance(op, ast.NotIn):
-            return "py_builtins.__not__(%s.PY$__contains__(%s))" % (self.visit(comp), self.visit(node.left))
+            return "__builtins__.PY$__not__(%s.PY$__contains__(%s))" % (self.visit(comp), self.visit(node.left))
         else:
             raise JSError("Unknown comparison type %s" % node.ops[0])
 
@@ -659,7 +659,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         if not isinstance(node.generators[0].target, ast.Name):
             raise JSError("Non-simple targets in generator expressions not supported")
 
-        return "py_builtins.map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
+        return "__builtins__.PY$map(function(%s) {return %s;}, %s)" % (node.generators[0].target.id, self.visit(node.elt), self.visit(node.generators[0].iter))
 
     def visit_Slice(self, node):
         if node.lower and node.upper and node.step:

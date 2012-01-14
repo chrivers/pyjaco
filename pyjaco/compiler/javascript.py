@@ -91,7 +91,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         name = self.name_map.get(node.id, node.id)
 
         if (name in self.builtin) and not (name in self._scope):
-            name = "py_builtins." + name
+            name = "__builtins__." + name
 
         return name
 
@@ -201,7 +201,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         js.append("    try {")
         js.append("        %s = %s.PY$next();" % (for_target, iter_dummy))
         js.append("    } catch (%s) {" % exc_dummy)
-        js.append("        if (py_builtins.isinstance(%s, py_builtins.StopIteration)) {" % exc_dummy)
+        js.append("        if (__builtins__.isinstance(%s, __builtins__.StopIteration)) {" % exc_dummy)
         js.append("            %s = true;" % orelse_dummy)
         js.append("            break;")
         js.append("        } else {")
