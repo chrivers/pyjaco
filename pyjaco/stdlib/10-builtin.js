@@ -270,7 +270,17 @@ __builtins__.PY$min = function(list) {
 __builtins__.PY$next = $PY.c_nif;
 __builtins__.PY$oct = $PY.c_nif;
 __builtins__.PY$open = $PY.c_nif;
-__builtins__.PY$ord = $PY.c_nif;
+
+__builtins__.PY$ord = function(ord) {
+    var s = ord._js_();
+    if (s.length === 1) {
+        return __builtins__.PY$int(s.charCodeAt(0));
+    } else {
+        throw __builtins__.PY$TypeError("ord() expected a character, but string of length " + s.length + " found");
+    }
+};
+
+
 __builtins__.PY$pow = $PY.c_nif;
 
 if (typeof console !== 'undefined' && console.log !== undefined) {
