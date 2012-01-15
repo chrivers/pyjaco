@@ -22,7 +22,7 @@ while true; do
     touch $1
     ./pyjs.py -b generate -o .
     python $1 > 1.res
-    ./pyjs.py --builtins=import -o 1.js $1
+    ./pyjs.py -q --builtins=import -o 1.js $1
     if run 1.js > 1.out; then
         if diff -au 1.res 1.out; then
             echo "Files now match!"
