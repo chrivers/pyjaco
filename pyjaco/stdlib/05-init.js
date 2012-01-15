@@ -26,9 +26,16 @@
 
 var $PY = {};
 
+$PY.prng = 42;
+
 var __builtins__ = {};
 
 __builtins__.PY$__python3__ = false;
+
+function prng() {
+    $PY.prng = ($PY.prng * 0x8088405 + 1) % 0xFFFFFFFF;
+    return $PY.prng;
+}
 
 function bt() {
     try {

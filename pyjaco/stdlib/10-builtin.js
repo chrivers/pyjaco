@@ -193,7 +193,10 @@ __builtins__.PY$hex = function(num) {
     }
 };
 
-__builtins__.PY$id = $PY.c_nif;
+__builtins__.PY$id = function(obj) {
+    return __builtins__.PY$int(obj.id);
+}
+
 __builtins__.PY$input = $PY.c_nif;
 
 __builtins__.PY$intern = function(x) {
