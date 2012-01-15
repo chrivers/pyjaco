@@ -179,7 +179,20 @@ __builtins__.PY$hash = function(obj) {
 };
 
 __builtins__.PY$help = $PY.c_nif;
-__builtins__.PY$hex = $PY.c_nif;
+
+__builtins__.PY$hex = function(num) {
+    if (num.PY$__class__ === __builtins__.PY$int) {
+        var hex = num._js_().toString(16);
+        if (hex.charAt(0) === "-") {
+            return __builtins__.PY$str("-0x" + hex.substr(1));
+        } else {
+            return __builtins__.PY$str("0x" + hex);
+        }
+    } else {
+        throw __builtins__.PY$TypeError("hex() argument can't be converted to hex");
+    }
+};
+
 __builtins__.PY$id = $PY.c_nif;
 __builtins__.PY$input = $PY.c_nif;
 __builtins__.PY$intern = $PY.c_nif;
