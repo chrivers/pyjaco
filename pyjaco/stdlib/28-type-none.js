@@ -25,8 +25,6 @@
 
 var none = __inherit(object, "NoneType");
 
-__builtins__.PY$None = none;
-
 none.PY$__init__ = function() {
     this.obj = null;
 };
@@ -56,6 +54,7 @@ none.PY$__nonzero__ = function() {
 };
 
 var None = none();
+__builtins__.PY$None = None;
 
 none.PY$__create__ = function() {
     return None;
