@@ -122,8 +122,10 @@ object.PY$__delattr__ = function(k) {
 object.PY$__repr__ = function() {
     if (this.PY$__class__) {
         return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
-    } else {
+    } else if (this.PY$__name__) {
         return str("<type '" + this.PY$__name__ + "'>");
+    } else {
+        return str("<javascript: " + this + ">");
     }
 };
 
