@@ -48,7 +48,7 @@ class BuiltinGenerator(object):
         py-builtins.js file.'''
         builtin_lines = []
         js_filenames = sorted(
-                [f for f in pkg_resources.resource_listdir("pyjaco", "stdlib") if f.endswith(".js")])
+                [f for f in pkg_resources.resource_listdir("pyjaco", "stdlib") if (f.endswith(".js") and not f.startswith("."))])
         for js_filename in js_filenames:
             builtin_lines.append("\n/* %-30s*/" % js_filename)
             lines = self.comment_stripper(pkg_resources.resource_string(
