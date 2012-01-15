@@ -294,7 +294,22 @@ __builtins__.PY$min = function(list) {
 };
 
 __builtins__.PY$next = $PY.c_nif;
-__builtins__.PY$oct = $PY.c_nif;
+
+__builtins__.PY$oct = function(num) {
+    if (num.PY$__class__ === __builtins__.PY$int) {
+        var oct = num._js_().toString(8);
+        if (oct.charAt(0) === "-") {
+            return __builtins__.PY$str("-0" + oct.substr(1));
+        } else if (oct === "0") {
+            return __builtins__.PY$str("0");
+        } else {
+            return __builtins__.PY$str("0" + oct);
+        }
+    } else {
+        throw __builtins__.PY$TypeError("oct() argument can't be converted to oct");
+    }
+};
+
 __builtins__.PY$open = $PY.c_nif;
 
 __builtins__.PY$ord = function(ord) {
