@@ -150,7 +150,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             self.reportProgres()
 
         def __str__(self):
-            return "%(py_unix_path)s [4]: " % self.templ
+            return "%(py_unix_path)s: " % self.templ
 
     return CompileAndRunFile
 
