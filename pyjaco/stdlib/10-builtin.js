@@ -27,7 +27,7 @@
 /*
  * Bastardized javascript-python builtins. Will be moved in the future
  */
-__builtins__.PY$js_getattr = function(obj, name, value) {
+__builtins__.js_getattr = function(obj, name, value) {
     var val = obj[name];
 
     if (val !== undefined) {
@@ -41,13 +41,35 @@ __builtins__.PY$js_getattr = function(obj, name, value) {
     }
 };
 
-__builtins__.PY$js_setattr = function(obj, name, value) {
+__builtins__.js_setattr = function(obj, name, value) {
     obj[name] = value;
 };
+
+/*
+ * Python __builtins__
+ */
+
+__builtins__.PY$abs = $PY.c_nif;
+__builtins__.PY$all = $PY.c_nif;
+__builtins__.PY$any = $PY.c_nif;
+__builtins__.PY$apply = $PY.c_nif;
+__builtins__.PY$bin = $PY.c_nif;
+__builtins__.PY$buffer = $PY.c_nif;
+__builtins__.PY$bytearray = $PY.c_nif;
+__builtins__.PY$bytes = $PY.c_nif;
+__builtins__.PY$callable = $PY.c_nif;
+__builtins__.PY$chr = $PY.c_nif;
+__builtins__.PY$classmethod = $PY.c_nif;
 
 __builtins__.PY$cmp = function(x, y) {
   return x.PY$__cmp__(y);
 };
+
+__builtins__.PY$coerce = $PY.c_nif;
+__builtins__.PY$compile = $PY.c_nif;
+__builtins__.PY$complex = $PY.c_nif;
+__builtins__.PY$copyright = $PY.c_nif;
+__builtins__.PY$credits = $PY.c_nif;
 
 __builtins__.PY$delattr = function(obj, name) {
     name = js(name);
@@ -61,13 +83,15 @@ __builtins__.PY$delattr = function(obj, name) {
 __builtins__.PY$dir = function(obj) {
     var res = list();
     for (var i in obj) {
-        if (i.indexOf('PY$') !== -1) {
+        if (i.indexOf('PY$') === 0) {
             res.PY$append(__builtins__.PY$str(i.substr(3)));
         }
     }
     res.PY$sort();
     return res;
 };
+
+__builtins__.PY$divmod = $PY.c_nif;
 
 __builtins__.PY$enumerate = function(obj) {
     if (arguments.length != 1) {
@@ -81,6 +105,11 @@ __builtins__.PY$enumerate = function(obj) {
     return items;
 };
 
+__builtins__.PY$eval = $PY.c_nif;
+__builtins__.PY$execfile = $PY.c_nif;
+__builtins__.PY$exit = $PY.c_nif;
+__builtins__.PY$file = $PY.c_nif;
+
 __builtins__.PY$filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
@@ -90,6 +119,9 @@ __builtins__.PY$filter = function(f, l) {
    });
    return res;
 };
+
+__builtins__.PY$format = $PY.c_nif;
+__builtins__.PY$frozenset = $PY.c_nif;
 
 __builtins__.PY$getattr = function(obj, name, value) {
     name = js(name);
@@ -106,6 +138,8 @@ __builtins__.PY$getattr = function(obj, name, value) {
     }
 };
 
+__builtins__.PY$globals = $PY.c_nif;
+
 __builtins__.PY$hasattr = function(obj, name) {
     name = js(name);
     return obj["PY$" + name] === undefined ? False : True;
@@ -121,6 +155,12 @@ __builtins__.PY$hash = function(obj) {
         throw __builtins__.PY$AttributeError('__hash__');
     }
 };
+
+__builtins__.PY$help = $PY.c_nif;
+__builtins__.PY$hex = $PY.c_nif;
+__builtins__.PY$id = $PY.c_nif;
+__builtins__.PY$input = $PY.c_nif;
+__builtins__.PY$intern = $PY.c_nif;
 
 __builtins__.PY$isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
@@ -150,6 +190,8 @@ __builtins__.PY$isinstance = function(obj, cls) {
     }
 };
 
+__builtins__.PY$issubclass = $PY.c_nif;
+
 __builtins__.PY$len = function(obj) {
     if (obj.PY$__len__ !== undefined) {
         return obj.PY$__len__();
@@ -157,6 +199,10 @@ __builtins__.PY$len = function(obj) {
         throw __builtins__.PY$AttributeError('__len__');
     }
 };
+
+__builtins__.PY$license = $PY.c_nif;
+__builtins__.PY$locals = $PY.c_nif;
+__builtins__.PY$long = $PY.c_nif;
 
 __builtins__.PY$map = function() {
     if (arguments.length < 2) {
@@ -195,6 +241,8 @@ __builtins__.PY$max = function(list) {
     }
 };
 
+__builtins__.PY$memoryview = $PY.c_nif;
+
 __builtins__.PY$min = function(list) {
     if (__builtins__.PY$len(list).PY$__eq__($c0) === True)
         throw __builtins__.PY$ValueError("min() arg is an empty sequence");
@@ -209,6 +257,12 @@ __builtins__.PY$min = function(list) {
         return result;
     }
 };
+
+__builtins__.PY$next = $PY.c_nif;
+__builtins__.PY$oct = $PY.c_nif;
+__builtins__.PY$open = $PY.c_nif;
+__builtins__.PY$ord = $PY.c_nif;
+__builtins__.PY$pow = $PY.c_nif;
 
 if (typeof console !== 'undefined' && console.log !== undefined) {
     if (console.log.apply !== undefined) {
@@ -245,6 +299,9 @@ if (typeof console !== 'undefined' && console.log !== undefined) {
     };
 }
 
+__builtins__.PY$property = $PY.c_nif;
+__builtins__.PY$quit = $PY.c_nif;
+
 __builtins__.PY$range = function(start, end, step) {
     start = js(start);
 
@@ -273,6 +330,8 @@ __builtins__.PY$range = function(start, end, step) {
         return list(seq);
 };
 
+__builtins__.PY$raw_input = $PY.c_nif;
+
 __builtins__.PY$reduce = function(func, seq) {
     var initial;
     if (arguments.length === 3) {
@@ -297,6 +356,8 @@ __builtins__.PY$reduce = function(func, seq) {
     return accum;
 };
 
+__builtins__.PY$reload = $PY.c_nif;
+
 __builtins__.PY$repr = function(obj) {
     if (obj === undefined) {
         return str("None");
@@ -311,6 +372,10 @@ __builtins__.PY$repr = function(obj) {
     }
 };
 
+__builtins__.PY$reversed = $PY.c_nif;
+__builtins__.PY$round = $PY.c_nif;
+__builtins__.PY$set = $PY.c_nif;
+
 __builtins__.PY$setattr = function(obj, name, value) {
     name = js(name);
     obj["PY$" + name] = value;
@@ -322,6 +387,14 @@ __builtins__.PY$sorted = function(iterable) {
     return l;
 };
 
+__builtins__.PY$staticmethod = function(func) {
+    var res = function () {
+        return func.apply(null, [null].concat(Array.prototype.slice.call(arguments)));
+    };
+    res.__static = true;
+    return res;
+};
+
 __builtins__.PY$sum = function(list) {
     var result = 0;
 
@@ -331,6 +404,10 @@ __builtins__.PY$sum = function(list) {
 
     return result;
 };
+
+__builtins__.PY$type = $PY.c_nif;
+__builtins__.PY$unichr = $PY.c_nif;
+__builtins__.PY$vars = $PY.c_nif;
 
 __builtins__.PY$xrange = function(start, end, step) {
     return iter(__builtins__.PY$range(start, end, step));
