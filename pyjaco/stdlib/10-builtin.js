@@ -178,7 +178,13 @@ __builtins__.PY$hash = function(obj) {
     }
 };
 
-__builtins__.PY$help = $PY.c_nif;
+__builtins__.PY$help = function() {
+    __builtins__.PY$print("Welcome to pyjaco, the Python-to-Javascript compiler!\n" +
+                          "  Homepage     : pyjaco.org\n" +
+                          "  Github       : https://github.com/chrivers/pyjaco\n" +
+                          "  Email        : developer@pyjaco.org\n" +
+                          "  Google group : http://groups.google.com/group/pyjaco");
+};
 
 __builtins__.PY$hex = function(num) {
     if (num.PY$__class__ === __builtins__.PY$int) {
