@@ -23,11 +23,11 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var Exception = __inherit(object, "Exception");
+var BaseException = __inherit(object, "BaseException");
 
-__builtins__.PY$Exception = Exception;
+__builtins__.PY$BaseException = BaseException;
 
-Exception.PY$__init__ = function() {
+BaseException.PY$__init__ = function() {
     if (arguments.length > 0) {
         this.PY$message = arguments[0];
     } else {
@@ -36,71 +36,85 @@ Exception.PY$__init__ = function() {
     this.message = "pyjaco: " + js(this.PY$__class__.PY$__name__) + ": " + js(this.PY$message);
 };
 
-Exception.PY$__str__ = function() {
+BaseException.PY$__str__ = function() {
     return __builtins__.PY$str(this.PY$message);
 };
 
-__builtins__.PY$__exceptions__ = [
-    'NotImplementedError',
-    'ZeroDivisionError',
-    'AssertionError',
-    'AttributeError',
-    'RuntimeError',
-    'ImportError',
-    'TypeError',
-    'ValueError',
-    'NameError',
-    'IndexError',
-    'KeyError',
-    'StopIteration',
-    'IOError'
-];
-
-__builtins__.PY$__exceptions__ = __builtins__.PY$__exceptions__.concat(
-    [
-        "ArithmeticError",
-        "BaseException",
-        "BufferError",
-        "BytesWarning",
-        "DeprecationWarning",
-        "EOFError",
-        "Ellipsis",
-        "EnvironmentError",
-        "FloatingPointError",
-        "FutureWarning",
-        "GeneratorExit",
-        "ImportWarning",
-        "IndentationError",
-        "KeyboardInterrupt",
-        "LookupError",
-        "MemoryError",
-        "NotImplemented",
-        "OSError",
-        "OverflowError",
-        "PendingDeprecationWarning",
-        "ReferenceError",
-        "RuntimeWarning",
-        "StandardError",
-        "SyntaxError",
-        "SyntaxWarning",
-        "SystemError",
-        "SystemExit",
-        "TabError",
-        "UnboundLocalError",
-        "UnicodeDecodeError",
-        "UnicodeEncodeError",
-        "UnicodeError",
-        "UnicodeTranslateError",
-        "UnicodeWarning",
-        "UserWarning",
-        "Warning"
-    ]);
-
 (function() {
-    var exc = __builtins__.PY$__exceptions__;
-    for (var i in exc) {
-        __builtins__["PY$" + exc[i]] = __inherit(Exception, exc[i]);
-    }
+     var exceptions = [
+         "SystemExit", [],
+         "KeyboardInterrupt", [],
+         "GeneratorExit", [],
+         "Exception", [
+             "StopIteration", [],
+             "StandardError", [
+                 "BufferError", [],
+                 "ArithmeticError", [
+                     "FloatingPointError", [],
+                     "OverflowError", [],
+                     "ZeroDivisionError", []
+                 ],
+                 "AssertionError", [],
+                 "AttributeError", [],
+                 "EnvironmentError", [
+                     "IOError", [],
+                     "OSError", []
+                 ],
+                 "EOFError", [],
+                 "ImportError", [],
+                 "LookupError", [
+                     "IndexError", [],
+                     "KeyError", []
+                 ],
+                 "MemoryError", [],
+                 "NameError", [
+                     "UnboundLocalError", []
+                 ],
+                 "ReferenceError", [],
+                 "RuntimeError", [
+                     "NotImplementedError", []
+                 ],
+                 "SyntaxError", [
+                     "IndentationError", [
+                         "TabError", []
+                     ]
+                 ],
+                 "SystemError", [],
+                 "TypeError", [],
+                 "ValueError", [
+                     "UnicodeError", [
+                         "UnicodeDecodeError", [],
+                         "UnicodeEncodeError", [],
+                         "UnicodeTranslateError", []
+                     ]
+                 ]
+             ],
+             "Warning", [
+                 "DeprecationWarning", [],
+                 "PendingDeprecationWarning", [],
+                 "RuntimeWarning", [],
+                 "SyntaxWarning", [],
+                 "UserWarning", [],
+                 "FutureWarning", [],
+	         "ImportWarning", [],
+	         "UnicodeWarning", [],
+	         "BytesWarning", []
+             ]
+         ]
+     ];
+
+     function create_exceptions(base, names)
+     {
+         for (var i = 0; i < names.length; i += 2)
+         {
+             var name = names[i];
+             var subs = names[i+1];
+             var exc = __inherit(base, name);
+             __builtins__["PY$" + name] = exc;
+             create_exceptions(exc, subs);
+         }
+     }
+     create_exceptions(BaseException, exceptions);
 })();
 
 $PY.c_stopiter = __builtins__.PY$StopIteration("No more items");
