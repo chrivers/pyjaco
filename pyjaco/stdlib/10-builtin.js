@@ -446,7 +446,11 @@ __builtins__.PY$repr = function(obj) {
     }
 };
 
-__builtins__.PY$reversed = $PY.c_nif;
+__builtins__.PY$reversed = function(iterable) {
+    var l = list(iterable);
+    l.PY$reverse();
+    return l;
+}
 
 __builtins__.PY$round = function(num) {
     if (num.PY$__class__ === __builtins__.PY$float) {
