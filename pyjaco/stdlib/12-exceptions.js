@@ -25,6 +25,8 @@
 
 var Exception = __inherit(object, "Exception");
 
+__builtins__.PY$Exception = Exception;
+
 Exception.PY$__init__ = function() {
     if (arguments.length > 0) {
         this.PY$message = arguments[0];
@@ -35,7 +37,7 @@ Exception.PY$__init__ = function() {
 };
 
 Exception.PY$__str__ = function() {
-    return str(this.PY$message);
+    return __builtins__.PY$str(this.PY$message);
 };
 
 __builtins__.PY$__exceptions__ = [
@@ -64,7 +66,6 @@ __builtins__.PY$__exceptions__ = __builtins__.PY$__exceptions__.concat(
         "EOFError",
         "Ellipsis",
         "EnvironmentError",
-        "Exception",
         "FloatingPointError",
         "FutureWarning",
         "GeneratorExit",
@@ -95,8 +96,11 @@ __builtins__.PY$__exceptions__ = __builtins__.PY$__exceptions__.concat(
         "Warning"
     ]);
 
-for (var i in __builtins__.PY$__exceptions__) {
-    __builtins__["PY$" + __builtins__.PY$__exceptions__[i]] = __inherit(Exception, __builtins__.PY$__exceptions__[i]);
-}
+(function() {
+    var exc = __builtins__.PY$__exceptions__;
+    for (var i in exc) {
+        __builtins__["PY$" + exc[i]] = __inherit(Exception, exc[i]);
+    }
+})();
 
 $PY.c_stopiter = __builtins__.PY$StopIteration("No more items");
