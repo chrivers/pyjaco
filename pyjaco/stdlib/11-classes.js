@@ -82,6 +82,7 @@ object.PY$__create__ = function(cls) {
     };
 
     obj.PY$__class__ = cls;
+    obj.id = prng();
     obj.PY$__init__.apply(obj, args);
     return obj;
 };
@@ -121,7 +122,7 @@ object.PY$__delattr__ = function(k) {
 
 object.PY$__repr__ = function() {
     if (this.PY$__class__) {
-        return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0xPYJACO>");
+        return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0x" + this.id.toString(16) + ">");
     } else if (this.PY$__name__) {
         return str("<type '" + this.PY$__name__ + "'>");
     } else {
