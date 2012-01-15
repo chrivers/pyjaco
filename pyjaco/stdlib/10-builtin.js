@@ -338,7 +338,21 @@ __builtins__.PY$ord = function(ord) {
 };
 
 
-__builtins__.PY$pow = $PY.c_nif;
+__builtins__.PY$pow = function(x, y, z) {
+    if (z !== undefined) {
+        throw __builtins__.PY$NotImplemented("Pyjaco does not support the 3-operand version of pow()");
+    } else if (x.PY$__pow__ !== undefined) {
+        if (y.obj < 0) {
+            return __builtins__.PY$float(x).PY$__pow__(y);
+        } else {
+            return x.PY$__pow__(y);
+        }
+    } else {
+        throw __builtins__.PY$TypeError("unsupported operand type(s) for ** or pow(): '" +
+                                        x.PY$__class__.PY$__name__ + "' and '" +
+                                        y.PY$__class__.PY$__name__ + "'");
+    }
+};
 
 if (typeof console !== 'undefined' && console.log !== undefined) {
     if (console.log.apply !== undefined) {
