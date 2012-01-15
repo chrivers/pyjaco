@@ -53,7 +53,7 @@ function iterate(obj, func) {
             try {
                 func(seq.PY$next());
             } catch (exc) {
-                if ($PY.isinstance(exc, __builtins__.PY$StopIteration)) {
+                if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     break;
                 } else {
                     throw exc;

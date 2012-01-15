@@ -113,7 +113,7 @@ tuple.PY$__cmp__ = function (other) {
             try {
                 var elm = it.PY$next();
             } catch (exc) {
-                if ($PY.isinstance(exc, __builtins__.PY$StopIteration)) {
+                if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     break;
                 } else {
                     throw exc;
