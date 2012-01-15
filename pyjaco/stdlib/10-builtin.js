@@ -434,7 +434,7 @@ __builtins__.PY$zip = function() {
             try {
                 var value = iters.PY$__getitem__(i).PY$next();
             } catch (exc) {
-                if ($PY.isinstance(exc, __builtins__.PY$StopIteration)) {
+                if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     return items;
                 } else {
                     throw exc;
