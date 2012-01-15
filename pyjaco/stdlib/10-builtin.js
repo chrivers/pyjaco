@@ -53,7 +53,20 @@ __builtins__.PY$abs = $PY.c_nif;
 __builtins__.PY$all = $PY.c_nif;
 __builtins__.PY$any = $PY.c_nif;
 __builtins__.PY$apply = $PY.c_nif;
-__builtins__.PY$bin = $PY.c_nif;
+
+__builtins__.PY$bin = function(num) {
+    if (num.PY$__class__ === __builtins__.PY$int) {
+        var bin = num._js_().toString(2);
+        if (bin.charAt(0) === "-") {
+            return __builtins__.PY$str("-0b" + bin.substr(1));
+        } else {
+            return __builtins__.PY$str("0b" + bin);
+        }
+    } else {
+        throw __builtins__.PY$TypeError("'" + num.PY$__class__.PY$__name__ + "' object cannot be interpreted as an index");
+    }
+};
+
 __builtins__.PY$buffer = $PY.c_nif;
 __builtins__.PY$bytearray = $PY.c_nif;
 __builtins__.PY$bytes = $PY.c_nif;
