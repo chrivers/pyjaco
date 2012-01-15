@@ -41,43 +41,8 @@ class BaseCompiler(object):
         'default': '__default',
     }
 
-    builtin = set([
-        'NotImplementedError',
-        'ZeroDivisionError',
-        'AssertionError',
-        'AttributeError',
-        'RuntimeError',
-        'ImportError',
-        'TypeError',
-        'ValueError',
-        'NameError',
-        'IndexError',
-        'KeyError',
-        'StopIteration',
-        'IOError',
-
-        'delattr',
-        'hasattr',
-        'getattr',
-        'setattr',
-        'hash',
-        'cmp',
-        'len',
-        'dir',
-        'repr',
-        'range',
-        'xrange',
-        'map',
-        'zip',
-        'isinstance',
-        'max',
-        'min',
-        'sum',
-        'filter',
-        'reduce',
-        'enumerate',
-        'sorted'
-    ])
+    import __builtin__
+    builtin = set([x for x in dir(__builtin__) if not x.startswith("__")])
 
     def __init__(self, opts):
         self.index_var = 0
