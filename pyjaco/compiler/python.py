@@ -78,6 +78,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         super(Compiler, self).__init__(opts)
         self.future_division = False
         self.opts = opts
+        self._funcs = []
 
     def stack_destiny(self, names, skip):
         for name in reversed(self.stack[:-skip]):
@@ -89,7 +90,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
     def visit_Name(self, node):
         name = self.name_map.get(node.id, node.id)
 
-        if (name in self.builtin) and not (name in self._scope):
+        if (name in self.builtin) and not ((name in self._scope) or (name in self._funcs)):
             name = "__builtins__.PY$" + name
 
         return name
@@ -123,6 +124,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             offset = 0
 
         self._scope = [arg.id for arg in node.args.args]
+        self._funcs.append(node.name)
 
         inclass = self.stack_destiny(["ClassDef", "FunctionDef"], 2) in ["ClassDef"]
 
@@ -180,7 +182,7 @@ class Compiler(pyjaco.compiler.BaseCompiler):
         js.append("}")
 
         for dec in node.decorator_list:
-            js.extend(["%s.PY$%s = %s(%s.PY$__getattr__('%s'));" % (self.heirar, node.name, dec.id, self.heirar, node.name)])
+            js.extend(["%s.PY$%s = %s(%s.PY$__getattr__('%s'));" % (self.heirar, node.name, self.visit(dec), self.heirar, node.name)])
 
         return js
 
@@ -264,8 +266,8 @@ class Compiler(pyjaco.compiler.BaseCompiler):
             # found slice assignmnet
             js = ["%s.PY$__setslice__(%s, %s, %s);" % (self.visit(target.value), self.visit(target.slice.lower), self.visit(target.slice.upper), value)]
         else:
-            var = self.visit(target)
             if isinstance(target, ast.Name):
+                var = target.id
                 if not (var in self._scope):
                     self._scope.append(var)
                     declare = "var "
