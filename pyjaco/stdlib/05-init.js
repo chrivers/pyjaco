@@ -105,14 +105,6 @@ var __kwargs_get = function(args) {
     }
 };
 
-var staticmethod = function(func) {
-    var res = function () {
-        return func.apply(null, [null].concat(Array.prototype.slice.call(arguments)));
-    };
-    res.__static = true;
-    return res;
-};
-
 var js = function(obj) {
     /*
        Converts (recursively) a Python object to a javascript builtin object.
