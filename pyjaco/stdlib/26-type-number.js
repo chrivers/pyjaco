@@ -23,7 +23,7 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-var number = __inherit(object, "int");
+var number = __inherit(object, "number");
 
 __builtins__.number = number;
 
