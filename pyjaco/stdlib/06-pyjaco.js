@@ -50,6 +50,28 @@ $PY.repr = function(obj) {
     return __builtins__.PY$repr(obj)._js_();
 };
 
+$PY.dump = function(obj) {
+    var res = [];
+    for (var i in obj) {
+        var val = obj[i];
+        if (typeof val === 'function') {
+            res.push(i + " (function)");
+        } else if (typeof val === 'number') {
+            res.push(i + " (number: " + val + ")");
+        } else if (typeof val === 'string') {
+            res.push(i + " (string: " + val + ")");
+        } else if (typeof val === '') {
+            res.push(i + " ()");
+        } else if (typeof val === '') {
+            res.push(i + " ()");
+        } else if (typeof val === '') {
+            res.push(i + " ()");
+        }
+    }
+    res.sort();
+    return "[\n  " + res.join("\n  ") + "\n]";
+};
+
 $PY.len = function(obj) {
     var c = obj.PY$__class__;
     if (c === list || c === tuple || c === str || c === basestring || c === unicode) {
@@ -90,3 +112,7 @@ $PY.__not__ = function(obj) {
 $PY.__is__ = function(a, b) {
     return a === b ? True : False;
 };
+
+$PY.c_nif = function() {
+    throw __builtins__.PY$NotImplementedError("The called function is not implemented in Pyjaco");
+}
