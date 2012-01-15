@@ -447,7 +447,22 @@ __builtins__.PY$repr = function(obj) {
 };
 
 __builtins__.PY$reversed = $PY.c_nif;
-__builtins__.PY$round = $PY.c_nif;
+
+__builtins__.PY$round = function(num) {
+    if (num.PY$__class__ === __builtins__.PY$float) {
+        var n = num.obj;
+        if (n < 0) {
+            return __builtins__.PY$float(-Math.round(-num.obj));
+        } else {
+            return __builtins__.PY$float(Math.round(num.obj));
+        }
+    } else if (num.PY$__class__ === __builtins__.PY$int) {
+        return __builtins__.PY$float(num.obj);
+    } else {
+        throw __builtins__.PY$TypeError("a float is required");
+    }
+};
+
 __builtins__.PY$set = $PY.c_nif;
 
 __builtins__.PY$setattr = function(obj, name, value) {
