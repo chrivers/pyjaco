@@ -367,7 +367,14 @@ if (typeof console !== 'undefined' && console.log !== undefined) {
 }
 
 __builtins__.PY$property = $PY.c_nif;
-__builtins__.PY$quit = $PY.c_nif;
+
+__builtins__.PY$quit = function() {
+    if (quit !== undefined) {
+        quit();
+    } else {
+        throw __builtins__.PY$SystemExit("quit");
+    }
+};
 
 __builtins__.PY$range = function(start, end, step) {
     start = js(start);
