@@ -58,11 +58,20 @@ __builtins__.PY$buffer = $PY.c_nif;
 __builtins__.PY$bytearray = $PY.c_nif;
 __builtins__.PY$bytes = $PY.c_nif;
 __builtins__.PY$callable = $PY.c_nif;
-__builtins__.PY$chr = $PY.c_nif;
+
+__builtins__.PY$chr = function(chr) {
+    var s = String.fromCharCode(chr._js_());
+    if (s === "\0") {
+        throw __builtins__.PY$TypeError("an integer is required");
+    } else {
+        return __builtins__.PY$str(s);
+    }
+};
+
 __builtins__.PY$classmethod = $PY.c_nif;
 
 __builtins__.PY$cmp = function(x, y) {
-  return x.PY$__cmp__(y);
+    return x.PY$__cmp__(y);
 };
 
 __builtins__.PY$coerce = $PY.c_nif;
