@@ -195,7 +195,14 @@ __builtins__.PY$hex = function(num) {
 
 __builtins__.PY$id = $PY.c_nif;
 __builtins__.PY$input = $PY.c_nif;
-__builtins__.PY$intern = $PY.c_nif;
+
+__builtins__.PY$intern = function(x) {
+    if ($PY.isinstance(x, __builtins__.PY$basestring)) {
+        // pass
+    } else {
+        throw __builtins__.PY$TypeError("must be string, not " + x.PY$__class__.PY$__name__);
+    }
+};
 
 __builtins__.PY$isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
