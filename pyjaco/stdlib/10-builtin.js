@@ -49,7 +49,15 @@ __builtins__.js_setattr = function(obj, name, value) {
  * Python __builtins__
  */
 
-__builtins__.PY$abs = $PY.c_nif;
+__builtins__.PY$abs = function(obj) {
+    if (obj === undefined) {
+        throw __builtins__.PY$TypeError("abs() takes exactly one argument (" + arguments.length + " given)");
+    } else if (obj.PY$__abs__) {
+        return obj.PY$__abs__();
+    } else {
+        throw __builtins__.PY$TypeError("bad operand type for abs(): '" + obj.PY$__class__.PY$__name__ + "'");
+    }
+};
 
 __builtins__.PY$all = function(obj) {
     if (obj === undefined) {
