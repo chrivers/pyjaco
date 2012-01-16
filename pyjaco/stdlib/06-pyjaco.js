@@ -60,12 +60,12 @@ $PY.dump = function(obj) {
             res.push(i + " (number: " + val + ")");
         } else if (typeof val === 'string') {
             res.push(i + " (string: " + val + ")");
-        } else if (typeof val === '') {
-            res.push(i + " ()");
-        } else if (typeof val === '') {
-            res.push(i + " ()");
-        } else if (typeof val === '') {
-            res.push(i + " ()");
+        } else if (val === null) {
+            res.push(i + " (null)");
+        } else if (val === undefined) {
+            res.push(i + " (undefined)");
+        } else {
+            res.push(i + " (object)");
         }
     }
     res.sort();
