@@ -529,7 +529,15 @@ __builtins__.PY$type = function(obj) {
     }
 };
 
-__builtins__.PY$unichr = $PY.c_nif;
+__builtins__.PY$unichr = function(unichr) {
+    var s = String.fromCharCode(unichr._js_());
+    if (s === "\0") {
+        throw __builtins__.PY$TypeError("an integer is required");
+    } else {
+        return __builtins__.PY$unicode(s);
+    }
+};
+
 __builtins__.PY$vars = $PY.c_nif;
 
 __builtins__.PY$xrange = function(start, end, step) {
