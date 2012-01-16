@@ -70,7 +70,14 @@ __builtins__.PY$bin = function(num) {
 __builtins__.PY$buffer = $PY.c_nif;
 __builtins__.PY$bytearray = $PY.c_nif;
 __builtins__.PY$bytes = $PY.c_nif;
-__builtins__.PY$callable = $PY.c_nif;
+
+__builtins__.PY$callable = function(obj) {
+    if (typeof obj === "function" && obj.PY$__class__ === undefined) {
+        return True;
+    } else {
+        return __builtins__.PY$hasattr(obj, "__call__");
+    }
+};
 
 __builtins__.PY$chr = function(chr) {
     var s = String.fromCharCode(chr._js_());
