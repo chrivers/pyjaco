@@ -521,7 +521,14 @@ __builtins__.PY$sum = function(list) {
     return result;
 };
 
-__builtins__.PY$type = $PY.c_nif;
+__builtins__.PY$type = function(obj) {
+    if (obj && obj.PY$__class__) {
+        return obj.PY$__class__;
+    } else {
+        return __builtins__.PY$None;
+    }
+};
+
 __builtins__.PY$unichr = $PY.c_nif;
 __builtins__.PY$vars = $PY.c_nif;
 
