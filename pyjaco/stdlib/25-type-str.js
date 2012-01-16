@@ -56,11 +56,19 @@ basestring.PY$__create__ = function(cls, obj) {
 };
 
 basestring.PY$__str__ = function () {
-    return this;
+    if (this.PY$__class__) {
+        return this;
+    } else {
+        return object.PY$__str__.apply(this);
+    }
 };
 
 basestring.PY$__repr__ = function () {
-    return this.PY$__class__("'" + this.obj + "'");
+    if (this.PY$__class__) {
+        return this.PY$__class__("'" + this.obj + "'");
+    } else {
+        return object.PY$__repr__.apply(this);
+    }
 };
 
 basestring._js_ = function () {
@@ -96,11 +104,12 @@ basestring.PY$__mod__ = function(args) {
 };
 
 basestring.PY$__eq__ = function(s) {
-    if (typeof(s) === "string")
+    if (this.PY$__class__ === undefined)
+        return object.PY$__eq__.call(this, s);
+    else if (typeof(s) === "string")
         return this.obj === s ? True : False;
-    else if ($PY.isinstance(s, __builtins__.PY$basestring)) {
+    else if ($PY.isinstance(s, __builtins__.PY$basestring))
         return this.obj === s.obj ? True : False;
-    }
     else
         return False;
 };
