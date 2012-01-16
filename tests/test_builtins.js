@@ -409,10 +409,6 @@ function test_isinstance() {
 
     var t = tuple([1, 2, 3]);
 
-    test(function() { return __builtins__.PY$isinstance(t, Array) == False });
-    test(function() { return __builtins__.PY$isinstance(t, Number) == False });
-    test(function() { return __builtins__.PY$isinstance(t, String) == False });
-
     test(function() { return __builtins__.PY$isinstance(t, tuple()) == False });
 
     test(function() { return __builtins__.PY$isinstance(t, tuple([Number, Array])) == False });
