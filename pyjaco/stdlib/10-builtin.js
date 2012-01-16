@@ -105,7 +105,9 @@ __builtins__.PY$bin = function(num) {
 };
 
 __builtins__.PY$buffer = $PY.c_nif;
+
 __builtins__.PY$bytearray = $PY.c_nif;
+
 __builtins__.PY$bytes = $PY.c_nif;
 
 __builtins__.PY$callable = function(obj) {
@@ -131,11 +133,33 @@ __builtins__.PY$cmp = function(x, y) {
     return x.PY$__cmp__(y);
 };
 
-__builtins__.PY$coerce = $PY.c_nif;
+__builtins__.PY$coerce = function(a, b) {
+    var _int = __builtins__.PY$int;
+    var _float = __builtins__.PY$float;
+    var _tuple = __builtins__.PY$tuple;
+    if (a.PY$__class__ === _int) {
+        if (b.PY$__class__ === _int) {
+            return tuple([a, b]);
+        } else if (b.PY$__class__ === _float) {
+            return tuple([_float(a), _float(b)]);
+        } else {
+            throw __builtins__.PY$TypeError("number coercion failed");
+        }
+    } else if (a.PY$__class__ === _float) {
+        return tuple([_float(a), _float(b)]);
+    } else {
+        throw __builtins__.PY$TypeError("number coercion failed");
+    }
+};
+
 __builtins__.PY$compile = $PY.c_nif;
+
 __builtins__.PY$complex = $PY.c_nif;
-__builtins__.PY$copyright = $PY.c_nif;
-__builtins__.PY$credits = $PY.c_nif;
+
+__builtins__.PY$copyright = __builtins__.PY$license;
+
+__builtins__.PY$credits = "The Pyjaco authors would like to thank everybody who has contributed" +
+    "time, ideas, or patches to the Pyjaco project.";
 
 __builtins__.PY$delattr = function(obj, name) {
     name = js(name);
@@ -317,8 +341,12 @@ __builtins__.PY$len = function(obj) {
     }
 };
 
-__builtins__.PY$license = $PY.c_nif;
+__builtins__.PY$license = function() {
+    return __builtins__.PY$str("See the file LICENSE in the pyjaco distribution for details.");
+};
+
 __builtins__.PY$locals = $PY.c_nif;
+
 __builtins__.PY$long = $PY.c_nif;
 
 __builtins__.PY$map = function() {
