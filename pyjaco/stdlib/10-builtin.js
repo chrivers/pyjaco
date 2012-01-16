@@ -52,7 +52,18 @@ __builtins__.js_setattr = function(obj, name, value) {
 __builtins__.PY$abs = $PY.c_nif;
 __builtins__.PY$all = $PY.c_nif;
 __builtins__.PY$any = $PY.c_nif;
-__builtins__.PY$apply = $PY.c_nif;
+
+__builtins__.PY$apply = function(fun, vargs, kwargs) {
+    if (vargs === undefined) {
+        return fun();
+    } else {
+        if (kwargs === undefined) {
+            return fun(__varargs_make(vargs));
+        } else {
+            return fun(__varargs_make(vargs), __kwargs_make(kwargs));
+        }
+    }
+};
 
 __builtins__.PY$bin = function(num) {
     if (num.PY$__class__ === __builtins__.PY$int) {
