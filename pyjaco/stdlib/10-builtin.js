@@ -215,22 +215,18 @@ __builtins__.PY$intern = function(x) {
 
 __builtins__.PY$isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
-        var length = cls.PY$__len__();
-
-        if (length.PY$__eq__($c0) === True) {
-            return False;
-        }
-
-        for (var i = 0; i < length; i++) {
-            var _cls = cls.PY$__getitem__(i);
-
-            if ($PY.isinstance(obj, _cls)) {
-                return True;
+        var length = cls.PY$__len__()._js_();
+        obj = obj.PY$__class__;
+        while (obj) {
+            for (var i = 0; i < length; i++) {
+                if (obj === cls.PY$__getitem__(i))
+                    return True;
             }
+            obj = obj.PY$__super__;
         }
 
         return False;
-    } else {
+    } else if (cls.PY$__super__ !== undefined) {
         var c = obj.PY$__class__;
         while (c) {
             if (c === cls)
@@ -238,10 +234,36 @@ __builtins__.PY$isinstance = function(obj, cls) {
             c = c.PY$__super__;
         }
         return False;
+    } else {
+        throw __builtins__.PY$TypeError("isinstance() arg 2 must be a class, type, or tuple of classes and types");
     }
 };
 
-__builtins__.PY$issubclass = $PY.c_nif;
+__builtins__.PY$issubclass = function(obj, cls) {
+    if (cls.PY$__class__ === tuple) {
+        var length = cls.PY$__len__()._js_();
+
+        while (obj) {
+            for (var i = 0; i < length; i++) {
+                if (obj === cls.PY$__getitem__(i))
+                    return True;
+            }
+            obj = obj.PY$__super__;
+        }
+
+        return False;
+    } else if (cls.PY$__super__ !== undefined) {
+        while (obj) {
+            if (obj === cls)
+                return True;
+            obj = obj.PY$__super__;
+        }
+        return False;
+    } else {
+        throw __builtins__.PY$TypeError("issubclass() arg 2 must be a class or tuple of classes");
+    }
+};
+
 
 __builtins__.PY$len = function(obj) {
     if (obj.PY$__len__ !== undefined) {
