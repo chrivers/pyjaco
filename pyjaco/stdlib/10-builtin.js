@@ -50,8 +50,34 @@ __builtins__.js_setattr = function(obj, name, value) {
  */
 
 __builtins__.PY$abs = $PY.c_nif;
-__builtins__.PY$all = $PY.c_nif;
-__builtins__.PY$any = $PY.c_nif;
+
+__builtins__.PY$all = function(obj) {
+    if (obj === undefined) {
+        throw __builtins__.PY$TypeError("all() takes exactly one argument (" + arguments.length + " given)");
+    }
+    var item;
+    var bool = __builtins__.PY$bool;
+    for (var it = iter(obj); item = $PY.next(it); item !== null) {
+        if (bool(item) !== True) {
+            return False;
+        }
+    }
+    return True;
+};
+
+__builtins__.PY$any = function(obj) {
+    if (obj === undefined) {
+        throw __builtins__.PY$TypeError("any() takes exactly one argument (" + arguments.length + " given)");
+    }
+    var item;
+    var bool = __builtins__.PY$bool;
+    for (var it = iter(obj); item = $PY.next(it); item !== null) {
+        if (bool(item) === True) {
+            return True;
+        }
+    }
+    return False;
+};
 
 __builtins__.PY$apply = function(fun, vargs, kwargs) {
     if (vargs === undefined) {
