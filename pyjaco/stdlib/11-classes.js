@@ -82,6 +82,7 @@ object.PY$__create__ = function(cls) {
     };
 
     obj.PY$__class__ = cls;
+    obj.PY$__super__ = undefined;
     obj.id = prng();
     obj.PY$__init__.apply(obj, args);
     return obj;
