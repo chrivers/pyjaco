@@ -33,6 +33,10 @@ class ISTNode(object):
                 raise TypeError("IST node [%s] does not take attribute [%s]" % (self.__class__.__name__, x))
             else:
                 setattr(self, x, attr[x])
+        for x in self._fields:
+            if not x in attr:
+                raise TypeError("IST node [%s] requires attribute [%s]" % (self.__class__.__name__, x))
+
 
     def str(self, indent = 0):
         i = "  "*indent
@@ -42,20 +46,21 @@ class ISTNode(object):
         for k in self._fields:
             v = getattr(self, k)
             if isinstance(v, list):
-                s += "\n%s%s [\n" % (i, k)
+                s += "\n%s%s [" % (i, k)
+
                 for l in v:
-                    s += "%s" % (l.str(indent + 2))
-                    
+                    s += "\n%s" % (l.str(indent + 2))
+
                 if v == []:
-                    s = s[:-1] + "]"
+                    s += "]"
                 else:
-                    s += "\n%s]\n%s" % (i, i)
+                    s += "\n%s]" % i
             else:
                 if isinstance(v, ISTNode):
-                    f.append("%s=[%s]" % (k, v.str()))
+                    f = "%s = %s" % (k, v.str())
                 else:
-                    f.append("%s=%s" % (k, v))
-        s += ", ".join(f)
+                    f = "%s = %s" % (k, v)
+                s += "\n%s%s" % (i, f)
         return s
 
 ## Annotations
@@ -80,28 +85,28 @@ class Function(Code):
 class Statement(Code):
     _fields = []
 
-class IfStat(Code):
-    _fields = ["cond", "body", "else"]
+class If(Code):
+    _fields = ["cond", "body", "orelse"]
 
-class WhileStat(Code):
+class While(Code):
     _fields = ["conf", "body"]
 
-class TryExceptStat(Code):
+class TryExcept(Code):
     _fields = ["body", "errorbody"]
 
-class ForStat(Code):
+class For(Code):
     _fields = ["init", "cond", "incr", "body"]
 
-class RaiseStat(Code):
+class Raise(Code):
     _fields = ["expr"]
 
-class BreakStat(Code):
+class Break(Code):
     _fields = []
 
-class ContinueStat(Code):
+class Continue(Code):
     _fields = []
 
-class ReturnStat(Code):
+class Return(Code):
     _fields = ["expr"]
 
 ## Expressions
@@ -128,7 +133,7 @@ class GetAttr(Code):
     _fields = ["base", "attr"]
 
     def str(self, indent = 0):
-        return "%s%s.%s" % ("  " * indent, self.base, self.attr)
+        return "%s%s -> %s" % ("  " * indent, self.base.str(), self.attr)
 
 class Name(Code):
     _fields = ["id"]
