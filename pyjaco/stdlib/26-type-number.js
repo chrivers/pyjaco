@@ -53,6 +53,10 @@ number.PY$__pos__ = function() {
     return this.PY$__class__(+this.obj);
 };
 
+number.PY$__abs__ = function() {
+    return this.PY$__class__(Math.abs(this.obj));
+};
+
 number.PY$__neg__ = function() {
     return this.PY$__class__(-this.obj);
 };
