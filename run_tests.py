@@ -5,6 +5,7 @@ import testtools.runner
 import testtools.util
 import testtools.tests
 from unittest import installHandler
+from pyjs import BuiltinGenerator
 
 def main():
     installHandler()
@@ -37,6 +38,11 @@ def main():
         help="run only failing tests (to check for improvements)"
         )
     options, args = option_parser.parse_args()
+    
+    with open("py-builtins.js", "w") as f:
+        builtins = BuiltinGenerator().generate_builtins()
+        f.write(builtins)
+    
     runner = testtools.runner.Py2JsTestRunner(verbosity=2)
     results = None
     try:
