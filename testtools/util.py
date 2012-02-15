@@ -12,7 +12,7 @@ import subprocess
 import posixpath
 
 def run_command(cmd):
-    return subprocess.call([cmd], shell = True)
+    return subprocess.call(cmd, shell = True)
 
 def get_posix_path(path):
     """translates path to a posix path"""
