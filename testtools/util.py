@@ -11,6 +11,9 @@ import os
 import subprocess
 import posixpath
 
+def run_command(cmd):
+    return subprocess.call([cmd], shell = True)
+
 def get_posix_path(path):
     """translates path to a posix path"""
     heads = []
@@ -42,7 +45,7 @@ def run_with_stdlib(file_path, file_name=None):
                   'js -f "py-builtins.js" '
                   '-f "%(js_path)s" > "%(js_out_path)s" 2> "%(js_error)s"'
                   )% self.templ
-            self.assertEqual(0, subprocess.call([cmd], shell = True))
+            self.assertEqual(0, run_command(cmd))
             self.reportProgres()
         def __str__(self):
             return "%(js_unix_path)s [1]: " % self.templ
@@ -76,7 +79,7 @@ def compile_file_test(file_path, file_name=None):
                 ) % self.templ,
               )
             for cmd in commands:
-                self.assertEqual(0, subprocess.call([cmd], shell = True))
+                self.assertEqual(0, run_command(cmd))
                 self.reportProgres()
         def __str__(self):
             return "%(py_unix_path)s [1]: " % self.templ
@@ -141,7 +144,7 @@ def compile_and_run_file_test(file_path, file_name=None):
             commands.append(javascript_command)
 
             for cmd in commands:
-                self.assertEqual(0, subprocess.call([cmd], shell = True))
+                self.assertEqual(0, run_command(cmd))
                 self.reportProgres()
             self.assertEqual(
                 file(self.templ["py_out_path"]).readlines(),

@@ -9,6 +9,8 @@ if sys.version_info < (2, 7):
 else:
     import unittest
 import tempfile
+from util import run_command
+
 class EnviromentTest(unittest.TestCase):
     "Test case that makes sure that the environment is up and working"
     def reportProgres(self):
@@ -19,7 +21,7 @@ class EnviromentTest(unittest.TestCase):
 
     def runTest(self):
         """The actual test goes here."""
-        if os.system(
+        if run_command(
             "echo | js > %s" %
             os.path.join(
                 tempfile.gettempdir(),
