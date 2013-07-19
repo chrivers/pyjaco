@@ -1,6 +1,6 @@
 ######################################################################
 ##
-## Copyright 2012 Christian Iversen <ci@sikkerhed.org>
+## Copyright 2013 Christian Iversen <ci@sikkerhed.org>
 ##
 ## Permission is hereby granted, free of charge, to any person
 ## obtaining a copy of this software and associated documentation
@@ -120,23 +120,14 @@ class Assign(Code):
 class BinOp(Code):
     _fields = ["left", "right", "op"]
 
-    def str(self, indent = 0):
-        return "%s[%s %s %s]" % ("  " * indent, self.left.str(), self.op, self.right.str())
-
 class Value(Code):
     _fields = ["value"]
-
-    def str(self, indent = 0):
-        return "%s[%s: %s]" % ("  " * indent, self.value.__class__.__name__, repr(self.value))
 
 class GetAttr(Code):
     _fields = ["base", "attr"]
 
-    def str(self, indent = 0):
-        return "%s%s -> %s" % ("  " * indent, self.base.str(), self.attr)
-
 class Name(Code):
     _fields = ["id"]
 
-    def str(self, indent = 0):
-        return self.id
+class String(Code):
+    _fields = ["value"]
