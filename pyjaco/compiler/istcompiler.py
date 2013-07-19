@@ -153,3 +153,23 @@ class ISTCompiler(Multiplexer):
         return Parameters(args = [arg.id for arg in node.args],
                           defaults = self.comp(node.defaults),
                           kwargs = node.kwarg, varargs = node.vararg)
+
+    def node_tryexcept(self, node):
+        return TryExcept(body = self.comp(node.body),
+                         handlers = self.comp(node.handlers),
+                         orelse = self.comp(node.orelse))
+
+    def node_tryfinally(self, node):
+        return TryFinally(body = self.comp(node.body), finalbody = self.comp(node.finalbody))
+
+    def node_excepthandler(self, node):
+        if node.name:
+            nodename = self.comp(node.name)
+        else:
+            nodename = None
+
+        if node.type:
+            nodetype = self.comp(node.type)
+        else:
+            nodetype = None
+        return TryHandler(body = self.comp(node.body), name = nodename, type = nodetype)
