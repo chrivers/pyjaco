@@ -16,10 +16,10 @@ class Printer(istcompiler.Multiplexer):
 
     def comp(self, node, indent = 0):
         if isinstance(node, list):
-            print "Visiting a list %s" % repr(node)
+            # print "Visiting a list %s" % repr(node)
             return [self.comp(n) for n in node]
         else:
-            print "Visiting %s with fields [%s]" % (node.__class__.__name__, ", ".join(node._fields))
+            # print "Visiting %s with fields [%s]" % (node.__class__.__name__, ", ".join(node._fields))
             return super(Printer, self).comp(node)
 
     def node_block(self, node):
@@ -84,7 +84,22 @@ class Printer(istcompiler.Multiplexer):
             body = self.indent("pass")
         else:
             body = "\n".join(self.indent(self.comp(node.body)))
-        return "def %s(%s):\n%s" % (node.name, ", ".join(self.comp(node.params)), body)
+        return "def %s(%s):\n%s\n" % (node.name, self.comp(node.params), body)
+
+    def node_parameters(self, node):
+        argnames = []
+        posargs = node.args[:-len(node.defaults)]
+        optargs = ["%s = %s" % (x, y) for x, y in zip(node.args[-len(node.defaults):], self.comp(node.defaults))]
+        argnames.extend(posargs)
+        argnames.extend(optargs)
+
+        if node.varargs:
+            argnames.append("*%s" % node.varargs)
+
+        if node.kwargs:
+            argnames.append("**%s" % node.kwargs)
+
+        return ", ".join(argnames)
 
 def format(ist):
     p = Printer()
