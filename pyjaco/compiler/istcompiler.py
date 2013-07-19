@@ -41,12 +41,16 @@ class Compiler(object):
 class Multiplexer(object):
 
     def comp(self, node):
-        name = "node_%s" % node.__class__.__name__.lower()
-#        print node.__class__.__name__, [x for x in dir(node) if not x.startswith("_")]
-        if hasattr(self, name):
-            return getattr(self, name)(node)
+        if isinstance(node, list):
+            # print "Visiting a list %s" % repr(node)
+            return [self.comp(n) for n in node]
         else:
-            raise NotImplementedError("%s does not support node type [%s]" % (self.__class__.__name__, node.__class__.__name__))
+            name = "node_%s" % node.__class__.__name__.lower()
+            # print node.__class__.__name__, [x for x in dir(node) if not x.startswith("_")]
+            if hasattr(self, name):
+                return getattr(self, name)(node)
+            else:
+                raise NotImplementedError("%s does not support node type [%s]" % (self.__class__.__name__, node.__class__.__name__))
 
     ## Multiplexed functions
 
@@ -115,7 +119,8 @@ class ISTCompiler(Multiplexer):
         return self.comp(node.value)
 
     def node_functiondef(self, node):
-        return Function(body = [self.comp(n) for n in node.body], name = node.name, params = [])
+        return Function(body = [self.comp(n) for n in node.body], name = node.name, params = self.comp(node.args),
+                        decos = [self.comp(n) for n in node.decorator_list])
 
     def node_if(self, node):
         return If(cond = self.comp(node.test), body = [self.comp(n) for n in node.body], orelse = [self.comp(n) for n in node.orelse])
@@ -143,3 +148,8 @@ class ISTCompiler(Multiplexer):
 
     def node_pass(self, node):
         return Nop()
+
+    def node_arguments(self, node):
+        return Parameters(args = [arg.id for arg in node.args],
+                          defaults = self.comp(node.defaults),
+                          kwargs = node.kwarg, varargs = node.vararg)
