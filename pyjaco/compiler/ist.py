@@ -77,6 +77,9 @@ class Code(ISTNode):
 class Block(Code):
     _fields = ["body"]
 
+class Nop(Code):
+    _fields = []
+
 class Function(Code):
     _fields = ["name", "params", "body"]
 

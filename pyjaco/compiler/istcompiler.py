@@ -142,4 +142,4 @@ class ISTCompiler(Multiplexer):
         return String(value = node.s)
 
     def node_pass(self, node):
-        return Block(body = [])
+        return Nop()

@@ -1,27 +1,26 @@
+import ist
 import istcompiler
 
 class Printer(istcompiler.Multiplexer):
 
-    indentation = 0
+    indentation = 4
 
-    def indent(self, s):
-        ind = " " * self.indentation
+    def indent(self, s, indentation = None):
+        if indentation == None:
+            indentation = self.indentation
+        ind = " " * indentation
         if isinstance(s, list):
-            res = [ind + n for n in s]
+            return [ind + n for n in s]
         else:
             return ind + s
 
     def comp(self, node, indent = 0):
-        self.indentation += indent
         if isinstance(node, list):
-            print "Visiting a list.."
-            res = [self.comp(n) for n in node]
-            print "..done"
+            print "Visiting a list %s" % repr(node)
+            return [self.comp(n) for n in node]
         else:
             print "Visiting %s with fields [%s]" % (node.__class__.__name__, ", ".join(node._fields))
-            res = self.indent(super(Printer, self).comp(node))
-        self.indentation -= indent
-        return res
+            return super(Printer, self).comp(node)
 
     def node_block(self, node):
         return "\n".join(self.comp(stmt) for stmt in node.body)
@@ -30,7 +29,10 @@ class Printer(istcompiler.Multiplexer):
         return str(node)
 
     def node_getattr(self, node):
-        return "%s.%s" % (self.comp(node.base), node.attr)
+        if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
+            return node.attr
+        else:
+            return "%s.%s" % (self.comp(node.base), node.attr)
 
     def node_value(self, node):
         return str(node.value)
@@ -74,13 +76,15 @@ class Printer(istcompiler.Multiplexer):
     def node_return(self, node):
         return str(node)
 
+    def node_nop(self, node):
+        return "pass"
+
     def node_function(self, node):
-        print node.body
         if node.body == []:
             body = self.indent("pass")
         else:
-            body = "\n".join(self.comp(node.body, 1))
-        return "%s(%s):\n%s" % (node.name, ", ".join(self.comp(node.params)), body)
+            body = "\n".join(self.indent(self.comp(node.body)))
+        return "def %s(%s):\n%s" % (node.name, ", ".join(self.comp(node.params)), body)
 
 def format(ist):
     p = Printer()
