@@ -137,3 +137,12 @@ class Name(Code):
 
 class String(Code):
     _fields = ["value"]
+
+class TryExcept(Code):
+    _fields = ["body", "handlers", "orelse"]
+
+class TryFinally(Code):
+    _fields = ["body", "finalbody"]
+
+class TryHandler(Code):
+    _fields = ["body", "name", "type"]
