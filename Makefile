@@ -3,7 +3,9 @@ SHELL=/bin/zsh -G
 all: stdlib
 	$(MAKE) -C examples generate
 
-stdlib:
+stdlib: py-builtins.js
+
+py-builtins.js:
 	@./pyjs.py -b generate --output .
 
 clean: testclean
