@@ -101,6 +101,29 @@ class Printer(istcompiler.Multiplexer):
 
         return ", ".join(argnames)
 
+    def node_tryexcept(self, node):
+        body = "\n".join(self.indent(self.comp(node.body)))
+        excpt = "\n".join(self.comp(node.handlers))
+        if node.orelse:
+            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
+        else:
+            orelse = ""
+        return "try:\n%s\n%s%s\n" % (body, excpt, orelse)
+
+    def node_tryfinally(self, node):
+        body = "\n".join(self.indent(self.comp(node.body)))
+        finalbody = "\n".join(self.indent(self.comp(node.finalbody)))
+        return "try:\n%s\nfinally:\n%s\n" % (body, finalbody)
+
+    def node_tryhandler(self, node):
+        if node.type and node.name:
+            handle = " %s, %s" % (self.comp(node.type), self.comp(node.name))
+        elif node.type:
+            handle = " %s" % self.comp(node.type)
+        else:
+            handle = ""
+        return "except%s:\n%s" % (handle, "\n".join(self.indent(self.comp(node.body))))
+
 def format(ist):
     p = Printer()
     return p.comp(ist)
