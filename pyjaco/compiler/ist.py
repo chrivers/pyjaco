@@ -81,7 +81,10 @@ class Nop(Code):
     _fields = []
 
 class Function(Code):
-    _fields = ["name", "params", "body"]
+    _fields = ["name", "params", "body", "decos"]
+
+class Parameters(Code):
+    _fields = ["args", "defaults", "kwargs", "varargs"]
 
 ## Statements
 
