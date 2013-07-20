@@ -194,3 +194,9 @@ class Generator(Code):
 
 class Comprehension(Code):
     _fields = ["conds", "iter", "target"]
+
+class Import(Code):
+    _fields = ["names"]
+
+class ImportFrom(Code):
+    _fields = ["module", "names"]

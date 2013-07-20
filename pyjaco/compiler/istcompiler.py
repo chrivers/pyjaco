@@ -239,10 +239,17 @@ class ISTCompiler(Multiplexer):
         return Comprehension(conds = self.comp(node.ifs), iter = self.comp(node.iter), target = self.comp(node.target))
 
     def node_importfrom(self, node):
-        return Nop()
+        assert node.level == 0
+        names = dict()
+        for n in node.names:
+            names[n.name] = n.asname
+        return ImportFrom(module = node.module, names = names)
 
     def node_import(self, node):
-        return Nop()
+        names = dict()
+        for n in node.names:
+            names[n.name] = n.asname
+        return Import(names = names)
 
     def node_listcomp(self, node):
         return List(values = [Generator(value = self.comp(node.elt), generators = self.comp(node.generators))])

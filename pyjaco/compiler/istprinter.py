@@ -286,6 +286,24 @@ class Printer(istcompiler.Multiplexer):
     def node_nonetype(self, node):
         return "None"
 
+    def node_import(self, node):
+        names = []
+        for name, asname in node.names.items():
+            if asname:
+                names.append("%s as %s" % (name, asname))
+            else:
+                names.append(name)
+        return "import %s" % ", ".join(names)
+
+    def node_importfrom(self, node):
+        names = []
+        for name, asname in node.names.items():
+            if asname:
+                names.append("%s as %s" % (name, asname))
+            else:
+                names.append(name)
+        return "from %s import %s" % (node.module, ", ".join(names))
+
 def format(ist):
     p = Printer()
     return p.comp(ist)
