@@ -25,7 +25,8 @@ class Printer(istcompiler.Multiplexer):
     compmap = dict(
         Gt = ">",
         Eq = "==",
-        Is = "is"
+        Is = "is",
+        In = "in"
         )
 
     def indent(self, s, indentation = None):
@@ -180,6 +181,19 @@ class Printer(istcompiler.Multiplexer):
 
     def node_continue(self, node):
         return "continue"
+
+    def node_lambda(self, node):
+        if node.args:
+            args = " %s" % self.comp(node.args)
+        else:
+            args = ""
+        return "lambda%s: %s" % (args, self.comp(node.body))
+
+    def node_unaryop(self, node):
+        return "%s%s" % (self.comp(node.lvalue), node.op)
+
+    def node_float(self, node):
+        return repr(node)
 
 def format(ist):
     p = Printer()

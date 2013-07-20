@@ -170,3 +170,9 @@ class Compare(Code):
 
 class Subscript(Code):
     _fields = ["value", "slice"]
+
+class Lambda(Code):
+    _fields = ["body", "args"]
+
+class UnaryOp(Code):
+    _fields = ["op", "lvalue"]
