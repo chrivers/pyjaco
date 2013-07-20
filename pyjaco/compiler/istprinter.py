@@ -191,6 +191,9 @@ class Printer(istcompiler.Multiplexer):
     def node_continue(self, node):
         return "continue"
 
+    def node_break(self, node):
+        return "break"
+
     def node_lambda(self, node):
         if node.args:
             args = " %s" % self.comp(node.args)
