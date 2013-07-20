@@ -79,10 +79,14 @@ class ISTCompiler(Multiplexer):
     def node_boolop(self, node):
         return BinOp(left = self.comp(node.values[0]), right = self.comp(node.values[1]), op = node.op.__class__.__name__)
 
+    def node_keyword(self, node):
+        return node.arg, self.comp(node.value)
+
     def node_call(self, node):
-        assert node.kwargs == None
-        assert node.starargs == None
-        return Call(func = self.comp(node.func), params = [self.comp(n) for n in node.args])
+        return Call(func     = self.comp(node.func), args = self.comp(node.args),
+                    keywords = None if node.keywords is None else self.comp(node.keywords),
+                    varargs  = None if node.starargs is None else self.comp(node.starargs),
+                    kwargs   = None if node.kwargs   is None else self.comp(node.kwargs))
 
     def node_expr(self, node):
         return self.comp(node.value)
@@ -107,10 +111,15 @@ class ISTCompiler(Multiplexer):
         assert node.dest == None
         assert node.nl
 
-        return Call(func = GetAttr(base = self.bi, attr = "print"), params = [self.comp(n) for n in node.values])
+        return Call(func = GetAttr(base = self.bi, attr = "print"), args = [self.comp(n) for n in node.values],
+                    keywords = None, varargs = None, kwargs = None)
 
     def node_return(self, node):
-        return Return(expr = self.comp(node.value))
+        if node.value:
+            value = self.comp(node.value)
+        else:
+            value = None
+        return Return(expr = value)
 
     def node_str(self, node):
         return String(value = node.s)
@@ -222,3 +231,18 @@ class ISTCompiler(Multiplexer):
         else:
             step = None
         return Slice(lower = lower, upper = upper, step = step)
+
+    def node_generatorexp(self, node):
+        return Generator(value = self.comp(node.elt), generators = self.comp(node.generators))
+
+    def node_comprehension(self, node):
+        return Comprehension(conds = self.comp(node.ifs), iter = self.comp(node.iter), target = self.comp(node.target))
+
+    def node_importfrom(self, node):
+        return Nop()
+
+    def node_import(self, node):
+        return Nop()
+
+    def node_listcomp(self, node):
+        return Nop()
