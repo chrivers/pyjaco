@@ -24,7 +24,8 @@ class Printer(istcompiler.Multiplexer):
 
     compmap = dict(
         Gt = ">",
-        Eq = "=="
+        Eq = "==",
+        Is = "is"
         )
 
     def indent(self, s, indentation = None):
@@ -166,7 +167,8 @@ class Printer(istcompiler.Multiplexer):
     def node_compare(self, node):
         ret = []
         for op, cval in zip(node.ops, node.comps):
-            assert op in self.compmap
+            if op not in self.compmap:
+                raise NotImplementedError("Unknown comparison operator: %s" % op)
             ret.append("%s %s" % (self.compmap[op], self.comp(cval)))
         return "%s %s" % (self.comp(node.lvalue), " ".join(ret))
 
@@ -175,6 +177,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_list(self, node):
         return "[%s]" % ", ".join(self.comp(node.values))
+
+    def node_continue(self, node):
+        return "continue"
 
 def format(ist):
     p = Printer()

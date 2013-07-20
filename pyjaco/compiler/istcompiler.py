@@ -172,3 +172,6 @@ class ISTCompiler(Multiplexer):
 
     def node_list(self, node):
         return List(values = self.comp(node.elts))
+
+    def node_continue(self, node):
+        return Continue()
