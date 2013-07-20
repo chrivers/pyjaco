@@ -57,7 +57,7 @@ class ISTNode(object):
                     s += "\n%s]" % i
             else:
                 if isinstance(v, ISTNode):
-                    f = "%s = %s" % (k, v.str())
+                    f = "%s = %s" % (k, v.str(indent))
                 else:
                     f = "%s = %s" % (k, v)
                 s += "\n%s%s" % (i, f)
