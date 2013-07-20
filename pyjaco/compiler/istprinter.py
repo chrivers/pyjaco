@@ -24,7 +24,9 @@ class Printer(istcompiler.Multiplexer):
 
     compmap = dict(
         Gt = ">",
+        Lt = "<",
         Eq = "==",
+        NotEq = "<>",
         Is = "is",
         In = "in"
         )
@@ -165,6 +167,13 @@ class Printer(istcompiler.Multiplexer):
             orelse = ""
         return "if %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
 
+    def node_while(self, node):
+        if node.orelse:
+            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
+        else:
+            orelse = ""
+        return "while %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
+
     def node_compare(self, node):
         ret = []
         for op, cval in zip(node.ops, node.comps):
@@ -181,6 +190,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_continue(self, node):
         return "continue"
+
+    def node_while(self, node):
+        return "while"
 
     def node_lambda(self, node):
         if node.args:
@@ -200,6 +212,18 @@ class Printer(istcompiler.Multiplexer):
             return "raise %s" % (self.comp(node.expr))
         else:
             return "raise"
+
+    def node_dict(self, node):
+        return "{%s}" % ('"%s": "%s"' % (key, value) for key, value in zip(node.keys, node.values))
+
+    def node_global(self, node):
+        return "global %s" % (node.names)
+
+    def node_yield(self, node):
+        if node.value:
+            return "yield %s" % (self.comp(node.value))
+        else:
+            return "yield"
 
 def format(ist):
     p = Printer()

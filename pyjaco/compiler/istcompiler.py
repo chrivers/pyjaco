@@ -176,6 +176,9 @@ class ISTCompiler(Multiplexer):
     def node_continue(self, node):
         return Continue()
 
+    def node_break(self, node):
+        return Break()
+
     def node_lambda(self, node):
         return Lambda(args = self.comp(node.args), body = self.comp(node.body))
 
@@ -190,3 +193,15 @@ class ISTCompiler(Multiplexer):
         else:
             expr = None
         return Raise(expr = expr)
+
+    def node_while(self, node):
+        return While(cond = self.comp(node.test), body = self.comp(node.body), orelse = self.comp(node.orelse))
+
+    def node_dict(self, node):
+        return Dict(keys = self.comp(node.keys), values = self.comp(node.values))
+
+    def node_global(self, node):
+        return Global(names = node.names[:])
+
+    def node_yield(self, node):
+        return Yield(value = self.comp(node.value))

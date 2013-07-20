@@ -92,10 +92,10 @@ class Statement(Code):
     _fields = []
 
 class If(Code):
-    _fields = ["cond", "body", "orelse"]
+    _fields = ["body", "cond", "orelse"]
 
 class While(Code):
-    _fields = ["conf", "body"]
+    _fields = ["body", "cond", "orelse"]
 
 class TryExcept(Code):
     _fields = ["body", "errorbody"]
@@ -176,3 +176,12 @@ class Lambda(Code):
 
 class UnaryOp(Code):
     _fields = ["op", "lvalue"]
+
+class Dict(Code):
+    _fields = ["keys", "values"]
+
+class Global(Code):
+    _fields = ["names"]
+
+class Yield(Code):
+    _fields = ["value"]
