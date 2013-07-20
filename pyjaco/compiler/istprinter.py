@@ -65,8 +65,8 @@ class Printer(istcompiler.Multiplexer):
         self.dedent()
 
     def node_getattr(self, node):
-        if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
-            return node.attr
+        if isinstance(node.base, ist.Name) and node.base.id == "__builtins__" and node.attr == "print":
+            return "getattr(__builtins__, 'print')"
         else:
             return "%s.%s" % (self.comp(node.base), node.attr)
 
@@ -94,10 +94,10 @@ class Printer(istcompiler.Multiplexer):
             args.extend("%s = %s" % (x[0], self.comp(x[1])) for x in node.keywords)
 
         if node.varargs:
-            args.append("*%s" % node.varargs)
+            args.append("*%s" % self.comp(node.varargs))
 
         if node.kwargs:
-            args.append("**%s" % node.varargs)
+            args.append("**%s" % self.comp(node.kwargs))
 
         return "%s(%s)" % (self.comp(node.func), ", ".join(args))
 
@@ -111,6 +111,7 @@ class Printer(istcompiler.Multiplexer):
         self.line("pass")
 
     def node_function(self, node):
+        assert node.decorators == []
         self.line("def %s(%s):" % (node.name, self.comp(node.params)))
         if node.body == []:
             self.block([Nop()])
@@ -196,7 +197,7 @@ class Printer(istcompiler.Multiplexer):
         self.block(node.body)
 
     def node_delete(self, node):
-        return "del %s" % self.comp(node.targets)
+        return "del %s" % ", ".join(self.comp(node.targets))
 
     def node_if(self, node):
         self.line("if %s:" % self.comp(node.cond))
@@ -237,7 +238,7 @@ class Printer(istcompiler.Multiplexer):
             args = " %s" % self.comp(node.args)
         else:
             args = ""
-        return "lambda%s: %s" % (args, self.comp(node.body))
+        return "(lambda%s: %s)" % (args, self.comp(node.body))
 
     def node_unaryop(self, node):
         return "%s%s" % (self.uopmap[node.op], self.comp(node.lvalue))
@@ -252,7 +253,10 @@ class Printer(istcompiler.Multiplexer):
             self.line("raise")
 
     def node_dict(self, node):
-        return "{%s}" % ('"%s": "%s"' % (key, value) for key, value in zip(node.keys, node.values))
+        if len(node.keys):
+            return "{%s}" % ('"%s": "%s"' % (key, value) for key, value in zip(node.keys, node.values))
+        else:
+            return "{}"
 
     def node_global(self, node):
         return "global %s" % (node.names)
