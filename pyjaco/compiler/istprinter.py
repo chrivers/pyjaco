@@ -27,15 +27,20 @@ class Printer(istcompiler.Multiplexer):
         Gt = ">",
         Lt = "<",
         Eq = "==",
+        GtE = ">=",
+        LtE = "<=",
         NotEq = "<>",
+        NotIn = "not in",
         Is = "is",
         In = "in",
         Or = "or"
         )
 
     uopmap = dict(
+        UAdd = "+",
         USub = "-",
-        Not  = "not "
+        Not  = "not ",
+        Invert = "~",
         )
 
     def indent(self, s, indentation = None):
@@ -82,7 +87,18 @@ class Printer(istcompiler.Multiplexer):
         return '"%s"' % node.value
 
     def node_call(self, node):
-        return "%s(%s)" % (self.comp(node.func), ", ".join(self.comp(node.params)))
+        args = self.comp(node.args)
+
+        if node.keywords:
+            args.extend("%s = %s" % (x[0], self.comp(x[1])) for x in node.keywords)
+
+        if node.varargs:
+            args.append("*%s" % node.varargs)
+
+        if node.kwargs:
+            args.append("**%s" % node.varargs)
+
+        return "%s(%s)" % (self.comp(node.func), ", ".join(args))
 
     def node_name(self, node):
         return node.id
@@ -147,7 +163,12 @@ class Printer(istcompiler.Multiplexer):
         return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
 
     def node_tuple(self, node):
-        return "(%s)" % ", ".join(self.comp(node.values))
+        if len(node.values) == 0:
+            return "()"
+        elif len(node.values) == 1:
+            return "(%s,)" % self.comp(node.values[0])
+        else:
+            return "(%s)" % ", ".join(self.comp(node.values))
 
     def node_augassign(self, node):
         assert node.op in self.opmap
@@ -249,6 +270,15 @@ class Printer(istcompiler.Multiplexer):
             step = ""
 
         return "%s:%s%s" % (lower, upper, step)
+
+    def node_generator(self, node):
+        return "foo"
+
+    def node_comprehension(self, node):
+        return "foo"
+
+    def node_nonetype(self, node):
+        return "None"
 
 def format(ist):
     p = Printer()
