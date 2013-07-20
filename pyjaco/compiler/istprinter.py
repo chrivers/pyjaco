@@ -278,8 +278,10 @@ class Printer(istcompiler.Multiplexer):
         return "%s %s" % (self.comp(node.value), " ".join(gens))
 
     def node_comprehension(self, node):
-        assert node.conds == []
-        return "for %s in %s" % (self.comp(node.target), self.comp(node.iter))
+        conds = [""]
+        for cond in node.conds:
+            conds.append(self.comp(cond))
+        return "for %s in %s%s" % (self.comp(node.target), self.comp(node.iter), " if ".join(conds))
 
     def node_nonetype(self, node):
         return "None"
