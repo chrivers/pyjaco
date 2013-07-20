@@ -195,6 +195,12 @@ class Printer(istcompiler.Multiplexer):
     def node_float(self, node):
         return repr(node)
 
+    def node_raise(self, node):
+        if node.expr:
+            return "raise %s" % (self.comp(node.expr))
+        else:
+            return "raise"
+
 def format(ist):
     p = Printer()
     return p.comp(ist)

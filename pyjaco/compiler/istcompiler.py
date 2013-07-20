@@ -181,3 +181,12 @@ class ISTCompiler(Multiplexer):
 
     def node_unaryop(self, node):
         return UnaryOp(lvalue = self.comp(node.operand), op = node.op.__class__.__name__)
+
+    def node_raise(self, node):
+        assert node.inst is None
+        assert node.tback is None
+        if node.type:
+            expr = self.comp(node.type)
+        else:
+            expr = None
+        return Raise(expr = expr)
