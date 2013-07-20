@@ -7,5 +7,6 @@ if len(sys.argv) == 1:
     sys.exit()
 
 c = istcompiler.Compiler()
-code = c.compile(file(sys.argv[1]).read(), "test.py")
-print istprinter.format(code)
+for arg in sys.argv[1:]:
+    code = c.compile(file(arg).read(), "test.py")
+    print istprinter.format(code)
