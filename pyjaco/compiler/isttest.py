@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import istcompiler
-import istprinter
+import pyprinter
 import sys
 
 if len(sys.argv) == 1:
@@ -10,4 +10,4 @@ if len(sys.argv) == 1:
 c = istcompiler.Compiler()
 for arg in sys.argv[1:]:
     code = c.compile(file(arg).read(), "test.py")
-    print istprinter.format(code)
+    print pyprinter.format(code)
