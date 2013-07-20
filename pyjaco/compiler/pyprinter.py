@@ -58,21 +58,18 @@ class Printer(istcompiler.Multiplexer):
     def dedent(self, indent = 4):
         self.indentation -= indent
 
-    def block(self, block):
+    def block(self, block, end = True):
         self.indent()
         for b in block:
             res = self.comp(b)
             if res:
                 self.line(res)
         self.dedent()
-        if self.buffer[-1].strip() <> "":
+        if self.buffer[-1].strip() <> "" and end:
             self.line("")
 
     def node_getattr(self, node):
-        if isinstance(node.base, ist.Name) and node.base.id == "__builtins__" and node.attr == "print":
-            return "getattr(__builtins__, 'print')"
-        else:
-            return "%s.%s" % (self.comp(node.base), node.attr)
+        return "%s.%s" % (self.comp(node.base), node.attr)
 
     def node_value(self, node):
         return self.comp(node.value)
@@ -106,7 +103,10 @@ class Printer(istcompiler.Multiplexer):
         if node.kwargs:
             args.append("**%s" % self.comp(node.kwargs))
 
-        return "%s(%s)" % (self.comp(node.func), ", ".join(args))
+        if isinstance(node.func, ist.GetAttr) and isinstance(node.func.base, ist.Name) and node.func.base.id == "__builtins__" and node.func.attr == "print":
+            return "print %s" % ", ".join(args)
+        else:
+            return "%s(%s)" % (self.comp(node.func), ", ".join(args))
 
     def node_name(self, node):
         return node.id
@@ -154,7 +154,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_tryexcept(self, node):
         self.line("try:")
-        self.block(node.body)
+        self.block(node.body, end = False)
         for handler in node.handlers:
             self.comp(handler)
         if node.orelse:
@@ -163,7 +163,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_tryfinally(self, node):
         self.line("try:")
-        self.block(node.body)
+        self.block(node.body, end = False)
         self.line("finally:")
         self.block(node.finalbody)
 
@@ -175,7 +175,7 @@ class Printer(istcompiler.Multiplexer):
         else:
             handle = ""
         self.line("except%s:" % handle)
-        self.block(node.body)
+        self.block(node.body, end = False)
 
     def node_assign(self, node):
         self.line("%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue)))
@@ -209,7 +209,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_if(self, node):
         self.line("if %s:" % self.comp(node.cond))
-        self.block(node.body)
+        self.block(node.body, end = bool(node.orselse))
         if node.orelse:
             self.line("else:")
             self.block(node.orelse)
