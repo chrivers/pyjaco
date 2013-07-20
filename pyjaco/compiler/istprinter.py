@@ -3,8 +3,6 @@ import istcompiler
 
 class Printer(istcompiler.Multiplexer):
 
-    indentation = 4
-
     opmap = dict(
         Add = "+",
         Sub = "-",
@@ -52,16 +50,28 @@ class Printer(istcompiler.Multiplexer):
         else:
             return ind + s
 
-    def comp(self, node, indent = 0):
-        if isinstance(node, list):
-            # print "Visiting a list %s" % repr(node)
-            return [self.comp(n) for n in node]
-        else:
-            # print "Visiting %s with fields [%s]" % (node.__class__.__name__, ", ".join(node._fields))
-            return super(Printer, self).comp(node)
+    def format(self, tree):
+        self.buffer = []
+        self.indentation = -4
+        self.block(tree)
+        return "\n".join(self.buffer)
 
-    def node_block(self, node):
-        return "\n".join(self.comp(stmt) for stmt in node.body)
+    def line(self, line):
+        self.buffer.append(" " * self.indentation + line)
+
+    def indent(self, indent = 4):
+        self.indentation += indent
+
+    def dedent(self, indent = 4):
+        self.indentation -= indent
+
+    def block(self, block):
+        self.indent()
+        for b in block:
+            res = self.comp(b)
+            if res:
+                self.line(res)
+        self.dedent()
 
     def node_getattr(self, node):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
@@ -104,17 +114,17 @@ class Printer(istcompiler.Multiplexer):
         return node.id
 
     def node_return(self, node):
-        return "return %s" % self.comp(node.expr)
+        self.line("return %s" % self.comp(node.expr))
 
     def node_nop(self, node):
-        return "pass"
+        self.line("pass")
 
     def node_function(self, node):
+        self.line("def %s(%s):" % (node.name, self.comp(node.params)))
         if node.body == []:
-            body = self.indent("pass")
+            self.block([Nop()])
         else:
-            body = "\n".join(self.indent(self.comp(node.body)))
-        return "def %s(%s):\n%s\n" % (node.name, self.comp(node.params), body)
+            self.block(node.body)
 
     def node_parameters(self, node):
         argnames = []
@@ -137,18 +147,19 @@ class Printer(istcompiler.Multiplexer):
         return ", ".join(argnames)
 
     def node_tryexcept(self, node):
-        body = "\n".join(self.indent(self.comp(node.body)))
-        excpt = "\n".join(self.comp(node.handlers))
+        self.line("try:")
+        self.block(node.body)
+        for handler in node.handlers:
+            self.comp(handler)
         if node.orelse:
-            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
-        else:
-            orelse = ""
-        return "try:\n%s\n%s%s\n" % (body, excpt, orelse)
+            self.line("else:")
+            self.block(node.orelse)
 
     def node_tryfinally(self, node):
-        body = "\n".join(self.indent(self.comp(node.body)))
-        finalbody = "\n".join(self.indent(self.comp(node.finalbody)))
-        return "try:\n%s\nfinally:\n%s\n" % (body, finalbody)
+        self.line("try:")
+        self.block(node.body)
+        self.line("finally:")
+        self.block(node.finalbody)
 
     def node_tryhandler(self, node):
         if node.type and node.name:
@@ -157,10 +168,11 @@ class Printer(istcompiler.Multiplexer):
             handle = " %s" % self.comp(node.type)
         else:
             handle = ""
-        return "except%s:\n%s" % (handle, "\n".join(self.indent(self.comp(node.body))))
+        self.line("except%s:" % handle)
+        self.block(node.body)
 
     def node_assign(self, node):
-        return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
+        self.line("%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue)))
 
     def node_tuple(self, node):
         if len(node.values) == 0:
@@ -175,32 +187,33 @@ class Printer(istcompiler.Multiplexer):
         return "%s %s= %s" % (self.comp(node.target), self.opmap[node.op], self.comp(node.value))
 
     def node_foreach(self, node):
+        self.line("for %s in %s:" % (self.comp(node.target), self.comp(node.iter)))
+        self.block(node.body)
         if node.orelse:
-            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
-        else:
-            orelse = ""
-        return "for %s in %s:\n%s%s\n" % (self.comp(node.target), self.comp(node.iter), "\n".join(self.indent(self.comp(node.body))), orelse)
+            self.line("else:")
+            self.block(node.orelse)
 
     def node_classdef(self, node):
         assert node.decorators == []
-        return "class %s(%s):\n%s" % (node.name, ", ".join(self.comp(node.bases)), "\n".join(self.indent(self.comp(node.body))))
+        self.line("class %s(%s):" % (node.name, ", ".join(self.comp(node.bases))))
+        self.block(node.body)
 
     def node_delete(self, node):
         return "del %s" % self.comp(node.targets)
 
     def node_if(self, node):
+        self.line("if %s:" % self.comp(node.cond))
+        self.block(node.body)
         if node.orelse:
-            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
-        else:
-            orelse = ""
-        return "if %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
+            self.line("else:")
+            self.block(node.orelse)
 
     def node_while(self, node):
+        self.line("while %s:" % self.comp(node.cond))
+        self.block(node.body)
         if node.orelse:
-            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
-        else:
-            orelse = ""
-        return "while %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
+            self.line("else:")
+            self.block(node.orelse)
 
     def node_compare(self, node):
         ret = []
@@ -237,9 +250,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_raise(self, node):
         if node.expr:
-            return "raise %s" % (self.comp(node.expr))
+            self.line("raise %s" % (self.comp(node.expr)))
         else:
-            return "raise"
+            self.line("raise")
 
     def node_dict(self, node):
         return "{%s}" % ('"%s": "%s"' % (key, value) for key, value in zip(node.keys, node.values))
@@ -249,9 +262,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_yield(self, node):
         if node.value:
-            return "yield %s" % (self.comp(node.value))
+            self.line("yield %s" % (self.comp(node.value)))
         else:
-            return "yield"
+            self.line("yield")
 
     def node_slice(self, node):
         if node.lower:
@@ -293,7 +306,7 @@ class Printer(istcompiler.Multiplexer):
                 names.append("%s as %s" % (name, asname))
             else:
                 names.append(name)
-        return "import %s" % ", ".join(names)
+        self.line("import %s" % ", ".join(names))
 
     def node_importfrom(self, node):
         names = []
@@ -302,8 +315,8 @@ class Printer(istcompiler.Multiplexer):
                 names.append("%s as %s" % (name, asname))
             else:
                 names.append(name)
-        return "from %s import %s" % (node.module, ", ".join(names))
+        self.line("from %s import %s" % (node.module, ", ".join(names)))
 
 def format(ist):
     p = Printer()
-    return p.comp(ist)
+    return p.format(ist)
