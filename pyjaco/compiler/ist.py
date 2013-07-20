@@ -101,7 +101,10 @@ class TryExcept(Code):
     _fields = ["body", "errorbody"]
 
 class For(Code):
-    _fields = ["init", "cond", "incr", "body"]
+    _fields = ["body", "init", "cond", "incr"]
+
+class ForEach(Code):
+    _fields = ["body", "iter", "target", "orelse"]
 
 class Raise(Code):
     _fields = ["expr"]

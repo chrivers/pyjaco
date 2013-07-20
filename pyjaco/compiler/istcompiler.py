@@ -195,3 +195,6 @@ class ISTCompiler(Multiplexer):
 
     def node_augassign(self, node):
         return AugAssign(target = self.comp(node.target), value = self.comp(node.value), op = node.op.__class__.__name__)
+
+    def node_for(self, node):
+        return ForEach(body = self.comp(node.body), iter = self.comp(node.iter), target = self.comp(node.target), orelse = self.comp(node.orelse))

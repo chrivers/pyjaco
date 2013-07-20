@@ -148,6 +148,13 @@ class Printer(istcompiler.Multiplexer):
         assert node.op in self.opmap
         return "%s %s= %s" % (self.comp(node.target), self.opmap[node.op], self.comp(node.value))
 
+    def node_foreach(self, node):
+        if node.orelse:
+            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
+        else:
+            orelse = ""
+        return "for %s in %s:\n%s%s\n" % (self.comp(node.target), self.comp(node.iter), "\n".join(self.indent(self.comp(node.body))), orelse)
+
 def format(ist):
     p = Printer()
     return p.comp(ist)
