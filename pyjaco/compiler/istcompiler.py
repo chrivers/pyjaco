@@ -99,7 +99,7 @@ class ISTCompiler(Multiplexer):
         return If(cond = self.comp(node.test), body = self.comp(node.body), orelse = self.comp(node.orelse))
 
     def node_module(self, node):
-        return Block(body = [self.comp(n) for n in node.body])
+        return [self.comp(n) for n in node.body]
 
     def node_name(self, node):
         return Name(id = node.id)

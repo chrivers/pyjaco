@@ -74,9 +74,6 @@ class Comment(Annotation):
 class Code(ISTNode):
     _fields = []
 
-class Block(Code):
-    _fields = ["body"]
-
 class Nop(Code):
     _fields = []
 
