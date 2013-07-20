@@ -272,10 +272,14 @@ class Printer(istcompiler.Multiplexer):
         return "%s:%s%s" % (lower, upper, step)
 
     def node_generator(self, node):
-        return "foo"
+        gens = []
+        for gen in node.generators:
+            gens.append(self.comp(gen))
+        return "%s %s" % (self.comp(node.value), " ".join(gens))
 
     def node_comprehension(self, node):
-        return "foo"
+        assert node.conds == []
+        return "for %s in %s" % (self.comp(node.target), self.comp(node.iter))
 
     def node_nonetype(self, node):
         return "None"

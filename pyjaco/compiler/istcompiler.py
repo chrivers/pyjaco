@@ -245,4 +245,4 @@ class ISTCompiler(Multiplexer):
         return Nop()
 
     def node_listcomp(self, node):
-        return Nop()
+        return List(values = [Generator(value = self.comp(node.elt), generators = self.comp(node.generators))])
