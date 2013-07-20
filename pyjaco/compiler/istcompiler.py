@@ -136,7 +136,7 @@ class ISTCompiler(Multiplexer):
                         decorators = [self.comp(n) for n in node.decorator_list])
 
     def node_if(self, node):
-        return If(cond = self.comp(node.test), body = [self.comp(n) for n in node.body], orelse = [self.comp(n) for n in node.orelse])
+        return If(cond = self.comp(node.test), body = self.comp(node.body), orelse = self.comp(node.orelse))
 
     def node_module(self, node):
         return Block(body = [self.comp(n) for n in node.body])
@@ -201,3 +201,6 @@ class ISTCompiler(Multiplexer):
 
     def node_classdef(self, node):
         return ClassDef(body = self.comp(node.body), name = node.name, decorators = self.comp(node.decorator_list), bases = self.comp(node.bases))
+
+    def node_delete(self, node):
+        return Delete(targets = self.comp(node.targets))

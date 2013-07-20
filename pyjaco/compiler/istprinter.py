@@ -69,9 +69,6 @@ class Printer(istcompiler.Multiplexer):
     def node_expr(self, node):
         return str(node)
 
-    def node_functiondef(self, node):
-        return str(node)
-
     def node_if(self, node):
         return str(node)
 
@@ -163,6 +160,16 @@ class Printer(istcompiler.Multiplexer):
     def node_classdef(self, node):
         assert node.decorators == []
         return "class %s(%s):\n%s" % (node.name, ", ".join(self.comp(node.bases)), "\n".join(self.indent(self.comp(node.body))))
+
+    def node_delete(self, node):
+        return "del %s" % self.comp(node.targets)
+
+    def node_if(self, node):
+        if node.orelse:
+            orelse = "\nelse:\n%s" % "\n".join(self.indent(self.comp(node.orelse)))
+        else:
+            orelse = ""
+        return "if %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
 
 def format(ist):
     p = Printer()

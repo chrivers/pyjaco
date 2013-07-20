@@ -158,3 +158,6 @@ class Tuple(Code):
 
 class AugAssign(Code):
     _fields = ["target", "value", "op"]
+
+class Delete(Code):
+    _fields = ["targets"]
