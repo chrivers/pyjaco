@@ -83,9 +83,6 @@ class Nop(Code):
 class Function(Code):
     _fields = ["name", "params", "body", "decorators"]
 
-class Arguments(Code):
-    _fields = ["args", "keywords", "kwargs", "varargs"]
-
 class Parameters(Code):
     _fields = ["args", "defaults", "kwargs", "varargs"]
 
