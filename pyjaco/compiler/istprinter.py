@@ -136,7 +136,7 @@ class Printer(istcompiler.Multiplexer):
         return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
 
     def node_tuple(self, node):
-        return "(%s)" % ", ".join(self.comp(node.elts))
+        return "(%s)" % ", ".join(self.comp(node.values))
 
     def node_augassign(self, node):
         assert node.op in self.opmap
@@ -172,6 +172,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_subscript(self, node):
         return "%s[%s]" % (self.comp(node.value), self.comp(node.slice))
+
+    def node_list(self, node):
+        return "[%s]" % ", ".join(self.comp(node.values))
 
 def format(ist):
     p = Printer()

@@ -154,7 +154,10 @@ class TryHandler(Code):
     _fields = ["body", "name", "type"]
 
 class Tuple(Code):
-    _fields = ["elts"]
+    _fields = ["values"]
+
+class List(Code):
+    _fields = ["values"]
 
 class AugAssign(Code):
     _fields = ["target", "value", "op"]

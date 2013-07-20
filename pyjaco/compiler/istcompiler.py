@@ -144,7 +144,7 @@ class ISTCompiler(Multiplexer):
         return TryHandler(body = self.comp(node.body), name = nodename, type = nodetype)
 
     def node_tuple(self, node):
-        return Tuple(elts = self.comp(node.elts))
+        return Tuple(values = self.comp(node.elts))
 
     def node_assign(self, node):
         return Assign(lvalue = self.comp(node.targets), rvalue = self.comp(node.value))
@@ -169,3 +169,6 @@ class ISTCompiler(Multiplexer):
 
     def node_index(self, node):
         return Value(value = self.comp(node.value))
+
+    def node_list(self, node):
+        return List(values = self.comp(node.elts))
