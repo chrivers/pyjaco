@@ -133,7 +133,7 @@ class ISTCompiler(Multiplexer):
 
     def node_functiondef(self, node):
         return Function(body = [self.comp(n) for n in node.body], name = node.name, params = self.comp(node.args),
-                        decos = [self.comp(n) for n in node.decorator_list])
+                        decorators = [self.comp(n) for n in node.decorator_list])
 
     def node_if(self, node):
         return If(cond = self.comp(node.test), body = [self.comp(n) for n in node.body], orelse = [self.comp(n) for n in node.orelse])
@@ -198,3 +198,6 @@ class ISTCompiler(Multiplexer):
 
     def node_for(self, node):
         return ForEach(body = self.comp(node.body), iter = self.comp(node.iter), target = self.comp(node.target), orelse = self.comp(node.orelse))
+
+    def node_classdef(self, node):
+        return ClassDef(body = self.comp(node.body), name = node.name, decorators = self.comp(node.decorator_list), bases = self.comp(node.bases))
