@@ -85,7 +85,7 @@ class Printer(istcompiler.Multiplexer):
         return "(%s %s %s)" % (self.comp(node.left), self.opmap[node.op], self.comp(node.right))
 
     def node_string(self, node):
-        return '"%s"' % node.value
+        return repr(node.value)
 
     def node_call(self, node):
         args = self.comp(node.args)
@@ -115,7 +115,13 @@ class Printer(istcompiler.Multiplexer):
         if node.body == []:
             self.block([Nop()])
         else:
-            self.block(node.body)
+            if isinstance(node.body[0], ist.String):
+                self.indent()
+                self.line('"""%s"""' % repr(node.body[0].value)[1:-1].replace("\\n", "\n"))
+                self.dedent()
+                self.block(node.body[1:])
+            else:
+                self.block(node.body)
 
     def node_parameters(self, node):
         argnames = []
