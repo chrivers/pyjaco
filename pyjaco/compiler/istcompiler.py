@@ -101,6 +101,19 @@ class ISTCompiler(Multiplexer):
 
     ## Multiplexed functions
 
+    def comp(self, node):
+        if isinstance(node, list):
+            # print "Visiting a list %s" % repr(node)
+            return [self.comp(n) for n in node]
+        else:
+            name = "node_%s" % node.__class__.__name__.lower()
+            # print node.__class__.__name__, [x for x in dir(node) if not x.startswith("_")]
+            if hasattr(self, name):
+                return getattr(self, name)(node)
+            else:
+                print [x for x in dir(node) if not x.startswith("_") and not x in ["col_offset", "lineno"]]
+                raise NotImplementedError("%s does not support node type [%s]" % (self.__class__.__name__, node.__class__.__name__))
+
     def node_attribute(self, node):
         return GetAttr(base = self.comp(node.value), attr = node.attr)
 
@@ -173,3 +186,9 @@ class ISTCompiler(Multiplexer):
         else:
             nodetype = None
         return TryHandler(body = self.comp(node.body), name = nodename, type = nodetype)
+
+    def node_tuple(self, node):
+        return Tuple(elts = self.comp(node.elts))
+
+    def node_assign(self, node):
+        return Assign(lvalue = self.comp(node.targets), rvalue = self.comp(node.value))

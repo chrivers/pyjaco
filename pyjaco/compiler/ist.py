@@ -146,3 +146,6 @@ class TryFinally(Code):
 
 class TryHandler(Code):
     _fields = ["body", "name", "type"]
+
+class Tuple(Code):
+    _fields = ["elts"]

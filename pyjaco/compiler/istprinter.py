@@ -124,6 +124,12 @@ class Printer(istcompiler.Multiplexer):
             handle = ""
         return "except%s:\n%s" % (handle, "\n".join(self.indent(self.comp(node.body))))
 
+    def node_assign(self, node):
+        return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
+
+    def node_tuple(self, node):
+        return "(%s)" % ", ".join(self.comp(node.elts))
+
 def format(ist):
     p = Printer()
     return p.comp(ist)
