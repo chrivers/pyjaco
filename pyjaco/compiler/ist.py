@@ -162,6 +162,9 @@ class AugAssign(Code):
 class Delete(Code):
     _fields = ["targets"]
 
+class BoolOp(Code):
+    _fields = ["values", "op"]
+
 class Compare(Code):
     _fields = ["comps", "ops", "lvalue"]
 

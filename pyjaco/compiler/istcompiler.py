@@ -77,7 +77,7 @@ class ISTCompiler(Multiplexer):
         return BinOp(left = self.comp(node.left), right = self.comp(node.right), op = node.op.__class__.__name__)
 
     def node_boolop(self, node):
-        return BinOp(left = self.comp(node.values[0]), right = self.comp(node.values[1]), op = node.op.__class__.__name__)
+        return BoolOp(values = self.comp(node.values), op = node.op.__class__.__name__)
 
     def node_keyword(self, node):
         return node.arg, self.comp(node.value)
