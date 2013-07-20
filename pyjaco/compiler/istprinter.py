@@ -88,7 +88,7 @@ class Printer(istcompiler.Multiplexer):
         return str(node)
 
     def node_return(self, node):
-        return str(node)
+        return "return %s" % self.comp(node.expr)
 
     def node_nop(self, node):
         return "pass"
@@ -102,8 +102,13 @@ class Printer(istcompiler.Multiplexer):
 
     def node_parameters(self, node):
         argnames = []
-        posargs = node.args[:-len(node.defaults)]
-        optargs = ["%s = %s" % (x, y) for x, y in zip(node.args[-len(node.defaults):], self.comp(node.defaults))]
+        if node.defaults:
+            posargs = node.args[:-len(node.defaults)]
+            optargs = ["%s = %s" % (x, y) for x, y in zip(node.args[-len(node.defaults):], self.comp(node.defaults))]
+        else:
+            posargs = node.args[:]
+            optargs = []
+
         argnames.extend(posargs)
         argnames.extend(optargs)
 
@@ -154,6 +159,10 @@ class Printer(istcompiler.Multiplexer):
         else:
             orelse = ""
         return "for %s in %s:\n%s%s\n" % (self.comp(node.target), self.comp(node.iter), "\n".join(self.indent(self.comp(node.body))), orelse)
+
+    def node_classdef(self, node):
+        assert node.decorators == []
+        return "class %s(%s):\n%s" % (node.name, ", ".join(self.comp(node.bases)), "\n".join(self.indent(self.comp(node.body))))
 
 def format(ist):
     p = Printer()
