@@ -40,9 +40,6 @@ class Printer(istcompiler.Multiplexer):
     def node_block(self, node):
         return "\n".join(self.comp(stmt) for stmt in node.body)
 
-    def node_attribute(self, node):
-        return str(node)
-
     def node_getattr(self, node):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
             return node.attr
@@ -57,32 +54,14 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError(node.op)
         return "(%s %s %s)" % (self.comp(node.left), self.opmap[node.op], self.comp(node.right))
 
-    def node_boolop(self, node):
-        return str(node)
-
     def node_string(self, node):
         return '"%s"' % node.value
 
     def node_call(self, node):
         return "%s(%s)" % (self.comp(node.func), ", ".join(self.comp(node.params)))
 
-    def node_expr(self, node):
-        return str(node)
-
-    def node_if(self, node):
-        return str(node)
-
-    def node_module(self, node):
-        return str(node)
-
     def node_name(self, node):
         return node.id
-
-    def node_num(self, node):
-        return str(node)
-
-    def node_print(self, node):
-        return str(node)
 
     def node_return(self, node):
         return "return %s" % self.comp(node.expr)

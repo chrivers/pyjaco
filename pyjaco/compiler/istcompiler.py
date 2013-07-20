@@ -52,50 +52,6 @@ class Multiplexer(object):
             else:
                 raise NotImplementedError("%s does not support node type [%s]" % (self.__class__.__name__, node.__class__.__name__))
 
-    ## Multiplexed functions
-
-    def node_block(self, node):
-        raise NotImplementedError()
-
-    def node_attribute(self, node):
-        raise NotImplementedError()
-
-    def node_binop(self, node):
-        raise NotImplementedError()
-
-    def node_boolop(self, node):
-        raise NotImplementedError()
-
-    def node_call(self, node):
-        raise NotImplementedError()
-
-    def node_expr(self, node):
-        raise NotImplementedError()
-
-    def node_functiondef(self, node):
-        raise NotImplementedError()
-
-    def node_if(self, node):
-        raise NotImplementedError()
-
-    def node_module(self, node):
-        raise NotImplementedError()
-
-    def node_name(self, node):
-        raise NotImplementedError()
-
-    def node_num(self, node):
-        raise NotImplementedError()
-
-    def node_print(self, node):
-        raise NotImplementedError()
-
-    def node_return(self, node):
-        raise NotImplementedError()
-
-    def node_str(self, node):
-        raise NotImplementedError()
-
 class ISTCompiler(Multiplexer):
     bi = Name(id = "__builtins__")
 
