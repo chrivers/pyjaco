@@ -19,7 +19,8 @@ class Printer(istcompiler.Multiplexer):
         FloorDiv = "//",
         Pow      = "**",
         ## Non-aug ops
-        And      = "and"
+        And      = "and",
+        Or       = "or"
         )
 
     compmap = dict(
@@ -28,7 +29,13 @@ class Printer(istcompiler.Multiplexer):
         Eq = "==",
         NotEq = "<>",
         Is = "is",
-        In = "in"
+        In = "in",
+        Or = "or"
+        )
+
+    uopmap = dict(
+        USub = "-",
+        Not  = "not "
         )
 
     def indent(self, s, indentation = None):
@@ -202,7 +209,7 @@ class Printer(istcompiler.Multiplexer):
         return "lambda%s: %s" % (args, self.comp(node.body))
 
     def node_unaryop(self, node):
-        return "%s%s" % (self.comp(node.lvalue), node.op)
+        return "%s%s" % (self.uopmap[node.op], self.comp(node.lvalue))
 
     def node_float(self, node):
         return repr(node)
@@ -224,6 +231,24 @@ class Printer(istcompiler.Multiplexer):
             return "yield %s" % (self.comp(node.value))
         else:
             return "yield"
+
+    def node_slice(self, node):
+        if node.lower:
+            lower = self.comp(node.lower)
+        else:
+            lower = ""
+
+        if node.upper:
+            upper = self.comp(node.upper)
+        else:
+            upper = ""
+
+        if node.step:
+            step = ":%s" % self.comp(node.step)
+        else:
+            step = ""
+
+        return "%s:%s%s" % (lower, upper, step)
 
 def format(ist):
     p = Printer()

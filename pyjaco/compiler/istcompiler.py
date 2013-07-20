@@ -205,3 +205,20 @@ class ISTCompiler(Multiplexer):
 
     def node_yield(self, node):
         return Yield(value = self.comp(node.value))
+
+    def node_slice(self, node):
+        if node.lower:
+            lower = self.comp(node.lower)
+        else:
+            lower = None
+
+        if node.upper:
+            upper = self.comp(node.upper)
+        else:
+            upper = None
+
+        if node.step:
+            step = self.comp(node.step)
+        else:
+            step = None
+        return Slice(lower = lower, upper = upper, step = step)

@@ -185,3 +185,6 @@ class Global(Code):
 
 class Yield(Code):
     _fields = ["value"]
+
+class Slice(Code):
+    _fields = ["lower", "upper", "step"]
