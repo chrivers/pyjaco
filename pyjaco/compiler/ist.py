@@ -81,7 +81,7 @@ class Nop(Code):
     _fields = []
 
 class Function(Code):
-    _fields = ["name", "params", "body", "decos"]
+    _fields = ["name", "params", "body", "decorators"]
 
 class Parameters(Code):
     _fields = ["args", "defaults", "kwargs", "varargs"]
@@ -117,6 +117,9 @@ class Continue(Code):
 
 class Return(Code):
     _fields = ["expr"]
+
+class ClassDef(Code):
+    _fields = ["body", "name", "bases", "decorators"]
 
 ## Expressions
 
