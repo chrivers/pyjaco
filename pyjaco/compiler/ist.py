@@ -149,3 +149,6 @@ class TryHandler(Code):
 
 class Tuple(Code):
     _fields = ["elts"]
+
+class AugAssign(Code):
+    _fields = ["target", "value", "op"]

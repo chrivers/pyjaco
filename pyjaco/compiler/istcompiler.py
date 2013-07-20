@@ -192,3 +192,6 @@ class ISTCompiler(Multiplexer):
 
     def node_assign(self, node):
         return Assign(lvalue = self.comp(node.targets), rvalue = self.comp(node.value))
+
+    def node_augassign(self, node):
+        return AugAssign(target = self.comp(node.target), value = self.comp(node.value), op = node.op.__class__.__name__)

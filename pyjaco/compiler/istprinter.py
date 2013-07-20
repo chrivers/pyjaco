@@ -5,6 +5,21 @@ class Printer(istcompiler.Multiplexer):
 
     indentation = 4
 
+    opmap = dict(
+        Add = "+",
+        Sub = "-",
+        Mult = "*",
+        Div = "/",
+        Mod = "%",
+        BitAnd = "&",
+        BitOr = "|",
+        BitXor = "^",
+        LShift = "<<",
+        RShift = ">>",
+        FloorDiv = "//",
+        Pow      = "**"
+        )
+
     def indent(self, s, indentation = None):
         if indentation == None:
             indentation = self.indentation
@@ -38,10 +53,9 @@ class Printer(istcompiler.Multiplexer):
         return str(node.value)
 
     def node_binop(self, node):
-        opmap = dict(Add = "+", Sub = "-", Div = "/", Mult = "*", Pow = "**")
-        if node.op not in opmap:
+        if node.op not in self.opmap:
             raise NotImplementedError(node.op)
-        return "(%s %s %s)" % (self.comp(node.left), opmap[node.op], self.comp(node.right))
+        return "(%s %s %s)" % (self.comp(node.left), self.opmap[node.op], self.comp(node.right))
 
     def node_boolop(self, node):
         return str(node)
@@ -129,6 +143,10 @@ class Printer(istcompiler.Multiplexer):
 
     def node_tuple(self, node):
         return "(%s)" % ", ".join(self.comp(node.elts))
+
+    def node_augassign(self, node):
+        assert node.op in self.opmap
+        return "%s %s= %s" % (self.comp(node.target), self.opmap[node.op], self.comp(node.value))
 
 def format(ist):
     p = Printer()
