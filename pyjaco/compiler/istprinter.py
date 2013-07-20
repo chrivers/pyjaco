@@ -41,15 +41,6 @@ class Printer(istcompiler.Multiplexer):
         Invert = "~",
         )
 
-    def indent(self, s, indentation = None):
-        if indentation == None:
-            indentation = self.indentation
-        ind = " " * indentation
-        if isinstance(s, list):
-            return [ind + n for n in s]
-        else:
-            return ind + s
-
     def format(self, tree):
         self.buffer = []
         self.indentation = -4
