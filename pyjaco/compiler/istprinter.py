@@ -45,6 +45,8 @@ class Printer(istcompiler.Multiplexer):
         self.buffer = []
         self.indentation = -4
         self.block(tree)
+        if self.buffer and self.buffer[-1].strip() == "":
+            self.buffer.pop()
         return "\n".join(self.buffer)
 
     def line(self, line):
@@ -63,6 +65,8 @@ class Printer(istcompiler.Multiplexer):
             if res:
                 self.line(res)
         self.dedent()
+        if self.buffer[-1].strip() <> "":
+            self.line("")
 
     def node_getattr(self, node):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__" and node.attr == "print":
@@ -83,6 +87,9 @@ class Printer(istcompiler.Multiplexer):
         if node.op not in self.opmap:
             raise NotImplementedError(node.op)
         return "(%s %s %s)" % (self.comp(node.left), self.opmap[node.op], self.comp(node.right))
+
+    def node_boolop(self, node):
+        return (" %s " % self.opmap[node.op]).join(self.comp(x) for x in node.values)
 
     def node_string(self, node):
         return repr(node.value)
@@ -111,7 +118,8 @@ class Printer(istcompiler.Multiplexer):
         self.line("pass")
 
     def node_function(self, node):
-        assert node.decorators == []
+        for deco in node.decorators:
+            self.line("@%s" % self.comp(deco))
         self.line("def %s(%s):" % (node.name, self.comp(node.params)))
         if node.body == []:
             self.block([Nop()])
