@@ -83,6 +83,9 @@ class Nop(Code):
 class Function(Code):
     _fields = ["name", "params", "body", "decorators"]
 
+class Arguments(Code):
+    _fields = ["args", "keywords", "kwargs", "varargs"]
+
 class Parameters(Code):
     _fields = ["args", "defaults", "kwargs", "varargs"]
 
@@ -124,7 +127,7 @@ class ClassDef(Code):
 ## Expressions
 
 class Call(Code):
-    _fields = ["func", "params"]
+    _fields = ["func", "args", "keywords", "varargs", "kwargs"]
 
 class Assign(Code):
     _fields = ["lvalue", "rvalue"]
@@ -188,3 +191,9 @@ class Yield(Code):
 
 class Slice(Code):
     _fields = ["lower", "upper", "step"]
+
+class Generator(Code):
+    _fields = ["value", "generators"]
+
+class Comprehension(Code):
+    _fields = ["conds", "iter", "target"]
