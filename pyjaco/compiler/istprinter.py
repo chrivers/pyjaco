@@ -17,7 +17,14 @@ class Printer(istcompiler.Multiplexer):
         LShift = "<<",
         RShift = ">>",
         FloorDiv = "//",
-        Pow      = "**"
+        Pow      = "**",
+        ## Non-aug ops
+        And      = "and"
+        )
+
+    compmap = dict(
+        Gt = ">",
+        Eq = "=="
         )
 
     def indent(self, s, indentation = None):
@@ -47,7 +54,13 @@ class Printer(istcompiler.Multiplexer):
             return "%s.%s" % (self.comp(node.base), node.attr)
 
     def node_value(self, node):
-        return str(node.value)
+        return self.comp(node.value)
+
+    def node_int(self, node):
+        return "%s" % node
+
+    def node_num(self, node):
+        return "%s" % node.value
 
     def node_binop(self, node):
         if node.op not in self.opmap:
@@ -149,6 +162,16 @@ class Printer(istcompiler.Multiplexer):
         else:
             orelse = ""
         return "if %s:\n%s%s" % (self.comp(node.cond), "\n".join(self.indent(self.comp(node.body))), orelse)
+
+    def node_compare(self, node):
+        ret = []
+        for op, cval in zip(node.ops, node.comps):
+            assert op in self.compmap
+            ret.append("%s %s" % (self.compmap[op], self.comp(cval)))
+        return "%s %s" % (self.comp(node.lvalue), " ".join(ret))
+
+    def node_subscript(self, node):
+        return "%s[%s]" % (self.comp(node.value), self.comp(node.slice))
 
 def format(ist):
     p = Printer()

@@ -161,3 +161,9 @@ class AugAssign(Code):
 
 class Delete(Code):
     _fields = ["targets"]
+
+class Compare(Code):
+    _fields = ["comps", "ops", "lvalue"]
+
+class Subscript(Code):
+    _fields = ["value", "slice"]

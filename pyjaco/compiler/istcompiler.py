@@ -160,3 +160,12 @@ class ISTCompiler(Multiplexer):
 
     def node_delete(self, node):
         return Delete(targets = self.comp(node.targets))
+
+    def node_compare(self, node):
+        return Compare(comps = self.comp(node.comparators), ops = [x.__class__.__name__ for x in node.ops], lvalue = self.comp(node.left))
+
+    def node_subscript(self, node):
+        return Subscript(value = self.comp(node.value), slice = self.comp(node.slice))
+
+    def node_index(self, node):
+        return Value(value = self.comp(node.value))
