@@ -253,13 +253,10 @@ class Printer(istcompiler.Multiplexer):
             self.line("raise")
 
     def node_dict(self, node):
-        if len(node.keys):
-            return "{%s}" % ('"%s": "%s"' % (key, value) for key, value in zip(node.keys, node.values))
-        else:
-            return "{}"
+        return "{%s}" % (", ".join('%s: %s' % (self.comp(key), self.comp(value)) for key, value in zip(node.keys, node.values)))
 
     def node_global(self, node):
-        return "global %s" % (node.names)
+        return "global %s" % ", ".join(node.names)
 
     def node_yield(self, node):
         if node.value:
