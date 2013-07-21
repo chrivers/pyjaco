@@ -44,7 +44,7 @@ class Printer(istcompiler.Multiplexer):
     def format(self, tree):
         self.buffer = []
         self.indentation = -4
-        self.block(tree)
+        self.comp(tree)
         if self.buffer and self.buffer[-1].strip() == "":
             self.buffer.pop()
         return "\n".join(self.buffer)
@@ -65,7 +65,7 @@ class Printer(istcompiler.Multiplexer):
             if res:
                 self.line(res)
         self.dedent()
-        if self.buffer[-1].strip() <> "" and end:
+        if self.buffer and self.buffer[-1].strip() <> "" and end:
             self.line("")
 
     def node_getattr(self, node):
@@ -322,6 +322,9 @@ class Printer(istcompiler.Multiplexer):
             else:
                 names.append(name)
         self.line("from %s import %s" % (node.module, ", ".join(names)))
+
+    def node_module(self, node):
+        self.block(node.body)
 
 def format(ist):
     p = Printer()

@@ -88,6 +88,9 @@ class Parameters(Code):
 class Statement(Code):
     _fields = []
 
+class Module(Code):
+    _fields = ["body"]
+
 class If(Code):
     _fields = ["body", "cond", "orelse"]
 
