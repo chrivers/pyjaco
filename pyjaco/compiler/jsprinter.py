@@ -47,14 +47,14 @@ class Printer(istcompiler.Multiplexer):
     def format(self, tree):
         self.buffer = []
         self.indentation = -4
-        self.line('load("py-builtins.js")')
+        self.line('load("py-builtins.js");')
         self.comp(tree)
         if self.buffer and self.buffer[-1].strip() == "":
             self.buffer.pop()
         return "\n".join(self.buffer)
 
     def line(self, line):
-        self.buffer.append(" " * self.indentation + line + ";" if line else "")
+        self.buffer.append(" " * self.indentation + line)
 
     def indent(self, indent = 4):
         self.indentation += indent
@@ -67,7 +67,7 @@ class Printer(istcompiler.Multiplexer):
         for b in block:
             res = self.comp(b)
             if res:
-                self.line(res)
+                self.line(res + ";")
         self.dedent()
         if self.buffer[-1].strip() <> "" and end:
             self.line("")
@@ -118,7 +118,7 @@ class Printer(istcompiler.Multiplexer):
         return node.id
 
     def node_return(self, node):
-        self.line("return %s" % self.comp(node.expr))
+        self.line("return %s;" % self.comp(node.expr))
 
     def node_nop(self, node):
         self.line("/* pass */")
@@ -179,7 +179,7 @@ class Printer(istcompiler.Multiplexer):
         self.line("}")
 
     def node_assign(self, node):
-        self.line("%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue)))
+        self.line("%s = %s;" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue)))
 
     def node_tuple(self, node):
         raise NotImplementedError("JS does not support tuples")
