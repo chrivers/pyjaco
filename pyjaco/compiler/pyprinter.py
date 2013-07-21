@@ -221,6 +221,9 @@ class Printer(istcompiler.Multiplexer):
             self.line("else:")
             self.block(node.orelse)
 
+    def node_ifexp(self, node):
+        self.line("%s if %s else %s" % (self.comp(node.body), self.comp(node.cond), self.comp(node.orelse)))
+
     def node_compare(self, node):
         ret = []
         for op, cval in zip(node.ops, node.comps):
@@ -325,6 +328,12 @@ class Printer(istcompiler.Multiplexer):
 
     def node_module(self, node):
         self.block(node.body)
+
+    def node_assert(self, node):
+        if node.msg:
+            self.line("assert %s, %s" % (self.comp(node.cond), self.comp(node.msg)))
+        else:
+            self.line("assert %s" % self.comp(node.cond))
 
 def format(ist):
     p = Printer()

@@ -253,3 +253,9 @@ class ISTCompiler(Multiplexer):
 
     def node_listcomp(self, node):
         return List(values = [Generator(value = self.comp(node.elt), generators = self.comp(node.generators))])
+
+    def node_ifexp(self, node):
+        return IfExp(cond = self.comp(node.test), body = self.comp(node.body), orelse = self.comp(node.orelse))
+
+    def node_assert(self, node):
+        return Assert(cond = self.comp(node.test), msg = node.msg)

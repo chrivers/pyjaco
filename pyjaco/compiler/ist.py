@@ -203,3 +203,9 @@ class Import(Code):
 
 class ImportFrom(Code):
     _fields = ["module", "names"]
+
+class IfExp(Code):
+    _fields = ["body", "orelse", "cond"]
+
+class Assert(Code):
+    _fields = ["msg", "cond"]
