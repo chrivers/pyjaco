@@ -71,7 +71,7 @@ class Printer(istcompiler.Multiplexer):
     def node_getattr(self, node):
         return "%s.%s" % (self.comp(node.base), node.attr)
 
-    def node_value(self, node):
+    def node_number(self, node):
         return self.comp(node.value)
 
     def node_int(self, node):
