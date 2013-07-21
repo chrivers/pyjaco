@@ -209,7 +209,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_if(self, node):
         self.line("if %s:" % self.comp(node.cond))
-        self.block(node.body, end = bool(node.orselse))
+        self.block(node.body, end = bool(node.orelse))
         if node.orelse:
             self.line("else:")
             self.block(node.orelse)
