@@ -105,7 +105,7 @@ class ISTCompiler(Multiplexer):
         return Name(id = node.id)
 
     def node_num(self, node):
-        return Value(value = node.n)
+        return Number(value = node.n)
 
     def node_print(self, node):
         assert node.dest == None
@@ -177,7 +177,7 @@ class ISTCompiler(Multiplexer):
         return Subscript(value = self.comp(node.value), slice = self.comp(node.slice))
 
     def node_index(self, node):
-        return Value(value = self.comp(node.value))
+        return self.comp(node.value)
 
     def node_list(self, node):
         return List(values = self.comp(node.elts))
