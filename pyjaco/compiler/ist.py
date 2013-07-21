@@ -27,6 +27,8 @@
 
 class ISTNode(object):
 
+    _defaults = dict()
+
     def __init__(self, **attr):
         for x in attr:
             if not x in self._fields:
@@ -34,8 +36,11 @@ class ISTNode(object):
             else:
                 setattr(self, x, attr[x])
         for x in self._fields:
-            if not x in attr:
-                raise TypeError("IST node [%s] requires attribute [%s]" % (self.__class__.__name__, x))
+            if not hasattr(self, x):
+                if x in self._defaults:
+                    setattr(self, x, self._defaults[x])
+                else:
+                    raise TypeError("IST node [%s] requires attribute [%s]" % (self.__class__.__name__, x))
 
 
     def str(self, indent = 0):
@@ -78,7 +83,8 @@ class Nop(Code):
     _fields = []
 
 class Function(Code):
-    _fields = ["name", "params", "body", "decorators"]
+    _fields = {"name", "params", "body", "decorators"}
+    _defaults = dict(decorators = [])
 
 class Parameters(Code):
     _fields = ["args", "defaults", "kwargs", "varargs"]
@@ -93,9 +99,11 @@ class Module(Code):
 
 class If(Code):
     _fields = ["body", "cond", "orelse"]
+    _defaults = dict(orelse = [])
 
 class While(Code):
     _fields = ["body", "cond", "orelse"]
+    _defaults = dict(orelse = [])
 
 class TryExcept(Code):
     _fields = ["body", "errorbody"]
@@ -105,6 +113,7 @@ class For(Code):
 
 class ForEach(Code):
     _fields = ["body", "iter", "target", "orelse"]
+    _defaults = dict(orelse = [])
 
 class Raise(Code):
     _fields = ["expr"]
@@ -120,11 +129,13 @@ class Return(Code):
 
 class ClassDef(Code):
     _fields = ["body", "name", "bases", "decorators"]
+    _defaults = dict(decorators = [])
 
 ## Expressions
 
 class Call(Code):
     _fields = ["func", "args", "keywords", "varargs", "kwargs"]
+    _defaults = dict(keywords = [], varargs = None, kwargs = None)
 
 class Assign(Code):
     _fields = ["lvalue", "rvalue"]
@@ -132,7 +143,7 @@ class Assign(Code):
 class BinOp(Code):
     _fields = ["left", "right", "op"]
 
-class Value(Code):
+class Number(Code):
     _fields = ["value"]
 
 class GetAttr(Code):
@@ -146,6 +157,7 @@ class String(Code):
 
 class TryExcept(Code):
     _fields = ["body", "handlers", "orelse"]
+    _defaults = dict(orelse = [])
 
 class TryFinally(Code):
     _fields = ["body", "finalbody"]
