@@ -19,6 +19,15 @@ class Transformer(isttransform.Transformer):
         "FloorDiv": "floordiv",
     }
 
+    ops_compare = {
+        "Eq": "eq",
+        "NotEq": "ne",
+        "Gt": "gt",
+        "Lt": "lt",
+        "GtE": "ge",
+        "LtE": "le",
+    }
+
     def node_getattr(self, node):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
             return node
@@ -97,13 +106,21 @@ class Transformer(isttransform.Transformer):
 
     def node_if(self, node):
         node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
+        node.body = self.comp(node.body)
+        return node
+
+    def node_while(self, node):
+        node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
+        node.body = self.comp(node.body)
         return node
 
     def node_compare(self, node):
         assert len(node.ops) == 1
         assert len(node.comps) == 1
         op = node.ops[0]
-        if op == "In":
+        if op in self.ops_compare:
+            return ist.Call(func = ist.GetAttr(base = self.comp(node.lvalue), attr = "PY$__%s__" % self.ops_compare[op]), args = [self.comp(node.comps[0])])
+        elif op == "In":
             return ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
         elif op == "NotIn":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__not__"), args = [
