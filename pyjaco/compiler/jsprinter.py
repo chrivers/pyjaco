@@ -197,7 +197,9 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError("JS does not support orelse blocks")
 
     def node_for(self, node):
-        self.line("for (%s; %s; %s) {" % (self.comp(node.init), self.comp(node.cond), self.comp(node.incr)))
+        self.line("for (%s; %s; %s) {" % (self.comp(node.init) if node.init else "",
+                                          self.comp(node.cond) if node.cond else "",
+                                          self.comp(node.incr) if node.incr else ""))
         self.block(node.body, end = False)
         self.line("}")
 
