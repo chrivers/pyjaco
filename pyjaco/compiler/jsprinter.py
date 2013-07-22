@@ -27,14 +27,10 @@ class Printer(istcompiler.Multiplexer):
     compmap = dict(
         Gt = ">",
         Lt = "<",
-        Eq = "==",
+        Eq = "===",
         GtE = ">=",
         LtE = "<=",
-        NotEq = "<>",
-        NotIn = "not in",
-        Is = "is",
-        In = "in",
-        Or = "or"
+        NotEq = "!==",
         )
 
     uopmap = dict(
@@ -65,9 +61,14 @@ class Printer(istcompiler.Multiplexer):
     def block(self, block, end = True):
         self.indent()
         for b in block:
-            res = self.comp(b)
-            if res:
-                self.line(res + ";")
+            if type(b) == list:
+                self.dedent()
+                self.block(b)
+                self.indent()
+            else:
+                res = self.comp(b)
+                if res:
+                    self.line(res + ";")
         self.dedent()
         if self.buffer[-1].strip() <> "" and end:
             self.line("")
@@ -179,7 +180,7 @@ class Printer(istcompiler.Multiplexer):
         self.line("}")
 
     def node_assign(self, node):
-        self.line("%s = %s;" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue)))
+        return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
 
     def node_tuple(self, node):
         raise NotImplementedError("JS does not support tuples")
@@ -194,6 +195,11 @@ class Printer(istcompiler.Multiplexer):
         self.line("}")
         if node.orelse:
             raise NotImplementedError("JS does not support orelse blocks")
+
+    def node_for(self, node):
+        self.line("for (%s; %s; %s) {" % (self.comp(node.init), self.comp(node.cond), self.comp(node.incr)))
+        self.block(node.body, end = False)
+        self.line("}")
 
     def node_classdef(self, node):
         raise NotImplementedError("JS does not support classes")
@@ -273,6 +279,12 @@ class Printer(istcompiler.Multiplexer):
 
     def node_importfrom(self, node):
         raise NotImplementedError("JS does not support import")
+
+    def node_var(self, node):
+        if node.expr:
+            return "var %s = %s" % (node.name, self.comp(node.expr))
+        else:
+            return "var %s" % node.name
 
 def format(ist):
     p = Printer()
