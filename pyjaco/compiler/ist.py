@@ -221,3 +221,7 @@ class IfExp(Code):
 
 class Assert(Code):
     _fields = ["msg", "cond"]
+
+class Var(Code):
+    _fields = ["name", "expr"]
+    _defaults = dict(expr = None)
