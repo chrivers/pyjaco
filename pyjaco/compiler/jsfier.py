@@ -28,6 +28,20 @@ class Transformer(isttransform.Transformer):
         "LtE": "le",
     }
 
+    def comp(self, node):
+        self.index_var = 0
+        return super(Transformer, self).comp(node)
+
+    def alloc_var(self):
+        self.index_var += 1
+        return "$v%d" % self.index_var
+
+    def node_name(self, node):
+        if node.id in ["range"]:
+            return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
+        else:
+            return node
+
     def node_getattr(self, node):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
             return node
@@ -38,8 +52,10 @@ class Transformer(isttransform.Transformer):
         return ist.Call(func = ist.Name(id = "tuple"), args = [ist.List(values = self.comp(node.values))])
 
     def node_return(self, node):
-        if not node.values:
-            node.values = [ist.Name(id = "None")]
+        if not node.expr:
+            node.expr = [ist.Name(id = "None")]
+        else:
+            node.expr = self.comp(node.expr)
         return node
 
     def node_dict(self, node):
@@ -54,7 +70,7 @@ class Transformer(isttransform.Transformer):
 
     def node_subscript(self, node):
         return ist.Call(args = [self.comp(node.slice)],
-                        func = ist.GetAttr(base = node.value, attr = "PY$__getitem__"),
+                        func = ist.GetAttr(base = self.comp(node.value), attr = "PY$__getitem__"),
                         keywords = [],
                         kwargs = None,
                         varargs = None)
@@ -74,13 +90,13 @@ class Transformer(isttransform.Transformer):
 
     def node_slice(self, node):
         if node.lower and node.upper and node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [node.lower, node.upper, node.step])
+            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), self.comp(node.upper), self.comp(node.step)])
         if node.lower and node.upper:
-            return ist.Call(func = ist.Name(id = "slice"), args = [node.lower, node.upper])
+            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), self.comp(node.upper)])
         if node.upper and not node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [node.upper])
+            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.upper)])
         if node.lower and not node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [node.lower, ist.Name(id = "null")])
+            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), ist.Name(id = "null")])
         if not node.lower and not node.upper and not node.step:
             return ist.Call(func = ist.Name(id = "slice"), args = [ist.Name(id = "null")])
         raise NotImplementedError("Slice")
@@ -113,6 +129,35 @@ class Transformer(isttransform.Transformer):
         node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
         node.body = self.comp(node.body)
         return node
+
+    def node_foreach(self, node):
+        if isinstance(node.target, ist.Name):
+            for_target = self.comp(node.target)
+        elif isinstance(node.target, ist.Tuple):
+            for_target = ist.Name(id = self.alloc_var())
+        else:
+            raise JSError("Advanced for-loop decomposition not supported")
+
+        js = []
+
+        for_iter = self.comp(node.iter)
+        iter_var = self.alloc_var()
+        exc_var = self.alloc_var()
+
+        if node.orelse:
+            orelse_var = self.alloc_var()
+            js.append(ist.Var(name = orelse_var, expr = ist.Name(id = "true")))
+
+        js.append(ist.Var(name = for_target.id))
+        js.append(ist.For(body = self.comp(node.body),
+                          init = ist.Var(name = iter_var, expr = ist.Call(func = ist.Name(id = "iter"), args = [for_iter])),
+                          cond = ist.Compare(lvalue = for_target, ops = ["NotEq"], comps = [ist.Name(id = "null")]),
+                          incr = ist.Assign(lvalue = [for_target], rvalue = ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "next"), args = [ist.Name(id = iter_var)]),
+                          )))
+
+        return js
+
+
 
     def node_compare(self, node):
         assert len(node.ops) == 1
