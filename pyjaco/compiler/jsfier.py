@@ -151,9 +151,9 @@ class Transformer(isttransform.Transformer):
         js.append(ist.Var(name = for_target.id))
         js.append(ist.For(body = self.comp(node.body),
                           init = ist.Var(name = iter_var, expr = ist.Call(func = ist.Name(id = "iter"), args = [for_iter])),
-                          cond = ist.Compare(lvalue = for_target, ops = ["NotEq"], comps = [ist.Name(id = "null")]),
-                          incr = ist.Assign(lvalue = [for_target], rvalue = ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "next"), args = [ist.Name(id = iter_var)]),
-                          )))
+                          cond = ist.Assign(lvalue = [for_target], rvalue = ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "next"), args = [ist.Name(id = iter_var)])),
+                          incr = None
+                          ))
 
         return js
 
