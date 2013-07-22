@@ -28,8 +28,9 @@ class Transformer(isttransform.Transformer):
         "LtE": "le",
     }
 
+    index_var = 0
+
     def comp(self, node):
-        self.index_var = 0
         return super(Transformer, self).comp(node)
 
     def alloc_var(self):
@@ -37,7 +38,7 @@ class Transformer(isttransform.Transformer):
         return "$v%d" % self.index_var
 
     def node_name(self, node):
-        if node.id in ["range"]:
+        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
         else:
             return node
@@ -46,7 +47,7 @@ class Transformer(isttransform.Transformer):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
             return node
         else:
-            return ist.Call(args = [ist.String(value = node.attr)], func = ist.GetAttr(base = node.base, attr = "PY$__getattr__"), keywords = [], kwargs = None, varargs = None)
+            return ist.Call(args = [ist.String(value = node.attr)], func = ist.GetAttr(base = self.comp(node.base), attr = "PY$__getattr__"), keywords = [], kwargs = None, varargs = None)
 
     def node_tuple(self, node):
         return ist.Call(func = ist.Name(id = "tuple"), args = [ist.List(values = self.comp(node.values))])
@@ -66,7 +67,7 @@ class Transformer(isttransform.Transformer):
         return ist.Call(func = ist.Name(id = "dict"), args = [ist.List(values = els)])
 
     def node_list(self, node):
-        return ist.Call(func = ist.Name(id = "list"), args = [node])
+        return ist.Call(func = ist.Name(id = "list"), args = [ist.List(values = self.comp(node.values))])
 
     def node_subscript(self, node):
         return ist.Call(args = [self.comp(node.slice)],
@@ -156,8 +157,6 @@ class Transformer(isttransform.Transformer):
                           ))
 
         return js
-
-
 
     def node_compare(self, node):
         assert len(node.ops) == 1
