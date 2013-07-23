@@ -98,7 +98,7 @@ class Printer(istcompiler.Multiplexer):
         return "(%s %s %s)" % (self.comp(node.values[0]), self.opmap[node.op], self.comp(node.values[1]))
 
     def node_string(self, node):
-        return repr(node.value)
+        return repr(node.value).lstrip("urb")
 
     def node_call(self, node):
         args = self.comp(node.args)
