@@ -21,7 +21,8 @@ class Printer(istcompiler.Multiplexer):
         Pow      = "**",
         ## Non-aug ops
         And      = "and",
-        Or       = "or"
+        Or       = "or",
+        In       = "in"
         )
 
     compmap = dict(
@@ -259,7 +260,7 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError("JS does not support re-raising exceptions")
 
     def node_dict(self, node):
-        raise NotImplementedError("JS does not support dictionaries")
+        return "{%s}" % ", ".join(["%s: %s" % (self.comp(key), self.comp(value)) for key, value in zip(node.keys, node.values)])
 
     def node_global(self, node):
         raise NotImplementedError("JS does not support global scope imports")
@@ -287,6 +288,9 @@ class Printer(istcompiler.Multiplexer):
             return "var %s = %s" % (node.name, self.comp(node.expr))
         else:
             return "var %s" % node.name
+
+    def node_ifexp(self, node):
+        return "(%s ? %s : %s)" % (self.comp(node.cond), self.comp(node.body), self.comp(node.orelse))
 
 def format(ist):
     p = Printer()
