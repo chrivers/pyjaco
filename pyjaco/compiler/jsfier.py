@@ -1,4 +1,8 @@
 import ist
+import sys
+G = globals()
+for x in ist.__all__:
+    G["I%s" % x] = getattr(ist, x)
 import istcompiler
 import isttransform
 
@@ -106,10 +110,32 @@ class Transformer(isttransform.Transformer):
         return ist.Call(func = ist.Name(id = "str"), args = [ist.String(value = node.value)])
 
     def node_call(self, node):
+        js = []
         node.func = self.comp(node.func)
         node.args = self.comp(node.args)
         if isinstance(node.func, ist.GetAttr) and node.func.base.id == '__builtins__' and node.func.attr == "print":
             node.func.attr = "PY$print"
+
+
+        if node.varargs:
+            node.args += [ist.Call(func = ist.Name(id = "__varargs_make"), args = [self.comp(node.varargs)])]
+            node.varargs = None
+
+        if node.keywords or node.kwargs:
+            args = []
+            if node.keywords:
+                keys, values = zip(*node.keywords)
+                args.append(ist.Dict(keys = [ist.Name(id = k) for k in keys], values = self.comp(list(values))))
+                node.keywords = None
+            else:
+                args.append(ist.Dict(keys = [], values = []))
+
+            if node.kwargs:
+                args.append(self.comp(node.kwargs))
+                node.kwargs = None
+
+            node.args += [ist.Call(func = ist.Name(id = "__kwargs_make"), args = args)]
+
         return node
 
     def node_binop(self, node):
@@ -182,4 +208,119 @@ class Transformer(isttransform.Transformer):
         return node
 
     def node_importfrom(self, node):
+        return node
+
+    def node_assign(self, node):
+        res = []
+        if len(node.lvalue) > 1:
+            tmp = self.alloc_var()
+            res.append(ist.Var(name = tmp, expr = self.comp(node.rvalue)))
+            for lval in node.lvalue:
+                res.extend(self.assign_simple(lval, ist.Name(id = tmp)))
+            return res
+        else:
+            return self.assign_simple(node.lvalue[0], self.comp(node.rvalue))
+
+    def assign_simple(self, target, value):
+        if isinstance(target, (ist.Tuple, ist.List)):
+            raise NotImplementedError()
+            t1 = self.alloc_var()
+            js = [ist.Var(name = t1, expr = value)]
+
+            for i, target in enumerate(target.elts):
+                var = self.comp(target)
+        elif isinstance(target, ist.Subscript) and isinstance(target.slice, (ist.Number, ist.String)):
+            js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setitem__"), args = [self.comp(target.slice), value])]
+        elif isinstance(target, ist.Subscript) and isinstance(target.slice, ist.Slice):
+            raise NotImplementedError()
+        else:
+            if isinstance(target, ist.Name):
+                var = target.id
+                js = [ist.Var(name = var, expr = value)]
+            elif isinstance(target, ist.GetAttr):
+                js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setattr__"), args = [self.comp(target.slice), value])]
+            else:
+                print target
+                raise NotImplementedError()
+        return js
+
+    def node_function(self, node):
+        #'args', 'defaults', 'kwargs', 'str', 'varargs'
+        defaults = [None] * (len(node.params.args) - len(node.params.defaults)) + node.params.defaults
+        offset = 0
+
+        js = []
+
+        if node.params.kwargs:
+            kwarg_name = node.params.kwargs
+        else:
+            kwarg_name = "__kwargs"
+
+        if node.params.varargs:
+            vararg_name = node.params.varargs
+        else:
+            vararg_name = "__varargs"
+
+        js.append(IVar(name = kwarg_name,  expr = ICall(func = IName(id = "__kwargs_get"),  args = [IName(id = "arguments")])))
+        js.append(IVar(name = vararg_name, expr = ICall(func = IName(id = "__varargs_get"), args = [IName(id = "arguments")])))
+
+        newargs = self.alloc_var()
+        js.append(IVar(name = newargs, expr = ICall(
+                    func = IGetAttr(
+                        base =
+                        ICall(
+                            func = IGetAttr(
+                                base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"),
+                                attr = "call"),
+                            args = [IName(id = "arguments")]),
+                        attr = "concat"),
+                    args = [ICall(func = IName(id = "js"), args = [IName(id = vararg_name)])]
+                    )))
+
+        if node.params.kwargs:
+            node.body.insert(0, IAssign(lvalue = [IName(id = kwarg_name)], rvalue = ICall(func = IName(id = "dict"), args = [IName(id = kwarg_name)])))
+            node.params.kwargs = None
+
+        if node.params.varargs:
+            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(0))" % (newargs))))
+            node.params.varargs = None
+
+        for i, arg in enumerate(node.params.args):
+            values = dict(i = i, id = arg, rawid = arg, kwarg = kwarg_name, newargs = newargs, func = node.name)
+
+            if defaults[i + offset] == None:
+                js.append(
+                    IVar(
+                        name = arg,
+                        expr = IIfExp(
+                            cond   = IBinOp(left = IString(value = arg), op = "In", right = IName(id = kwarg_name)),
+                            body   = ISubscript(value = IName(id = kwarg_name), slice = IString(value = arg)),
+                            orelse = ISubscript(value = IName(id = newargs),    slice = INumber(value = i)))))
+            else:
+                values['default'] = self.comp(defaults[i + offset])
+                js.append(IVar(name = arg, expr = ISubscript(value = IName(id = newargs), slice = INumber(value = i))))
+                js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
+                            IAssign(
+                                lvalue = IName(id = arg),
+                                rvalue = IIfExp(
+                                    cond = ICompare(
+                                        lvalue = IGetAttr(
+                                            base = IName(id = kwarg_name),
+                                            attr = arg),
+                                        comps = [IName(id = "undefined")],
+                                        ops = ["Eq"]),
+                                    body = self.comp(defaults[i + offset]),
+                                    orelse = IGetAttr(
+                                        base = IName(id = kwarg_name),
+                                        attr = arg)))]))
+            js.append(IDelete(targets = [IGetAttr(base = IName(id = kwarg_name), attr = arg)]))
+
+        node.params.defaults = []
+
+        node.params.args = []
+
+        node.body = js + self.comp(node.body)
+        if not (node.body and isinstance(node.body[-1], IReturn)):
+            node.body.append(IReturn(expr = IName(id = "None")))
+
         return node
