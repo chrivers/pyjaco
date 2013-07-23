@@ -25,6 +25,8 @@
 ##
 ######################################################################
 
+__all__ = ["ISTNode", "Annotation", "Comment", "Code", "Nop", "Function", "Parameters", "Statement", "Module", "If", "While", "TryExcept", "For", "ForEach", "Raise", "Break", "Continue", "Return", "ClassDef", "Call", "Assign", "BinOp", "Number", "GetAttr", "Name", "String", "TryExcept", "TryFinally", "TryHandler", "Tuple", "List", "AugAssign", "Delete", "BoolOp", "Compare", "Subscript", "Lambda", "UnaryOp", "Dict", "Global", "Yield", "Slice", "Generator", "Comprehension", "Import", "ImportFrom", "IfExp", "Assert", "Var"]
+
 class ISTNode(object):
 
     _defaults = dict()
