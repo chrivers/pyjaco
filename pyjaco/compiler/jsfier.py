@@ -28,10 +28,10 @@ class Transformer(isttransform.Transformer):
         "LtE": "le",
     }
 
-    index_var = 0
-
-    def comp(self, node):
-        return super(Transformer, self).comp(node)
+    def compute(self, tree):
+        self.index_var = 0
+        self.future_division = False
+        return self.comp(tree)
 
     def alloc_var(self):
         self.index_var += 1
@@ -103,7 +103,7 @@ class Transformer(isttransform.Transformer):
         raise NotImplementedError("Slice")
 
     def node_string(self, node):
-        return ist.Call(func = ist.Name(id = "str"), args = [node])
+        return ist.Call(func = ist.Name(id = "str"), args = [ist.String(value = node.value)])
 
     def node_call(self, node):
         node.func = self.comp(node.func)
@@ -113,7 +113,14 @@ class Transformer(isttransform.Transformer):
         return node
 
     def node_binop(self, node):
-        return ist.Call(func = ist.GetAttr(base = self.comp(node.left), attr = "PY$__%s__" % self.ops_binop[node.op]), args = [self.comp(node.right)])
+        if node.op == "Div":
+            if self.future_division:
+                op = "div"
+            else:
+                op = "floordiv"
+        else:
+            op = self.ops_binop[node.op]
+        return ist.Call(func = ist.GetAttr(base = self.comp(node.left), attr = "PY$__%s__" % op), args = [self.comp(node.right)])
 
     def node_unaryop(self, node):
         if node.op == "Invert":
@@ -172,4 +179,7 @@ class Transformer(isttransform.Transformer):
                     ])
         else:
             raise NotImplementedError()
+        return node
+
+    def node_importfrom(self, node):
         return node
