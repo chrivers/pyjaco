@@ -189,7 +189,7 @@ class Subscript(Code):
     _fields = ["value", "slice"]
 
 class Lambda(Code):
-    _fields = ["body", "args"]
+    _fields = ["body", "params"]
 
 class UnaryOp(Code):
     _fields = ["op", "lvalue"]
