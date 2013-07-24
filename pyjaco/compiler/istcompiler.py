@@ -189,7 +189,7 @@ class ISTCompiler(Multiplexer):
         return Break()
 
     def node_lambda(self, node):
-        return Lambda(args = self.comp(node.args), body = self.comp(node.body))
+        return Lambda(params = self.comp(node.args), body = [self.comp(node.body)])
 
     def node_unaryop(self, node):
         return UnaryOp(lvalue = self.comp(node.operand), op = node.op.__class__.__name__)
