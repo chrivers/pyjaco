@@ -23,6 +23,20 @@ class Transformer(isttransform.Transformer):
         "FloorDiv": "floordiv",
     }
 
+    ops_augassign = {
+        "Add"     : "iadd",
+        "Sub"     : "isub",
+        "Div"     : "idiv",
+        "Mult"    : "imul",
+        "LShift"  : "ilshift",
+        "RShift"  : "irshift",
+        "BitOr"   : "ibitor",
+        "BitAnd"  : "ibitand",
+        "BitXor"  : "ibitxor",
+        "FloorDiv": "ifloordiv",
+        "Pow"     : "ipow",
+    }
+
     ops_compare = {
         "Eq": "eq",
         "NotEq": "ne",
@@ -202,6 +216,11 @@ class Transformer(isttransform.Transformer):
                           incr = None
                           ))
 
+        if isinstance(node.target, ITuple):
+            decom = []
+            for i, x in enumerate(node.target.values):
+                decom.append(IVar(name = x.id, expr = ICall(func = (IGetAttr(base = for_target, attr = "PY$__getitem__")), args = [INumber(value = i)])))
+            js[-1].body = decom + js[-1].body
         return js
 
     def node_compare(self, node):
@@ -374,6 +393,18 @@ class Transformer(isttransform.Transformer):
     def node_lambda(self, node):
         assert len(node.body) == 1
         return ILambda(params = self.comp(node.params), body = [IReturn(expr = self.comp(node.body[0]))])
+
+    def node_augassign(self, node):
+        if node.op == "Div":
+            if self.future_division:
+                op = "div"
+            else:
+                op = "floordiv"
+        else:
+            op = self.ops_augassign[node.op]
+
+        return self.assign_simple(node.target, ICall(func = IGetAttr(base = self.comp(node.target), attr = "PY$__%s__" % op),
+                                                     args = [self.comp(node.value)]))
 
     # def node_global(self, node):
     #     self.scope.extend(node.names)
