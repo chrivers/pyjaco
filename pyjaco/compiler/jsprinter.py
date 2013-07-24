@@ -18,10 +18,9 @@ class Printer(istcompiler.Multiplexer):
         LShift = "<<",
         RShift = ">>",
         FloorDiv = "//",
-        Pow      = "**",
         ## Non-aug ops
-        And      = "and",
-        Or       = "or",
+        And      = "&&",
+        Or       = "||",
         In       = "in"
         )
 
@@ -94,9 +93,7 @@ class Printer(istcompiler.Multiplexer):
         return "(%s %s %s)" % (self.comp(node.left), self.opmap[node.op], self.comp(node.right))
 
     def node_boolop(self, node):
-        if len(node.values) <> 2:
-            raise NotImplementedError("JS does not support multi-term boolean operations")
-        return "(%s %s %s)" % (self.comp(node.values[0]), self.opmap[node.op], self.comp(node.values[1]))
+        return "(%s)" % (" %s " % self.opmap[node.op]).join((self.comp(val) for val in node.values))
 
     def node_string(self, node):
         return repr(node.value).lstrip("urb")
@@ -120,7 +117,7 @@ class Printer(istcompiler.Multiplexer):
         return node.id
 
     def node_return(self, node):
-        self.line("return %s;" % self.comp(node.expr))
+        return "return %s" % self.comp(node.expr)
 
     def node_nop(self, node):
         self.line("/* pass */")
@@ -216,9 +213,13 @@ class Printer(istcompiler.Multiplexer):
     def node_if(self, node):
         self.line("if (%s) {" % self.comp(node.cond))
         self.block(node.body, end = False)
-        self.line("}")
         if node.orelse:
-            raise NotImplementedError("JS does not support orelse blocks")
+            self.line("} else {")
+            self.block(node.orelse, end = False)
+            self.line("}")
+        else:
+            self.line("}")
+            return
 
     def node_while(self, node):
         self.line("while (%s) {" % self.comp(node.cond))
@@ -245,7 +246,7 @@ class Printer(istcompiler.Multiplexer):
         return "break"
 
     def node_lambda(self, node):
-        raise NotImplementedError("JS does not support lambdas")
+        return "function (%s) {%s}" % (", ".join(self.comp(node.params)), "; ".join(self.comp(node.body)))
 
     def node_unaryop(self, node):
         return "%s%s" % (self.uopmap[node.op], self.comp(node.lvalue))
