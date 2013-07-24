@@ -32,9 +32,16 @@ class Transformer(isttransform.Transformer):
         "LtE": "le",
     }
 
+    uopmap = dict(
+        UAdd = "pos",
+        USub = "neg",
+        Invert = "invert",
+        )
+
     def compute(self, tree):
         self.index_var = 0
         self.future_division = False
+        self.scope = []
         return self.comp(tree)
 
     def alloc_var(self):
@@ -149,19 +156,25 @@ class Transformer(isttransform.Transformer):
         return ist.Call(func = ist.GetAttr(base = self.comp(node.left), attr = "PY$__%s__" % op), args = [self.comp(node.right)])
 
     def node_unaryop(self, node):
-        if node.op == "Invert":
+        if node.op == "Not":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__not__"), args = [self.comp(node.lvalue)])
+        elif node.op in self.uopmap:
+            return ist.Call(func = ist.GetAttr(base = self.comp(node.lvalue), attr = "PY$__%s__" % self.uopmap[node.op]), args = [])
         else:
             raise NotImplementedError()
 
     def node_if(self, node):
         node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
         node.body = self.comp(node.body)
+        if node.orelse:
+            node.orelse = self.comp(node.orelse)
         return node
 
     def node_while(self, node):
         node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
         node.body = self.comp(node.body)
+        if node.orelse:
+            node.orelse = self.comp(node.orelse)
         return node
 
     def node_foreach(self, node):
@@ -208,7 +221,11 @@ class Transformer(isttransform.Transformer):
         return node
 
     def node_importfrom(self, node):
-        return node
+        if node.module == "__future__" and node.names == dict(division = None):
+            self.future_division = True
+            return None
+        else:
+            raise NotImplementedError()
 
     def node_assign(self, node):
         res = []
@@ -223,25 +240,37 @@ class Transformer(isttransform.Transformer):
 
     def assign_simple(self, target, value):
         if isinstance(target, (ist.Tuple, ist.List)):
-            raise NotImplementedError()
             t1 = self.alloc_var()
-            js = [ist.Var(name = t1, expr = value)]
+            js = [ist.Var(name = t1, expr = self.comp(value))]
 
-            for i, target in enumerate(target.elts):
-                var = self.comp(target)
-        elif isinstance(target, ist.Subscript) and isinstance(target.slice, (ist.Number, ist.String)):
-            js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setitem__"), args = [self.comp(target.slice), value])]
-        elif isinstance(target, ist.Subscript) and isinstance(target.slice, ist.Slice):
-            raise NotImplementedError()
-        else:
-            if isinstance(target, ist.Name):
+            for i, target in enumerate(target.values):
                 var = target.id
-                js = [ist.Var(name = var, expr = value)]
-            elif isinstance(target, ist.GetAttr):
-                js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setattr__"), args = [self.comp(target.slice), value])]
+                assert isinstance(target, IName)
+                expr = ICall(func = IGetAttr(base = IName(id = t1), attr = "PY$__getitem__"), args = [INumber(value = i)])
+                if isinstance(target, IName) and not (var in self.scope):
+                    self.scope.append(var)
+                    js.append(IAssign(lvalue = [target], rvalue = expr))
+                else:
+                    js.append(IVar(name = target.id, expr = expr))
+        elif isinstance(target, ist.Subscript):
+            if isinstance(target.slice, ist.Slice):
+                slice = target.slice
+                js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setslice__"), args = [
+                            self.comp(slice.lower) if slice.lower else IName(id = "None"),
+                            self.comp(slice.upper) if slice.upper else IName(id = "None"),
+                            value])]
             else:
-                print target
-                raise NotImplementedError()
+                js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setitem__"), args = [self.comp(target.slice), value])]
+        elif isinstance(target, ist.Name):
+            var = target.id
+            if var in self.scope:
+                js = [IAssign(lvalue = IName(id = var), rvalue = value)]
+            else:
+                js = [ist.Var(name = var, expr = value)]
+        elif isinstance(target, ist.GetAttr):
+            js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setattr__"), args = [self.comp(target.slice), value])]
+        else:
+            raise NotImplementedError("Unsupported assignment type", target)
         return js
 
     def node_function(self, node):
@@ -282,7 +311,7 @@ class Transformer(isttransform.Transformer):
             node.params.kwargs = None
 
         if node.params.varargs:
-            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(0))" % (newargs))))
+            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
             node.params.varargs = None
 
         for i, arg in enumerate(node.params.args):
@@ -324,3 +353,28 @@ class Transformer(isttransform.Transformer):
             node.body.append(IReturn(expr = IName(id = "None")))
 
         return node
+
+    def node_boolop(self, node):
+        assign_context = self.destiny(["assign", "function", "call", "comprehension"], 1) in ["assign", "call"]
+        if assign_context:
+            var = self.alloc_var()
+            evallist = [ICompare(lvalue =
+                                 ICall(func = IName(id = "bool"),
+                                       args = [IAssign(lvalue = [IName(id = var)], rvalue = self.comp(val))]),
+                                 ops = ["Eq"],
+                                 comps = [IName(id = "True")])
+                        for val in node.values]
+            return ICall(func =
+                         ILambda(body = [IVar(name = var),
+                                         IBoolOp(op = node.op, values = evallist),
+                                         IReturn(expr = IName(id = var))], params = []), args = [])
+        else:
+            return IBoolOp(values = [ICompare(lvalue = ICall(func = IName(id = "bool"), args = [val]), ops = ["Eq"], comps = [IName(id = "True")]) for val in node.values], op = node.op)
+
+    def node_lambda(self, node):
+        assert len(node.body) == 1
+        return ILambda(params = self.comp(node.params), body = [IReturn(expr = self.comp(node.body[0]))])
+
+    # def node_global(self, node):
+    #     self.scope.extend(node.names)
+    #     return None
