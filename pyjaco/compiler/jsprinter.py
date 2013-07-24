@@ -58,7 +58,7 @@ class Printer(istcompiler.Multiplexer):
     def dedent(self, indent = 4):
         self.indentation -= indent
 
-    def block(self, block, end = True):
+    def block(self, block):
         self.indent()
         for b in block:
             if type(b) == list:
@@ -70,8 +70,6 @@ class Printer(istcompiler.Multiplexer):
                 if res:
                     self.line(res + ";")
         self.dedent()
-        if self.buffer[-1].strip() <> "" and end:
-            self.line("")
 
     def capture(self, block):
         buf = self.buffer
@@ -79,7 +77,7 @@ class Printer(istcompiler.Multiplexer):
         self.block(block)
         res = self.buffer
         self.buffer = buf
-        return [r for r in res if r]
+        return res
 
     def node_module(self, node):
         self.block(node.body)
@@ -135,7 +133,7 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError("JS does not support decorators")
 
         self.line("function %s(%s) {" % (node.name, self.comp(node.params)))
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("}")
 
     def node_parameters(self, node):
@@ -159,7 +157,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_tryexcept(self, node):
         self.line("try {")
-        self.block(node.body, end = False)
+        self.block(node.body)
         if len(node.handlers) <> 1:
             raise NotImplementedError("JS does not support multiple exception handlers")
 
@@ -169,9 +167,9 @@ class Printer(istcompiler.Multiplexer):
 
     def node_tryfinally(self, node):
         self.line("try {")
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("} finally {")
-        self.block(node.finalbody, end = False)
+        self.block(node.finalbody)
         self.line("}")
 
     def node_tryhandler(self, node):
@@ -179,7 +177,7 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError("JS does not support typed exception handlers")
         assert isinstance(node.name, ist.Name)
         self.line("} catch (%s) {" % node.name.id)
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("}")
 
     def node_assign(self, node):
@@ -194,7 +192,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_foreach(self, node):
         self.line("for (%s in %s) {" % (self.comp(node.target), self.comp(node.iter)))
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("}")
         if node.orelse:
             raise NotImplementedError("JS does not support orelse blocks")
@@ -203,7 +201,7 @@ class Printer(istcompiler.Multiplexer):
         self.line("for (%s; %s; %s) {" % (self.comp(node.init) if node.init else "",
                                           self.comp(node.cond) if node.cond else "",
                                           self.comp(node.incr) if node.incr else ""))
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("}")
 
     def node_classdef(self, node):
@@ -217,10 +215,10 @@ class Printer(istcompiler.Multiplexer):
 
     def node_if(self, node):
         self.line("if (%s) {" % self.comp(node.cond))
-        self.block(node.body, end = False)
+        self.block(node.body)
         if node.orelse:
             self.line("} else {")
-            self.block(node.orelse, end = False)
+            self.block(node.orelse)
             self.line("}")
         else:
             self.line("}")
@@ -228,7 +226,7 @@ class Printer(istcompiler.Multiplexer):
 
     def node_while(self, node):
         self.line("while (%s) {" % self.comp(node.cond))
-        self.block(node.body, end = False)
+        self.block(node.body)
         self.line("}")
         if node.orelse:
             raise NotImplementedError("JS does not support orelse blocks")
