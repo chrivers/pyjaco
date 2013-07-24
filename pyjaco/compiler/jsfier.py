@@ -269,9 +269,9 @@ class Transformer(isttransform.Transformer):
                 expr = ICall(func = IGetAttr(base = IName(id = t1), attr = "PY$__getitem__"), args = [INumber(value = i)])
                 if isinstance(target, IName) and not (var in self.scope):
                     self.scope.append(var)
-                    js.append(IAssign(lvalue = [target], rvalue = expr))
-                else:
                     js.append(IVar(name = target.id, expr = expr))
+                else:
+                    js.append(IAssign(lvalue = [target], rvalue = expr))
         elif isinstance(target, ist.Subscript):
             if isinstance(target.slice, ist.Slice):
                 slice = target.slice
@@ -284,8 +284,9 @@ class Transformer(isttransform.Transformer):
         elif isinstance(target, ist.Name):
             var = target.id
             if var in self.scope:
-                js = [IAssign(lvalue = IName(id = var), rvalue = value)]
+                js = [IAssign(lvalue = [IName(id = var)], rvalue = value)]
             else:
+                self.scope.append(var)
                 js = [ist.Var(name = var, expr = value)]
         elif isinstance(target, ist.GetAttr):
             js = [ist.Call(func = ist.GetAttr(base = value, attr = "PY$__setattr__"), args = [target.attr, value])]
@@ -371,7 +372,7 @@ class Transformer(isttransform.Transformer):
         if not (node.body and isinstance(node.body[-1], IReturn)):
             node.body.append(IReturn(expr = IName(id = "None")))
 
-        return node
+        return IVar(name = node.name, expr = ILambda(body = node.body, params = node.params))
 
     def node_boolop(self, node):
         assign_context = self.destiny(["assign", "function", "call", "comprehension"], 1) in ["assign", "call"]
@@ -386,9 +387,9 @@ class Transformer(isttransform.Transformer):
             return ICall(func =
                          ILambda(body = [IVar(name = var),
                                          IBoolOp(op = node.op, values = evallist),
-                                         IReturn(expr = IName(id = var))], params = []), args = [])
+                                         IReturn(expr = IName(id = var))], params = None), args = [])
         else:
-            return IBoolOp(values = [ICompare(lvalue = ICall(func = IName(id = "bool"), args = [val]), ops = ["Eq"], comps = [IName(id = "True")]) for val in node.values], op = node.op)
+            return IBoolOp(values = [ICompare(lvalue = ICall(func = IName(id = "bool"), args = [self.comp(val)]), ops = ["Eq"], comps = [IName(id = "True")]) for val in node.values], op = node.op)
 
     def node_lambda(self, node):
         assert len(node.body) == 1
