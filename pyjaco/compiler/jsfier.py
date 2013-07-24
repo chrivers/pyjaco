@@ -260,7 +260,7 @@ class Transformer(isttransform.Transformer):
     def assign_simple(self, target, value):
         if isinstance(target, (ist.Tuple, ist.List)):
             t1 = self.alloc_var()
-            js = [ist.Var(name = t1, expr = self.comp(value))]
+            js = [ist.Var(name = t1, expr = value)]
 
             for i, target in enumerate(target.values):
                 var = target.id
