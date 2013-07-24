@@ -73,6 +73,14 @@ class Printer(istcompiler.Multiplexer):
         if self.buffer[-1].strip() <> "" and end:
             self.line("")
 
+    def capture(self, block):
+        buf = self.buffer
+        self.buffer = []
+        self.block(block)
+        res = self.buffer
+        self.buffer = buf
+        return [r for r in res if r]
+
     def node_module(self, node):
         self.block(node.body)
 
@@ -243,7 +251,7 @@ class Printer(istcompiler.Multiplexer):
         return "break"
 
     def node_lambda(self, node):
-        return "function (%s) {%s}" % (", ".join(self.comp(node.params)), "; ".join(self.comp(node.body)))
+        return "function (%s) {\n%s\n}" % (self.comp(node.params) if node.params else "", "\n".join(self.capture(node.body)))
 
     def node_unaryop(self, node):
         return "%s%s" % (self.uopmap[node.op], self.comp(node.lvalue))
