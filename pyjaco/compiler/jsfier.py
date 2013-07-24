@@ -406,6 +406,25 @@ class Transformer(isttransform.Transformer):
         return self.assign_simple(node.target, ICall(func = IGetAttr(base = self.comp(node.target), attr = "PY$__%s__" % op),
                                                      args = [self.comp(node.value)]))
 
+    def node_delete(self, node):
+        return [self.delete_simple(part) for part in node.targets]
+
+    def delete_simple(self, node):
+        if isinstance(node, ist.Subscript):
+            if isinstance(node.slice, ist.Slice):
+                return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delslice__"),
+                             args = [self.comp(node.slice.lower), self.comp(node.slice.upper)])
+            else:
+                return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delitem__"),
+                             args = [self.comp(node.slice)])
+        elif isinstance(node, ist.Attribute):
+                return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delattr__"),
+                             args = [IString(value = node.attr)])
+        elif isinstance(node, ist.Name):
+            raise NotImplementedError("Javascript does not support deleting variables. Cannot compile")
+        else:
+            raise NotImplementedError("Unsupported delete type: %s" % node)
+
     # def node_global(self, node):
     #     self.scope.extend(node.names)
     #     return None
