@@ -167,13 +167,10 @@ class Printer(istcompiler.Multiplexer):
         self.line("}")
 
     def node_tryhandler(self, node):
-        if node.type and node.name:
-            handle = " %s, %s" % (self.comp(node.type), self.comp(node.name))
-        elif node.type:
-            handle = " %s" % self.comp(node.type)
-        else:
-            handle = ""
-        self.line("catch (%s) {" % handle)
+        if node.type:
+            raise NotImplementedError("JS does not support typed exception handlers")
+        assert isinstance(node.name, ist.Name)
+        self.line("} catch (%s) {" % node.name.id)
         self.block(node.body, end = False)
         self.line("}")
 
