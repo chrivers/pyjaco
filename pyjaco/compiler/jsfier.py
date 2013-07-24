@@ -56,6 +56,7 @@ class Transformer(isttransform.Transformer):
         self.index_var = 0
         self.future_division = False
         self.scope = []
+        self.exceptions = []
         return self.comp(tree)
 
     def alloc_var(self):
@@ -63,7 +64,7 @@ class Transformer(isttransform.Transformer):
         return "$v%d" % self.index_var
 
     def node_name(self, node):
-        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"]:
+        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
         else:
             return node
@@ -287,7 +288,7 @@ class Transformer(isttransform.Transformer):
             else:
                 js = [ist.Var(name = var, expr = value)]
         elif isinstance(target, ist.GetAttr):
-            js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setattr__"), args = [self.comp(target.slice), value])]
+            js = [ist.Call(func = ist.GetAttr(base = value, attr = "PY$__setattr__"), args = [target.attr, value])]
         else:
             raise NotImplementedError("Unsupported assignment type", target)
         return js
@@ -425,6 +426,49 @@ class Transformer(isttransform.Transformer):
         else:
             raise NotImplementedError("Unsupported delete type: %s" % node)
 
-    # def node_global(self, node):
-    #     self.scope.extend(node.names)
-    #     return None
+    def node_tryexcept(self, node):
+        var = self.alloc_var()
+        body = []
+        catchall = False
+        self.exceptions.append(var)
+
+        lastif = None
+        for i, n in enumerate(node.handlers):
+            if n.type:
+                if n.name:
+                    if isinstance(n.name, IName):
+                        body.append(IVar(name = n.name.id, expr = IName(id = var)))
+                    else:
+                        raise JSError("Catching non-simple exceptions not supported")
+
+                exp = IIf(cond = ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "isinstance"), args = [IName(id = var), self.comp(n.type)]), body = self.comp(n.body))
+                if lastif:
+                    lastif.orelse = [exp]
+                else:
+                    body.append(exp)
+                lastif = exp
+            else:
+                catchall = True
+                if lastif:
+                    lastif.orelse = self.comp(n.body)
+                else:
+                    body.append(self.comp(n.body))
+            continue
+        if not catchall:
+            lastif.orelse = [IRaise(expr = IName(id = var))]
+
+        node.body = self.comp(node.body)
+        node.handlers = [ITryHandler(body = body, name = IName(id = var), type = None)]
+        self.exceptions.pop()
+        return node
+
+    def node_raise(self, node):
+        if node.expr:
+            node.expr = self.comp(node.expr)
+        else:
+            node.expr = IName(id = self.exceptions[-1])
+        return node
+
+    def node_global(self, node):
+        self.scope.extend(node.names)
+        return None
