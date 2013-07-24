@@ -294,7 +294,6 @@ class Transformer(isttransform.Transformer):
         return js
 
     def node_function(self, node):
-        #'args', 'defaults', 'kwargs', 'str', 'varargs'
         defaults = [None] * (len(node.params.args) - len(node.params.defaults)) + node.params.defaults
         offset = 0
 
