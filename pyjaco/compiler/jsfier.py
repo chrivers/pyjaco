@@ -57,6 +57,7 @@ class Transformer(isttransform.Transformer):
         self.future_division = False
         self.scope = []
         self.exceptions = []
+        self._class_name = []
         return self.comp(tree)
 
     def alloc_var(self):
@@ -242,7 +243,7 @@ class Transformer(isttransform.Transformer):
                     ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
                     ])
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(op)
         return node
 
     def node_importfrom(self, node):
@@ -315,6 +316,13 @@ class Transformer(isttransform.Transformer):
         else:
             vararg_name = "__varargs"
 
+        if len(node.params.args) and node.params.args[0] == "self":
+            offset = 1
+        else:
+            offset = 0
+
+        self.scope = [arg for arg in node.params.args]
+
         js.append(IVar(name = kwarg_name,  expr = ICall(func = IName(id = "__kwargs_get"),  args = [IName(id = "arguments")])))
         js.append(IVar(name = vararg_name, expr = ICall(func = IName(id = "__varargs_get"), args = [IName(id = "arguments")])))
 
@@ -331,6 +339,9 @@ class Transformer(isttransform.Transformer):
                     args = [ICall(func = IName(id = "js"), args = [IName(id = vararg_name)])]
                     )))
 
+        if node.name in ("__getattr__", "__setattr__"):
+            node.body.insert(0, IName(id = "if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); }" % { 'id': node.params.args[1] }))
+
         if node.params.kwargs:
             node.body.insert(0, IAssign(lvalue = [IName(id = kwarg_name)], rvalue = ICall(func = IName(id = "dict"), args = [IName(id = kwarg_name)])))
             node.params.kwargs = None
@@ -339,7 +350,7 @@ class Transformer(isttransform.Transformer):
             node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
             node.params.varargs = None
 
-        for i, arg in enumerate(node.params.args):
+        for i, arg in enumerate(node.params.args[offset:]):
             values = dict(i = i, id = arg, rawid = arg, kwarg = kwarg_name, newargs = newargs, func = node.name)
 
             if defaults[i + offset] == None:
@@ -377,7 +388,19 @@ class Transformer(isttransform.Transformer):
         if not (node.body and isinstance(node.body[-1], IReturn)):
             node.body.append(IReturn(expr = IName(id = "None")))
 
-        return IVar(name = node.name, expr = ILambda(body = node.body, params = node.params))
+        self.scope = []
+
+        inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
+
+        exp = ILambda(body = node.body, params = node.params)
+
+        if inclass or offset == 1:
+            exp.body.insert(0, IVar(name = "self", expr = IName(id = "this")))
+
+        if inclass:
+            return exp
+        else:
+            return IVar(name = node.name, expr = exp)
 
     def node_boolop(self, node):
         assign_context = self.destiny(["assign", "function", "call", "comprehension"], 1) in ["assign", "call"]
@@ -479,3 +502,46 @@ class Transformer(isttransform.Transformer):
     def node_global(self, node):
         self.scope.extend(node.names)
         return None
+
+    def node_classdef(self, node):
+        bases = [n.id for n in node.bases]
+        if not bases:
+            bases = ['object']
+        if len(bases) == 0:
+            raise NotImplementedError("Old-style classes not supported")
+        elif len(bases) > 1:
+            raise NotImplementedError("Multiple inheritance not supported")
+
+        class_name = node.name
+
+        use_prototypes = IName(id = "true")
+
+        js = []
+
+        inherit = ICall(func = IName(id = "__inherit"), args = [self.comp(IName(id = bases[0])), IString(value = class_name), use_prototypes])
+        if len(self._class_name) > 0:
+            js.append(inherit)
+        else:
+            js.append(IVar(name = class_name, expr = inherit))
+
+        self._class_name.append(class_name)
+
+        for st in node.body:
+            if isinstance(st, IAssign):
+                value = self.comp(st.rvalue)
+                for t in st.lvalue:
+                    js.append(IAssign(lvalue = [IGetAttr(base = IName(id = class_name), attr = "PY$%s" % t.id)], rvalue = self.comp(st.rvalue)))
+            elif isinstance(st, IFunction):
+                js.append(IAssign(lvalue = [IGetAttr(base = IName(id = class_name), attr = "PY$%s" % st.name)], rvalue = self.comp(st)))
+            elif isinstance(st, IClassDef):
+                pass
+            elif isinstance(st, IString):
+                js.append(IName(id = "\n".join(["/* %s */" % s for s in st.value.split("\n")])))
+            elif isinstance(st, INop):
+                pass
+            else:
+                raise JSError("Unsupported class data: %s" % st)
+
+        self._class_name.pop()
+
+        return js
