@@ -52,6 +52,12 @@ class Transformer(isttransform.Transformer):
         Invert = "invert",
         )
 
+    name_map = {
+        'super' : '$super',
+        'delete': '$delete',
+        'default': '$default',
+    }
+
     def compute(self, tree):
         self.index_var = 0
         self.future_division = False
@@ -67,10 +73,8 @@ class Transformer(isttransform.Transformer):
     def node_name(self, node):
         if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError", "ZeroDivisionError"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
-        elif node.id == "super":
-            node.id = "Super"
-            return node
         else:
+            node.id = self.name_map.get(node.id, node.id)
             return node
 
     def node_getattr(self, node):
