@@ -126,7 +126,7 @@ class Printer(istcompiler.Multiplexer):
         return "return %s" % self.comp(node.expr)
 
     def node_nop(self, node):
-        self.line("/* pass */")
+        return "/* pass */"
 
     def node_function(self, node):
         for deco in node.decorators:
