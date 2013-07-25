@@ -567,8 +567,60 @@ class Transformer(isttransform.Transformer):
             elif isinstance(st, INop):
                 pass
             else:
-                raise JSError("Unsupported class data: %s" % st)
+                raise NotImplementedError("Unsupported class data: %s" % st)
 
         self._class_name.pop()
 
         return js
+
+    def node_listcomp(self, node):
+
+        comp = self.alloc_var()
+
+        gen = node.generators[0]
+
+        for_body = []
+
+        if isinstance(gen.target, ist.Name):
+            for_target = gen.target.id
+        elif isinstance(gen.target, ist.Tuple):
+            for_target = self.alloc_var()
+            for i, x in enumerate(gen.target.values):
+                for_body.append(IVar(name = x.id, expr = ICall(func = (IGetAttr(base = IName(id = for_target), attr = "PY$__getitem__")), args = [INumber(value = i)])))
+        else:
+            raise JSError("Advanced for-loop decomposition not supported")
+
+        for_body.append(ICall(func = IGetAttr(base = IName(id = comp), attr = "push"), args = [self.comp(node.expr)]))
+
+        body = []
+        body.append(IVar(name = comp, expr = IList(values = [])))
+        body.append(IVar(name = for_target, expr = None))
+        itervar = self.alloc_var()
+
+        body.append(
+            IFor(
+                body = for_body,
+                init = IAssign(
+                    lvalue = [IName(id = itervar)],
+                    rvalue = ICall(func = IName(id = "iter"), args = [self.comp(gen.iter)])
+                    ),
+                cond = IAssign(lvalue = [IName(id = for_target)], rvalue = ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "next"), args = [IName(id = itervar)])),
+                incr = None
+                )
+            )
+        body.append(IReturn(expr = ICall(func = IName(id = "list"), args = [IName(id = comp)])))
+        return ICall(func = ILambda(body = body, params = []), args = [])
+
+    def node_generator(self, node):
+        raise NotImplementedError("Cannot compile generator expressions")
+
+    def node_comprehension(self, node):
+        if isinstance(node.target, ast.Name):
+            var = self.visit(node.target)
+        elif isinstance(node.target, ast.Tuple):
+            var = self.alloc_var()
+        else:
+            raise NotImplementedError("Unsupported target type in list comprehension")
+
+        print node, dir(node)
+        return INop()
