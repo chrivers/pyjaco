@@ -63,6 +63,7 @@ class Transformer(isttransform.Transformer):
         self.future_division = False
         self.scope = []
         self.exceptions = []
+        self._loops = []
         self._class_name = []
         return self.comp(tree)
 
@@ -194,11 +195,27 @@ class Transformer(isttransform.Transformer):
         return node
 
     def node_while(self, node):
+        if node.orelse:
+            orelse_var = self.alloc_var()
+            self._loops.append(orelse_var)
+            decl = IVar(name = orelse_var, expr = ist.Name(id = "true"))
+
         node.cond = ist.Compare(lvalue = ist.Call(func = ist.Name(id = "bool"), args = [self.comp(node.cond)]), ops = ["Eq"], comps = [ist.Name(id = "True")])
         node.body = self.comp(node.body)
+
         if node.orelse:
-            node.orelse = self.comp(node.orelse)
-        return node
+            self._loops.pop()
+            code = [decl, node, IIf(cond = IName(id = orelse_var), body = self.comp(node.orelse))]
+            node.orelse = None
+            return code
+        else:
+            return node
+
+    def node_break(self, node):
+        if self._loops:
+            return [IAssign(lvalue = [IName(id = self._loops[-1])], rvalue = IName(id = "false")), node]
+        else:
+            return node
 
     def node_foreach(self, node):
         if isinstance(node.target, ist.Name):
@@ -216,6 +233,7 @@ class Transformer(isttransform.Transformer):
 
         if node.orelse:
             orelse_var = self.alloc_var()
+            self._loops.append(orelse_var)
             js.append(ist.Var(name = orelse_var, expr = ist.Name(id = "true")))
 
         js.append(ist.Var(name = for_target.id))
@@ -230,6 +248,11 @@ class Transformer(isttransform.Transformer):
             for i, x in enumerate(node.target.values):
                 decom.append(IVar(name = x.id, expr = ICall(func = (IGetAttr(base = for_target, attr = "PY$__getitem__")), args = [INumber(value = i)])))
             js[-1].body = decom + js[-1].body
+
+        if node.orelse:
+            js.append(IIf(cond = IName(id = orelse_var), body = self.comp(node.orelse)))
+            self._loops.pop()
+
         return js
 
     def node_compare(self, node):
