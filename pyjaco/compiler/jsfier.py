@@ -64,8 +64,11 @@ class Transformer(isttransform.Transformer):
         return "$v%d" % self.index_var
 
     def node_name(self, node):
-        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError"]:
+        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError", "ZeroDivisionError"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
+        elif node.id == "super":
+            node.id = "Super"
+            return node
         else:
             return node
 
@@ -232,6 +235,8 @@ class Transformer(isttransform.Transformer):
             return ist.Call(func = ist.GetAttr(base = self.comp(node.lvalue), attr = "PY$__%s__" % self.ops_compare[op]), args = [self.comp(node.comps[0])])
         elif op == "In":
             return ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
+        elif op == "Is":
+            return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__is__"), args = [self.comp(node.lvalue), self.comp(node.comps[0])])
         elif op == "NotIn":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__not__"), args = [
                     ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
@@ -289,7 +294,7 @@ class Transformer(isttransform.Transformer):
                 self.scope.append(var)
                 js = [ist.Var(name = var, expr = value)]
         elif isinstance(target, ist.GetAttr):
-            js = [ist.Call(func = ist.GetAttr(base = value, attr = "PY$__setattr__"), args = [target.attr, value])]
+            js = [ist.Call(func = ist.GetAttr(base = target.base, attr = "PY$__setattr__"), args = [IString(value = target.attr), value])]
         else:
             raise NotImplementedError("Unsupported assignment type", target)
         return js
@@ -418,8 +423,8 @@ class Transformer(isttransform.Transformer):
             else:
                 return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delitem__"),
                              args = [self.comp(node.slice)])
-        elif isinstance(node, ist.Attribute):
-                return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delattr__"),
+        elif isinstance(node, ist.GetAttr):
+                return ICall(func = IGetAttr(base = self.comp(node.base), attr = "PY$__delattr__"),
                              args = [IString(value = node.attr)])
         elif isinstance(node, ist.Name):
             raise NotImplementedError("Javascript does not support deleting variables. Cannot compile")
