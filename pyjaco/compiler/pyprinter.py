@@ -299,6 +299,12 @@ class Printer(istcompiler.Multiplexer):
             gens.append(self.comp(gen))
         return "%s %s" % (self.comp(node.value), " ".join(gens))
 
+    def node_listcomp(self, node):
+        gens = []
+        for gen in node.generators:
+            gens.append(self.comp(gen))
+        return "[%s %s]" % (self.comp(node.value), " ".join(gens))
+
     def node_comprehension(self, node):
         conds = [""]
         for cond in node.conds:
