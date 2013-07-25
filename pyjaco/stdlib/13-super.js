@@ -23,16 +23,16 @@
   OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-__builtins__.PY$super = __inherit(object, "Super");
+__builtins__.PY$super = __inherit(object, "super");
 
-var Super = __builtins__.PY$super;
+var $super = __builtins__.PY$super;
 
-Super.PY$__init__ = function(cls, obj) {
+$super.PY$__init__ = function(cls, obj) {
     this.cls = cls;
     this.obj = obj;
 };
 
-Super.PY$__getattr__ = function(k) {
+$super.PY$__getattr__ = function(k) {
     var q = this.cls.PY$__super__.PY$__getattr__(k, false);
     if ((typeof q === 'function') && q.PY$__class__ === undefined) {
         var that = this.obj;
@@ -44,8 +44,8 @@ Super.PY$__getattr__ = function(k) {
     }
 };
 
-Super.PY$__repr__ = function() {
+$super.PY$__repr__ = function() {
     return str("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
 };
 
-Super.PY$__str__ = Super.PY$__repr__;
+$super.PY$__str__ = $super.PY$__repr__;
