@@ -232,11 +232,14 @@ class ISTCompiler(Multiplexer):
             step = None
         return Slice(lower = lower, upper = upper, step = step)
 
-    def node_generatorexp(self, node):
-        return Generator(value = self.comp(node.elt), generators = self.comp(node.generators))
-
     def node_comprehension(self, node):
         return Comprehension(conds = self.comp(node.ifs), iter = self.comp(node.iter), target = self.comp(node.target))
+
+    def node_generatorexp(self, node):
+        return Generator(expr = self.comp(node.elt), generators = self.comp(node.generators))
+
+    def node_listcomp(self, node):
+        return ListComp(expr = self.comp(node.elt), generators = self.comp(node.generators))
 
     def node_importfrom(self, node):
         assert node.level == 0
@@ -250,9 +253,6 @@ class ISTCompiler(Multiplexer):
         for n in node.names:
             names[n.name] = n.asname
         return Import(names = names)
-
-    def node_listcomp(self, node):
-        return List(values = [Generator(value = self.comp(node.elt), generators = self.comp(node.generators))])
 
     def node_ifexp(self, node):
         return IfExp(cond = self.comp(node.test), body = self.comp(node.body), orelse = self.comp(node.orelse))
