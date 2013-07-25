@@ -439,14 +439,16 @@ class Transformer(isttransform.Transformer):
 
         lastif = None
         for i, n in enumerate(node.handlers):
-            if n.type:
-                if n.name:
-                    if isinstance(n.name, IName):
-                        body.append(IVar(name = n.name.id, expr = IName(id = var)))
-                    else:
-                        raise JSError("Catching non-simple exceptions not supported")
+            if n.name:
+                if isinstance(n.name, IName):
+                    vardecl = [IVar(name = n.name.id, expr = IName(id = var))]
+                else:
+                    raise JSError("Catching non-simple exceptions not supported")
+            else:
+                vardecl = []
 
-                exp = IIf(cond = ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "isinstance"), args = [IName(id = var), self.comp(n.type)]), body = self.comp(n.body))
+            if n.type:
+                exp = IIf(cond = ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "isinstance"), args = [IName(id = var), self.comp(n.type)]), body = vardecl + self.comp(n.body))
                 if lastif:
                     lastif.orelse = [exp]
                 else:
