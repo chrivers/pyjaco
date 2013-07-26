@@ -27,15 +27,15 @@ def run_with_stdlib(file_path, file_name=None):
     class TestStdLib(unittest.TestCase):
         """Tests js code with the stdlib"""
         templ = {
-            "js_path": file_path, 
-            "js_unix_path": get_posix_path(file_path), 
+            "js_path": file_path,
+            "js_unix_path": get_posix_path(file_path),
             "js_out_path": file_path + ".out",
             "js_error": file_path + ".err",
             "name": file_name,
         }
         def reportProgres(self):
             """Should be overloaded by the test result class."""
-    
+
         def runTest(self):
             """The actual test goes here."""
             cmd = (
@@ -52,14 +52,14 @@ def run_with_stdlib(file_path, file_name=None):
 def compile_file_test(file_path, file_name=None):
     """Creates a test that tests if a file can be compiled by python"""
     file_name = file_name if file_name else file_path
-    
+
     class CompileFile(unittest.TestCase):
         """Test if a file can be compiled by python."""
 
         templ = {
             "py_executable": sys.executable,
-            "py_path": file_path, 
-            "py_unix_path": get_posix_path(file_path), 
+            "py_path": file_path,
+            "py_unix_path": get_posix_path(file_path),
             "py_out_path": file_path + ".out",
             "py_error": file_path + ".err",
             "name": file_name,
@@ -93,7 +93,7 @@ def compile_and_run_file_test(file_path, file_name=None):
         """Tests that a file can be compiled and run as js"""
         templ = {
         "py_executable": sys.executable,
-        "py_path": file_path, 
+        "py_path": file_path,
         "py_unix_path": get_posix_path(file_path),
         "py_out_path": file_path + ".out",
         "js_path": file_path + ".js",
@@ -126,11 +126,11 @@ def compile_and_run_file_test(file_path, file_name=None):
                 '%(py_executable)s pyjs.py -I -q '
                 '"%(py_path)s" > "%(js_path)s" 2> '
                 '"%(compiler_error)s"'
-                ) % self.templ 
+                ) % self.templ
 
             javascript_command = (
                 'js -f "%(js_path)s" > "%(js_out_path)s" 2> '
-                '"%(js_error)s"' 
+                '"%(js_error)s"'
                 ) % self.templ
 
             commands = []
@@ -144,8 +144,8 @@ def compile_and_run_file_test(file_path, file_name=None):
                 self.assertEqual(0, subprocess.call([cmd], shell = True))
                 self.reportProgres()
             self.assertEqual(
-                file(self.templ["py_out_path"]).readlines(),
-                file(self.templ["js_out_path"]).readlines()
+                file(self.templ["py_out_path"]).read(),
+                file(self.templ["js_out_path"]).read()
                 )
             self.reportProgres()
 
@@ -165,4 +165,3 @@ def compile_and_run_file_failing_test(*a, **k):
             return super(FailingTest, self).runTest()
 
     return FailingTest
-
