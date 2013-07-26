@@ -181,6 +181,7 @@ class Printer(istcompiler.Multiplexer):
         self.line("}")
 
     def node_assign(self, node):
+        assert type(node.lvalue) == list
         return "%s = %s" % (" = ".join(self.comp(node.lvalue)), self.comp(node.rvalue))
 
     def node_tuple(self, node):
