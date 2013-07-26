@@ -33,3 +33,8 @@ for x in range(2):
         print "else 1"
 else:
     print "should happen 2"
+
+for x in []:
+    print "foo"
+else:
+    print "no iteration"
