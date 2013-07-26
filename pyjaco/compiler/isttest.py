@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 import istcompiler
 import pyprinter
+import jsprinter
+import jsfier
 import sys
+import ist
 
 if len(sys.argv) == 1:
     print "Usage: %s <file.py>" % sys.argv[0]
@@ -10,4 +13,5 @@ if len(sys.argv) == 1:
 c = istcompiler.Compiler()
 for arg in sys.argv[1:]:
     code = c.compile(file(arg).read(), "test.py")
-    print pyprinter.format(code)
+    code = jsfier.Transformer().compute(code)
+    print jsprinter.format(code)
