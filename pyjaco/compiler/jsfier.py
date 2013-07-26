@@ -516,7 +516,15 @@ class Transformer(isttransform.Transformer):
         node.body = self.comp(node.body)
         node.handlers = [ITryHandler(body = body, name = IName(id = var), type = None)]
         self.exceptions.pop()
-        return node
+
+        if node.orelse:
+            else_var = self.alloc_var()
+            node.handlers[0].body.insert(0, IAssign(lvalue = [IName(id = else_var)], rvalue = IName(id = "false")))
+            res = [IVar(name = else_var, expr = IName(id = "true")), node, IIf(cond = IName(id = else_var), body = self.comp(node.orelse))]
+            node.orelse = None
+            return res
+        else:
+            return node
 
     def node_raise(self, node):
         if node.expr:
