@@ -163,7 +163,7 @@ class Printer(istcompiler.Multiplexer):
 
         self.comp(node.handlers[0])
         if node.orelse:
-            raise NotImplementedError("JS does not support orelse blocks")
+            raise NotImplementedError("JS does not support orelse blocks in try-except")
 
     def node_tryfinally(self, node):
         self.line("try {")
@@ -195,7 +195,7 @@ class Printer(istcompiler.Multiplexer):
         self.block(node.body)
         self.line("}")
         if node.orelse:
-            raise NotImplementedError("JS does not support orelse blocks")
+            raise NotImplementedError("JS does not support orelse blocks in foreach")
 
     def node_for(self, node):
         self.line("for (%s; %s; %s) {" % (self.comp(node.init) if node.init else "",
@@ -229,7 +229,7 @@ class Printer(istcompiler.Multiplexer):
         self.block(node.body)
         self.line("}")
         if node.orelse:
-            raise NotImplementedError("JS does not support orelse blocks")
+            raise NotImplementedError("JS does not support orelse blocks in while")
 
     def node_compare(self, node):
         if len(node.ops) <> 1:
