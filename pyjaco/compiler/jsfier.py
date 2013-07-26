@@ -423,6 +423,9 @@ class Transformer(isttransform.Transformer):
         if inclass or offset == 1:
             exp.body.insert(0, IVar(name = "self", expr = IName(id = "this")))
 
+        for deco in reversed(node.decorators):
+            exp = ICall(func = self.comp(deco), args = [exp])
+
         if inclass:
             return exp
         else:
