@@ -256,22 +256,23 @@ class Transformer(isttransform.Transformer):
         return js
 
     def node_compare(self, node):
-        assert len(node.ops) == 1
-        assert len(node.comps) == 1
+        assert len(node.ops) == len(node.comps)
         op = node.ops[0]
+        return self.compare_simple(node.lvalue, op, node.comps[0])
+
+    def compare_simple(self, lvalue, op, rvalue):
         if op in self.ops_compare:
-            return ist.Call(func = ist.GetAttr(base = self.comp(node.lvalue), attr = "PY$__%s__" % self.ops_compare[op]), args = [self.comp(node.comps[0])])
+            return ist.Call(func = ist.GetAttr(base = self.comp(lvalue), attr = "PY$__%s__" % self.ops_compare[op]), args = [self.comp(rvalue)])
         elif op == "In":
-            return ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
+            return ist.Call(func = ist.GetAttr(base = self.comp(rvalue), attr = "PY$__contains__"), args = [self.comp(lvalue)])
         elif op == "Is":
-            return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__is__"), args = [self.comp(node.lvalue), self.comp(node.comps[0])])
+            return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__is__"), args = [self.comp(lvalue), self.comp(rvalue)])
         elif op == "NotIn":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__not__"), args = [
-                    ist.Call(func = ist.GetAttr(base = self.comp(node.comps[0]), attr = "PY$__contains__"), args = [self.comp(node.lvalue)])
+                    ist.Call(func = ist.GetAttr(base = self.comp(rvalue), attr = "PY$__contains__"), args = [self.comp(lvalue)])
                     ])
         else:
             raise NotImplementedError(op)
-        return node
 
     def node_importfrom(self, node):
         if node.module == "__future__" and node.names == dict(division = None):
