@@ -13,3 +13,11 @@ while count() > 0:
     print x
 else:
     print "no iterations"
+
+x = 3
+
+while count() > 0:
+    if x == 1:
+        break
+else:
+    print "should not happen"
