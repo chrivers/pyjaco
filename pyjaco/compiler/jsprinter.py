@@ -129,7 +129,7 @@ class Printer(istcompiler.Multiplexer):
         return "/* pass */"
 
     def node_function(self, node):
-        for deco in node.decorators:
+        if node.decorators:
             raise NotImplementedError("JS does not support decorators")
 
         self.line("function %s(%s) {" % (node.name, self.comp(node.params)))
