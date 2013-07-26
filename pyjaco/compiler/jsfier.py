@@ -156,7 +156,7 @@ class Transformer(isttransform.Transformer):
             args = []
             if node.keywords:
                 keys, values = zip(*node.keywords)
-                args.append(ist.Dict(keys = [ist.Name(id = k) for k in keys], values = self.comp(list(values))))
+                args.append(ist.Dict(keys = [ist.Name(id = self.name_map.get(k, k)) for k in keys], values = self.comp(list(values))))
                 node.keywords = None
             else:
                 args.append(ist.Dict(keys = [], values = []))
@@ -378,8 +378,7 @@ class Transformer(isttransform.Transformer):
             node.params.varargs = None
 
         for i, arg in enumerate(node.params.args[offset:]):
-            values = dict(i = i, id = arg, rawid = arg, kwarg = kwarg_name, newargs = newargs, func = node.name)
-
+            arg = self.name_map.get(arg, arg)
             if defaults[i + offset] == None:
                 js.append(
                     IVar(
@@ -389,11 +388,10 @@ class Transformer(isttransform.Transformer):
                             body   = ISubscript(value = IName(id = kwarg_name), slice = IString(value = arg)),
                             orelse = ISubscript(value = IName(id = newargs),    slice = INumber(value = i)))))
             else:
-                values['default'] = self.comp(defaults[i + offset])
                 js.append(IVar(name = arg, expr = ISubscript(value = IName(id = newargs), slice = INumber(value = i))))
                 js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
                             IAssign(
-                                lvalue = IName(id = arg),
+                                lvalue = [IName(id = arg)],
                                 rvalue = IIfExp(
                                     cond = ICompare(
                                         lvalue = IGetAttr(
@@ -573,33 +571,30 @@ class Transformer(isttransform.Transformer):
 
         return js
 
-    def node_listcomp(self, node):
-
-        comp = self.alloc_var()
-
-        gen = node.generators[0]
-
-        for_body = []
-
+    def make_listcomp(self, gen, comp):
+        inner_body = []
         if isinstance(gen.target, ist.Name):
             for_target = gen.target.id
         elif isinstance(gen.target, ist.Tuple):
             for_target = self.alloc_var()
             for i, x in enumerate(gen.target.values):
-                for_body.append(IVar(name = x.id, expr = ICall(func = (IGetAttr(base = IName(id = for_target), attr = "PY$__getitem__")), args = [INumber(value = i)])))
+                inner_body.append(IVar(name = x.id, expr = ICall(func = (IGetAttr(base = IName(id = for_target), attr = "PY$__getitem__")), args = [INumber(value = i)])))
         else:
             raise JSError("Advanced for-loop decomposition not supported")
 
-        for_body.append(ICall(func = IGetAttr(base = IName(id = comp), attr = "push"), args = [self.comp(node.expr)]))
+        innermost = inner_body
+        itervar = self.alloc_var()
+        for cond in gen.conds:
+            innermost.append(self.comp(IIf(cond = cond, body = [])))
+            innermost = innermost[-1].body
 
         body = []
-        body.append(IVar(name = comp, expr = IList(values = [])))
         body.append(IVar(name = for_target, expr = None))
-        itervar = self.alloc_var()
+        body.append(IVar(name = itervar, expr = None))
 
         body.append(
             IFor(
-                body = for_body,
+                body = inner_body,
                 init = IAssign(
                     lvalue = [IName(id = itervar)],
                     rvalue = ICall(func = IName(id = "iter"), args = [self.comp(gen.iter)])
@@ -608,6 +603,18 @@ class Transformer(isttransform.Transformer):
                 incr = None
                 )
             )
+        return body, innermost
+
+    def node_listcomp(self, node):
+        comp = self.alloc_var()
+        body, inner_body = self.make_listcomp(node.generators[0], comp)
+        for gen in node.generators[1:]:
+            next_body, next_inner_body = self.make_listcomp(gen, comp)
+            inner_body.append(next_body)
+            inner_body = next_inner_body
+
+        inner_body.append(ICall(func = IGetAttr(base = IName(id = comp), attr = "push"), args = [self.comp(node.expr)]))
+        body.insert(0, IVar(name = comp, expr = IList(values = [])))
         body.append(IReturn(expr = ICall(func = IName(id = "list"), args = [IName(id = comp)])))
         return ICall(func = ILambda(body = body, params = []), args = [])
 
