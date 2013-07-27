@@ -14,11 +14,13 @@ clean: testclean
 
 testclean:
 	@rm -f tests/**/*.py.js.out
-	@rm -f tests/**/*.py.err
 	@rm -f tests/**/*.py.js
-	@rm -f tests/**/*.py.out
 	@rm -f tests/**/*.py.js.err
 	@rm -f tests/**/*.py.comp.err
+
+testclean-full: testclean
+	@rm -f tests/**/*.py.err
+	@rm -f tests/**/*.py.out
 	@rm -f tests/**/*.pyc
 	@rm -f tests/test_builtins.js.{err,out}
 
