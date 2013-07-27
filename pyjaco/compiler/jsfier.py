@@ -65,6 +65,7 @@ class Transformer(isttransform.Transformer):
         self.exceptions = []
         self._loops = []
         self._class_name = []
+        self.emulate_generators = True
         return self.comp(tree)
 
     def alloc_var(self):
@@ -257,8 +258,29 @@ class Transformer(isttransform.Transformer):
 
     def node_compare(self, node):
         assert len(node.ops) == len(node.comps)
-        op = node.ops[0]
-        return self.compare_simple(node.lvalue, op, node.comps[0])
+        if len(node.ops) == 1:
+            return self.compare_simple(node.lvalue, node.ops[0], node.comps[0])
+        else:
+            var = self.alloc_var()
+            body = []
+            body.append(IVar(name = var, expr = self.comp(node.lvalue)))
+
+            complambda = ILambda(body = body, params = None)
+
+            lastif = complambda
+            lastvar = var
+            for i, op, val in zip(range(len(node.ops)), node.ops, node.comps):
+                newvar = self.alloc_var()
+                lastif.body.append(IAssign(lvalue = [IName(id = newvar)], rvalue = self.comp(val)))
+                I = IIf(cond = ICompare(lvalue = ICall(func = IName(id = "bool"), args = [self.compare_simple(IName(id = lastvar), op, IName(id = newvar))]), ops = ["Eq"], comps = [IName(id = "True")]), body = [])
+                lastif.body.append(I)
+                lastif = I
+                lastvar = newvar
+
+            lastif.body.append(IReturn(expr = IName(id = "True")))
+
+            body.append(IReturn(expr = IName(id = "False")))
+            return ICall(func = complambda, args = [])
 
     def compare_simple(self, lvalue, op, rvalue):
         if op in self.ops_compare:
@@ -631,7 +653,10 @@ class Transformer(isttransform.Transformer):
         return ICall(func = ILambda(body = body, params = []), args = [])
 
     def node_generator(self, node):
-        raise NotImplementedError("Cannot compile generator expressions")
+        if self.emulate_generators:
+            return self.node_listcomp(node)
+        else:
+            raise NotImplementedError("Cannot compile generator expressions")
 
     def node_comprehension(self, node):
         if isinstance(node.target, ast.Name):
@@ -641,5 +666,3 @@ class Transformer(isttransform.Transformer):
         else:
             raise NotImplementedError("Unsupported target type in list comprehension")
 
-        print node, dir(node)
-        return INop()
