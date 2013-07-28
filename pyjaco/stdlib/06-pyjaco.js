@@ -52,6 +52,9 @@ $PY.repr = function(obj) {
 
 $PY.dump = function(obj) {
     var res = [];
+    if (obj.PY$__class__ !== undefined) {
+        return "<pyjaco object of class " + obj.PY$__class__.PY$__name__ + ": " + $PY.repr(obj) + ">";
+    };
     for (var i in obj) {
         var val = obj[i];
         if (typeof val === 'function') {
