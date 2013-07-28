@@ -69,7 +69,7 @@ $PY.dump = function(obj) {
         }
     }
     res.sort();
-    return "[\n  " + res.join("\n  ") + "\n]";
+    return "<" + (typeof obj) + " with " + res.length + " properties> {" + res.join("\n  ") + "}";
 };
 
 $PY.len = function(obj) {
