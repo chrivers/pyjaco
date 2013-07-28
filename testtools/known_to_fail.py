@@ -7,7 +7,6 @@ KNOWN_TO_FAIL = [
     "tests/namespace/del_local.py",
     "tests/list/assign_slice_step.py",
     "tests/functions/cmp.py",
-    "tests/operator/type-comparison.py",
     "tests/flow/yield.py",
 
     "tests/libraries/xmlwriter.py",
@@ -20,5 +19,4 @@ KNOWN_TO_FAIL = [
     "tests/modules/import_global.py",
     "tests/modules/import_multi.py",
     "tests/modules/module_name.py",
-    "tests/modules/rng.py",
     ]
