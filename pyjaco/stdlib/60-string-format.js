@@ -27,7 +27,7 @@ function sprintf(obj, args) {
 
     var get_argument = function() {
         if (flag_name) {
-            return args.PY$__getitem__(flag_name);
+            return args.PY$__getitem__(str(flag_name));
         } else {
             return args.PY$__getitem__(argc++);
         }

@@ -33,30 +33,52 @@ dict.PY$__init__ = function() {
     var items;
     var key;
     var value;
+    var hash;
+    var count = 0;
 
     var kwargs = __kwargs_get(arguments);
     var args = arguments[0];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
-            items = args.items.slice();
+            items = {};
+            for (hash in args.items) {
+                value = args.items[hash];
+                items[hash] = [value[0], value[1]];
+                count++;
+            }
         } else if (args.PY$__iter__ !== undefined) {
-            items = [];
+            items = {};
             iterate(args, function(item) {
-                        items.push(item.PY$__getitem__($c0));
-                        items.push(item.PY$__getitem__($c1));
+                        var key = item.PY$__getitem__($c0);
+                        var hash = __builtins__.PY$hash(key);
+                        items[hash] = [key, item.PY$__getitem__($c1)];
             });
         } else if (args.length === undefined) {
-            items = [];
+            items = {};
             for (var item in args) {
-                items.push(str(item));
-                items.push(args[item]);
+                key = str(item);
+                hash = __builtins__.PY$hash(key);
+                if (!(hash in items)) {
+                    count++;
+                }
+                items[hash] = [key, args[item]];
             };
         } else {
-            items = args.slice();
+            items = {};
+            for (var i = 0; i < args.length; i += 2)
+            {
+                hash = __builtins__.PY$hash(args[i]);
+                if (!(hash in items)) {
+                    count++;
+                }
+                items[hash] = [args[i], args[i+1]];
+            }
         }
         this.items = items;
+        this.count = count;
     } else {
-        this.items = [];
+        this.items = {};
+        this.count = 0;
     }
     for (var p in kwargs) {
         this.PY$__setitem__(str(p), kwargs[p]);
@@ -67,8 +89,8 @@ dict.PY$__str__ = function () {
     var strings = [];
     var items = this.items;
 
-    for (var i = 0; i < items.length; i += 2) {
-        strings.push($PY.repr(items[i]) + ": " + $PY.repr(items[i+1]));
+    for (var hash in items) {
+        strings.push($PY.repr(items[hash][0]) + ": " + $PY.repr(items[hash][1]));
     }
 
     return str("{" + js(strings.join(", ")) + "}");
@@ -79,8 +101,8 @@ dict.PY$__repr__ = dict.PY$__str__;
 dict._js_ = function () {
     var items = {};
 
-    for (var i = 0; i < this.items.length; i += 2) {
-        items[str(this.items[i])] = js(this.items[i+1]);
+    for (var hash in this.items) {
+        items[str(this.items[hash][0])] = js(this.items[hash][1]);
     }
 
     return items;
@@ -91,7 +113,7 @@ dict.PY$__hash__ = function () {
 };
 
 dict.PY$__len__ = function() {
-    return int(this.items.length / 2);
+    return int(this.count);
 };
 
 dict.PY$__iter__ = function() {
@@ -100,57 +122,50 @@ dict.PY$__iter__ = function() {
 
 dict.PY$__contains__ = function(key) {
     var items = this.items;
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            return True;
-        }
-    }
-    return False;
+    var hash = __builtins__.PY$hash(key);
+    return hash in items ? True : False;
 };
 
 dict.PY$__getitem__ = function(key) {
     var items = this.items;
-
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            return items[i+1];
-        }
+    var hash = __builtins__.PY$hash(key);
+    if (hash in items) {
+        return items[hash][1];
+    } else {
+        throw __builtins__.PY$KeyError(str(key));
     }
-    throw __builtins__.PY$KeyError(str(key));
+    return None;
 };
 
 dict.PY$__setitem__ = function(key, value) {
     var items = this.items;
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            items[i+1] = value;
-            return;
-        }
+    var hash = __builtins__.PY$hash(key);
+    if (hash in items) {
+        items[hash][1] = value;
+    } else {
+        items[hash] = [key, value];
+        this.count++;
     }
-    items.push(key);
-    items.push(value);
+    return None;
 };
 
 dict.PY$__delitem__ = function(key) {
     var items = this.items;
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            this.items = items.slice(0, i).concat(items.slice(i+2));
-            return;
-        }
+    var hash = __builtins__.PY$hash(key);
+    if (hash in items) {
+        delete items[hash];
+        this.count--;
+    } else {
+        throw __builtins__.PY$KeyError(str(key));
     }
-    throw __builtins__.PY$KeyError(str(key));
 };
 
 dict.PY$get = function(key, value) {
     var items = this.items;
-
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            return items[i+1];
-        }
-    }
-    if (value !== undefined) {
+    var hash = __builtins__.PY$hash(key);
+    if (hash in items) {
+        return items[hash][1];
+    } else if (value !== undefined) {
         return value;
     } else {
         return None;
@@ -160,8 +175,9 @@ dict.PY$get = function(key, value) {
 dict.PY$items = function() {
     var res = [];
     var items = this.items;
-    for (var i = 0; i < items.length; i += 2) {
-        res.push(tuple([items[i], items[i+1]]));
+
+    for (var hash in items) {
+        res.push(tuple(items[hash]));
     }
 
     return list(res);
@@ -171,8 +187,8 @@ dict.PY$keys = function() {
     var res = [];
     var items = this.items;
 
-    for (var i = 0; i < this.items.length; i += 2) {
-        res.push(items[i]);
+    for (var hash in items) {
+        res.push(items[hash][0]);
     }
 
     return list(res);
@@ -182,8 +198,8 @@ dict.PY$values = function() {
     var res = [];
     var items = this.items;
 
-    for (var i = 1; i < items.length; i += 2) {
-        res.push(items[i]);
+    for (var hash in items) {
+        res.push(items[hash][1]);
     }
 
     return list(res);
@@ -205,15 +221,12 @@ dict.PY$clear = function() {
 dict.PY$pop = function(key, value) {
     var items = this.items;
     var res = null;
-
-    for (var i = 0; i < items.length; i += 2) {
-        if (items[i].PY$__eq__(key) === True) {
-            res = items[i+1];
-            this.items = items.slice(0, i).concat(items.slice(i+2));
-        }
-    }
-    if (res !== null) {
-        return res;
+    var hash = __builtins__.PY$hash(key);
+    if (hash in items) {
+        res = items[hash];
+        delete items[hash];
+        this.count--;
+        return res[1];
     } else if (value !== undefined) {
         return value;
     } else {
@@ -223,11 +236,11 @@ dict.PY$pop = function(key, value) {
 
 dict.PY$popitem = function() {
     var items = this.items;
-    if (items.length > 1) {
-        var item = items.pop();
-        var key = items.pop();
-        return tuple([key, value]);
-    } else {
-        throw __builtins__.PY$KeyError("popitem(): dictionary is empty");
+    for (var hash in items) {
+        var res = tuple(items[hash]);
+        delete items[hash];
+        this.count--;
+        return res;
     }
+    throw __builtins__.PY$KeyError("popitem(): dictionary is empty");
 };

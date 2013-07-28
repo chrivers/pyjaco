@@ -77,8 +77,9 @@ var __kwargs_make = function(kw, kwargs) {
             throw TypeError("Keyword arguments with non-standard dictionary types not supported");
         }
         var items = kwargs.items;
-        for (var i = 0; i < items.length; i += 2) {
-            kw[str(items[i])._js_()] = items[i+1];
+        for (var hash in items) {
+            var item = items[hash];
+            kw[str(item[0])._js_()] = item[1];
         };
     };
     return kw;
