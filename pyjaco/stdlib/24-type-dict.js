@@ -51,6 +51,9 @@ dict.PY$__init__ = function() {
             iterate(args, function(item) {
                         var key = item.PY$__getitem__($c0);
                         var hash = __builtins__.PY$hash(key);
+                        if (!(hash in items)) {
+                            count++;
+                        }
                         items[hash] = [key, item.PY$__getitem__($c1)];
             });
         } else if (args.length === undefined) {
