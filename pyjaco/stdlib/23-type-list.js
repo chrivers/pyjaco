@@ -137,11 +137,34 @@ list.PY$extend = function(l) {
     });
 };
 
-list.PY$pop = function() {
+list.PY$pop = function(index) {
     if (this.items.length > 0) {
-        return this.items.pop();
-    } else
+        var idx;
+        var res;
+
+        if (index === undefined) {
+            idx = this.items.length - 1;
+        } else {
+            idx = index._js_();
+        }
+
+        if (idx === this.items.length - 1) {
+            return this.items.pop();
+        } else if (idx < 0 || idx >= this.items.length) {
+            throw __builtins__.PY$IndexError("pop index out of range");
+        } else if (idx == 0) {
+            res = this.items[0];
+            this.items = this.items.slice(1);
+            return res;
+        } else {
+            res = this.items[idx];
+            this.items = Array.prototype.concat(this.items.slice(0, idx), this.items.slice(idx + 1));
+            return res;
+        }
+
+    } else {
         throw __builtins__.PY$IndexError("pop from empty list");
+    }
 };
 
 list.PY$sort = function() {
