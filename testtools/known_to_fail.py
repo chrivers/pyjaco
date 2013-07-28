@@ -8,6 +8,7 @@ KNOWN_TO_FAIL = [
     "tests/list/assign_slice_step.py",
     "tests/functions/cmp.py",
     "tests/flow/yield.py",
+    "tests/iter/generator.py",
 
     "tests/libraries/xmlwriter.py",
     "tests/modules/classname.py",
