@@ -22,6 +22,7 @@ function raises(exc, code) {
         if (name == exc.PY$__getattr__("__name__")) {
             return;
         } else {
+            print(name);
             throw __builtins__.PY$AssertionError(name + " exception was thrown in " + code);
         }
     }
@@ -41,9 +42,9 @@ function test_dict() {
     raises(__builtins__.PY$KeyError, function() { d.PY$__getitem__($c0) });
     raises(__builtins__.PY$KeyError, function() { d.PY$__delitem__($c0) });
 
-    raises(__builtins__.PY$KeyError, function() { d.PY$pop('a') });
-    raises(__builtins__.PY$KeyError, function() { d.PY$__getitem__('a') });
-    raises(__builtins__.PY$KeyError, function() { d.PY$__delitem__('a') });
+    raises(__builtins__.PY$KeyError, function() { d.PY$pop(str('a')) });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__getitem__(str('a')) });
+    raises(__builtins__.PY$KeyError, function() { d.PY$__delitem__(str('a')) });
 
     d.PY$__setitem__($c0, $c1);
 
@@ -55,9 +56,9 @@ function test_dict() {
 
     test(function() { return str(d) == "{0: 2}" });
     test(function() { return __builtins__.PY$len(d) == 1 });
-    test(function() { return d.PY$__getitem__($c0) == 2 });
+    test(function() { return d.PY$__getitem__(0) == 2 });
 
-    test(function() { return d.PY$pop(0) == 2 });
+    test(function() { return d.PY$pop($c0) == $c2 });
     test(function() { return __builtins__.PY$len(d) == 0 });
 
     d = dict([$c1, $c6, $c2, $c8]);
