@@ -54,10 +54,13 @@ bool.toString = function () {
 bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function (other) {
-    if (other.PY$__int__ !== undefined)
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__eq__.call(this, other);
+    } else if (other.PY$__int__ !== undefined) {
         return Number(this.obj) === other.PY$__int__()._js_() ? True : False;
-
-    return this.obj === other.obj ? True : False;
+    } else {
+        return this.obj === other.obj ? True : False;
+    }
 };
 
 bool._js_ = function () {

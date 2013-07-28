@@ -30,7 +30,9 @@ __builtins__.number = number;
 number.PY$__repr__ = number.PY$__str__;
 
 number.PY$__eq__ = function (other) {
-    if (typeof(other) === "number") {
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__eq__.call(this, other);
+    } else if (typeof(other) === "number") {
         return this.obj === other ? True : False;
     } else if (other.numbertype) {
         return this.obj === other.obj ? True : False;

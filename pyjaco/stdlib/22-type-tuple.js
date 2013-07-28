@@ -67,6 +67,9 @@ tuple.PY$__str__ = function () {
 tuple.PY$__repr__ = tuple.PY$__str__;
 
 tuple.PY$__eq__ = function (other) {
+    if (this.PY$__class__ === undefined) {
+        return object.PY$__eq__.call(this, other);
+    }
     if (other.PY$__class__ === this.PY$__class__) {
         if (this.items.length != js(__builtins__.PY$len(other))) {
             return False;
