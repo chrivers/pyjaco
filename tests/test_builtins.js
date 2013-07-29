@@ -19,7 +19,7 @@ function raises(exc, code) {
     } catch (e) {
         var name = e.PY$__class__.PY$__name__;
 
-        if (name == exc.PY$__getattr__("__name__")) {
+        if (name == $PY.getattr(exc, "__name__")) {
             return;
         } else {
             print(name);
