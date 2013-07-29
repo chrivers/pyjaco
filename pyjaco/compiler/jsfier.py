@@ -105,7 +105,7 @@ class Transformer(isttransform.Transformer):
     def node_list(self, node):
         return ist.Call(func = ist.Name(id = "list"), args = [ist.List(values = self.comp(node.values))])
 
-    def node_subscript(self, node):
+    def node_getitem(self, node):
         return ist.Call(args = [self.comp(node.slice)],
                         func = ist.GetAttr(base = self.comp(node.value), attr = "PY$__getitem__"),
                         keywords = [],
@@ -328,7 +328,7 @@ class Transformer(isttransform.Transformer):
                     js.append(IVar(name = target.id, expr = expr))
                 else:
                     js.append(IAssign(lvalue = [target], rvalue = expr))
-        elif isinstance(target, ist.Subscript):
+        elif isinstance(target, ist.GetItem):
             if isinstance(target.slice, ist.Slice):
                 slice = target.slice
                 js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setslice__"), args = [
@@ -408,10 +408,10 @@ class Transformer(isttransform.Transformer):
                         name = arg,
                         expr = IIfExp(
                             cond   = IBinOp(left = IString(value = arg), op = "In", right = IName(id = kwarg_name)),
-                            body   = ISubscript(value = IName(id = kwarg_name), slice = IString(value = arg)),
-                            orelse = ISubscript(value = IName(id = newargs),    slice = INumber(value = i)))))
+                            body   = IGetItem(value = IName(id = kwarg_name), slice = IString(value = arg)),
+                            orelse = IGetItem(value = IName(id = newargs),    slice = INumber(value = i)))))
             else:
-                js.append(IVar(name = arg, expr = ISubscript(value = IName(id = newargs), slice = INumber(value = i))))
+                js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i))))
                 js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
                             IAssign(
                                 lvalue = [IName(id = arg)],
@@ -490,7 +490,7 @@ class Transformer(isttransform.Transformer):
         return [self.delete_simple(part) for part in node.targets]
 
     def delete_simple(self, node):
-        if isinstance(node, ist.Subscript):
+        if isinstance(node, ist.GetItem):
             if isinstance(node.slice, ist.Slice):
                 return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delslice__"),
                              args = [self.comp(node.slice.lower), self.comp(node.slice.upper)])

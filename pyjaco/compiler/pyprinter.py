@@ -232,7 +232,7 @@ class Printer(istcompiler.Multiplexer):
             ret.append("%s %s" % (self.compmap[op], self.comp(cval)))
         return "%s %s" % (self.comp(node.lvalue), " ".join(ret))
 
-    def node_subscript(self, node):
+    def node_getitem(self, node):
         return "%s[%s]" % (self.comp(node.value), self.comp(node.slice))
 
     def node_list(self, node):

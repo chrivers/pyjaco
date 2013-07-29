@@ -237,7 +237,7 @@ class Printer(istcompiler.Multiplexer):
             raise NotImplementedError("JS does not support multi-term comparisons")
         return "%s %s %s" % (self.comp(node.lvalue), self.compmap[node.ops[0]], self.comp(node.comps[0]))
 
-    def node_subscript(self, node):
+    def node_getitem(self, node):
         return "%s[%s]" % (self.comp(node.value), self.comp(node.slice))
 
     def node_list(self, node):

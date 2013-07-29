@@ -25,7 +25,7 @@
 ##
 ######################################################################
 
-__all__ = ["ISTNode", "Annotation", "Comment", "Code", "Nop", "Function", "Parameters", "Statement", "Module", "If", "While", "TryExcept", "For", "ForEach", "Raise", "Break", "Continue", "Return", "ClassDef", "Call", "Assign", "BinOp", "Number", "GetAttr", "Name", "String", "TryExcept", "TryFinally", "TryHandler", "Tuple", "List", "AugAssign", "Delete", "BoolOp", "Compare", "Subscript", "Lambda", "UnaryOp", "Dict", "Global", "Yield", "Slice", "Generator", "ListComp", "Comprehension", "Import", "ImportFrom", "IfExp", "Assert", "Var"]
+__all__ = ["ISTNode", "Annotation", "Comment", "Code", "Nop", "Function", "Parameters", "Statement", "Module", "If", "While", "TryExcept", "For", "ForEach", "Raise", "Break", "Continue", "Return", "ClassDef", "Call", "Assign", "BinOp", "Number", "GetAttr", "Name", "String", "TryExcept", "TryFinally", "TryHandler", "Tuple", "List", "AugAssign", "Delete", "BoolOp", "Compare", "GetItem", "Lambda", "UnaryOp", "Dict", "Global", "Yield", "Slice", "Generator", "ListComp", "Comprehension", "Import", "ImportFrom", "IfExp", "Assert", "Var"]
 
 class ISTNode(object):
 
@@ -185,7 +185,7 @@ class BoolOp(Code):
 class Compare(Code):
     _fields = ["comps", "ops", "lvalue"]
 
-class Subscript(Code):
+class GetItem(Code):
     _fields = ["value", "slice"]
 
 class Lambda(Code):
