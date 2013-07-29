@@ -32,11 +32,11 @@ $super.PY$__init__ = function(cls, obj) {
     this.obj = obj;
 };
 
-$super.PY$__getattr__ = function(k) {
-    var q = this.cls.PY$__super__.PY$__getattr__(k, false);
+$super.PY$__getattribute__ = function(k) {
+    var q = $PY.getattr(this.cls.PY$__super__, k);
     if ((typeof q === 'function') && q.PY$__class__ === undefined) {
         var that = this.obj;
-        var t = function() { return q.apply(that, arguments); };
+        var t = function() { return q.apply(null, [that].concat(Array.prototype.slice.call(arguments))); };
         t.PY$__call__ = t;
         return t;
     } else {

@@ -606,11 +606,8 @@ __builtins__.PY$sorted = function(iterable) {
 };
 
 __builtins__.PY$staticmethod = function(func) {
-    var res = function () {
-        return func.apply(null, [null].concat(Array.prototype.slice.call(arguments)));
-    };
-    res.__static = true;
-    return res;
+    func.__static = true;
+    return func;
 };
 
 __builtins__.PY$sum = function(list) {

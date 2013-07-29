@@ -45,6 +45,8 @@ var __inherit = function(cls, name, prototyping) {
     res.PY$__name__  = name;
     res.PY$__super__ = cls;
     res.prototyping  = prototyping;
+    res.__isclass = true;
+    res.__isinstance = false;
     return res;
 };
 
@@ -84,41 +86,73 @@ object.PY$__create__ = function(cls) {
     obj.PY$__class__ = cls;
     obj.PY$__super__ = undefined;
     obj.id = prng();
+    obj.__isinstance = true;
+    obj.__isclass = false;
     obj.PY$__init__.apply(obj, args);
     return obj;
 };
 
-object.PY$__setattr__ = function(k, v) {
-    this["PY$" + k] = v;
+$PY.setattr = function(obj, k, v) {
+    obj["PY$" + k] = v;
 };
 
-object.PY$__getattr__ = function(k) {
-    var q = this["PY$" + k];
-    if ((typeof q === 'function') && (q.PY$__class__ === undefined) && (k !== '__class__') && arguments[1] !== false) {
-        var that = this;
-        if (this.PY$__class__ === undefined && !q.__static) {
-            var t = function() { return q.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
-        } else {
-            if (q.PY$__super__ !== undefined) {
-                return q;
+$PY.getattr = function(obj, k) {
+    var name = "PY$" + k;
+    var res;
+    var debug = true;
+    debug = false;
+    if ("PY$__getattribute__" in obj) {
+        return obj.PY$__getattribute__(k);
+    } else if (name in obj) {
+        res = obj[name];
+        debug && print(sprintf("case1(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.isclass: %s, res.isclass:%s", list([
+              py(name),
+              py(typeof res === 'function'),
+              py(obj.__isinstance),
+              py(res.__isinstance),
+              py(obj.__isclass),
+              py(res.__isclass)])));
+        if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
+            if (obj.__isinstance) {
+                return function() { return res.apply(obj, arguments); };
             } else {
-                var t = function() { return q.apply(that, arguments); };
+                if (res.__static) {
+                    return res;
+                } else {
+                    return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
+                }
             }
-        }
-        return t;
-    } else if (k === '__name__') {
-        return str(this.PY$__name__);
-    } else {
-        if (q === undefined) {
-            throw __builtins__.PY$AttributeError(js(this.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
+        } else if (k === "__name__") {
+            return str(res);
         } else {
-            return q;
+            return res;
         }
+    } else if (obj.PY$__class__ && name in obj.PY$__class__) {
+        res = obj.PY$__class__[name];
+        debug && print("case2", typeof res === 'function');
+        if (typeof res === 'function' && obj.__isinstance) {
+            return function() { return res.apply(obj.PY$__class__, arguments); };
+        } else {
+            return res;
+        }
+    } else if ("PY$__getattr__" in obj) {
+        res = obj.PY$__getattr__(k);
+        debug && print(sprintf("case3(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.hasclass:%s, res.hasclass:%s, obj.isclass: %s, res.isclass:%s", list([
+              py(name),
+              py(typeof res === 'function'),
+              py(obj.__isinstance),
+              py(res.__isinstance),
+              py(obj.PY$__class__ !== undefined),
+              py(res.PY$__class__ !== undefined),
+              py(obj.__isclass),
+              py(res.__isclass)])));
+        return res;
     }
+    throw __builtins__.PY$AttributeError(js(obj.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
 };
 
-object.PY$__delattr__ = function(k) {
-    delete this["PY$" + k];
+$PY.delattr = function(obj, k) {
+    delete obj["PY$" + k];
 };
 
 object.PY$__repr__ = function() {
