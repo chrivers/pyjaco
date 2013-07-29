@@ -25,9 +25,10 @@
 ##
 ######################################################################
 
-import pyjaco.compiler.python
-import pyjaco.compiler.javascript
-import pyjaco.compiler.multiplexer
+import pyjaco.compiler.istcompiler
+import pyjaco.compiler.pyprinter
+import pyjaco.compiler.jsprinter
+import pyjaco.compiler.jsfier
 import re
 import StringIO
 import ast
@@ -68,9 +69,16 @@ class Compiler(object):
         compiler_opts = dict()
         compiler_opts.update(defaults)
         compiler_opts.update(opts)
-        self.compiler = pyjaco.compiler.multiplexer.Compiler(jsvars, compiler_opts)
+        self.compiler  = pyjaco.compiler.istcompiler.Compiler()
+        self.jsfier    = pyjaco.compiler.jsfier.Transformer()
+        self.jsprinter = pyjaco.compiler.jsprinter.Printer()
         self.buffer = None
         self.reset()
+
+    def _compile(self, ast):
+        ist = self.compiler.compile(ast)
+        js  = self.jsfier.compute(ist)
+        return self.jsprinter.format(js)
 
     def reset(self):
         self.buffer = StringIO.StringIO()
@@ -128,7 +136,7 @@ class Compiler(object):
         self.comment_section(name)
         if jsvars:
             self.compiler.jsvars = jsvars
-        self.buffer.write("\n".join(self.compiler.visit(ast.parse(code))))
+        self.buffer.write(self._compile(code))
         self.buffer.write("\n\n")
         self.compiler.jsvars = []
 
@@ -148,7 +156,7 @@ class Compiler(object):
     def compile_string(self, code, name = None, jsvars = None):
         if jsvars:
             self.compiler.jsvars = jsvars
-        res = self.format_name(name) + "\n".join(self.compiler.visit(ast.parse(code)))
+        res = self.format_name(name) + self._compile(code)
         self.compiler.jsvars = []
         return res
 
@@ -170,7 +178,7 @@ class Compiler(object):
         return "\n".join(res)
 
     def compile_data(self, key, value):
-        return "var %s = %s" % (key, "\n".join(self.compiler.visit(ast.parse(repr(value)))))
+        return "var %s = %s" % (key, self._compile(repr(value)))
 
     def compile_expr(self, value):
-        return "\n".join(self.compiler.visit(ast.parse(repr(value))))
+        return self._compile(repr(value))

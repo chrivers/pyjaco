@@ -296,7 +296,3 @@ class Printer(istcompiler.Multiplexer):
 
     def node_ifexp(self, node):
         return "(%s ? %s : %s)" % (self.comp(node.cond), self.comp(node.body), self.comp(node.orelse))
-
-def format(ist):
-    p = Printer()
-    return p.format(ist)
