@@ -250,7 +250,7 @@ class Printer(istcompiler.Multiplexer):
         return "break"
 
     def node_lambda(self, node):
-        return "function (%s) {\n%s\n}" % (self.comp(node.params) if node.params else "", "\n".join(self.capture(node.body)))
+        return "function (%s) {\n%s\n%s}" % (self.comp(node.params) if node.params else "", "\n".join(self.capture(node.body)), " " * self.indentation)
 
     def node_unaryop(self, node):
         return "%s%s" % (self.uopmap[node.op], self.comp(node.lvalue))
