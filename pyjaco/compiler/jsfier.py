@@ -83,7 +83,7 @@ class Transformer(isttransform.Transformer):
         if isinstance(node.base, ist.Name) and node.base.id == "__builtins__":
             return node
         else:
-            return ist.Call(args = [ist.String(value = node.attr)], func = ist.GetAttr(base = self.comp(node.base), attr = "PY$__getattr__"), keywords = [], kwargs = None, varargs = None)
+            return ist.Call(func = ist.GetAttr(base = IName(id = "$PY"), attr = "getattr"), args = [self.comp(node.base), ist.String(value = node.attr)], keywords = [], kwargs = None, varargs = None)
 
     def node_tuple(self, node):
         return ist.Call(func = ist.Name(id = "tuple"), args = [ist.List(values = self.comp(node.values))])
@@ -345,7 +345,7 @@ class Transformer(isttransform.Transformer):
                 self.scope.append(var)
                 js = [ist.Var(name = var, expr = value)]
         elif isinstance(target, ist.GetAttr):
-            js = [ist.Call(func = ist.GetAttr(base = target.base, attr = "PY$__setattr__"), args = [IString(value = target.attr), value])]
+            js = [ist.Call(func = ist.GetAttr(base = IName(id = "$PY"), attr = "setattr"), args = [self.comp(target.base), IString(value = target.attr), value])]
         else:
             raise NotImplementedError("Unsupported assignment type", target)
         return js
@@ -397,7 +397,7 @@ class Transformer(isttransform.Transformer):
             node.params.kwargs = None
 
         if node.params.varargs:
-            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
+            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, max(len(node.params.args) - offset, 0)))))
             node.params.varargs = None
 
         for i, arg in enumerate(node.params.args[offset:]):
@@ -498,8 +498,8 @@ class Transformer(isttransform.Transformer):
                 return ICall(func = IGetAttr(base = self.comp(node.value), attr = "PY$__delitem__"),
                              args = [self.comp(node.slice)])
         elif isinstance(node, ist.GetAttr):
-                return ICall(func = IGetAttr(base = self.comp(node.base), attr = "PY$__delattr__"),
-                             args = [IString(value = node.attr)])
+                return ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "delattr"),
+                             args = [self.comp(node.base), IString(value = node.attr)])
         elif isinstance(node, ist.Name):
             raise NotImplementedError("Javascript does not support deleting variables. Cannot compile")
         else:
