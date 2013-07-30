@@ -143,32 +143,39 @@ class Transformer(isttransform.Transformer):
 
     def node_call(self, node):
         js = []
-        node.func = self.comp(node.func)
-        node.args = self.comp(node.args)
-        if isinstance(node.func, ist.GetAttr) and node.func.base.id == '__builtins__' and node.func.attr == "print":
+
+        posargs = self.comp(node.args)
+
+        if isinstance(node.func, ist.GetAttr) and isinstance(node.func.base, IName) and node.func.base.id == '__builtins__' and node.func.attr == "print":
             node.func.attr = "PY$print"
 
+        cooked = IDict(keys = [], values = [])
 
         if node.varargs:
-            node.args += [ist.Call(func = ist.Name(id = "__varargs_make"), args = [self.comp(node.varargs)])]
-            node.varargs = None
+            cooked.keys.append(IString(value = "varargs"))
+            cooked.values.append(self.comp(node.varargs))
 
-        if node.keywords or node.kwargs:
-            args = []
-            if node.keywords:
-                keys, values = zip(*node.keywords)
-                args.append(ist.Dict(keys = [ist.Name(id = self.name_map.get(k, k)) for k in keys], values = self.comp(list(values))))
-                node.keywords = None
-            else:
-                args.append(ist.Dict(keys = [], values = []))
+        if node.keywords:
+            kws = IDict(keys = [], values = [])
+            for key, value in node.keywords:
+                kws.keys.append(IString(value = key))
+                kws.values.append(self.comp(value))
+            cooked.keys.append(IString(value = "kw"))
+            cooked.values.append(kws)
 
-            if node.kwargs:
-                args.append(self.comp(node.kwargs))
-                node.kwargs = None
+        if node.kwargs:
+            cooked.keys.append(IString(value = "kwargs"))
+            cooked.values.append(self.comp(node.kwargs))
 
-            node.args += [ist.Call(func = ist.Name(id = "__kwargs_make"), args = args)]
+        if cooked.keys:
+            if not node.varargs:
+                cooked.keys.append(IString(value = "varargs"))
+                cooked.values.append(IList(values = []))
+            cooked = [cooked]
+        else:
+            cooked = []
 
-        return node
+        return ICall(func = self.comp(node.func), args = posargs + cooked)
 
     def node_binop(self, node):
         if node.op == "Div":
@@ -356,49 +363,32 @@ class Transformer(isttransform.Transformer):
 
         js = []
 
-        if node.params.kwargs:
-            kwarg_name = node.params.kwargs
-        else:
-            kwarg_name = "__kwargs"
-
-        if node.params.varargs:
-            vararg_name = node.params.varargs
-        else:
-            vararg_name = "__varargs"
-
-        if len(node.params.args) and node.params.args[0] == "self":
-            offset = 1
-        else:
-            offset = 0
-
         self.scope = [arg for arg in node.params.args]
 
-        js.append(IVar(name = kwarg_name,  expr = ICall(func = IName(id = "__kwargs_get"),  args = [IName(id = "arguments")])))
-        js.append(IVar(name = vararg_name, expr = ICall(func = IName(id = "__varargs_get"), args = [IName(id = "arguments")])))
+        pyargs = IName(id = "$pyargs")
+        pyargs_kw = IGetAttr(base = pyargs, attr = "kw")
+
+        js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "arguments")])))
 
         newargs = self.alloc_var()
         js.append(IVar(name = newargs, expr = ICall(
                     func = IGetAttr(
                         base =
                         ICall(
-                            func = IGetAttr(
-                                base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"),
-                                attr = "call"),
+                            func = IGetAttr(base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"), attr = "call"),
                             args = [IName(id = "arguments")]),
                         attr = "concat"),
-                    args = [ICall(func = IName(id = "js"), args = [IName(id = vararg_name)])]
+                    args = [IGetAttr(base = pyargs, attr = "varargs")]
                     )))
 
         if node.name in ("__getattr__", "__setattr__"):
-            node.body.insert(0, IName(id = "if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); }" % { 'id': node.params.args[1] }))
+            js.append(IName(id = "if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); }" % { 'id': node.params.args[1] }))
 
         if node.params.kwargs:
-            node.body.insert(0, IAssign(lvalue = [IName(id = kwarg_name)], rvalue = ICall(func = IName(id = "dict"), args = [IName(id = kwarg_name)])))
-            node.params.kwargs = None
+            js.append(IVar(name =  node.params.kwargs, expr = ICall(func = IName(id = "dict"), args = [IGetAttr(base = pyargs, attr = "kwargs")])))
 
         if node.params.varargs:
-            node.body.insert(0, IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, max(len(node.params.args) - offset, 0)))))
-            node.params.varargs = None
+            js.append(IVar(name = node.params.varargs, expr = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
 
         for i, arg in enumerate(node.params.args[offset:]):
             arg = self.name_map.get(arg, arg)
@@ -407,9 +397,9 @@ class Transformer(isttransform.Transformer):
                     IVar(
                         name = arg,
                         expr = IIfExp(
-                            cond   = IBinOp(left = IString(value = arg), op = "In", right = IName(id = kwarg_name)),
-                            body   = IGetItem(value = IName(id = kwarg_name), slice = IString(value = arg)),
-                            orelse = IGetItem(value = IName(id = newargs),    slice = INumber(value = i)))))
+                            cond   = IBinOp(left = IString(value = arg), op = "In", right = pyargs_kw),
+                            body   = IGetAttr(base = pyargs_kw, attr = arg),
+                            orelse = IGetItem(value = IName(id = newargs), slice = INumber(value = i)))))
             else:
                 js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i))))
                 js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
@@ -418,15 +408,25 @@ class Transformer(isttransform.Transformer):
                                 rvalue = IIfExp(
                                     cond = ICompare(
                                         lvalue = IGetAttr(
-                                            base = IName(id = kwarg_name),
+                                            base = pyargs_kw,
                                             attr = arg),
                                         comps = [IName(id = "undefined")],
                                         ops = ["Eq"]),
                                     body = self.comp(defaults[i + offset]),
                                     orelse = IGetAttr(
-                                        base = IName(id = kwarg_name),
+                                        base = pyargs_kw,
                                         attr = arg)))]))
-            js.append(IDelete(targets = [IGetAttr(base = IName(id = kwarg_name), attr = arg)]))
+            js.append(IDelete(targets = [IGetAttr(base = pyargs_kw, attr = arg)]))
+
+        loopvar = self.alloc_var()
+
+        if node.params.kwargs:
+            js.append(IForEach(body = [
+                        ICall(func = IGetAttr(base = IName(id = node.params.kwargs), attr = "PY$__setitem__"),
+                              args = [
+                                ICall(func = IName(id = "str"), args = [IName(id = loopvar)]),
+                                IGetItem(value = pyargs_kw, slice = IName(id = loopvar))])
+                        ], target = IVar(name = loopvar), iter = pyargs_kw))
 
         node.params.defaults = []
 
@@ -440,7 +440,7 @@ class Transformer(isttransform.Transformer):
 
         inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
 
-        exp = ILambda(body = node.body, params = node.params)
+        exp = ILambda(body = node.body, params = IParameters(args = node.params.args, defaults = None, kwargs = None, varargs = None))
 
         if inclass or offset == 1:
             exp.body.insert(0, IVar(name = "self", expr = IName(id = "this")))
