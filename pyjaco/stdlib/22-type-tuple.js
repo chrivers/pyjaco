@@ -54,7 +54,7 @@ tuple.PY$__str__ = function () {
     if (this.items.length === 0) {
         return str("()");
     } else if (this.items.length === 1) {
-        return str("(" + str(this.items[0])._js_() + ",)");
+        return str("(" + js(__builtins__.PY$repr(this.items[0])) + ",)");
     } else {
         var res = "(" + js(__builtins__.PY$repr(this.items[0]));
         for (var i = 1; i < this.items.length; i++)  {
