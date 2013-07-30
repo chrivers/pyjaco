@@ -19,7 +19,6 @@ else
 fi
 
 while true; do
-    touch $1
     ./pyjs.py -b generate -o .
     python $1 > 1.res
     ./pyjs.py -q --builtins=import -o 1.js $1
