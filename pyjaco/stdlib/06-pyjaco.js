@@ -120,4 +120,4 @@ $PY.__is__ = function(a, b) {
 
 $PY.c_nif = function() {
     throw __builtins__.PY$NotImplementedError("The called function is not implemented in Pyjaco");
-}
+};

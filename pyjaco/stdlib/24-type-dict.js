@@ -36,7 +36,7 @@ dict.PY$__init__ = function() {
     var hash;
     var count = 0;
 
-    var kwargs = __kwargs_get(arguments);
+    var pyargs = __uncook(arguments);
     var args = arguments[0];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
@@ -83,8 +83,11 @@ dict.PY$__init__ = function() {
         this.items = {};
         this.count = 0;
     }
-    for (var p in kwargs) {
-        this.PY$__setitem__(str(p), kwargs[p]);
+    if (pyargs.kwargs !== undefined) {
+        this.PY$update(pyargs.kwargs);
+    }
+    for (var p in pyargs.kw) {
+        this.PY$__setitem__(str(p), pyargs.kw[p]);
     }
 };
 

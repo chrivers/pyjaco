@@ -88,13 +88,18 @@ __builtins__.PY$any = function(obj) {
 };
 
 __builtins__.PY$apply = function(fun, vargs, kwargs) {
-    if (vargs === undefined) {
-        return fun();
+    var args = {};
+    if (vargs !== undefined) {
+        args.varargs = vargs;
+        if (kwargs !== undefined) {
+            args.kwargs = kwargs;
+        }
+        return fun(args);
     } else {
-        if (kwargs === undefined) {
-            return fun(__varargs_make(vargs));
+        if (kwargs !== undefined) {
+            return fun({"varargs": [], "kwargs": kwargs});
         } else {
-            return fun(__varargs_make(vargs), __kwargs_make(kwargs));
+            return fun();
         }
     }
 };

@@ -168,15 +168,15 @@ list.PY$pop = function(index) {
 };
 
 list.PY$sort = function() {
-    var __kwargs = __kwargs_get(arguments);
+    var pyargs = __uncook(arguments);
     var cmp = js(arguments[0]);
-    if (cmp === undefined) { cmp = __kwargs.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(b));} : __kwargs.cmp; };
+    if (cmp === undefined) { cmp = pyargs.kw.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(b));} : pyargs.kw.cmp; };
 
     var key = js(arguments[1]);
-    if (key === undefined) { key = __kwargs.key === undefined ? function(x) { return x; } : __kwargs.key; };
+    if (key === undefined) { key = pyargs.kw.key === undefined ? function(x) { return x; } : pyargs.kw.key; };
 
     var reverse = arguments[2];
-    if (reverse === undefined) { reverse = __kwargs.reverse === undefined ? False : __kwargs.reverse; };
+    if (reverse === undefined) { reverse = pyargs.kw.reverse === undefined ? False : pyargs.kw.reverse; };
 
     var direction = reverse === True ? -1 : 1;
 

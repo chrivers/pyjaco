@@ -28,6 +28,8 @@ var $PY = {};
 
 $PY.prng = 42;
 
+$PY.c_emptycook = {"varargs": [], "kw": []};
+
 var __builtins__ = {};
 
 __builtins__.PY$__python3__ = false;
@@ -71,46 +73,30 @@ function iterate(obj, func) {
     }
 }
 
-var __kwargs_make = function(kw, kwargs) {
-    kw.__kwargs = true;
-    if (kwargs !== undefined) {
-        if (kwargs.PY$__class__ !== dict) {
-            throw TypeError("Keyword arguments with non-standard dictionary types not supported");
+var __uncook = function(args) {
+    var last = args.length-1;
+    if (args.length && (typeof args[last] === 'object') && (args[last].varargs !== undefined)) {
+        var res = args[last];
+        delete args[last];
+        args.length -= 1;
+        if (res.varargs.PY$__class__ === tuple || res.varargs.PY$__class__ === list) {
+            res.varargs = res.varargs.items;
+        } else {
+            res.varargs = tuple(res.varargs).items;
         }
-        var items = kwargs.items;
-        for (var hash in items) {
-            var item = items[hash];
-            kw[str(item[0])._js_()] = item[1];
-        };
-    };
-    return kw;
-};
-
-var __varargs_make = function(vr) {
-    vr = tuple(vr);
-    vr.__varargs = true;
-    return vr;
-};
-
-var __varargs_get = function(args) {
-    if (args.length && (args[args.length-1] !== undefined) && (args[args.length-1].__varargs === true)) {
-        var vargs = args[args.length-1];
-        args.length -= 1;
-        return vargs;
-    } else {
-        return $PY.$c_emptytuple;
-    }
-};
-
-var __kwargs_get = function(args) {
-    if (args.length && (args[args.length-1] !== undefined) && (args[args.length-1].__kwargs === true)) {
-        delete args[args.length-1].__kwargs;
-        var res = args[args.length-1];
-        delete args[args.length-1];
-        args.length -= 1;
+        if (!("kw" in res)) {
+            res.kw = [];
+        }
+        if (res.kwargs !== undefined) {
+            var items = res.kwargs.items;
+            for (var hash in items) {
+                var item = items[hash];
+                res.kw[js(item[0])] = item[1];
+            }
+        }
         return res;
     } else {
-        return [];
+        return $PY.c_emptycook;
     }
 };
 
