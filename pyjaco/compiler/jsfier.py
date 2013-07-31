@@ -409,7 +409,7 @@ class Transformer(isttransform.Transformer):
             offset = 0
 
         if node.params.varargs:
-            js.append(IVar(name = node.params.varargs, expr = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
+            js.append(IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.
 
         for i, arg in enumerate(node.params.args[offset:]):
             arg = self.name_map.get(arg, arg)
