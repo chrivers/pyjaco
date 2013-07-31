@@ -114,10 +114,14 @@ $PY.getattr = function(obj, k) {
               py(res.__isclass)])));
         if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
             if (obj.__isinstance) {
-                return function() { return res.apply(obj, arguments); };
+                if (res.__static) {
+                    return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
+                } else {
+                    return function() { return res.apply(obj, arguments); };
+                }
             } else {
                 if (res.__static) {
-                    return res;
+                    return function() { return res.call(Array.prototype.slice.call(arguments)); };
                 } else {
                     return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
                 }

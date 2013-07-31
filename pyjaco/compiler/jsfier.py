@@ -158,7 +158,7 @@ class Transformer(isttransform.Transformer):
         if node.keywords:
             kws = IDict(keys = [], values = [])
             for key, value in node.keywords:
-                kws.keys.append(IString(value = key))
+                kws.keys.append(IString(value = self.name_map.get(key, key)))
                 kws.values.append(self.comp(value))
             cooked.keys.append(IString(value = "kw"))
             cooked.values.append(kws)
@@ -359,7 +359,6 @@ class Transformer(isttransform.Transformer):
 
     def node_function(self, node):
         defaults = [None] * (len(node.params.args) - len(node.params.defaults)) + node.params.defaults
-        offset = 0
 
         js = []
 
@@ -371,21 +370,43 @@ class Transformer(isttransform.Transformer):
         js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "arguments")])))
 
         newargs = self.alloc_var()
-        js.append(IVar(name = newargs, expr = ICall(
-                    func = IGetAttr(
-                        base =
-                        ICall(
-                            func = IGetAttr(base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"), attr = "call"),
-                            args = [IName(id = "arguments")]),
-                        attr = "concat"),
-                    args = [IGetAttr(base = pyargs, attr = "varargs")]
-                    )))
 
-        if node.name in ("__getattr__", "__setattr__"):
-            js.append(IName(id = "if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); }" % { 'id': node.params.args[1] }))
+
+        varargs = ICall(
+            func =
+            IGetAttr(
+                base =
+                ICall(
+                    func = IGetAttr(base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"), attr = "call"),
+                    args = [IName(id = "arguments")]),
+                attr = "concat"),
+            args = [IGetAttr(base = pyargs, attr = "varargs")]
+            )
+
+        inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
+
+        if inclass:
+            js.append(IVar(
+                name = newargs,
+                expr =
+                ICall(
+                    func = IGetAttr(base = IList(values = [IName(id = "this")]), attr = "concat"),
+                    args = [varargs]
+                    )
+                ))
+        else:
+            js.append(IVar(name = newargs, expr = varargs))
 
         if node.params.kwargs:
             js.append(IVar(name =  node.params.kwargs, expr = ICall(func = IName(id = "dict"), args = [IGetAttr(base = pyargs, attr = "kwargs")])))
+
+        if node.params.args and inclass:
+            js.append(IVar(name = node.params.args[0], expr = IName(id = "this")))
+
+        if inclass:
+            offset = 1
+        else:
+            offset = 0
 
         if node.params.varargs:
             js.append(IVar(name = node.params.varargs, expr = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
@@ -399,9 +420,9 @@ class Transformer(isttransform.Transformer):
                         expr = IIfExp(
                             cond   = IBinOp(left = IString(value = arg), op = "In", right = pyargs_kw),
                             body   = IGetAttr(base = pyargs_kw, attr = arg),
-                            orelse = IGetItem(value = IName(id = newargs), slice = INumber(value = i)))))
+                            orelse = IGetItem(value = IName(id = newargs), slice = INumber(value = i + offset)))))
             else:
-                js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i))))
+                js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i + offset))))
                 js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
                             IAssign(
                                 lvalue = [IName(id = arg)],
@@ -417,6 +438,9 @@ class Transformer(isttransform.Transformer):
                                         base = pyargs_kw,
                                         attr = arg)))]))
             js.append(IDelete(targets = [IGetAttr(base = pyargs_kw, attr = arg)]))
+
+        if node.name in ("__getattr__", "__setattr__"):
+            js.append(IName(id = "if (typeof %(id)s === 'string') { %(id)s = str(%(id)s); }" % { 'id': node.params.args[1] }))
 
         loopvar = self.alloc_var()
 
@@ -438,12 +462,7 @@ class Transformer(isttransform.Transformer):
 
         self.scope = []
 
-        inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
-
         exp = ILambda(body = node.body, params = IParameters(args = node.params.args, defaults = None, kwargs = None, varargs = None))
-
-        if inclass or offset == 1:
-            exp.body.insert(0, IVar(name = "self", expr = IName(id = "this")))
 
         for deco in reversed(node.decorators):
             exp = ICall(func = self.comp(deco), args = [exp])
@@ -578,10 +597,7 @@ class Transformer(isttransform.Transformer):
         js = []
 
         inherit = ICall(func = IName(id = "__inherit"), args = [self.comp(IName(id = bases[0])), IString(value = class_name), use_prototypes])
-        if len(self._class_name) > 0:
-            js.append(inherit)
-        else:
-            js.append(IVar(name = class_name, expr = inherit))
+        js.append(IVar(name = class_name, expr = inherit))
 
         self._class_name.append(class_name)
 
@@ -593,7 +609,7 @@ class Transformer(isttransform.Transformer):
             elif isinstance(st, IFunction):
                 js.append(IAssign(lvalue = [IGetAttr(base = IName(id = class_name), attr = "PY$%s" % st.name)], rvalue = self.comp(st)))
             elif isinstance(st, IClassDef):
-                pass
+                js.append(IAssign(lvalue = [IGetAttr(base = IName(id = class_name), attr = "PY$%s" % st.name)], rvalue = ICall(func = ILambda(body = self.comp(st) + [IReturn(expr = IName(id = st.name))], params = []), args = [])))
             elif isinstance(st, IString):
                 js.append(IName(id = "\n".join(["/* %s */" % s for s in st.value.split("\n")])))
             elif isinstance(st, INop):
@@ -665,4 +681,3 @@ class Transformer(isttransform.Transformer):
             var = self.alloc_var()
         else:
             raise NotImplementedError("Unsupported target type in list comprehension")
-
