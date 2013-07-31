@@ -367,10 +367,7 @@ class Transformer(isttransform.Transformer):
         pyargs = IName(id = "$pyargs")
         pyargs_kw = IGetAttr(base = pyargs, attr = "kw")
 
-        js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "arguments")])))
-
         newargs = self.alloc_var()
-
 
         varargs = ICall(
             func =
@@ -386,30 +383,23 @@ class Transformer(isttransform.Transformer):
         inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
 
         if inclass:
-            js.append(IVar(
-                name = newargs,
-                expr =
-                ICall(
+            varargs_expr = ICall(
                     func = IGetAttr(base = IList(values = [IName(id = "this")]), attr = "concat"),
                     args = [varargs]
                     )
-                ))
-        else:
-            js.append(IVar(name = newargs, expr = varargs))
-
-        if node.params.kwargs:
-            js.append(IVar(name =  node.params.kwargs, expr = ICall(func = IName(id = "dict"), args = [IGetAttr(base = pyargs, attr = "kwargs")])))
-
-        if node.params.args and inclass:
-            js.append(IVar(name = node.params.args[0], expr = IName(id = "this")))
-
-        if inclass:
             offset = 1
         else:
+            varargs_expr = varargs
             offset = 0
 
+        js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "arguments")])))
+        js.append(IVar(name = newargs, expr = varargs_expr))
+
+        if node.params.kwargs:
+            js.append(IVar(name = node.params.kwargs, expr = ICall(func = IName(id = "dict"), args = [IGetAttr(base = pyargs, attr = "kwargs")])))
+
         if node.params.varargs:
-            js.append(IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.
+            js.append(IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
 
         for i, arg in enumerate(node.params.args[offset:]):
             arg = self.name_map.get(arg, arg)
@@ -452,17 +442,14 @@ class Transformer(isttransform.Transformer):
                                 IGetItem(value = pyargs_kw, slice = IName(id = loopvar))])
                         ], target = IVar(name = loopvar), iter = pyargs_kw))
 
-        node.params.defaults = []
+        js.extend(self.comp(node.body))
 
-        node.params.args = []
-
-        node.body = js + self.comp(node.body)
-        if not (node.body and isinstance(node.body[-1], IReturn)):
-            node.body.append(IReturn(expr = IName(id = "None")))
+        if not (js and isinstance(js[-1], IReturn)):
+            js.append(IReturn(expr = IName(id = "None")))
 
         self.scope = []
 
-        exp = ILambda(body = node.body, params = IParameters(args = node.params.args, defaults = None, kwargs = None, varargs = None))
+        exp = ILambda(body = js, params = IParameters(args = [], defaults = None, kwargs = None, varargs = None))
 
         for deco in reversed(node.decorators):
             exp = ICall(func = self.comp(deco), args = [exp])
