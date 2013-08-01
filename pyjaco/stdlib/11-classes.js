@@ -120,11 +120,7 @@ $PY.getattr = function(obj, k) {
                     return function() { return res.apply(obj, arguments); };
                 }
             } else {
-                if (res.__static) {
-                    return function() { return res.call(Array.prototype.slice.call(arguments)); };
-                } else {
-                    return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
-                }
+                return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
             }
         } else if (k === "__name__") {
             return str(res);
