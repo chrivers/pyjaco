@@ -1,5 +1,5 @@
 /**
-  Copyright 2011-2012 Christian Iversen <ci@sikkerhed.org>
+  Copyright 2011-2013 Christian Iversen <chrivers@iversen-net.dk>
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation
