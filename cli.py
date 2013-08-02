@@ -6,6 +6,7 @@ import select
 from pyjaco import Compiler
 import platform
 import sys, os
+import readline
 
 debug = len(sys.argv) > 1 and sys.argv[1] == '-d'
 
