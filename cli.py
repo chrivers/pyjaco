@@ -5,7 +5,7 @@ import ast
 import select
 from pyjaco import Compiler
 import platform
-import sys
+import sys, os
 
 debug = len(sys.argv) > 1 and sys.argv[1] == '-d'
 
@@ -17,7 +17,15 @@ def pyjaco_compile(code, printoutput):
     else:
         return "try {%s} finally {print('\\nMARK\\n')};\n" % "".join(compiler._compile(code).split("\n")[1:])
 
-proc = subprocess.Popen("js", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+if not os.path.exists("py-builtins.js"):
+    print "Standard library (py-builtins.js) not found. Please 'make stdlib'"
+    sys.exit(1)
+
+try:
+    proc = subprocess.Popen("js", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+except OSError, E:
+    print "Could not execute 'js' javascript engine: %s" % E
+    sys.exit(1)
 
 proc.stdin.write("load('py-builtins.js');\n")
 proc.stdin.write("print('MARK');\n");
