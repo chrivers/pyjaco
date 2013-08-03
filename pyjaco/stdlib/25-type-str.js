@@ -76,19 +76,28 @@ basestring._js_ = function () {
 };
 
 basestring.PY$__hash__ = function () {
-    var value = this.obj.charCodeAt(0) << 7;
+    /*
+     * This hash implementation is based on the CPython
+     * implementation, except that it cannot produce the same results
+     * for non-pathological strings. This is because JavaScript uses
+     * 64-bit floats as numbers, and it seems XOR is not defined
+     * correctly above 2^32, even though the integral numbers go as
+     * high as 2^53.
+     *
+     * We might support true hashes in the future, with a proper
+     * implementation of the long-type.
+     */
+    if (this.obj === "") {
+        return $c0;
+    }
     var len = this.obj.length;
 
-    for (var i = 1; i < len; i++) {
-        value = ((1000003 * value) & 0xFFFFFFFF) ^ this.obj[i];
-        value = value ^ len;
+    var hash = this.obj.charCodeAt(0) << 7;
+    for (var i = 0; i < len; i++) {
+        hash = (1000003 * hash) ^ this.obj.charCodeAt(i);
     }
-
-    if (value === -1) {
-        value = -2;
-    }
-
-    return value;
+    hash ^= len;
+    return int(hash);
 };
 
 basestring.PY$__len__ = function() {

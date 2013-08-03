@@ -202,19 +202,27 @@ tuple._js_ = function () {
 };
 
 tuple.PY$__hash__ = function () {
-    var value = 0x345678;
+    /*
+     * This hash implementation is based on the CPython
+     * implementation, except that it doesn't special-case -1 -> -2.
+     *
+     * So it's not the same, but hash values are not portable between
+     * implementations anyway. For example, PyPy differs from CPython,
+     * but works just fine. The reason we (roughly) use CPythons hash
+     * implementation is because it is well tested, and fairly simple.
+     */
+    var hash = 0x345678;
+    var mult  = 1000003;
     var length = this.items.length;
 
-    for (var index in this.items) {
-        value = ((1000003*value) & 0xFFFFFFFF) ^ __builtins__.PY$hash(this.items[index]);
-        value = value ^ length;
+    while (length--) {
+        var y = __builtins__.PY$hash(this.items[length]);
+        hash = (hash ^ y) * mult;
+        mult += (82520 + length + length);
     }
+    hash += 97531;
 
-    if (value === -1) {
-        value = -2;
-    }
-
-    return value;
+    return int(hash);
 };
 
 tuple.PY$__len__ = function() {

@@ -35,6 +35,10 @@ bool.PY$__init__ = function(b) {
     }
 };
 
+bool.PY$__hash__ = function () {
+    return this.obj === 0 ? $c0 : $c1;
+};
+
 bool.PY$__str__ = function () {
     if (this.obj) {
         return str("True");

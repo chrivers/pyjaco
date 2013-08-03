@@ -68,7 +68,7 @@ int.PY$__str__ = function () {
 int.PY$__repr__ = int.PY$__str__;
 
 int.PY$__hash__ = function () {
-    return this.obj;
+    return this;
 };
 
 int.PY$__invert__ = function() {
