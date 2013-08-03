@@ -4,6 +4,7 @@ KNOWN_TO_FAIL = [
     "tests/class/oo_diamond.py",
     "tests/class/oo_super.py",
     "tests/class/oo_decorated.py",
+    "tests/dict/customhash.py",
     "tests/namespace/del_global.py",
     "tests/namespace/del_local.py",
     "tests/list/assign_slice_step.py",

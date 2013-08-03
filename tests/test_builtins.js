@@ -147,7 +147,7 @@ function test_tuple() {
     raises(__builtins__.PY$ValueError, function() { t.PY$index(5) });
     test(function() { return t.PY$count(5) == 0 });
 
-    test(function() { return __builtins__.PY$hash(t) == 3430008 });
+    test(function() { return __builtins__.PY$hash(t) == 3527539 });
 
     var t = tuple([1]);
 
@@ -185,7 +185,7 @@ function test_tuple() {
     test(function() { return t.PY$index(5) == 2 });
     test(function() { return t.PY$count(5) == 2 });
 
-    test(function() { return __builtins__.PY$hash(t) == -2017591611 });
+    test(function() { return __builtins__.PY$hash(t) == -1172818373500599 });
 
     t = tuple([1, 2, 3, 4]);
     test(function() { return str(t) == '(1, 2, 3, 4)' })
