@@ -57,24 +57,41 @@ $PY.dump = function(obj) {
     } else if (obj !== undefined && obj.PY$__class__ !== undefined) {
         return "<pyjaco object of class " + obj.PY$__class__.PY$__name__ + ": " + $PY.repr(obj) + ">";
     };
-    for (var i in obj) {
-        var val = obj[i];
+    if (typeof obj === 'object') {
+        for (var i in obj) {
+            var val = obj[i];
+            if (typeof val === 'function') {
+                res.push(i + " (function)");
+            } else if (typeof val === 'number') {
+                res.push(i + " (number: " + val + ")");
+            } else if (typeof val === 'string') {
+                res.push(i + " (string: " + val + ")");
+            } else if (val === null) {
+                res.push(i + " (null)");
+            } else if (val === undefined) {
+                res.push(i + " (undefined)");
+            } else {
+                res.push(i + " (object)");
+            }
+        }
+        res.sort();
+    } else {
+        var val = obj;
         if (typeof val === 'function') {
-            res.push(i + " (function)");
+            return "<function>";
         } else if (typeof val === 'number') {
-            res.push(i + " (number: " + val + ")");
+            return "<number: " + val + ">";
         } else if (typeof val === 'string') {
-            res.push(i + " (string: " + val + ")");
+            return "<string: " + val + ">";
         } else if (val === null) {
-            res.push(i + " (null)");
+            return "<null>";
         } else if (val === undefined) {
-            res.push(i + " (undefined)");
+            return "<undefined>";
         } else {
-            res.push(i + " (object)");
+            return "<object>";
         }
     }
-    res.sort();
-    return "<" + (typeof obj) + " with " + res.length + " properties> {" + res.join("\n  ") + "}";
+    return "<" + (typeof obj) + " with " + res.length + " properties> {" + res.join(", ") + "}";
 };
 
 $PY.len = function(obj) {
