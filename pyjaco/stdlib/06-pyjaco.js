@@ -99,7 +99,7 @@ $PY.len = function(obj) {
     if (c === list || c === tuple || c === str || c === basestring || c === unicode) {
         return obj.obj.length;
     } else if (obj.PY$__len__ !== undefined) {
-        return obj.PY$__len__()._js_();
+        return obj.PY$__len__(obj)._js_();
     } else {
         throw __builtins__.PY$AttributeError('__len__');
     }
@@ -110,7 +110,7 @@ $PY.next = function(obj) {
         return obj.next();
     } else {
         try {
-            return obj.PY$next();
+            return obj.PY$next(obj);
         } catch (x) {
             if (x === $PY.c_stopiter || $PY.isinstance(x, __builtins__.PY$StopIteration)) {
                 return null;
@@ -123,9 +123,9 @@ $PY.next = function(obj) {
 
 $PY.__not__ = function(obj) {
    if (obj.PY$__nonzero__ !== undefined) {
-       return js(obj.PY$__nonzero__()) ? False : True;
+       return js(obj.PY$__nonzero__(obj)) ? False : True;
    } else if (obj.PY$__len__ !== undefined) {
-       return js(obj.PY$__len__()) === 0 ? True : False;
+       return js(obj.PY$__len__(obj)) === 0 ? True : False;
    } else {
        return js(obj) ? False : True;
    }
