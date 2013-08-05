@@ -61,7 +61,7 @@ bool.PY$__eq__ = function(self, other) {
     if (self.PY$__class__ === undefined) {
         return object.PY$__eq__.call(self, other);
     } else if (other.PY$__int__ !== undefined) {
-        return Number(self.obj) === other.PY$__int__()._js_() ? True : False;
+        return Number(self.obj) === other.PY$__int__(other)._js_() ? True : False;
     } else {
         return self.obj === other.obj ? True : False;
     }
@@ -101,9 +101,10 @@ bool.PY$__create__ = function(cls, b) {
     if (b === null || b === undefined) {
         return False;
     } else if (b.PY$__nonzero__ != undefined) {
-        return b.PY$__nonzero__();
+        return b.PY$__nonzero__(b);
     } else if (b.PY$__len__ != undefined) {
-        return b.PY$__len__().PY$__gt__($c0);
+        var len = b.PY$__len__(b);
+        return len.PY$__gt__(len, $c0);
     } else if (b instanceof Array) {
         if (b.length) {
             return True;
