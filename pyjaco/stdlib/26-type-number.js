@@ -29,118 +29,118 @@ __builtins__.number = number;
 
 number.PY$__repr__ = number.PY$__str__;
 
-number.PY$__eq__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__eq__.call(this, other);
+number.PY$__eq__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__eq__.call(self, other);
     } else if (typeof(other) === "number") {
-        return this.obj === other ? True : False;
+        return self.obj === other ? True : False;
     } else if (other.numbertype) {
-        return this.obj === other.obj ? True : False;
-    } else if (other[this.numbertype] !== undefined) {
-        return this.obj === other[this.numbertype]()._js_() ? True : False;
+        return self.obj === other.obj ? True : False;
+    } else if (other[self.numbertype] !== undefined) {
+        return self.obj === other[self.numbertype]()._js_() ? True : False;
     } else {
-        return object.PY$__eq__.call(this, other);
+        return object.PY$__eq__.call(self, other);
     }
 };
 
-number.toString = function () {
-    return js(this.PY$__str__());
+number.toString = function() {
+    return js(this.PY$__str__(this));
 };
 
-number._js_ = function () {
+number._js_ = function() {
     return this.obj;
 };
 
-number.PY$__pos__ = function() {
-    return this.PY$__class__(+this.obj);
+number.PY$__pos__ = function(self) {
+    return self.PY$__class__(+self.obj);
 };
 
-number.PY$__abs__ = function() {
-    return this.PY$__class__(Math.abs(this.obj));
+number.PY$__abs__ = function(self) {
+    return self.PY$__class__(Math.abs(self.obj));
 };
 
-number.PY$__neg__ = function() {
-    return this.PY$__class__(-this.obj);
+number.PY$__neg__ = function(self) {
+    return self.PY$__class__(-self.obj);
 };
 
-number.PY$__nonzero__ = function() {
-    return this.obj != 0 ? True : False;
+number.PY$__nonzero__ = function(self) {
+    return self.obj != 0 ? True : False;
 };
 
-number.PY$__gt__ = function(x) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__gt__.call(this, x);
+number.PY$__gt__ = function(self, x) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__gt__.call(self, x);
     } else if (x.numbertype) {
-        return this.obj > x.obj ? True : False;
-    } else if (x[this.numbertype] !== undefined) {
-        return this.obj > x[this.numbertype]()._js_() ? True : False;
+        return self.obj > x.obj ? True : False;
+    } else if (x[self.numbertype] !== undefined) {
+        return self.obj > x[self.numbertype]()._js_() ? True : False;
     } else {
-        return object.PY$__gt__.call(this, x);
+        return object.PY$__gt__.call(self, x);
     }
 };
 
-number.PY$__lt__ = function(x) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__lt__.call(this, x);
+number.PY$__lt__ = function(self, x) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__lt__.call(self, x);
     } else if (x.numbertype) {
-        return this.obj < x.obj ? True : False;
-    } else if (x[this.numbertype] !== undefined) {
-        return this.obj < x[this.numbertype]()._js_() ? True : False;
+        return self.obj < x.obj ? True : False;
+    } else if (x[self.numbertype] !== undefined) {
+        return self.obj < x[self.numbertype]()._js_() ? True : False;
     } else {
-        return object.PY$__lt__.call(this, x);
+        return object.PY$__lt__.call(self, x);
     }
 };
 
-number.PY$__mul__ = function(x) {
+number.PY$__mul__ = function(self, x) {
     if (x.numbertype === undefined) {
         if (x.PY$__int__ !== undefined) {
-            return this.numberclass(this.obj * x.PY$__int__()._js_());
+            return self.numberclass(self.obj * x.PY$__int__()._js_());
         } else if ($PY.isinstance(x, [basestring, list, tuple])) {
-            return x.PY$__mul__(this);
+            return x.PY$__mul__(self);
         } else {
             throw __builtins__.PY$TypeError("Cannot multiply number and non-number");
         }
-    } else if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__')) {
-        return this.numberclass(this.obj * x.obj);
+    } else if ((self.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__')) {
+        return self.numberclass(self.obj * x.obj);
     } else {
-        return x.numberclass(this.obj * x.obj);
+        return x.numberclass(self.obj * x.obj);
     }
 };
 
-number.PY$__add__ = function(x) {
+number.PY$__add__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot add number and non-number");
-    if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
-        return this.numberclass(this.obj + x.obj);
+    if ((self.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
+        return self.numberclass(self.obj + x.obj);
     else
-        return x.numberclass(this.obj + x.obj);
+        return x.numberclass(self.obj + x.obj);
 };
 
-number.PY$__div__ = function(x) {
+number.PY$__div__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot divide number and non-number");
-    if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
-        return this.numberclass(this.obj / x.obj);
+    if ((self.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
+        return self.numberclass(self.obj / x.obj);
     else
-        return x.numberclass(this.obj / x.obj);
+        return x.numberclass(self.obj / x.obj);
 };
 
-number.PY$__sub__ = function(x) {
+number.PY$__sub__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot subtract number and non-number");
-    if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
-        return this.numberclass(this.obj - x.obj);
+    if ((self.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
+        return self.numberclass(self.obj - x.obj);
     else
-        return x.numberclass(this.obj - x.obj);
+        return x.numberclass(self.obj - x.obj);
 };
 
-number.PY$__pow__ = function(x) {
+number.PY$__pow__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot exponentiate number and non-number");
-    if ((this.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
-        return this.numberclass(Math.pow(this.obj, x.obj));
+    if ((self.numbertype === 'PY$__float__') || (x.numbertype !== 'PY$__float__'))
+        return self.numberclass(Math.pow(self.obj, x.obj));
     else
-        return x.numberclass(Math.pow(this.obj, x.obj));
+        return x.numberclass(Math.pow(self.obj, x.obj));
 };
 
 number.PY$__imul__      = number.PY$__mul__;

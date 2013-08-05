@@ -32,7 +32,7 @@ var __inherit = function(cls, name) {
     var res = function() {
         var x = res.PY$__create__;
         if (x !== undefined) {
-            return res.PY$__create__.apply(null, [res].concat(Array.prototype.slice.call(arguments)));
+            return res.PY$__create__.apply({}, [res].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw __builtins__.PY$AttributeError("Class " + name + " does not have __create__ method");
         }
@@ -53,16 +53,15 @@ var object = __inherit(null, "object");
 
 __builtins__.PY$object = object;
 
-object.PY$__init__ = function() {
+object.PY$__init__ = function(self) {
 };
 
 object.PY$__create__ = function(cls) {
     var args = Array.prototype.slice.call(arguments, 1);
-
     var obj = function() {
         var x = cls.PY$__call__;
         if (x !== undefined) {
-            return cls.PY$__call__.apply(cls, args);
+            return cls.PY$__call__.apply({}, [obj].concat(args));
         } else {
             throw __builtins__.PY$AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
         }
@@ -81,7 +80,7 @@ object.PY$__create__ = function(cls) {
     obj.id = prng();
     obj.__isinstance = true;
     obj.__isclass = false;
-    obj.PY$__init__.apply(obj, args);
+    obj.PY$__init__.apply({}, [obj].concat(args));
     return obj;
 };
 
@@ -148,59 +147,59 @@ $PY.delattr = function(obj, k) {
     delete obj["PY$" + k];
 };
 
-object.PY$__repr__ = function() {
-    if (this.PY$__class__) {
-        return str("<instance of " + this.PY$__class__.PY$__name__ + " at 0x" + this.id.toString(16) + ">");
-    } else if (this.PY$__name__) {
-        return str("<type '" + this.PY$__name__ + "'>");
+object.PY$__repr__ = function(self) {
+    if (self.PY$__class__) {
+        return str("<instance of " + self.PY$__class__.PY$__name__ + " at 0x" + self.id.toString(16) + ">");
+    } else if (self.PY$__name__) {
+        return str("<type '" + self.PY$__name__ + "'>");
     } else {
-        return str("<javascript: " + this + ">");
+        return str("<javascript: " + self + ">");
     }
 };
 
 object.PY$__str__ = object.PY$__repr__;
 
-object.PY$__eq__ = function(other) {
-    return this === other ? True : False;
+object.PY$__eq__ = function(self, other) {
+    return self === other ? True : False;
 };
 
-object.PY$__ne__ = function (other) {
-    return $PY.__not__(this.PY$__eq__(other));
+object.PY$__ne__ = function(self, other) {
+    return $PY.__not__(self.PY$__eq__(other));
 };
 
-object.PY$__gt__ = function(other) {
-    if (this.PY$__class__ === undefined) {
-        return this.PY$__name__ > other.PY$__name__ ? True : False;
+object.PY$__gt__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return self.PY$__name__ > other.PY$__name__ ? True : False;
     } else {
-        return this.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__ ? True : False;
+        return self.PY$__class__.PY$__name__ > other.PY$__class__.PY$__name__ ? True : False;
     }
 };
 
-object.PY$__lt__ = function(other) {
-    if (other === this) {
+object.PY$__lt__ = function(self, other) {
+    if (other === self) {
         return False;
     } else {
-        if (this.PY$__class__ === undefined) {
-            return this.PY$__name__ < other.PY$__name__ ? True : False;
+        if (self.PY$__class__ === undefined) {
+            return self.PY$__name__ < other.PY$__name__ ? True : False;
         } else {
-            return this.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__ ? True : False;
+            return self.PY$__class__.PY$__name__ < other.PY$__class__.PY$__name__ ? True : False;
         }
     }
 };
 
-object.PY$__ge__ = function(other) {
-    return this.PY$__lt__(other) === False ? True : False;
+object.PY$__ge__ = function(self, other) {
+    return self.PY$__lt__(other) === False ? True : False;
 };
 
-object.PY$__le__ = function(other) {
-    return this.PY$__gt__(other) === False ? True : False;
+object.PY$__le__ = function(self, other) {
+    return self.PY$__gt__(other) === False ? True : False;
 };
 
-object.PY$__cmp__ = function (y) {
-    if (this.PY$__gt__(y) === True) {
+object.PY$__cmp__ = function(self, y) {
+    if (self.PY$__gt__(y) === True) {
         return $c1;
     } else {
-        if (this.PY$__lt__(y) === True) {
+        if (self.PY$__lt__(y) === True) {
             return $cn1;
         } else {
             return $c0;
@@ -208,10 +207,10 @@ object.PY$__cmp__ = function (y) {
     }
 };
 
-object.toString = function () {
-    return js(this.PY$__str__());
+object.toString = function() {
+    return js(this.PY$__str__(this));
 };
 
-object.valueOf = function () {
+object.valueOf = function() {
     return js(this);
 };

@@ -29,7 +29,7 @@ var slice = __inherit(object, "slice");
 
 __builtins__.PY$slice = slice;
 
-slice.PY$__init__ = function(start, stop, step) {
+slice.PY$__init__ = function(self, start, stop, step) {
     if (stop === undefined && step === undefined)
     {
         stop = start;
@@ -38,32 +38,32 @@ slice.PY$__init__ = function(start, stop, step) {
     if (!start && start != 0) start = null;
     if (stop === undefined) stop = null;
     if (step === undefined) step = null;
-    this.start = js(start);
-    this.stop = js(stop);
-    this.step = js(step);
+    self.start = js(start);
+    self.stop = js(stop);
+    self.step = js(step);
 };
 
-slice.PY$__str__ = function() {
-    return str("slice(" + this.start + ", " + this.stop + ", " + this.step + ")");
+slice.PY$__str__ = function(self) {
+    return str("slice(" + self.start + ", " + self.stop + ", " + self.step + ")");
 };
 
-slice.PY$indices = function(n) {
+slice.PY$indices = function(self, n) {
     n = js(n);
-    var start = this.start;
+    var start = self.start;
     if (start === null)
         start = 0;
     if (start > n)
         start = n;
     if (start < 0)
         start = n+start;
-    var stop = this.stop;
+    var stop = self.stop;
     if (stop > n)
         stop = n;
     if (stop === null)
         stop = n;
     if (stop < 0)
         stop = n+stop;
-    var step = this.step;
+    var step = self.step;
     if (step === null)
         step = 1;
     return tuple([start, stop, step]);

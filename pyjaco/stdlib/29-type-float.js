@@ -30,10 +30,10 @@ __builtins__.PY$float = float;
 float.numbertype = "PY$__float__";
 float.numberclass = float;
 
-float.PY$__init__ = function(value) {
+float.PY$__init__ = function(self, value) {
     var s = str(value)._js_();
     if (s.match(/^[-+]?[0-9]+(\.[0-9]*)?(e[-+]?[0-9]+)?$/)) {
-        this.obj = parseFloat(s);
+        self.obj = parseFloat(s);
     } else {
         throw __builtins__.PY$ValueError("Invalid float: " + s);
     }
@@ -49,45 +49,45 @@ float.PY$__create__ = function(cls, obj) {
     }
 };
 
-float.PY$__float__ = function () {
-    return this;
+float.PY$__float__ = function(self) {
+    return self;
 };
 
-float.PY$__int__ = function () {
-    return int(parseInt(this.obj));
+float.PY$__int__ = function(self) {
+    return int(parseInt(self.obj));
 };
 
-float.PY$__str__ = function () {
-    if (this.obj - Math.floor(this.obj) < 1e-6) {
-        var res = sprintf("%g", this);
+float.PY$__str__ = function(self) {
+    if (self.obj - Math.floor(self.obj) < 1e-6) {
+        var res = sprintf("%g", self);
         if (res.indexOf('e') === -1) {
             return str(res + ".0");
         } else {
             return str(res);
         }
     } else {
-        return str(sprintf("%.10g", this));
+        return str(sprintf("%.10g", self));
     }
 };
 
 float.PY$__repr__ = float.PY$__str__;
 
-float.PY$__hash__ = function () {
-    return this.obj;
+float.PY$__hash__ = function(self) {
+    return self.obj;
 };
 
-float.PY$__div__ = function(x) {
+float.PY$__div__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot divide number and non-number");
     if (x.obj === 0)
         throw __builtins__.PY$ZeroDivisionError("float division by zero");
-    return float((0.0 + this.obj) / (0.0 + x.obj));
+    return float((0.0 + self.obj) / (0.0 + x.obj));
 };
 
-float.PY$__pow__ = function(x) {
+float.PY$__pow__ = function(self, x) {
     if (!x.numbertype)
         throw __builtins__.PY$TypeError("Cannot exponentiate number and non-number");
-    return float(Math.pow(this.obj, x.obj));
+    return float(Math.pow(self.obj, x.obj));
 };
 
 float.PY$__floordiv__ = float.PY$__div__;

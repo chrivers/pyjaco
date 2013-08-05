@@ -27,36 +27,35 @@ var tuple = __inherit(object, "tuple");
 
 __builtins__.PY$tuple = tuple;
 
-tuple.PY$__init__ = function(seq) {
-    if (arguments.length > 1) {
+tuple.PY$__init__ = function(self, seq) {
+    if (arguments.length > 2) {
         throw __builtins__.PY$TypeError("tuple() takes at most 1 argument (" + arguments.length + " given)");
     } else if (seq === undefined) {
-        this.items = [];
+        self.items = [];
     } else if (seq.PY$__class__ === list || seq.PY$__class__ === tuple) {
-        this.items = seq.items.concat();
+        self.items = seq.items.concat();
     } else {
-        var that = this;
-        this.items = [];
+        self.items = [];
         iterate(seq, function(elm) {
                     if (typeof elm === 'number')
-                        that.items.push(int(elm));
+                        self.items.push(int(elm));
                     else if (typeof elm === 'string')
-                        that.items.push(str(elm));
+                        self.items.push(str(elm));
                     else
-                        that.items.push(elm);
+                        self.items.push(elm);
                 });
     }
 };
 
-tuple.PY$__str__ = function () {
-    if (this.items.length === 0) {
+tuple.PY$__str__ = function(self) {
+    if (self.items.length === 0) {
         return str("()");
-    } else if (this.items.length === 1) {
-        return str("(" + js(__builtins__.PY$repr(this.items[0])) + ",)");
+    } else if (self.items.length === 1) {
+        return str("(" + js(__builtins__.PY$repr(self.items[0])) + ",)");
     } else {
-        var res = "(" + js(__builtins__.PY$repr(this.items[0]));
-        for (var i = 1; i < this.items.length; i++)  {
-            res += ", " + js(__builtins__.PY$repr(this.items[i]));
+        var res = "(" + js(__builtins__.PY$repr(self.items[0]));
+        for (var i = 1; i < self.items.length; i++)  {
+            res += ", " + js(__builtins__.PY$repr(self.items[i]));
         }
         return str(res + ")");
     }
@@ -64,16 +63,16 @@ tuple.PY$__str__ = function () {
 
 tuple.PY$__repr__ = tuple.PY$__str__;
 
-tuple.PY$__eq__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__eq__.call(this, other);
+tuple.PY$__eq__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__eq__(self, other);
     }
-    if (other.PY$__class__ === this.PY$__class__) {
-        if (this.items.length != js(__builtins__.PY$len(other))) {
+    if (other.PY$__class__ === self.PY$__class__) {
+        if (self.items.length != js(__builtins__.PY$len(other))) {
             return False;
         }
-        for (var i = 0; i < this.items.length; i++) {
-            if (this.items[i].PY$__ne__(other.items[i]) === True) {
+        for (var i = 0; i < self.items.length; i++) {
+            if (self.items[i].PY$__ne__(other.items[i]) === True) {
                 return False;
             }
         }
@@ -83,15 +82,15 @@ tuple.PY$__eq__ = function (other) {
     }
 };
 
-tuple.PY$__cmp__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__cmp__.call(this, other);
+tuple.PY$__cmp__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__cmp__(self, other);
     }
-    if (other.PY$__class__ !== this.PY$__class__) {
-        if (object.PY$__gt__.call(this, other) === True) {
+    if (other.PY$__class__ !== self.PY$__class__) {
+        if (object.PY$__gt__(self, other) === True) {
             return $c1;
         } else {
-            if (object.PY$__lt__.call(this, other) === True) {
+            if (object.PY$__lt__(self, other) === True) {
                 return $cn1;
             } else {
                 return $c0;
@@ -120,11 +119,11 @@ tuple.PY$__cmp__ = function (other) {
                     throw exc;
                 }
             }
-            if (count >= this.items.length) {
+            if (count >= self.items.length) {
                 res = $cn1;
                 break;
             }
-            var r = this.items[count].PY$__cmp__(elm);
+            var r = self.items[count].PY$__cmp__(elm);
 
             if (r.PY$__gt__($c0) === True) {
                 res = $c1;
@@ -137,7 +136,7 @@ tuple.PY$__cmp__ = function (other) {
         }
 
         if (res === $c0) {
-            if (this.items.length > count) {
+            if (self.items.length > count) {
                 return $c1;
             } else {
                 return $c0;
@@ -148,50 +147,50 @@ tuple.PY$__cmp__ = function (other) {
     }
 };
 
-tuple.PY$__gt__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__gt__.call(this, other);
+tuple.PY$__gt__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__gt__(self, other);
     } else {
-        return this.PY$__cmp__(other).PY$__gt__($c0);
+        return self.PY$__cmp__(other).PY$__gt__($c0);
     }
 };
 
-tuple.PY$__lt__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__lt__.call(this, other);
+tuple.PY$__lt__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__lt__(self, other);
     } else {
-        return this.PY$__cmp__(other).PY$__lt__($c0);
+        return self.PY$__cmp__(other).PY$__lt__($c0);
     }
 };
 
-tuple.PY$__mul__ = function(num) {
+tuple.PY$__mul__ = function(self, num) {
     if ($PY.isinstance(num, int)) {
         var res = [];
         var count = num._js_();
         for (var i = 0; i < count; i++) {
-            res = res.concat(this.items);
+            res = res.concat(self.items);
         }
-        return this.PY$__class__(res);
+        return self.PY$__class__(res);
     } else {
-        var name = this.PY$__class__.PY$__name__;
+        var name = self.PY$__class__.PY$__name__;
         throw __builtins__.PY$NotImplementedError("Cannot multiply " + name + " and non-int");
     }
 };
 
-tuple.PY$__add__ = function(other) {
-    if (this.PY$__class__ === other.PY$__class__) {
-        var res = this.items.concat([]);
+tuple.PY$__add__ = function(self, other) {
+    if (self.PY$__class__ === other.PY$__class__) {
+        var res = self.items.concat([]);
         iterate(other, function(elm) {
                     res.push(elm);
                 });
-        return this.PY$__class__(res);
+        return self.PY$__class__(res);
     } else {
-        var name = this.PY$__class__.PY$__name__;
+        var name = self.PY$__class__.PY$__name__;
         throw __builtins__.PY$NotImplementedError("Cannot add " + name + " and non-" + name);
     }
 };
 
-tuple._js_ = function () {
+tuple._js_ = function() {
     var items = [];
 
     iterate(this, function(item) {
@@ -201,7 +200,7 @@ tuple._js_ = function () {
     return items;
 };
 
-tuple.PY$__hash__ = function () {
+tuple.PY$__hash__ = function (self) {
     /*
      * This hash implementation is based on the CPython
      * implementation, except that it doesn't special-case -1 -> -2.
@@ -213,10 +212,10 @@ tuple.PY$__hash__ = function () {
      */
     var hash = 0x345678;
     var mult  = 1000003;
-    var length = this.items.length;
+    var length = self.items.length;
 
     while (length--) {
-        var y = __builtins__.PY$hash(this.items[length]);
+        var y = __builtins__.PY$hash(self.items[length]);
         hash = (hash ^ y) * mult;
         mult += (82520 + length + length);
     }
@@ -225,17 +224,17 @@ tuple.PY$__hash__ = function () {
     return int(hash);
 };
 
-tuple.PY$__len__ = function() {
-    return int(this.items.length);
+tuple.PY$__len__ = function(self) {
+    return int(self.items.length);
 };
 
-tuple.PY$__iter__ = function() {
-    return iter(this.items);
+tuple.PY$__iter__ = function(self) {
+    return iter(self.items);
 };
 
-tuple.PY$__contains__ = function(item) {
-    for (var index in this.items) {
-        if (this.items[index].PY$__eq__(item) === True) {
+tuple.PY$__contains__ = function(self, item) {
+    for (var index in self.items) {
+        if (self.items[index].PY$__eq__(item) === True) {
             return True;
         }
     }
@@ -243,46 +242,46 @@ tuple.PY$__contains__ = function(item) {
     return False;
 };
 
-tuple.PY$__getitem__ = function(index) {
+tuple.PY$__getitem__ = function(self, index) {
     var seq;
     if ($PY.isinstance(index, slice)) {
         var s = index;
-        var inds = js(s.PY$indices(this.items.length));
+        var inds = js(s.PY$indices(self.items.length));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
         seq = [];
         for (var i = start; i < stop; i += step) {
-            seq.push(this.items[i]);
+            seq.push(self.items[i]);
         }
-        return this.PY$__class__(seq);
+        return self.PY$__class__(seq);
     } else {
         index = js(int(index));
 
-        var len = this.items.length;
+        var len = self.items.length;
         if (index >= 0 && index < len) {
-            return this.items[index];
+            return self.items[index];
         } else if (index < 0 && index >= -len) {
-            return this.items[index + len];
+            return self.items[index + len];
         } else {
             throw __builtins__.PY$IndexError("list index out of range");
         }
     }
 };
 
-tuple.PY$__setitem__ = function() {
+tuple.PY$__setitem__ = function(self) {
     throw __builtins__.PY$TypeError("'tuple' object doesn't support item assignment");
 };
 
-tuple.PY$__delitem__ = function() {
+tuple.PY$__delitem__ = function(self) {
     throw __builtins__.PY$TypeError("'tuple' object doesn't support item deletion");
 };
 
-tuple.PY$count = function(value) {
+tuple.PY$count = function(self, value) {
     var count = 0;
 
-    for (var index in this.items) {
-        if (this.items[index].PY$__eq__(value) === True) {
+    for (var index in self.items) {
+        if (self.items[index].PY$__eq__(value) === True) {
             count += 1;
         }
     }
@@ -290,7 +289,7 @@ tuple.PY$count = function(value) {
     return count;
 };
 
-tuple.PY$index = function(value, start, end) {
+tuple.PY$index = function(self, value, start, end) {
     if (start === undefined) {
         start = 0;
     } else {
@@ -299,7 +298,7 @@ tuple.PY$index = function(value, start, end) {
     end = js(end);
 
     for (var i = start; (end === undefined) || (start < end); i++) {
-        var _value = this.items[i];
+        var _value = self.items[i];
 
         if (_value === undefined) {
             break;
@@ -310,7 +309,7 @@ tuple.PY$index = function(value, start, end) {
         }
     }
 
-    throw __builtins__.PY$ValueError(this.PY$__class__.PY$__name__ + ".index(x): x not in list");
+    throw __builtins__.PY$ValueError(self.PY$__class__.PY$__name__ + ".index(x): x not in list");
 };
 
 __builtins__.PY$tuple = tuple;

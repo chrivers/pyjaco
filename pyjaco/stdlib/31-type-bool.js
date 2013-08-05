@@ -27,27 +27,27 @@ var bool = __inherit(int, "bool");
 
 __builtins__.PY$bool = bool;
 
-bool.PY$__init__ = function(b) {
+bool.PY$__init__ = function(self, b) {
     if (b) {
-        this.obj = 1;
+        self.obj = 1;
     } else {
-        this.obj = 0;
+        self.obj = 0;
     }
 };
 
-bool.PY$__hash__ = function () {
-    return this.obj === 0 ? $c0 : $c1;
+bool.PY$__hash__ = function (self) {
+    return self.obj === 0 ? $c0 : $c1;
 };
 
-bool.PY$__str__ = function () {
-    if (this.obj) {
+bool.PY$__str__ = function (self) {
+    if (self.obj) {
         return str("True");
     } else {
         return str("False");
     }
 };
 
-bool.toString = function () {
+bool.toString = function(self) {
     if (this.obj) {
         return "1";
     } else {
@@ -57,17 +57,17 @@ bool.toString = function () {
 
 bool.PY$__repr__ = bool.PY$__str__;
 
-bool.PY$__eq__ = function (other) {
-    if (this.PY$__class__ === undefined) {
-        return object.PY$__eq__.call(this, other);
+bool.PY$__eq__ = function(self, other) {
+    if (self.PY$__class__ === undefined) {
+        return object.PY$__eq__.call(self, other);
     } else if (other.PY$__int__ !== undefined) {
-        return Number(this.obj) === other.PY$__int__()._js_() ? True : False;
+        return Number(self.obj) === other.PY$__int__()._js_() ? True : False;
     } else {
-        return this.obj === other.obj ? True : False;
+        return self.obj === other.obj ? True : False;
     }
 };
 
-bool._js_ = function () {
+bool._js_ = function() {
     if (this.obj) {
         return true;
     } else {
@@ -75,16 +75,16 @@ bool._js_ = function () {
     }
 };
 
-bool.PY$__neg__ = function() {
-    return this.obj ? False : True;
+bool.PY$__neg__ = function(self) {
+    return self.obj ? False : True;
 };
 
-bool.PY$__nonzero__ = function() {
-    return this.obj ? True : False;
+bool.PY$__nonzero__ = function(self) {
+    return self.obj ? True : False;
 };
 
-bool.PY$__int__ = function() {
-    if (this.obj) {
+bool.PY$__int__ = function(self) {
+    if (self.obj) {
         return $c1;
     } else {
         return $c0;

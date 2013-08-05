@@ -27,17 +27,17 @@ var BaseException = __inherit(object, "BaseException");
 
 __builtins__.PY$BaseException = BaseException;
 
-BaseException.PY$__init__ = function() {
-    if (arguments.length > 0) {
-        this.PY$message = arguments[0];
+BaseException.PY$__init__ = function(self) {
+    if (arguments.length > 1) {
+        self.PY$message = arguments[1];
     } else {
-        this.PY$message = "";
+        self.PY$message = "";
     }
-    this.message = "pyjaco: " + js(this.PY$__class__.PY$__name__) + ": " + js(this.PY$message);
+    self.message = "pyjaco: " + js(self.PY$__class__.PY$__name__) + ": " + js(self.PY$message);
 };
 
-BaseException.PY$__str__ = function() {
-    return __builtins__.PY$str(this.PY$message);
+BaseException.PY$__str__ = function(self) {
+    return __builtins__.PY$str(self.PY$message);
 };
 
 (function() {

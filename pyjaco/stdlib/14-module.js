@@ -25,28 +25,28 @@
 
 var module = __inherit(object, "module");
 
-module.PY$__init__ = function(modname, filename, objects) {
-    this.modname = modname;
-    this.filename = filename;
+module.PY$__init__ = function(self, modname, filename, objects) {
+    self.modname = modname;
+    self.filename = filename;
     if (objects !== undefined) {
         for (var o in objects) {
             if (o.charAt(2) === "$")
-                this[o] = objects[o];
+                self[o] = objects[o];
         };
     }
 };
 
-module.PY$__getattr__ = function(k) {
-    var q = this["PY$" + k];
+module.PY$__getattr__ = function(self, k) {
+    var q = self["PY$" + k];
     if (q === undefined) {
-        throw __builtins__.PY$AttributeError(js(this.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
+        throw __builtins__.PY$AttributeError(js(self.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
     } else {
         return q;
     }
 };
 
-module.PY$__repr__ = function() {
-    return str("<module '" + this.modname + "' " + this.filename + ">");
+module.PY$__repr__ = function(self) {
+    return str("<module '" + self.modname + "' " + self.filename + ">");
 };
 
 module.PY$__str__ = module.PY$__repr__;

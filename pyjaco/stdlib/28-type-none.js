@@ -25,18 +25,18 @@
 
 var none = __inherit(object, "NoneType");
 
-none.PY$__init__ = function() {
-    this.obj = null;
+none.PY$__init__ = function(self) {
+    self.obj = null;
 };
 
-none.PY$__str__ = function () {
+none.PY$__str__ = function() {
     return str("None");
 };
 
 none.PY$__repr__ = none.PY$__str__;
 
-none.PY$__eq__ = function (other) {
-    if (other.PY$__class__ !== this.PY$__class__) {
+none.PY$__eq__ = function(self, other) {
+    if (other.PY$__class__ !== self.PY$__class__) {
         return False;
     } else if (other === null) {
         return True;
@@ -49,13 +49,13 @@ none._js_ = function () {
     return this.obj;
 };
 
-none.PY$__nonzero__ = function() {
+none.PY$__nonzero__ = function(self) {
     return False;
 };
 
 var None = none();
 __builtins__.PY$None = None;
 
-none.PY$__create__ = function() {
+none.PY$__create__ = function(self) {
     return None;
 };

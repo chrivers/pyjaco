@@ -27,9 +27,9 @@ function sprintf(obj, args) {
 
     var get_argument = function() {
         if (flag_name) {
-            return args.PY$__getitem__(str(flag_name));
+            return args.PY$__getitem__(args, str(flag_name));
         } else {
-            return args.PY$__getitem__(argc++);
+            return args.PY$__getitem__(args, argc++);
         }
     };
     var fixed_digits = function(num, digits) {
@@ -106,8 +106,9 @@ function sprintf(obj, args) {
             var flag_len2  = 0;
             var subres     = null;
             var prefix     = "";
-            var has_sign  = false;
+            var has_sign   = false;
             var flag_name  = null;
+            var arg        = null;
             while (i < s.length) {
                 si = s.charAt(i);
                 if (si === "0") {
@@ -152,33 +153,39 @@ function sprintf(obj, args) {
                     subres = "%";
                 } else if (si === "d" || si === "i" || si === "u") {
                     has_sign = true;
-                    subres = js(int(get_argument())).toString();
+                    arg = get_argument();
+                    subres = js(int(arg)).toString();
                 } else if (si === "s") {
-                    subres = js(get_argument().PY$__str__());
+                    arg = get_argument();
+                    subres = js(arg.PY$__str__(arg));
                 } else if (si === "r") {
-                    subres = js(get_argument().PY$__repr__());
+                    arg = get_argument();
+                    subres = js(arg.PY$__repr__(arg));
                 } else if (si === "f" || si === "F") {
                     has_sign = true;
-                    subres = format_float(js(get_argument().PY$__float__()), 6, flag_len2);
+                    arg = get_argument();
+                    subres = format_float(js(arg.PY$__float__(arg)), 6, flag_len2);
                 } else if (si === "e" || si === "E") {
                     has_sign = true;
                     var expchar = si;
-                    subres = format_exp(js(get_argument().PY$__float__()), expchar, 6, flag_len2, false);
+                    arg = get_argument();
+                    subres = format_exp(js(arg.PY$__float__(arg)), expchar, 6, flag_len2, false);
                 } else if (si === "g" || si === "G") {
                     has_sign = true;
-                    var arg = js(get_argument().PY$__float__());
+                    arg = get_argument();
+                    var farg = js(arg.PY$__float__(arg));
 
                     var val = flag_len2;
                     if (val === 0)
                         val = 6;
 
-                    if (arg === 0 && !flag_hash) {
+                    if (farg === 0 && !flag_hash) {
                         subres = "0";
-                    } else if (arg < 0.0001 || arg.toFixed().split(".")[0].length > val) {
+                    } else if (farg < 0.0001 || farg.toFixed().split(".")[0].length > val) {
                         expchar = "e";
                         if (si === "G")
                             expchar = "E";
-                        subres = format_exp(arg, expchar, 5, flag_len2-1, true);
+                        subres = format_exp(farg, expchar, 5, flag_len2-1, true);
 
                         if (!flag_hash) {
                             var parts = subres.split(expchar);
@@ -188,26 +195,29 @@ function sprintf(obj, args) {
                             }
                         }
                     } else {
-                        subres = format_float(arg, 5, flag_len2-1);
+                        subres = format_float(farg, 5, flag_len2-1);
                         if (!flag_hash) {
                             subres = trim_trailing_zeroes(subres);
                         }
                     }
                 } else if (si === "o") {
                     has_sign = true;
-                    subres = js(get_argument().PY$__int__()).toString(8);
+                    arg = get_argument();
+                    subres = js(arg.PY$__int__(arg)).toString(8);
                     if (flag_hash && subres.charAt(0) !== "0")
                         prefix = "0";
                 } else if (si === "x") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0x";
-                    subres = js(get_argument().PY$__int__()).toString(16);
+                    arg = get_argument();
+                    subres = js(arg.PY$__int__(arg)).toString(16);
                 } else if (si === "X") {
                     has_sign = true;
                     if (flag_hash)
                         prefix = "0X";
-                    subres = js(get_argument().PY$__int__()).toString(16).toUpperCase();
+                    arg = get_argument();
+                    subres = js(arg.PY$__int__(arg)).toString(16).toUpperCase();
                 } else {
                     throw __builtins__.PY$ValueError("Unsupported format character '" + si + "' at index " + String(i));
                 }

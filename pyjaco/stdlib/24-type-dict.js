@@ -27,7 +27,7 @@ var dict = __inherit(object, "dict");
 
 __builtins__.PY$dict = dict;
 
-dict.PY$__init__ = function() {
+dict.PY$__init__ = function(self) {
     var items;
     var key;
     var value;
@@ -35,7 +35,7 @@ dict.PY$__init__ = function() {
     var count = 0;
 
     var pyargs = __uncook(arguments);
-    var args = arguments[0];
+    var args = arguments[1];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
             items = {};
@@ -75,23 +75,23 @@ dict.PY$__init__ = function() {
                 items[hash] = [args[i], args[i+1]];
             }
         }
-        this.items = items;
-        this.count = count;
+        self.items = items;
+        self.count = count;
     } else {
-        this.items = {};
-        this.count = 0;
+        self.items = {};
+        self.count = 0;
     }
     if (pyargs.kwargs !== undefined) {
-        this.PY$update(pyargs.kwargs);
+        self.PY$update(pyargs.kwargs);
     }
     for (var p in pyargs.kw) {
-        this.PY$__setitem__(str(p), pyargs.kw[p]);
+        self.PY$__setitem__(str(p), pyargs.kw[p]);
     }
 };
 
-dict.PY$__str__ = function () {
+dict.PY$__str__ = function(self) {
     var strings = [];
-    var items = this.items;
+    var items = self.items;
 
     for (var hash in items) {
         strings.push($PY.repr(items[hash][0]) + ": " + $PY.repr(items[hash][1]));
@@ -102,36 +102,36 @@ dict.PY$__str__ = function () {
 
 dict.PY$__repr__ = dict.PY$__str__;
 
-dict._js_ = function () {
+dict._js_ = function(self) {
     var items = {};
 
-    for (var hash in this.items) {
-        items[str(this.items[hash][0])] = js(this.items[hash][1]);
+    for (var hash in self.items) {
+        items[str(self.items[hash][0])] = js(self.items[hash][1]);
     }
 
     return items;
 };
 
-dict.PY$__hash__ = function () {
+dict.PY$__hash__ = function(self) {
     throw __builtins__.PY$TypeError("unhashable type: 'dict'");
 };
 
-dict.PY$__len__ = function() {
-    return int(this.count);
+dict.PY$__len__ = function(self) {
+    return int(self.count);
 };
 
-dict.PY$__iter__ = function() {
-    return iter(this.PY$keys());
+dict.PY$__iter__ = function(self) {
+    return iter(self.PY$keys());
 };
 
-dict.PY$__contains__ = function(key) {
-    var items = this.items;
+dict.PY$__contains__ = function(self, key) {
+    var items = self.items;
     var hash = __builtins__.PY$hash(key);
     return hash in items ? True : False;
 };
 
-dict.PY$__getitem__ = function(key) {
-    var items = this.items;
+dict.PY$__getitem__ = function(self, key) {
+    var items = self.items;
     var hash = __builtins__.PY$hash(key);
     if (hash in items) {
         return items[hash][1];
@@ -141,31 +141,31 @@ dict.PY$__getitem__ = function(key) {
     return None;
 };
 
-dict.PY$__setitem__ = function(key, value) {
-    var items = this.items;
+dict.PY$__setitem__ = function(self, key, value) {
+    var items = self.items;
     var hash = __builtins__.PY$hash(key);
     if (hash in items) {
         items[hash][1] = value;
     } else {
         items[hash] = [key, value];
-        this.count++;
+        self.count++;
     }
     return None;
 };
 
-dict.PY$__delitem__ = function(key) {
-    var items = this.items;
+dict.PY$__delitem__ = function(self, key) {
+    var items = self.items;
     var hash = __builtins__.PY$hash(key);
     if (hash in items) {
         delete items[hash];
-        this.count--;
+        self.count--;
     } else {
         throw __builtins__.PY$KeyError(str(key));
     }
 };
 
-dict.PY$get = function(key, value) {
-    var items = this.items;
+dict.PY$get = function(self, key, value) {
+    var items = self.items;
     var hash = __builtins__.PY$hash(key);
     if (hash in items) {
         return items[hash][1];
@@ -176,9 +176,9 @@ dict.PY$get = function(key, value) {
     }
 };
 
-dict.PY$items = function() {
+dict.PY$items = function(self) {
     var res = [];
-    var items = this.items;
+    var items = self.items;
 
     for (var hash in items) {
         res.push(tuple(items[hash]));
@@ -187,9 +187,9 @@ dict.PY$items = function() {
     return list(res);
 };
 
-dict.PY$keys = function() {
+dict.PY$keys = function(self) {
     var res = [];
-    var items = this.items;
+    var items = self.items;
 
     for (var hash in items) {
         res.push(items[hash][0]);
@@ -198,9 +198,9 @@ dict.PY$keys = function() {
     return list(res);
 };
 
-dict.PY$values = function() {
+dict.PY$values = function(self) {
     var res = [];
-    var items = this.items;
+    var items = self.items;
 
     for (var hash in items) {
         res.push(items[hash][1]);
@@ -209,8 +209,7 @@ dict.PY$values = function() {
     return list(res);
 };
 
-dict.PY$update = function(other) {
-   var self = this;
+dict.PY$update = function(self, other) {
    iterate(other,
      function(key) {
          self.PY$__setitem__(key, other.PY$__getitem__(key));
@@ -218,18 +217,18 @@ dict.PY$update = function(other) {
    );
 };
 
-dict.PY$clear = function() {
-    this.items = [];
+dict.PY$clear = function(self) {
+    self.items = [];
 };
 
-dict.PY$pop = function(key, value) {
-    var items = this.items;
+dict.PY$pop = function(self, key, value) {
+    var items = self.items;
     var res = null;
     var hash = __builtins__.PY$hash(key);
     if (hash in items) {
         res = items[hash];
         delete items[hash];
-        this.count--;
+        self.count--;
         return res[1];
     } else if (value !== undefined) {
         return value;
@@ -238,12 +237,12 @@ dict.PY$pop = function(key, value) {
     }
 };
 
-dict.PY$popitem = function() {
-    var items = this.items;
+dict.PY$popitem = function(self) {
+    var items = self.items;
     for (var hash in items) {
         var res = tuple(items[hash]);
         delete items[hash];
-        this.count--;
+        self.count--;
         return res;
     }
     throw __builtins__.PY$KeyError("popitem(): dictionary is empty");

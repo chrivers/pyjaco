@@ -27,15 +27,15 @@ __builtins__.PY$super = __inherit(object, "super");
 
 var $super = __builtins__.PY$super;
 
-$super.PY$__init__ = function(cls, obj) {
-    this.cls = cls;
-    this.obj = obj;
+$super.PY$__init__ = function(self, cls, obj) {
+    self.cls = cls;
+    self.obj = obj;
 };
 
-$super.PY$__getattribute__ = function(k) {
-    var q = $PY.getattr(this.cls.PY$__super__, k);
+$super.PY$__getattribute__ = function(self, k) {
+    var q = $PY.getattr(self.cls.PY$__super__, k);
     if ((typeof q === 'function') && q.PY$__class__ === undefined) {
-        var that = this.obj;
+        var that = self.obj;
         var t = function() { return q.apply(null, [that].concat(Array.prototype.slice.call(arguments))); };
         t.PY$__call__ = t;
         return t;
@@ -44,8 +44,8 @@ $super.PY$__getattribute__ = function(k) {
     }
 };
 
-$super.PY$__repr__ = function() {
-    return str("<super " + this.cls.toString() + ", " + this.obj.toString() + ">");
+$super.PY$__repr__ = function(self) {
+    return str("<super " + self.cls.toString() + ", " + self.obj.toString() + ">");
 };
 
 $super.PY$__str__ = $super.PY$__repr__;
