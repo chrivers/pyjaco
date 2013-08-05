@@ -53,7 +53,7 @@ __builtins__.PY$abs = function(obj) {
     if (obj === undefined) {
         throw __builtins__.PY$TypeError("abs() takes exactly one argument (" + arguments.length + " given)");
     } else if (obj.PY$__abs__) {
-        return obj.PY$__abs__();
+        return obj.PY$__abs__(obj);
     } else {
         throw __builtins__.PY$TypeError("bad operand type for abs(): '" + obj.PY$__class__.PY$__name__ + "'");
     }
@@ -143,7 +143,7 @@ __builtins__.PY$chr = function(chr) {
 __builtins__.PY$classmethod = $PY.c_nif;
 
 __builtins__.PY$cmp = function(x, y) {
-    return x.PY$__cmp__(y);
+    return x.PY$__cmp__(x, y);
 };
 
 __builtins__.PY$coerce = function(a, b) {
@@ -187,10 +187,10 @@ __builtins__.PY$dir = function(obj) {
     var res = list();
     for (var i in obj) {
         if (i.indexOf('PY$') === 0) {
-            res.PY$append(__builtins__.PY$str(i.substr(3)));
+            res.PY$append(res, __builtins__.PY$str(i.substr(3)));
         }
     }
-    res.PY$sort();
+    res.PY$sort(res);
     return res;
 };
 
@@ -203,7 +203,7 @@ __builtins__.PY$enumerate = function(obj) {
     var items = list();
     var count = 0;
     iterate(obj, function(elm) {
-                items.PY$append(tuple([count++, elm]));
+                items.PY$append(items, tuple([count++, elm]));
             });
     return items;
 };
@@ -217,7 +217,7 @@ __builtins__.PY$filter = function(f, l) {
    var res = list();
    iterate(l, function(item) {
      if (f(item) === True) {
-       res.PY$append(item);
+       res.PY$append(res, item);
      }
    });
    return res;
@@ -251,7 +251,7 @@ __builtins__.PY$hasattr = function(obj, name) {
 
 __builtins__.PY$hash = function(obj) {
     if (obj.PY$__hash__ !== undefined) {
-        return obj.PY$__hash__();
+        return obj.PY$__hash__(obj);
     } else if (typeof(obj) === 'number') {
         return obj === -1 ? -2 : obj;
     } else {
@@ -296,11 +296,11 @@ __builtins__.PY$intern = function(x) {
 
 __builtins__.PY$isinstance = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
-        var length = cls.PY$__len__()._js_();
+        var length = cls.PY$__len__(cls)._js_();
         obj = obj.PY$__class__;
         while (obj) {
             for (var i = 0; i < length; i++) {
-                if (obj === cls.PY$__getitem__(i))
+                if (obj === cls.PY$__getitem__(cls, i))
                     return True;
             }
             obj = obj.PY$__super__;
@@ -322,7 +322,7 @@ __builtins__.PY$isinstance = function(obj, cls) {
 
 __builtins__.PY$issubclass = function(obj, cls) {
     if (cls.PY$__class__ === tuple) {
-        var length = cls.PY$__len__()._js_();
+        var length = cls.PY$__len__(cls)._js_();
 
         while (obj) {
             for (var i = 0; i < length; i++) {
@@ -348,7 +348,7 @@ __builtins__.PY$issubclass = function(obj, cls) {
 
 __builtins__.PY$len = function(obj) {
     if (obj.PY$__len__ !== undefined) {
-        return obj.PY$__len__();
+        return obj.PY$__len__(obj);
     } else {
         throw __builtins__.PY$AttributeError('__len__');
     }
@@ -375,7 +375,7 @@ __builtins__.PY$map = function() {
     var items = list();
 
     iterate(arguments[1], function(item) {
-        items.PY$append(func(item));
+        items.PY$append(items, func(item));
     });
 
     if (__builtins__.PY$__python3__)
@@ -385,13 +385,13 @@ __builtins__.PY$map = function() {
 };
 
 __builtins__.PY$max = function(list) {
-    if (__builtins__.PY$len(list).PY$__eq__($c0) === True)
+    if (__builtins__.PY$len(list).PY$__eq__(list, $c0) === True)
         throw __builtins__.PY$ValueError("max() arg is an empty sequence");
     else {
         var result = null;
 
         iterate(list, function(item) {
-                if ((result === null) || js(item.PY$__gt__(result)))
+                if ((result === null) || js(item.PY$__gt__(item, result)))
                     result = item;
         });
 
@@ -402,13 +402,13 @@ __builtins__.PY$max = function(list) {
 __builtins__.PY$memoryview = $PY.c_nif;
 
 __builtins__.PY$min = function(list) {
-    if (__builtins__.PY$len(list).PY$__eq__($c0) === True)
+    if (__builtins__.PY$len(list).PY$__eq__(list, $c0) === True)
         throw __builtins__.PY$ValueError("min() arg is an empty sequence");
     else {
         var result = null;
 
         iterate(list, function(item) {
-                if ((result === null) || js(item.PY$__lt__(result)))
+                if ((result === null) || js(item.PY$__lt__(item, result)))
                     result = item;
         });
 
@@ -450,9 +450,9 @@ __builtins__.PY$pow = function(x, y, z) {
         throw __builtins__.PY$NotImplemented("Pyjaco does not support the 3-operand version of pow()");
     } else if (x.PY$__pow__ !== undefined) {
         if (y.obj < 0) {
-            return __builtins__.PY$float(x).PY$__pow__(y);
+            return __builtins__.PY$float(x).PY$__pow__(x, y);
         } else {
-            return x.PY$__pow__(y);
+            return x.PY$__pow__(x, y);
         }
     } else {
         throw __builtins__.PY$TypeError("unsupported operand type(s) for ** or pow(): '" +
@@ -551,11 +551,11 @@ __builtins__.PY$reduce = function(func, seq) {
         accum = initial;
         start = 0;
     } else {
-        accum = func(seq.PY$__getitem__(0), seq.PY$__getitem__(1));
+        accum = func(seq.PY$__getitem__(seq, 0), seq.PY$__getitem__(seq, 1));
         start = 2;
     }
     for (var i = start; i < __builtins__.PY$len(seq)._js_(); i++) {
-        accum = func(accum, seq.PY$__getitem__(i));
+        accum = func(accum, seq.PY$__getitem__(seq, i));
     }
     return accum;
 };
@@ -578,7 +578,7 @@ __builtins__.PY$repr = function(obj) {
 
 __builtins__.PY$reversed = function(iterable) {
     var l = list(iterable);
-    l.PY$reverse();
+    l.PY$reverse(l);
     return l;
 }
 
@@ -606,7 +606,7 @@ __builtins__.PY$setattr = function(obj, name, value) {
 
 __builtins__.PY$sorted = function(iterable) {
     var l = list(iterable);
-    l.PY$sort();
+    l.PY$sort(l);
     return l;
 };
 
@@ -657,7 +657,7 @@ __builtins__.PY$zip = function() {
     var i;
 
     for (i = 0; i < arguments.length; i++) {
-        iters.PY$append(iter(arguments[i]));
+        iters.PY$append(iters, iter(arguments[i]));
     }
 
     var items = list();
@@ -667,7 +667,8 @@ __builtins__.PY$zip = function() {
 
         for (i = 0; i < arguments.length; i++) {
             try {
-                var value = iters.PY$__getitem__(i).PY$next();
+                var elm = iters.PY$__getitem__(iters, i);
+                var value = elm.PY$next(elm);
             } catch (exc) {
                 if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     return items;
@@ -676,10 +677,10 @@ __builtins__.PY$zip = function() {
                 }
             }
 
-            item.PY$append(value);
+            item.PY$append(item, value);
         }
 
-        items.PY$append(tuple(item));
+        items.PY$append(items, tuple(item));
     }
     return None;
 };
