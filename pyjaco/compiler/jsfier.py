@@ -369,50 +369,24 @@ class Transformer(isttransform.Transformer):
 
         newargs = self.alloc_var()
 
-        varargs = ICall(
-            func =
-            IGetAttr(
-                base =
-                ICall(
-                    func = IGetAttr(base = IGetAttr(base = IGetAttr(base = IName(id = "Array"), attr = "prototype"), attr = "slice"), attr = "call"),
-                    args = [IName(id = "arguments")]),
-                attr = "concat"),
-            args = [IGetAttr(base = pyargs, attr = "varargs")]
-            )
-
-        inclass = self.destiny(["classdef", "function"], 1) in ["classdef"]
-
-        if inclass:
-            varargs_expr = ICall(
-                    func = IGetAttr(base = IList(values = [IName(id = "this")]), attr = "concat"),
-                    args = [varargs]
-                    )
-            offset = 1
-        else:
-            varargs_expr = varargs
-            offset = 0
-
-        js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "arguments")])))
-        js.append(IVar(name = newargs, expr = varargs_expr))
+        js.append(IVar(name = pyargs.id,  expr = ICall(func = IName(id = "__uncook"),  args = [IName(id = "this"), IName(id = "arguments")])))
+        js.append(IVar(name = newargs, expr = IGetAttr(base = IName(id = "$pyargs"), attr = "varargs")))
 
         if node.params.kwargs:
             js.append(IVar(name = node.params.kwargs, expr = ICall(func = IName(id = "dict"), args = [IGetAttr(base = pyargs, attr = "kwargs")])))
 
         if node.params.varargs:
-            js.append(IAssign(lvalue = [IName(id = node.params.varargs)], rvalue = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
+            js.append(IVar(name = node.params.varargs, expr = IName(id = "tuple(%s.slice(%s))" % (newargs, len(node.params.args)))))
 
-        for i, arg in enumerate(node.params.args[offset:]):
+        for i, arg in enumerate(node.params.args):
             arg = self.name_map.get(arg, arg)
-            if defaults[i + offset] == None:
+            if defaults[i] == None:
                 js.append(
                     IVar(
                         name = arg,
-                        expr = IIfExp(
-                            cond   = IBinOp(left = IString(value = arg), op = "In", right = pyargs_kw),
-                            body   = IGetAttr(base = pyargs_kw, attr = arg),
-                            orelse = IGetItem(value = IName(id = newargs), slice = INumber(value = i + offset)))))
+                        expr = IBinOp(left = IGetAttr(base = pyargs_kw, attr = arg), op = "Or", right = IGetItem(value = IName(id = newargs), slice = INumber(value = i)))))
             else:
-                js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i + offset))))
+                js.append(IVar(name = arg, expr = IGetItem(value = IName(id = newargs), slice = INumber(value = i))))
                 js.append(IIf(cond = ICompare(lvalue = IName(id = arg), ops = ["Eq"], comps = [IName(id = "undefined")]), body = [
                             IAssign(
                                 lvalue = [IName(id = arg)],
@@ -423,7 +397,7 @@ class Transformer(isttransform.Transformer):
                                             attr = arg),
                                         comps = [IName(id = "undefined")],
                                         ops = ["Eq"]),
-                                    body = self.comp(defaults[i + offset]),
+                                    body = self.comp(defaults[i]),
                                     orelse = IGetAttr(
                                         base = pyargs_kw,
                                         attr = arg)))]))
@@ -449,12 +423,14 @@ class Transformer(isttransform.Transformer):
 
         self.scope = []
 
-        exp = ILambda(body = js, params = IParameters(args = [], defaults = None, kwargs = None, varargs = None))
+        exp = ILambda(body = js, name = node.name, params = IParameters(args = [], defaults = None, kwargs = None, varargs = None))
 
         for deco in reversed(node.decorators):
             exp = ICall(func = self.comp(deco), args = [exp])
 
-        if inclass:
+        exp = ICall(func = IGetAttr(base = IName(id = '__builtins__'), attr = 'PY$function'), args = [exp])
+
+        if self.destiny(["classdef", "function"], 1) in ["classdef"]:
             return exp
         else:
             return IVar(name = node.name, expr = exp)

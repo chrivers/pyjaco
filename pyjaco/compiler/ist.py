@@ -189,7 +189,8 @@ class GetItem(Code):
     _fields = ["value", "slice"]
 
 class Lambda(Code):
-    _fields = ["body", "params"]
+    _fields = ["body", "params", "name"]
+    _defaults = dict(name = "")
 
 class UnaryOp(Code):
     _fields = ["op", "lvalue"]
