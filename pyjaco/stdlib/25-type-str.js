@@ -49,7 +49,7 @@ basestring.PY$__create__ = function(cls, obj) {
     } else if (obj.PY$__class__ === undefined && obj.PY$__super__ !== undefined) {
         return object.PY$__repr__.apply(obj);
     } else if (obj.PY$__str__ !== undefined) {
-        return obj.PY$__str__();
+        return obj.PY$__str__(obj);
     } else {
         return __basestring_real__(cls, obj);
     }
@@ -208,7 +208,7 @@ basestring.PY$__mul__ = function(self, c) {
 
 basestring.PY$__add__ = function(self, c) {
     if ($PY.isinstance(c, basestring)) {
-        return self.PY$__class__(self.obj + c.PY$__str__()._js_());
+        return self.PY$__class__(self.obj + c.PY$__str__(c)._js_());
     } else {
         throw __builtins__.PY$TypeError(sprintf("Cannot add string and <%s>", c.PY$__class__.PY$__name__));
     }
@@ -402,7 +402,7 @@ __builtins__.PY$unicode = unicode;
 
 unicode.PY$__create__ = function(self, cls, obj) {
     if (obj.PY$__unicode__ !== undefined) {
-        return obj.PY$__unicode__();
+        return obj.PY$__unicode__(obj);
     } else {
         return basestring.PY$__create__(cls, obj);
     }

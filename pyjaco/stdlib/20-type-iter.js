@@ -49,7 +49,7 @@ iter.PY$__create__ = function(cls, obj) {
     if (obj.PY$__class__ === iter) {
        return obj;
     } else if (obj.PY$__iter__ !== undefined) {
-        return obj.PY$__iter__();
+        return obj.PY$__iter__(obj);
     } else {
         return __iter_real__(cls, obj);
     }
@@ -73,10 +73,10 @@ iter.PY$next = function(self) {
     }
 };
 
-iter.next = function(self) {
-    if (self.index >= self.seq.length) {
+iter.next = function() {
+    if (this.index >= this.seq.length) {
         return null;
     } else {
-        return self.seq[self.index++];
+        return this.seq[this.index++];
     }
 };

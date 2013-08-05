@@ -37,7 +37,7 @@ number.PY$__eq__ = function(self, other) {
     } else if (other.numbertype) {
         return self.obj === other.obj ? True : False;
     } else if (other[self.numbertype] !== undefined) {
-        return self.obj === other[self.numbertype]()._js_() ? True : False;
+        return self.obj === other[self.numbertype](other)._js_() ? True : False;
     } else {
         return object.PY$__eq__.call(self, other);
     }
@@ -73,7 +73,7 @@ number.PY$__gt__ = function(self, x) {
     } else if (x.numbertype) {
         return self.obj > x.obj ? True : False;
     } else if (x[self.numbertype] !== undefined) {
-        return self.obj > x[self.numbertype]()._js_() ? True : False;
+        return self.obj > x[self.numbertype](x)._js_() ? True : False;
     } else {
         return object.PY$__gt__.call(self, x);
     }
@@ -85,7 +85,7 @@ number.PY$__lt__ = function(self, x) {
     } else if (x.numbertype) {
         return self.obj < x.obj ? True : False;
     } else if (x[self.numbertype] !== undefined) {
-        return self.obj < x[self.numbertype]()._js_() ? True : False;
+        return self.obj < x[self.numbertype](x)._js_() ? True : False;
     } else {
         return object.PY$__lt__.call(self, x);
     }
@@ -94,7 +94,7 @@ number.PY$__lt__ = function(self, x) {
 number.PY$__mul__ = function(self, x) {
     if (x.numbertype === undefined) {
         if (x.PY$__int__ !== undefined) {
-            return self.numberclass(self.obj * x.PY$__int__()._js_());
+            return self.numberclass(self.obj * x.PY$__int__(x)._js_());
         } else if ($PY.isinstance(x, [basestring, list, tuple])) {
             return x.PY$__mul__(self);
         } else {

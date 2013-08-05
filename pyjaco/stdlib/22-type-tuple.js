@@ -111,7 +111,7 @@ tuple.PY$__cmp__ = function(self, other) {
 
         while (true) {
             try {
-                var elm = it.PY$next();
+                var elm = it.PY$next(it);
             } catch (exc) {
                 if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     break;
