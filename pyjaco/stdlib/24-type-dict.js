@@ -121,7 +121,7 @@ dict.PY$__len__ = function(self) {
 };
 
 dict.PY$__iter__ = function(self) {
-    return iter(self.PY$keys());
+    return iter(self.PY$keys(self));
 };
 
 dict.PY$__contains__ = function(self, key) {

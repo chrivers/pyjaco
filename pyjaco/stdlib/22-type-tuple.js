@@ -72,7 +72,7 @@ tuple.PY$__eq__ = function(self, other) {
             return False;
         }
         for (var i = 0; i < self.items.length; i++) {
-            if (self.items[i].PY$__ne__(other.items[i]) === True) {
+            if (self.items[i].PY$__ne__(self.items[i], other.items[i]) === True) {
                 return False;
             }
         }
@@ -123,12 +123,12 @@ tuple.PY$__cmp__ = function(self, other) {
                 res = $cn1;
                 break;
             }
-            var r = self.items[count].PY$__cmp__(elm);
+            var r = self.items[count].PY$__cmp__(self.items[count], elm);
 
-            if (r.PY$__gt__($c0) === True) {
+            if (r.PY$__gt__(r, $c0) === True) {
                 res = $c1;
                 break;
-            } else if (r.PY$__lt__($c0) === True) {
+            } else if (r.PY$__lt__(r, $c0) === True) {
                 res = $cn1;
                 break;
             }
@@ -151,7 +151,8 @@ tuple.PY$__gt__ = function(self, other) {
     if (self.PY$__class__ === undefined) {
         return object.PY$__gt__(self, other);
     } else {
-        return self.PY$__cmp__(other).PY$__gt__($c0);
+        var cmp = self.PY$__cmp__(self, other);
+        return cmp.PY$__gt__(cmp, $c0);
     }
 };
 
@@ -159,7 +160,8 @@ tuple.PY$__lt__ = function(self, other) {
     if (self.PY$__class__ === undefined) {
         return object.PY$__lt__(self, other);
     } else {
-        return self.PY$__cmp__(other).PY$__lt__($c0);
+        var cmp = self.PY$__cmp__(self, other);
+        return cmp.PY$__lt__(cmp, $c0);
     }
 };
 
@@ -234,7 +236,7 @@ tuple.PY$__iter__ = function(self) {
 
 tuple.PY$__contains__ = function(self, item) {
     for (var index in self.items) {
-        if (self.items[index].PY$__eq__(item) === True) {
+        if (self.items[index].PY$__eq__(self.items[index], item) === True) {
             return True;
         }
     }
@@ -246,7 +248,7 @@ tuple.PY$__getitem__ = function(self, index) {
     var seq;
     if ($PY.isinstance(index, slice)) {
         var s = index;
-        var inds = js(s.PY$indices(self.items.length));
+        var inds = js(s.PY$indices(s, self.items.length));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
@@ -281,7 +283,7 @@ tuple.PY$count = function(self, value) {
     var count = 0;
 
     for (var index in self.items) {
-        if (self.items[index].PY$__eq__(value) === True) {
+        if (self.items[index].PY$__eq__(self.items[index], value) === True) {
             count += 1;
         }
     }
@@ -304,7 +306,7 @@ tuple.PY$index = function(self, value, start, end) {
             break;
         }
 
-        if (_value.PY$__eq__(value) === True) {
+        if (_value.PY$__eq__(_value, value) === True) {
             return int(i);
         }
     }

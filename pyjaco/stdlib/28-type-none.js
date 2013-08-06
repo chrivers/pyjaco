@@ -56,6 +56,6 @@ none.PY$__nonzero__ = function(self) {
 var None = none();
 __builtins__.PY$None = None;
 
-none.PY$__create__ = function(self) {
-    return None;
+none.PY$__create__ = function(cls, obj) {
+    throw __builtins__.PY$TypeError("'NoneType' object is not callable");
 };
