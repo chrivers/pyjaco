@@ -50,6 +50,10 @@ $PY.repr = function(obj) {
     return __builtins__.PY$repr(obj)._js_();
 };
 
+$PY.call = function(obj, func /*, ...*/) {
+    return obj[func].apply(null, [obj].concat(Array.prototype.slice.call(arguments, 2)));
+};
+
 $PY.dump = function(obj) {
     var res = [];
     if (obj === undefined) {

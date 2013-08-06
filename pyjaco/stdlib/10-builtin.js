@@ -385,7 +385,7 @@ __builtins__.PY$map = function() {
 };
 
 __builtins__.PY$max = function(list) {
-    if (__builtins__.PY$len(list).PY$__eq__(list, $c0) === True)
+    if (__builtins__.PY$len(list).PY$__eq__(__builtins__.PY$len(list), $c0) === True)
         throw __builtins__.PY$ValueError("max() arg is an empty sequence");
     else {
         var result = null;
@@ -402,7 +402,7 @@ __builtins__.PY$max = function(list) {
 __builtins__.PY$memoryview = $PY.c_nif;
 
 __builtins__.PY$min = function(list) {
-    if (__builtins__.PY$len(list).PY$__eq__(list, $c0) === True)
+    if (__builtins__.PY$len(list).PY$__eq__(__builtins__.PY$len(list), $c0) === True)
         throw __builtins__.PY$ValueError("min() arg is an empty sequence");
     else {
         var result = null;

@@ -27,8 +27,6 @@ var $PY = {};
 
 $PY.prng = 42;
 
-$PY.c_emptycook = {"varargs": [], "kw": []};
-
 var __builtins__ = {};
 
 __builtins__.PY$__python3__ = false;
@@ -60,7 +58,7 @@ function iterate(obj, func) {
         var seq = iter(obj);
         while (true) {
             try {
-                func(seq.PY$next());
+                func(seq.PY$next(seq));
             } catch (exc) {
                 if (exc === $PY.c_stopiter || $PY.isinstance(exc, __builtins__.PY$StopIteration)) {
                     break;
@@ -76,14 +74,13 @@ var __uncook = function(args) {
     var last = args.length-1;
     if (args.length && (typeof args[last] === 'object') && (args[last].varargs !== undefined)) {
         var res = args[last];
-        delete args[last];
-        args.length -= 1;
+        var posargs = Array.prototype.slice.call(args, 0, last);
         if (res.varargs.PY$__class__ === tuple || res.varargs.PY$__class__ === list) {
-            res.varargs = res.varargs.items;
+            res.varargs = posargs.concat(res.varargs.items);
         } else {
-            res.varargs = tuple(res.varargs).items;
+            res.varargs = posargs.concat(tuple(res.varargs).items);
         }
-        if (!("kw" in res)) {
+        if (res.kw === undefined) {
             res.kw = [];
         }
         if (res.kwargs !== undefined) {
@@ -95,7 +92,7 @@ var __uncook = function(args) {
         }
         return res;
     } else {
-        return $PY.c_emptycook;
+        return {varargs: Array.prototype.slice.call(args), kw: {}};
     }
 };
 
@@ -137,13 +134,13 @@ var py = function(obj) {
     } else if (obj instanceof Array) {
         var res = list();
         for (var q in obj) {
-          res.PY$append(py(obj[q]));
+          res.PY$append(res, py(obj[q]));
         }
         return res;
     } else {
         var res = dict();
         for (var q in obj) {
-            res.PY$__setitem__(str(q), py(obj[q]));
+            res.PY$__setitem__(res, str(q), py(obj[q]));
         }
         return res;
     }
