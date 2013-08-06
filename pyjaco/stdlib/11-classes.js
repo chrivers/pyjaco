@@ -61,7 +61,7 @@ object.PY$__create__ = function(cls) {
     var obj = function() {
         var x = cls.PY$__call__;
         if (x !== undefined) {
-            return cls.PY$__call__.apply({}, [obj].concat(args));
+            return cls.PY$__call__.apply({}, [obj].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw __builtins__.PY$AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
         }
@@ -107,12 +107,12 @@ $PY.getattr = function(obj, k) {
         if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
             if (obj.__isinstance) {
                 if (res.__static) {
-                    return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
+                    return function() { return res.apply(null, arguments); };
                 } else {
-                    return function() { return res.apply(obj, arguments); };
+                    return function() { return res.apply(null, [obj].concat(Array.prototype.slice.call(arguments))); };
                 }
             } else {
-                return function() { return res.apply(arguments[0], Array.prototype.slice.call(arguments, 1)); };
+                return function() { return res.apply(null, arguments); };
             }
         } else if (k === "__name__") {
             return str(res);
@@ -188,18 +188,18 @@ object.PY$__lt__ = function(self, other) {
 };
 
 object.PY$__ge__ = function(self, other) {
-    return self.PY$__lt__(other) === False ? True : False;
+    return self.PY$__lt__(self, other) === False ? True : False;
 };
 
 object.PY$__le__ = function(self, other) {
-    return self.PY$__gt__(other) === False ? True : False;
+    return self.PY$__gt__(self, other) === False ? True : False;
 };
 
 object.PY$__cmp__ = function(self, y) {
-    if (self.PY$__gt__(y) === True) {
+    if (self.PY$__gt__(self, y) === True) {
         return $c1;
     } else {
-        if (self.PY$__lt__(y) === True) {
+        if (self.PY$__lt__(self, y) === True) {
             return $cn1;
         } else {
             return $c0;
