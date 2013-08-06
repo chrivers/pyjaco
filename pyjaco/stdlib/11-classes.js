@@ -95,8 +95,14 @@ $PY.getattr = function(obj, k) {
     debug = false;
     if ("PY$__getattribute__" in obj) {
         return obj.PY$__getattribute__(k);
-    } else if (name in obj) {
-        res = obj[name];
+    } else if ((res = obj[name]) !== undefined) {
+        if (res.PY$__get__ !== undefined) {
+            return res.PY$__get__(res, obj,  res.PY$__class__);
+        } else if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
+            return function() { return res.apply(null, [obj].concat(Array.prototype.slice.call(arguments))); };
+        } else {
+            return res;
+        }
         debug && print(sprintf("case1(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.isclass: %s, res.isclass:%s", list([
               py(name),
               py(typeof res === 'function'),
@@ -104,21 +110,6 @@ $PY.getattr = function(obj, k) {
               py(res.__isinstance),
               py(obj.__isclass),
               py(res.__isclass)])));
-        if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
-            if (obj.__isinstance) {
-                if (res.__static) {
-                    return function() { return res.apply(null, arguments); };
-                } else {
-                    return function() { return res.apply(null, [obj].concat(Array.prototype.slice.call(arguments))); };
-                }
-            } else {
-                return function() { return res.apply(null, arguments); };
-            }
-        } else if (k === "__name__") {
-            return str(res);
-        } else {
-            return res;
-        }
     } else if (obj.PY$__class__ && name in obj.PY$__class__) {
         res = obj.PY$__class__[name];
         debug && print("case2", typeof res === 'function');
@@ -140,7 +131,7 @@ $PY.getattr = function(obj, k) {
               py(res.__isclass)])));
         return res;
     }
-    throw __builtins__.PY$AttributeError(js(obj.PY$__repr__()) + " does not have attribute '" + js(k) + "'");
+    throw __builtins__.PY$AttributeError(js(obj.PY$__repr__(obj)) + " does not have attribute '" + js(k) + "'");
 };
 
 $PY.delattr = function(obj, k) {
@@ -164,7 +155,7 @@ object.PY$__eq__ = function(self, other) {
 };
 
 object.PY$__ne__ = function(self, other) {
-    return $PY.__not__(self.PY$__eq__(other));
+    return $PY.__not__(self.PY$__eq__(self, other));
 };
 
 object.PY$__gt__ = function(self, other) {
