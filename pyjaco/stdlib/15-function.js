@@ -27,18 +27,18 @@ __builtins__.PY$function = __inherit(object, "function");
 
 var $function = __builtins__.PY$function;
 
-$function.PY$__init__ = function(code) {
-    this.PY$func_code = code;
+$function.PY$__init__ = function(self, code) {
+    self.PY$func_code = code;
 };
 
-$function.PY$__get__ = function(obj, type) {
+$function.PY$__get__ = function(self, obj, type) {
 };
 
-$function.PY$__getattribute__ = function(key) {
+$function.PY$__getattribute__ = function(self, key) {
 
 };
 
-$function.PY$__repr__ = function() {
+$function.PY$__repr__ = function(self) {
     return str("<function " + this.PY$func_code.name + " at 0x" + this.id.toString(16) + ">");
 };
 
