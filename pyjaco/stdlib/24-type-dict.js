@@ -35,7 +35,7 @@ dict.PY$__init__ = function(self) {
     var count = 0;
 
     var pyargs = __uncook(arguments);
-    var args = arguments[1];
+    var args = pyargs.varargs[0];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
             items = {};
@@ -47,12 +47,12 @@ dict.PY$__init__ = function(self) {
         } else if (args.PY$__iter__ !== undefined) {
             items = {};
             iterate(args, function(item) {
-                        var key = item.PY$__getitem__($c0);
+                        var key = item.PY$__getitem__(item, $c0);
                         var hash = __builtins__.PY$hash(key);
                         if (!(hash in items)) {
                             count++;
                         }
-                        items[hash] = [key, item.PY$__getitem__($c1)];
+                        items[hash] = [key, item.PY$__getitem__(item, $c1)];
             });
         } else if (args.length === undefined) {
             items = {};
@@ -82,10 +82,10 @@ dict.PY$__init__ = function(self) {
         self.count = 0;
     }
     if (pyargs.kwargs !== undefined) {
-        self.PY$update(pyargs.kwargs);
+        self.PY$update(self, pyargs.kwargs);
     }
     for (var p in pyargs.kw) {
-        self.PY$__setitem__(str(p), pyargs.kw[p]);
+        self.PY$__setitem__(self, str(p), pyargs.kw[p]);
     }
 };
 
@@ -212,7 +212,7 @@ dict.PY$values = function(self) {
 dict.PY$update = function(self, other) {
    iterate(other,
      function(key) {
-         self.PY$__setitem__(key, other.PY$__getitem__(key));
+         self.PY$__setitem__(self, key, other.PY$__getitem__(key));
      }
    );
 };

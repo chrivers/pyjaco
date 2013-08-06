@@ -179,7 +179,7 @@ tuple.PY$__mul__ = function(self, num) {
 
 tuple.PY$__add__ = function(self, other) {
     if (self.PY$__class__ === other.PY$__class__) {
-        var res = self.items.concat([]);
+        var res = self.items.slice();
         iterate(other, function(elm) {
                     res.push(elm);
                 });

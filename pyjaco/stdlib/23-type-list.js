@@ -167,13 +167,13 @@ list.PY$pop = function(self, index) {
 
 list.PY$sort = function(self) {
     var pyargs = __uncook(arguments);
-    var cmp = js(arguments[0]);
-    if (cmp === undefined) { cmp = pyargs.kw.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(b));} : pyargs.kw.cmp; };
+    var cmp = js(arguments[1]);
+    if (cmp === undefined) { cmp = pyargs.kw.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(a, b));} : pyargs.kw.cmp; };
 
-    var key = js(arguments[1]);
+    var key = js(arguments[2]);
     if (key === undefined) { key = pyargs.kw.key === undefined ? function(x) { return x; } : pyargs.kw.key; };
 
-    var reverse = arguments[2];
+    var reverse = arguments[3];
     if (reverse === undefined) { reverse = pyargs.kw.reverse === undefined ? False : pyargs.kw.reverse; };
 
     var direction = reverse === True ? -1 : 1;
