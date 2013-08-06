@@ -47,7 +47,7 @@ var __int_real__ = int.PY$__create__;
 
 int.PY$__create__ = function(cls, obj) {
     if (js($PY.isinstance(obj, object)) && (obj.PY$__int__ !== undefined)) {
-        return obj.PY$__int__();
+        return obj.PY$__int__(obj);
     } else {
         return __int_real__(cls, obj);
     }
@@ -62,12 +62,16 @@ int.PY$__float__ = function(self) {
 };
 
 int.PY$__str__ = function(self) {
-    return str(self.obj);
+    if (self.PY$__class__) {
+        return str(self.obj);
+    } else {
+        return object.PY$__str__.call(null, self);
+    }
 };
 
 int.PY$__repr__ = int.PY$__str__;
 
-int.PY$__hash__ = function (self) {
+int.PY$__hash__ = function(self) {
     return self;
 };
 
