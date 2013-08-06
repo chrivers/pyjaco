@@ -32,6 +32,15 @@ $function.PY$__init__ = function(self, code) {
 };
 
 $function.PY$__get__ = function(self, obj, type) {
+    if (bool(obj) === True && !self.PY$func_code.__static) {
+        return function() {
+            return self.PY$func_code.apply(null, [obj].concat(Array.prototype.slice.call(arguments)));
+        };
+    } else {
+        return function() {
+            return self.PY$func_code.apply(null, arguments);
+        };
+    }
 };
 
 $function.PY$__getattribute__ = function(self, key) {
@@ -43,3 +52,7 @@ $function.PY$__repr__ = function(self) {
 };
 
 $function.PY$__str__ = $function.PY$__repr__;
+
+$function.PY$__call__ = function(self) {
+    return self.PY$func_code.apply({}, Array.prototype.slice.call(arguments, 1));
+};
