@@ -75,6 +75,19 @@ class Transformer(isttransform.Transformer):
     def ispure(self, tree):
         return isinstance(tree, IName)
 
+    def purecall(self, obj, func, *args):
+        target = self.comp(obj)
+        args = [self.comp(n) for n in args]
+        if self.ispure(obj):
+            return ICall(
+                func = IGetAttr(base = target, attr = func),
+                args = [target] + args,
+                keywords = [],
+                kwargs = None,
+                varargs = None)
+        else:
+            return ICall(func = IName(id = "$PY.call"), args = [target, IString(value = func)] + args)
+
     def node_name(self, node):
         if node.id in ["copyright", "credits", "license", "help"] + ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "hex", "id", "intern", "isinstance", "issubclass", "len", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError", "ZeroDivisionError", "StopIteration", "IndexError"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
@@ -111,15 +124,7 @@ class Transformer(isttransform.Transformer):
     def node_getitem(self, node):
         target = self.comp(node.value)
         func = "PY$__getitem__"
-        if self.ispure(node.value):
-            return ist.Call(
-                func = ist.GetAttr(base = target, attr = func),
-                args = [self.comp(node.value), self.comp(node.slice)],
-                keywords = [],
-                kwargs = None,
-                varargs = None)
-        else:
-            return ist.Call(func = IName(id = "$PY.call"), args = [target, IString(value = func), self.comp(node.slice)])
+        return self.purecall(node.value, func, node.slice)
 
     def node_number(self, node):
         if isinstance(node.value, (int, long)):
@@ -195,22 +200,14 @@ class Transformer(isttransform.Transformer):
         else:
             op = self.ops_binop[node.op]
         func = "PY$__%s__" % op
-        if self.ispure(node.left):
-            return ist.Call(func = ist.GetAttr(base = self.comp(node.left), attr = func), args = [self.comp(node.left), self.comp(node.right)])
-        else:
-            return ist.Call(func = IName(id = "$PY.call"), args = [self.comp(node.left), IString(value = func), self.comp(node.right)])
+        return self.purecall(node.left, func, node.right)
 
     def node_unaryop(self, node):
         if node.op == "Not":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__not__"), args = [self.comp(node.lvalue)])
         elif node.op in self.uopmap:
             func = "PY$__%s__" % self.uopmap[node.op]
-            target = self.comp(node.lvalue)
-            if self.ispure(node.lvalue):
-                return ist.Call(func = ist.GetAttr(base = target, attr = func), args = [target])
-            else:
-                return ist.Call(func = IName(id = "$PY.call"), args = [target, IString(value = func)])
-
+            return self.purecall(node.lvalue, func)
         else:
             raise NotImplementedError()
 
@@ -311,16 +308,10 @@ class Transformer(isttransform.Transformer):
     def compare_simple(self, lvalue, op, rvalue):
         if op in self.ops_compare:
             func = "PY$__%s__" % self.ops_compare[op]
-            if self.ispure(lvalue):
-                return ist.Call(func = ist.GetAttr(base = self.comp(lvalue), attr = func), args = [self.comp(lvalue), self.comp(rvalue)])
-            else:
-                return ist.Call(func = IName(id = "$PY.call"), args = [self.comp(lvalue), IString(value = func), self.comp(rvalue)])
+            return self.purecall(lvalue, func, rvalue)
         elif op == "In":
             func = "PY$__contains__"
-            if self.ispure(lvalue):
-                return ist.Call(func = ist.GetAttr(base = self.comp(rvalue), attr = func), args = [self.comp(rvalue), self.comp(lvalue)])
-            else:
-                return ist.Call(func = IName(id = "$PY.call"), args = [self.comp(rvalue), IString(value = func), self.comp(lvalue)])
+            return self.purecall(rvalue, func, lvalue)
         elif op == "Is":
             return ist.Call(func = ist.GetAttr(base = ist.Name(id = "$PY"), attr = "__is__"), args = [self.comp(lvalue), self.comp(rvalue)])
         elif op == "NotIn":
@@ -362,15 +353,11 @@ class Transformer(isttransform.Transformer):
                     js.append(IAssign(lvalue = [target], rvalue = expr))
         elif isinstance(target, ist.GetItem):
             if isinstance(target.slice, ist.Slice):
-                settarget = self.comp(target.value)
                 func = "PY$__setslice__"
                 slice = target.slice
                 lower = self.comp(slice.lower) if slice.lower else IName(id = "None")
                 upper = self.comp(slice.upper) if slice.upper else IName(id = "None")
-                if self.ispure(target.value):
-                    js = [ist.Call(func = ist.GetAttr(base = settarget, attr = func), args = [settarget, lower, upper, value])]
-                else:
-                    js = [ist.Call(func = IName(id = "$PY.call"), args = [settarget, func, lower, upper, value])]
+                js = [self.purecall(target.value, func, lower, upper, value)]
             else:
                 js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setitem__"), args = [self.comp(target.value), self.comp(target.slice), value])]
         elif isinstance(target, ist.Name):
@@ -495,13 +482,8 @@ class Transformer(isttransform.Transformer):
         else:
             op = self.ops_augassign[node.op]
 
-        target = self.comp(node.target)
         func = "PY$__%s__" % op
-        if self.ispure(node.target):
-            return self.assign_simple(node.target, ICall(func = IGetAttr(base = target, attr = func),
-                                                         args = [target, self.comp(node.value)]))
-        else:
-            return self.assign_simple(node.target, ICall(func = IName(id = "$PY.call"), args = [target, IString(value = func), self.comp(node.value)]))
+        return self.assign_simple(node.target, self.purecall(node.target, func, node.value))
 
     def node_delete(self, node):
         return [self.delete_simple(part) for part in node.targets]
@@ -509,21 +491,11 @@ class Transformer(isttransform.Transformer):
     def delete_simple(self, node):
         if isinstance(node, ist.GetItem):
             if isinstance(node.slice, ist.Slice):
-                target = self.comp(node.value)
                 func = "PY$__delslice__"
-                if self.ispure(node.value):
-                    return ICall(func = IGetAttr(base = target, attr = func),
-                                 args = [target, self.comp(node.slice.lower), self.comp(node.slice.upper)])
-                else:
-                    return ICall(func = IName(id = "$PY.call", args = [target, func, self.comp(node.slice.lower), self.comp(node.slice.upper)]))
+                return self.purecall(node.value, func, node.slice.lower, node.slice.upper)
             else:
-                target = self.comp(node.value)
                 func = "PY$__delitem__"
-                if self.ispure(node.value):
-                    return ICall(func = IGetAttr(base = target, attr = func),
-                                 args = [target, self.comp(node.slice)])
-                else:
-                    return ICall(func = IName(id = "$PY.call"), args = [target, func, self.comp(node.slice)])
+                return self.purecall(node.value, func, node.slice)
         elif isinstance(node, ist.GetAttr):
                 return ICall(func = IGetAttr(base = IName(id = "$PY"), attr = "delattr"),
                              args = [self.comp(node.base), IString(value = node.attr)])
