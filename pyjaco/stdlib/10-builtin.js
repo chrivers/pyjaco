@@ -326,7 +326,7 @@ __builtins__.PY$issubclass = function(obj, cls) {
 
         while (obj) {
             for (var i = 0; i < length; i++) {
-                if (obj === cls.PY$__getitem__(i))
+                if (obj === cls.PY$__getitem__(cls, i))
                     return True;
             }
             obj = obj.PY$__super__;
@@ -479,21 +479,18 @@ if (typeof console !== 'undefined' && console.log !== undefined) {
     };
 } else if (typeof window === 'undefined' || window.print !== print) {
     __builtins__.PY$print = function() {
-        if (arguments.length <= 1) {
-            if (arguments[0] !== undefined) {
-                print(__builtins__.PY$str(arguments[0]));
-            } else {
-                print("");
-            }
-        } else {
-            print.apply(null, arguments);
-        }
+        var args = tuple(Array.prototype.slice.call(arguments));
+        var base = __builtins__.PY$str(" ");
+        print(js(base.PY$join(base, __builtins__.PY$map(__builtins__.PY$str, args))));
     };
-} else {
+} else if (typeof alert !== 'undefined') {
     __builtins__.PY$print = function() {
         var args = tuple(Array.prototype.slice.call(arguments));
-        alert(js(__builtins__.PY$str(" ").PY$join(__builtins__.PY$map(__builtins__.PY$repr, args))));
+        var base = __builtins__.PY$str(" ");
+        alert(js(base.PY$join(base, __builtins__.PY$map(__builtins__.PY$str, args))));
     };
+} else {
+    throw "JavaScript environment does not have any output method";
 }
 
 __builtins__.PY$property = $PY.c_nif;
@@ -566,7 +563,7 @@ __builtins__.PY$repr = function(obj) {
     if (obj === undefined) {
         return str("None");
     } else if (obj.PY$__class__ === undefined) {
-        return object.PY$__repr__.call(obj);
+        return object.PY$__repr__(obj);
     } else if (obj.PY$__repr__ !== undefined) {
         return obj.PY$__repr__(obj);
     } else if (obj.PY$__str__ !== undefined) {
