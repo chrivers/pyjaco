@@ -20,16 +20,16 @@ fi
 
 while true; do
     ./pyjs.py -b generate -o .
-    python $1 > 1.res
+    python $1 > 1.pyres
     ./pyjs.py -q --builtins=import -o 1.js $1
-    if run 1.js > 1.out; then
-        if diff -au 1.res 1.out; then
+    if run 1.js > 1.jsres; then
+        if diff -au 1.pyres 1.jsres; then
             echo "Files now match!"
             exit
         fi
     else
         echo "Could not run $1:"
-        cat 1.out
+        cat 1.jsres
     fi
     read "dummy?Press enter to continue>"
     echo
