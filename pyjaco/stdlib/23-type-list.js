@@ -114,7 +114,7 @@ list.PY$count = tuple.PY$count;
 list.PY$index = tuple.PY$index;
 
 list.PY$remove = function(self, value) {
-    self.PY$__delitem__(self.PY$index(value));
+    self.PY$__delitem__(self, self.PY$index(self, value));
 };
 
 list.PY$append = function(self, value) {
@@ -167,13 +167,13 @@ list.PY$pop = function(self, index) {
 
 list.PY$sort = function(self) {
     var pyargs = __uncook(arguments);
-    var cmp = js(arguments[1]);
+    var cmp = pyargs.varargs[1];
     if (cmp === undefined) { cmp = pyargs.kw.cmp === undefined ? function(a, b) { return js(a.PY$__cmp__(a, b));} : pyargs.kw.cmp; };
 
-    var key = js(arguments[2]);
+    var key = pyargs.varargs[2];
     if (key === undefined) { key = pyargs.kw.key === undefined ? function(x) { return x; } : pyargs.kw.key; };
 
-    var reverse = arguments[3];
+    var reverse = pyargs.varargs[3];
     if (reverse === undefined) { reverse = pyargs.kw.reverse === undefined ? False : pyargs.kw.reverse; };
 
     var direction = reverse === True ? -1 : 1;
@@ -191,7 +191,7 @@ list.PY$insert = function(self, index, x) {
 list.PY$reverse = function(self) {
     var new_list = list();
     iterate(self, function(item) {
-            new_list.PY$insert(0, item);
+            new_list.PY$insert(new_list, 0, item);
     });
     self.items = new_list.items;
 };

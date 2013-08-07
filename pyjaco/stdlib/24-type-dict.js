@@ -35,7 +35,7 @@ dict.PY$__init__ = function(self) {
     var count = 0;
 
     var pyargs = __uncook(arguments);
-    var args = pyargs.varargs[0];
+    var args = pyargs.varargs[1];
     if (args !== undefined) {
         if (args.PY$__class__ === dict) {
             items = {};
@@ -102,11 +102,11 @@ dict.PY$__str__ = function(self) {
 
 dict.PY$__repr__ = dict.PY$__str__;
 
-dict._js_ = function(self) {
+dict._js_ = function() {
     var items = {};
 
-    for (var hash in self.items) {
-        items[str(self.items[hash][0])] = js(self.items[hash][1]);
+    for (var hash in this.items) {
+        items[str(this.items[hash][0])] = js(this.items[hash][1]);
     }
 
     return items;
@@ -212,7 +212,7 @@ dict.PY$values = function(self) {
 dict.PY$update = function(self, other) {
    iterate(other,
      function(key) {
-         self.PY$__setitem__(self, key, other.PY$__getitem__(key));
+         self.PY$__setitem__(self, key, other.PY$__getitem__(other, key));
      }
    );
 };

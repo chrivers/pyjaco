@@ -60,7 +60,7 @@ basestring.PY$__str__ = function(self) {
     if (self.PY$__class__) {
         return self;
     } else {
-        return object.PY$__str__.apply(self);
+        return object.PY$__str__(self);
     }
 };
 
@@ -68,7 +68,7 @@ basestring.PY$__repr__ = function(self) {
     if (self.PY$__class__) {
         return self.PY$__class__("'" + self.obj + "'");
     } else {
-        return object.PY$__repr__.apply(self);
+        return object.PY$__repr__(self);
     }
 };
 
@@ -115,7 +115,7 @@ basestring.PY$__mod__ = function(self, args) {
 
 basestring.PY$__eq__ = function(self, s) {
     if (self.PY$__class__ === undefined)
-        return object.PY$__eq__.call(self, s);
+        return object.PY$__eq__(self, s);
     else if (typeof(s) === "string")
         return self.obj === s ? True : False;
     else if ($PY.isinstance(s, __builtins__.PY$basestring))
@@ -126,7 +126,7 @@ basestring.PY$__eq__ = function(self, s) {
 
 basestring.PY$__gt__ = function(self, s) {
     if (self.PY$__class__ === undefined)
-        return object.PY$__gt__.call(self, s);
+        return object.PY$__gt__(self, s);
     else if (typeof(s) === "string")
         return self.obj > s ? True : False;
     else if ($PY.isinstance(s, __builtins__.PY$basestring))
@@ -139,7 +139,7 @@ basestring.PY$__gt__ = function(self, s) {
 
 basestring.PY$__lt__ = function(self, s) {
     if (self.PY$__class__ === undefined)
-        return object.PY$__lt__.call(self, s);
+        return object.PY$__lt__(self, s);
     if (typeof(s) === "string")
         return self.obj < s ? True : False;
     else if ($PY.isinstance(s, __builtins__.PY$basestring))
@@ -165,7 +165,7 @@ basestring.PY$__getitem__ = function(self, index) {
     index = js(index);
     if ($PY.isinstance(index, slice)) {
         var s = index;
-        var inds = js(s.PY$indices(self.obj.length));
+        var inds = js(s.PY$indices(s, self.obj.length));
         var start = inds[0];
         var stop = inds[1];
         var step = inds[2];
@@ -228,12 +228,12 @@ basestring.PY$count = function(self, needle, start, end) {
     else
         end = js(end);
     var count = 0;
-    var s = self.PY$__getitem__(slice(start, end));
-    var idx = js(s.PY$find(needle));
+    var s = self.PY$__getitem__(self, slice(start, end));
+    var idx = js(s.PY$find(s, needle));
     while (idx != -1) {
         count += 1;
-        s = s.PY$__getitem__(slice(idx+1, null));
-        idx = js(s.PY$find(needle));
+        s = s.PY$__getitem__(s, slice(idx+1, null));
+        idx = js(s.PY$find(s, needle));
     }
     return count;
 };
@@ -305,10 +305,10 @@ basestring.PY$lstrip = function(self, chars) {
     else
         chars = tuple(["\n", "\t", " "]);
     var i = 0;
-    while ((i < self.obj.length) && (js(chars.PY$__contains__(self.PY$__getitem__(i))))) {
+    while ((i < self.obj.length) && (js(chars.PY$__contains__(chars, self.PY$__getitem__(self, i))))) {
         i += 1;
     }
-    return self.PY$__getitem__(slice(i, null));
+    return self.PY$__getitem__(self, slice(i, null));
 };
 
 basestring.PY$rstrip = function(self, chars) {
@@ -319,14 +319,15 @@ basestring.PY$rstrip = function(self, chars) {
     else
         chars = tuple(["\n", "\t", " "]);
     var i = self.obj.length - 1;
-    while ((i >= 0) && (js(chars.PY$__contains__(self.PY$__getitem__(i))))) {
+    while ((i >= 0) && (js(chars.PY$__contains__(chars, self.PY$__getitem__(self, i))))) {
         i -= 1;
     }
-    return self.PY$__getitem__(slice(i+1));
+    return self.PY$__getitem__(self, slice(i+1));
 };
 
 basestring.PY$strip = function(self, chars) {
-    return self.PY$lstrip(chars).PY$rstrip(chars);
+    var ls = self.PY$lstrip(self, chars);
+    return ls.PY$rstrip(ls, chars);
 };
 
 basestring.PY$split = function(self, sep, max) {
@@ -357,16 +358,16 @@ basestring.PY$split = function(self, sep, max) {
         if (i === -1) {
             break;
         }
-        r_new.PY$append(self.PY$__class__(self.obj.substring(q, i)));
+        r_new.PY$append(r_new, self.PY$__class__(self.obj.substring(q, i)));
         q = i + sep.length;
         c++;
     }
-    r_new.PY$append(self.PY$__class__(self.obj.substring(q)));
+    r_new.PY$append(r_new, self.PY$__class__(self.obj.substring(q)));
     return r_new;
 };
 
 basestring.PY$splitlines = function(self) {
-    return self.PY$split("\n");
+    return self.PY$split(self, "\n");
 };
 
 basestring.PY$lower = function(self) {
@@ -401,7 +402,7 @@ var unicode = __inherit(basestring, "unicode");
 __builtins__.PY$str = str;
 __builtins__.PY$unicode = unicode;
 
-unicode.PY$__create__ = function(self, cls, obj) {
+unicode.PY$__create__ = function(cls, obj) {
     if (obj.PY$__unicode__ !== undefined) {
         return obj.PY$__unicode__(obj);
     } else {

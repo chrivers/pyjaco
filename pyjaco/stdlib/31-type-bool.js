@@ -47,7 +47,7 @@ bool.PY$__str__ = function (self) {
     }
 };
 
-bool.toString = function(self) {
+bool.toString = function() {
     if (this.obj) {
         return "1";
     } else {
@@ -55,11 +55,15 @@ bool.toString = function(self) {
     }
 };
 
+bool.PY$__hash__ = function(self) {
+    return self.obj === 0 ? $c0 : $c1;
+};
+
 bool.PY$__repr__ = bool.PY$__str__;
 
 bool.PY$__eq__ = function(self, other) {
     if (self.PY$__class__ === undefined) {
-        return object.PY$__eq__.call(self, other);
+        return object.PY$__eq__(self, other);
     } else if (other.PY$__int__ !== undefined) {
         return Number(self.obj) === other.PY$__int__(other)._js_() ? True : False;
     } else {
