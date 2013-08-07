@@ -116,7 +116,7 @@ $PY.next = function(obj) {
         try {
             return obj.PY$next(obj);
         } catch (x) {
-            if (x === $PY.c_stopiter || $PY.isinstance(x, __builtins__.PY$StopIteration)) {
+            if (x === $PY.c_stopiter || $PY.isinstance(x, __builtins__.PY$StopIteration) || x === __builtins__.PY$StopIteration) {
                 return null;
             } else {
                 throw x;
