@@ -92,8 +92,6 @@ $PY.getattr = function(obj, k) {
     var name = "PY$" + k;
     var res;
     var pyclass;
-    var debug = true;
-    debug = false;
     if ("PY$__getattribute__" in obj) {
         return obj.PY$__getattribute__(obj, k);
     } else if ((res = obj[name]) !== undefined) {
@@ -113,16 +111,8 @@ $PY.getattr = function(obj, k) {
                 return res;
             }
         }
-        debug && print(sprintf("case1(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.isclass: %s, res.isclass:%s", list([
-              py(name),
-              py(typeof res === 'function'),
-              py(obj.__isinstance),
-              py(res.__isinstance),
-              py(obj.__isclass),
-              py(res.__isclass)])));
     } else if (obj.PY$__class__ && name in obj.PY$__class__) {
         res = obj.PY$__class__[name];
-        debug && print("case2", typeof res === 'function');
         if (typeof res === 'function' && obj.__isinstance) {
             return function() { return res.apply(obj.PY$__class__, arguments); };
         } else {
@@ -130,15 +120,6 @@ $PY.getattr = function(obj, k) {
         }
     } else if ("PY$__getattr__" in obj) {
         res = obj.PY$__getattr__(obj, k);
-        debug && print(sprintf("case3(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.hasclass:%s, res.hasclass:%s, obj.isclass: %s, res.isclass:%s", list([
-              py(name),
-              py(typeof res === 'function'),
-              py(obj.__isinstance),
-              py(res.__isinstance),
-              py(obj.PY$__class__ !== undefined),
-              py(res.PY$__class__ !== undefined),
-              py(obj.__isclass),
-              py(res.__isclass)])));
         return res;
     }
     throw __builtins__.PY$AttributeError(js(obj.PY$__repr__(obj)) + " does not have attribute '" + js(k) + "'");
