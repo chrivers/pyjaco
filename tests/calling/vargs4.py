@@ -7,7 +7,7 @@ class UserType(object):
         return "<usertype with value %d>" % self.x
 
 def foo(a, b, *vargs):
-    print a, b, repr(vargs)
+    print a, b, [str(x) for x in vargs]
 
 foo(1, 2)
 foo(1, 2, 3)
