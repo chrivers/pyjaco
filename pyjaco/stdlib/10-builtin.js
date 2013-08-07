@@ -45,6 +45,7 @@ __builtins__.js_setattr = function(obj, name, value) {
     obj[name] = value;
 };
 
+
 /*
  * Python __builtins__
  */
@@ -169,11 +170,6 @@ __builtins__.PY$compile = $PY.c_nif;
 
 __builtins__.PY$complex = $PY.c_nif;
 
-__builtins__.PY$copyright = __builtins__.PY$license;
-
-__builtins__.PY$credits = "The Pyjaco authors would like to thank everybody who has contributed" +
-    "time, ideas, or patches to the Pyjaco project.";
-
 __builtins__.PY$delattr = function(obj, name) {
     name = js(name);
     if (obj["PY$" + name] !== undefined) {
@@ -257,14 +253,6 @@ __builtins__.PY$hash = function(obj) {
     } else {
         throw __builtins__.PY$AttributeError('__hash__');
     }
-};
-
-__builtins__.PY$help = function() {
-    __builtins__.PY$print("Welcome to pyjaco, the Python-to-Javascript compiler!\n" +
-                          "  Homepage     : pyjaco.org\n" +
-                          "  Github       : https://github.com/chrivers/pyjaco\n" +
-                          "  Email        : developer@pyjaco.org\n" +
-                          "  Google group : http://groups.google.com/group/pyjaco");
 };
 
 __builtins__.PY$hex = function(num) {
@@ -352,10 +340,6 @@ __builtins__.PY$len = function(obj) {
     } else {
         throw __builtins__.PY$AttributeError('__len__');
     }
-};
-
-__builtins__.PY$license = function() {
-    return __builtins__.PY$str("See the file LICENSE in the pyjaco distribution for details.");
 };
 
 __builtins__.PY$locals = $PY.c_nif;
@@ -562,10 +546,10 @@ __builtins__.PY$reload = $PY.c_nif;
 __builtins__.PY$repr = function(obj) {
     if (obj === undefined) {
         return str("None");
-    } else if (obj.PY$__class__ === undefined) {
-        return object.PY$__repr__(obj);
     } else if (obj.PY$__repr__ !== undefined) {
         return obj.PY$__repr__(obj);
+    } else if (obj.PY$__class__ === undefined) {
+        return object.PY$__repr__(obj);
     } else if (obj.PY$__str__ !== undefined) {
         return obj.PY$__str__(obj);
     } else {
