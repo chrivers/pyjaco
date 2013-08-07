@@ -91,13 +91,19 @@ $PY.setattr = function(obj, k, v) {
 $PY.getattr = function(obj, k) {
     var name = "PY$" + k;
     var res;
+    var pyclass;
     var debug = true;
     debug = false;
     if ("PY$__getattribute__" in obj) {
         return obj.PY$__getattribute__(k);
     } else if ((res = obj[name]) !== undefined) {
         if (res.PY$__get__ !== undefined) {
-            return res.PY$__get__(res, obj,  res.PY$__class__);
+            pyclass = obj.PY$__class__;
+            if (pyclass) {
+                return res.PY$__get__(res, obj, pyclass);
+            } else {
+                return res.PY$__get__(res, None, obj);
+            }
         } else if (typeof res === 'function' && !(res.__isclass || res.__isinstance)) {
             return function() { return res.apply(null, [obj].concat(Array.prototype.slice.call(arguments))); };
         } else {
@@ -119,7 +125,7 @@ $PY.getattr = function(obj, k) {
             return res;
         }
     } else if ("PY$__getattr__" in obj) {
-        res = obj.PY$__getattr__(k);
+        res = obj.PY$__getattr__(obj, k);
         debug && print(sprintf("case3(%s): typeof==function: %s, obj.isinstance:%s, res.isinstance:%s, obj.hasclass:%s, res.hasclass:%s, obj.isclass: %s, res.isclass:%s", list([
               py(name),
               py(typeof res === 'function'),
