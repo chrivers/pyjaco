@@ -76,7 +76,7 @@ class Transformer(isttransform.Transformer):
         return isinstance(tree, IName)
 
     def node_name(self, node):
-        if node.id in ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "help", "hex", "id", "intern", "isinstance", "issubclass", "len", "license", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError", "ZeroDivisionError", "StopIteration", "IndexError"]:
+        if node.id in ["copyright", "credits", "license", "help"] + ["abs", "all", "any", "apply", "bin", "callable", "chr", "cmp", "coerce", "delattr", "dir", "enumerate", "filter", "getattr", "hasattr", "hash", "hex", "id", "intern", "isinstance", "issubclass", "len", "map", "max", "min", "oct", "ord", "pow", "quit", "range", "reduce", "repr", "reversed", "round", "setattr", "sorted", "staticmethod", "sum", "type", "unichr", "xrange", "zip"] + ["Exception", "TypeError", "IOError", "ValueError", "ZeroDivisionError", "StopIteration", "IndexError"]:
             return ist.GetAttr(base = ist.Name(id = "__builtins__"), attr = "PY$%s" % node.id)
         else:
             node.id = self.name_map.get(node.id, node.id)
