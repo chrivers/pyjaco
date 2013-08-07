@@ -1,7 +1,5 @@
 /**
-  Copyright 2010-2011 Ondrej Certik <ondrej@certik.cz>
-  Copyright 2010-2011 Mateusz Paprocki <mattpap@gmail.com>
-  Copyright 2011 Christian Iversen <ci@sikkerhed.org>
+  Copyright 2011-2013 Christian Iversen <ci@sikkerhed.org>
 
   Permission is hereby granted, free of charge, to any person
   obtaining a copy of this software and associated documentation

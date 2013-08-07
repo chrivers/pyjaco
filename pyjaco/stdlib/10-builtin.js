@@ -1,5 +1,4 @@
 /**
-  Copyright 2010-2011 Mateusz Paprocki <mattpap@gmail.com>
   Copyright 2011-2013 Christian Iversen <chrivers@iversen-net.dk>
 
   Permission is hereby granted, free of charge, to any person
