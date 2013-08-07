@@ -44,7 +44,6 @@ basestring.PY$__init__ = function(self, s) {
 var __basestring_real__ = basestring.PY$__create__;
 
 basestring.PY$__create__ = function(cls, obj) {
-    if (obj === undefined) bt();
     if ($PY.isinstance(obj, basestring)) {
         return obj;
     } else if (obj.PY$__class__ === undefined && obj.PY$__super__ !== undefined) {
