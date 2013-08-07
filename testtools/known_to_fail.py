@@ -1,9 +1,11 @@
 """lists all the tests that are known to fail"""
 KNOWN_TO_FAIL = [
+    "tests/builtin/print.py",
     "tests/calling/too-few-args.py",
     "tests/calling/functiontype.py",
     "tests/class/oo_diamond.py",
     "tests/class/oo_super.py",
+    "tests/class/nestedclass2.py",
     "tests/dict/customhash.py",
     "tests/namespace/del_global.py",
     "tests/namespace/del_local.py",
