@@ -125,6 +125,68 @@ $PY.next = function(obj) {
     }
 };
 
+$PY.indices = function(start, stop, step, length) {
+
+    if (step === null) {
+        step = 1;
+    }
+
+    if (step === 0) {
+        throw __builtins__.PY$ValueError("slice step cannot be zero");
+    } else if (step > 0) {
+
+        if (start === null) {
+            start = 0;
+        } else {
+            if (start < 0) start += length;
+            if (start < 0) start = 0;
+            if (start >= length)
+                start = length;
+        }
+
+        if (stop === null) {
+            stop = length;
+        } else {
+            if (stop < 0) stop += length;
+            if (stop < 0) stop = 0;
+            if (stop >= length)
+                stop = length;
+        }
+    } else {
+
+        if (start === null) {
+            start = length-1;
+        } else {
+            if (start < 0) start += length;
+            if (start < 0) start = -1;
+            if (start >= length)
+                start = length - 1;
+        }
+
+        if (stop === null) {
+            stop = -1;
+        } else {
+            if (stop < 0) stop += length;
+            if (stop < 0) stop = -1;
+            if (stop >= length)
+                stop = length - 1;
+        }
+    }
+
+    var slicelength;
+    if ((step < 0 && stop >= start) || (step > 0 && start >= stop)) {
+        slicelength = 0;
+    }
+    else if (step < 0) {
+        slicelength = Math.floor((stop-start+1)/(step)+1);
+    }
+    else {
+        slicelength = Math.floor((stop-start-1)/(step)+1);
+    }
+
+    return [start, stop, step, slicelength];
+};
+
 $PY.__not__ = function(obj) {
    if (obj.PY$__nonzero__ !== undefined) {
        return js(obj.PY$__nonzero__(obj)) ? False : True;
