@@ -5,7 +5,11 @@ if [[ $1 == "" ]]; then
     exit 1
 fi
 
-if [[ -x $(which js) ]]; then
+if [[ -x $(which $JS) ]]; then
+    function run() {
+        $(which $JS) $1
+    }
+elif [[ -x $(which js) ]]; then
     function run() {
         $(which js) $1
     }
@@ -21,7 +25,7 @@ fi
 while true; do
     ./pyjs.py -b generate -o .
     python $1 > 1.pyres
-    ./pyjs.py -q --builtins=import -o 1.js $1
+    ./pyjs.py -q --builtins=import-each -o 1.js $1
     if run 1.js > 1.jsres; then
         if diff -au 1.pyres 1.jsres; then
             echo "------------------------------------------"
