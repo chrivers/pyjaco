@@ -23,7 +23,6 @@ else
 fi
 
 while true; do
-    ./pyjs.py -b generate -o .
     python $1 > 1.pyres
     ./pyjs.py -q --builtins=import-each -o 1.js $1
     if run 1.js > 1.jsres; then
