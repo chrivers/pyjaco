@@ -24,8 +24,10 @@ while true; do
     ./pyjs.py -q --builtins=import -o 1.js $1
     if run 1.js > 1.jsres; then
         if diff -au 1.pyres 1.jsres; then
-            echo "Files now match!"
-            exit
+            echo "------------------------------------------"
+            cat 1.jsres
+            echo "------------------------------------------"
+            echo "Files match"
         fi
     else
         echo "Could not run $1:"
