@@ -22,9 +22,9 @@ def parse_args():
 
 def pyjaco_compile(compiler, code, printoutput):
     if printoutput:
-        return "try {print($PY.repr(%s), '\\n')} finally {print('\\nMARK\\n')};\n" % "\n".join(compiler._compile(code).split("\n")[1:])[:-1]
+        return "try {print($PY.repr(%s), '\\n')} finally {print('\\nMARK\\n')};\n" % "\n".join(compiler._compile(code).split("\n"))[:-1]
     else:
-        return "try {%s} finally {print('\\nMARK\\n')};\n" % "".join(compiler._compile(code).split("\n")[1:])
+        return "try {%s} finally {print('\\nMARK\\n')};\n" % "".join(compiler._compile(code).split("\n"))
 
 def start_checks():
     if not os.path.exists("py-builtins.js"):
