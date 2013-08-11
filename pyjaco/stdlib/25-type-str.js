@@ -274,24 +274,21 @@ basestring.PY$join = function(self, s) {
     return str(res);
 };
 
-basestring.PY$replace = function(self, old, _new, count) {
-    old = js(old);
-    _new = js(_new);
-    var old_s;
-    var new_s;
-
-    if (count !== undefined)
-        count = js(count);
-    else
-        count = -1;
-    old_s = "";
-    new_s = self.obj;
-    while ((count != 0) && (new_s != old_s)) {
-        old_s = new_s;
-        new_s = new_s.replace(old, _new);
-        count -= 1;
+basestring.PY$replace = function(self, s, r, count) {
+    s = js(s);
+    r = js(r);
+    count = js(count);
+    if (count === 0) {
+        return self;
+    } else if (count < 0) {
+        count = 0;
     }
-    return self.PY$__class__(new_s);
+    var elms = self.obj.split(s);
+    if (count !== undefined && count > 0 && count < elms.length) {
+        return self.PY$__class__(elms.slice(0, count).join(r) + r + elms.slice(count).join(s));
+    } else {
+        return elms.join(r);
+    }
 };
 
 basestring.PY$lstrip = function(self, chars) {
