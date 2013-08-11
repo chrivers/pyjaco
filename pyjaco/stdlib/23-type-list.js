@@ -211,9 +211,5 @@ list.PY$insert = function(self, index, x) {
 };
 
 list.PY$reverse = function(self) {
-    var new_list = list();
-    iterate(self, function(item) {
-            new_list.PY$insert(new_list, 0, item);
-    });
-    self.items = new_list.items;
+    self.items.reverse();
 };
