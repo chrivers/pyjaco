@@ -43,7 +43,6 @@ class Printer(istcompiler.Multiplexer):
     def format(self, tree):
         self.buffer = []
         self.indentation = -4
-        self.line('load("py-builtins.js");')
         self.comp(tree)
         if self.buffer and self.buffer[-1].strip() == "":
             self.buffer.pop()
