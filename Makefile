@@ -9,7 +9,7 @@ py-builtins.js:
 	@./pyjs.py -b generate --output .
 
 clean: testclean
-	@rm -fv **/*~ **/*.pyc 1.{pyout,jsout,js}
+	@rm -fv **/*~ **/*.pyc 1.{pyres,jsres,js}
 	$(MAKE) -C examples clean
 
 testclean:
