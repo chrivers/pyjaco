@@ -264,14 +264,7 @@ basestring.PY$rfind = function(self, s) {
 };
 
 basestring.PY$join = function(self, s) {
-    // return self.PY$__class__(js(s).join(js(self)));
-    var res = "";
-    iterate(s, function(elm) {
-                if (res != "")
-                    res += self.obj;
-                res += str(elm)._js_();
-            });
-    return str(res);
+    return self.PY$__class__(js(s).join(js(self)));
 };
 
 basestring.PY$replace = function(self, s, r, count) {
@@ -287,7 +280,7 @@ basestring.PY$replace = function(self, s, r, count) {
     if (count !== undefined && count > 0 && count < elms.length) {
         return self.PY$__class__(elms.slice(0, count).join(r) + r + elms.slice(count).join(s));
     } else {
-        return elms.join(r);
+        return self.PY$__class__(elms.join(r));
     }
 };
 
