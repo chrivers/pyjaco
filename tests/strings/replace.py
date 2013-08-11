@@ -1,14 +1,9 @@
 
-txt = "the quick brown fox jumped over thethe lazy dog"
-
-txt2 = txt.replace("the","a")
-
-print txt
-print txt2
-
-print txt.replace("the", "a", 0)
-print txt.replace("the", "a", 1)
-print txt.replace("the", "a", 2)
-print txt.replace("the", "a", 3)
-print txt.replace("the", "a", 4)
-print txt.replace("the", "a", 50)
+for txt in ["the quick brown fox jumped over thethe lazy dog the",
+            "thethethethe",
+            "the word t-h-e does not appear here",
+            "the line here starts with the word",
+            "this line ends with the word the"]:
+    print txt.replace("the", "a")
+    for count in [-1, 0, 1, 2, 3, 4, 50]:
+        print txt.replace("the", "a", count)
