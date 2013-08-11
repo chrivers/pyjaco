@@ -140,17 +140,10 @@ class Transformer(isttransform.Transformer):
             raise NotImplementedError("Unknown numeric type: %s" % node.n.__class__.__name__)
 
     def node_slice(self, node):
-        if node.lower and node.upper and node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), self.comp(node.upper), self.comp(node.step)])
-        if node.lower and node.upper:
-            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), self.comp(node.upper)])
-        if node.upper and not node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.upper)])
-        if node.lower and not node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [self.comp(node.lower), ist.Name(id = "null")])
-        if not node.lower and not node.upper and not node.step:
-            return ist.Call(func = ist.Name(id = "slice"), args = [ist.Name(id = "null")])
-        raise NotImplementedError("Slice")
+        lower = self.comp(node.lower) if node.lower else IName(id = "None")
+        upper = self.comp(node.upper) if node.upper else IName(id = "None")
+        step  = self.comp(node.step)  if node.step  else IName(id = "None")
+        return ist.Call(func = ist.Name(id = "slice"), args = [lower, upper, step])
 
     def node_string(self, node):
         return ist.Call(func = ist.Name(id = "str"), args = [ist.String(value = node.value)])
@@ -357,7 +350,8 @@ class Transformer(isttransform.Transformer):
                 slice = target.slice
                 lower = self.comp(slice.lower) if slice.lower else IName(id = "None")
                 upper = self.comp(slice.upper) if slice.upper else IName(id = "None")
-                js = [self.purecall(target.value, func, lower, upper, value)]
+                step  = self.comp(slice.step ) if slice.step  else IName(id = "None")
+                js = [self.purecall(target.value, func, lower, upper, step, value)]
             else:
                 js = [ist.Call(func = ist.GetAttr(base = self.comp(target.value), attr = "PY$__setitem__"), args = [self.comp(target.value), self.comp(target.slice), value])]
         elif isinstance(target, ist.Name):
