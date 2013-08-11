@@ -54,3 +54,8 @@ print x[-20:-10:4]
 print x[-10:-20:4]
 print x[10:-20:-4]
 print x[-10:-20:-4]
+
+try:
+    print x[::0]
+except ValueError, E:
+    print E
