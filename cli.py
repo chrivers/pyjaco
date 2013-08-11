@@ -138,6 +138,9 @@ if __name__ == "__main__":
             try:
                 code, linetype = interactive_read()
                 run_code(compiler, options, code, linetype)
+            except KeyboardInterrupt:
+                print "\nKeyboardInterrupt"
+                continue
             except EOFError:
                 print
                 break
