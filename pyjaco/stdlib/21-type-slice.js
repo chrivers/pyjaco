@@ -42,27 +42,9 @@ slice.PY$__init__ = function(self, start, stop, step) {
 };
 
 slice.PY$__str__ = function(self) {
-    return str("slice(" + self.start + ", " + self.stop + ", " + self.step + ")");
+    return str("slice(" + py(self.start) + ", " + py(self.stop) + ", " + py(self.step) + ")");
 };
 
 slice.PY$indices = function(self, n) {
-    n = js(n);
-    var start = self.start;
-    if (start === null)
-        start = 0;
-    if (start > n)
-        start = n;
-    if (start < 0)
-        start = n+start;
-    var stop = self.stop;
-    if (stop > n)
-        stop = n;
-    if (stop === null)
-        stop = n;
-    if (stop < 0)
-        stop = n+stop;
-    var step = self.step;
-    if (step === null)
-        step = 1;
-    return tuple([start, stop, step]);
+    return tuple($PY.indices(self.start, self.stop, self.step, n).slice(0, 3));
 };
