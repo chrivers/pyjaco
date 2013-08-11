@@ -78,12 +78,34 @@ list.PY$__setitem__ = function(self, index, value) {
     }
 };
 
-list.PY$__setslice__ = function(self, lower, upper, value) {
+list.PY$__setslice__ = function(self, _start, _stop, _step, value) {
     var it = list(value).items;
-    lower = js(lower);
-    upper = js(upper);
-    if (lower < self.items.length && upper < self.items.length) {
-        self.items = self.items.slice(0, lower).concat(it).concat(self.items.slice(upper, self.items.length));
+    var ind = $PY.indices(js(_start), js(_stop), js(_step), self.items.length);
+    var start = ind[0];
+    var stop  = ind[1];
+    var step  = ind[2];
+    var slen  = ind[3];
+
+    if (step === 1) {
+        self.items = self.items.slice(0, start).concat(it).concat(self.items.slice(stop));
+    } else {
+        var items  = self.items;
+        var c = 0;
+
+        if (slen !== it.length) {
+            throw __builtins__.PY$ValueError("attempt to assign sequence of size " + it.length +  " to extended slice of size " + slen);
+        }
+
+        if (step > 0) {
+            for (var i = start; i < stop; i += step) {
+                items[i] = it[c++];
+            }
+        } else {
+            for (var i = start; i > stop; i += step) {
+                items[i] = it[c++];
+            }
+        }
+        self.items = items;
     }
 };
 
