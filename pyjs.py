@@ -58,6 +58,16 @@ class BuiltinGenerator(object):
 
         return "\n".join(builtin_lines)
 
+    def generate_loadbuiltins(self):
+        '''Generate a py-builtins.js proxy that contains load() calls to the files (for easier debugging)'''
+        builtin_lines = []
+        js_filenames = sorted(
+                [f for f in pkg_resources.resource_listdir("pyjaco", "stdlib") if (f.endswith(".js") and not f.startswith("."))])
+        for js_filename in js_filenames:
+            builtin_lines.append("load('stdlib/%s');" % js_filename)
+
+        return "\n".join(builtin_lines)+"\n"
+
 
 def compile_file(infile, outfile, options):
     '''Compile a single python file object to a single javascript output file
@@ -70,6 +80,8 @@ def compile_file(infile, outfile, options):
         outfile.write("/*%s*/\n" % "  User code  ".center(76, "*"))
     elif options.builtins == "import":
         outfile.write('load("py-builtins.js");\n')
+    elif options.builtins == "import-each":
+        outfile.write(BuiltinGenerator().generate_loadbuiltins())
 
     c = Compiler()
     c.append_string(infile.read())
@@ -215,9 +227,14 @@ def main():
     parser.add_option("-b", "--builtins",
             action = "store",
             dest = "builtins",
-            choices = ["include", "import", "generate", "none"],
-            default = "none",
-            help = "INCLUDE builtins statically in each file\nIMPORT builtins using a load statement in each file\nGENERATE a separate file for builtins (output must be a directory)\nNONE don't include builtins")
+            choices = ["include", "import", "import-each", "generate", "none"],
+            default = "import",
+            help = " ".join([
+                "INCLUDE builtins statically in each file",
+                "IMPORT builtins using a load statement in each file",
+                "IMPORT-EACH each piece of the stdlib will be loaded independently (for easier debugging)",
+                "GENERATE a separate file for builtins (output must be a directory)",
+                "NONE don't include builtins"]))
 
     parser.add_option("-I", "--import",
             action = "store_const",
