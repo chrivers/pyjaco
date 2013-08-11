@@ -9,7 +9,6 @@ KNOWN_TO_FAIL = [
     "tests/dict/customhash.py",
     "tests/namespace/del_global.py",
     "tests/namespace/del_local.py",
-    "tests/list/assign_slice_step.py",
     "tests/functions/cmp.py",
     "tests/flow/yield.py",
 
