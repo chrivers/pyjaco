@@ -253,8 +253,14 @@ tuple.PY$__getitem__ = function(self, index) {
         var stop = inds[1];
         var step = inds[2];
         seq = [];
-        for (var i = start; i < stop; i += step) {
-            seq.push(self.items[i]);
+        if (step < 0) {
+            for (var i = start; i > stop; i += step) {
+                seq.push(self.items[i]);
+            }
+        } else {
+            for (var i = start; i < stop; i += step) {
+                seq.push(self.items[i]);
+            }
         }
         return self.PY$__class__(seq);
     } else {
