@@ -32,7 +32,7 @@ var __inherit = function(cls, name) {
     var res = function() {
         var x = res.PY$__create__;
         if (x !== undefined) {
-            return res.PY$__create__.apply({}, [res].concat(Array.prototype.slice.call(arguments)));
+            return res.PY$__create__.apply(null, [res].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw __builtins__.PY$AttributeError("Class " + name + " does not have __create__ method");
         }
@@ -61,7 +61,7 @@ object.PY$__create__ = function(cls) {
     var obj = function() {
         var x = cls.PY$__call__;
         if (x !== undefined) {
-            return cls.PY$__call__.apply({}, [obj].concat(Array.prototype.slice.call(arguments)));
+            return cls.PY$__call__.apply(null, [obj].concat(Array.prototype.slice.call(arguments)));
         } else {
             throw __builtins__.PY$AttributeError("Object " + js(cls.PY$__name__) + " does not have __call__ method");
         }
@@ -191,8 +191,4 @@ object.PY$__cmp__ = function(self, y) {
 
 object.toString = function() {
     return js(this.PY$__str__(this));
-};
-
-object.valueOf = function() {
-    return js(this);
 };
